@@ -34,8 +34,6 @@ export class DetailKpiComponent implements OnInit {
   user: any;
   editingRowIndex: number | null = null;
   editingRowIndex2: number | null = null;
-  editingRowIndex3: number | null = null; // revenue
-  editingRowIndex4: number | null = null; // commissionManualAmount
 
   constructor(
     private employeesService: EmployeeService,
@@ -168,27 +166,12 @@ export class DetailKpiComponent implements OnInit {
     this.editingRowIndex2 = rowIndex;
   }
 
-  startEditing3(rowIndex: number): void {
-    this.editingRowIndex3 = rowIndex;
-  }
-
-  startEditing4(rowIndex: number): void {
-    this.editingRowIndex4 = rowIndex;
-  }
-
   stopEditing(): void {
     this.editingRowIndex = null;
   }
   stopEditing2(): void {
     this.editingRowIndex2 = null;
   }
-  stopEditing3(): void {
-    this.editingRowIndex3 = null;
-  }
-  stopEditing4(): void {
-    this.editingRowIndex4 = null;
-  }
-
   stopEditingAndSave(rowData: any) {
     this.saveRow(rowData, 'completionRate');
   }
@@ -197,34 +180,12 @@ export class DetailKpiComponent implements OnInit {
     this.saveRow(rowData, 'bonus');
   }
 
-  stopEditingAndSave3(rowData: any) {
-    this.saveRow(rowData, 'revenue');
-  }
-
-  stopEditingAndSave4(rowData: any) {
-    this.saveRow(rowData, 'commissionManualAmount');
-  }
-
-  onToggleCommissionManual(rowData: any) {
-    if (!rowData.isCommissionManual) {
-      rowData.commissionManualAmount = null;
-    }
-    this.saveRow(rowData);
-  }
-
-  private saveRow(rowData: any, field?: 'completionRate' | 'bonus' | 'revenue' | 'commissionManualAmount') {
+  private saveRow(rowData: any, field?: 'completionRate' | 'bonus') {
     if (field === 'completionRate') this.stopEditing();
     if (field === 'bonus') this.stopEditing2();
-    if (field === 'revenue') this.stopEditing3();
-    if (field === 'commissionManualAmount') this.stopEditing4();
 
     const completionRate = this.toNumberOrZero(rowData.completionRate);
     const bonus = this.toNumberOrZero(rowData.bonus);
-    const revenue = this.toNumberOrZero(rowData.revenue);
-    const isCommissionManual = !!rowData.isCommissionManual;
-    const commissionManualAmount = isCommissionManual
-      ? this.toNumberOrZero(rowData.commissionManualAmount)
-      : null;
 
     const payload = {
       employeeId: rowData.employeeId,
@@ -232,9 +193,6 @@ export class DetailKpiComponent implements OnInit {
       employeeName: rowData.employeeName,
       completionRate,
       bonus,
-      revenue,
-      isCommissionManual,
-      commissionManualAmount,
     };
 
     this.kpiService.updateRateKpi(rowData.id, payload).subscribe(

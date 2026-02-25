@@ -79,9 +79,6 @@
                             <th style="width: 20%;">Tên nhân viên</th>
                             <th style="width: 20%;">Tỷ lệ hoàn thành KPI</th>
                             <th style="width: 20%;">Thưởng</th>
-                            <th style="width: 20%;">Doanh thu</th>
-                            <th style="width: 15%;">Override hoa hồng</th>
-                            <th style="width: 20%;">Hoa hồng (nhập tay)</th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-rowData let-i="rowIndex">
@@ -127,40 +124,6 @@
                                     <span (click)="startEditing2(i)" style="cursor: pointer;">
                                         {{ rowData.bonus || 0 }} ₫
                                     </span>
-                                </ng-template>
-                            </td>
-                            <td>
-                                <input
-                                    type="number"
-                                    [(ngModel)]="rowData.revenue"
-                                    (blur)="stopEditingAndSave3(rowData)"
-                                    (keydown.enter)="stopEditingAndSave3(rowData)"
-                                    class="p-inputtext p-component"
-                                    style="width: 90%; min-width: 100px;"
-                                    placeholder="Nhập doanh thu"
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="checkbox"
-                                    [(ngModel)]="rowData.isCommissionManual"
-                                    (change)="onToggleCommissionManual(rowData)"
-                                />
-                            </td>
-                            <td>
-                                <ng-container *ngIf="rowData.isCommissionManual; else displayValue4Disabled">
-                                    <input
-                                        type="number"
-                                        [(ngModel)]="rowData.commissionManualAmount"
-                                        (blur)="stopEditingAndSave4(rowData)"
-                                        (keydown.enter)="stopEditingAndSave4(rowData)"
-                                        class="p-inputtext p-component"
-                                        style="width: 90%; min-width: 100px;"
-                                        placeholder="Nhập tiền hoa hồng"
-                                    />
-                                </ng-container>
-                                <ng-template #displayValue4Disabled>
-                                    <span style="color: #888;">Bật override để nhập</span>
                                 </ng-template>
                             </td>
                         </tr>
