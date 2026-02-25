@@ -103,13 +103,13 @@ export class TimesheetComponent implements OnInit {
 
     ngOnInit() {
         this.CallSnaphot();
-        this.getDetailTimesheetById();
         this.initForm();
         this.fetchEmployees();
         this.getOrganizations();
         this.getStaffPosition();
-        this.getTimesheetDetails();
         this.getTimeSheetData();
+
+        this.getDetailTimesheetById();
 
         this.timeTrackingForm.valueChanges.subscribe(() => {
             this.updateWorkingHours();
@@ -291,6 +291,8 @@ export class TimesheetComponent implements OnInit {
                         organizationId: matchingNode,
                     });
                 }
+                // Sau khi đã có dateRange và thông tin chi tiết, mới load danh sách timesheet để tránh lỗi không hiển thị đủ
+                this.getTimesheetDetails();
             }
         });
     }
