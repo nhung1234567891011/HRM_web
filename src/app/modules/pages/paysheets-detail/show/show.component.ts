@@ -65,7 +65,7 @@ export class ShowComponent implements OnInit {
     allColumns: Array<{ key: string; label: string }> = [
         { key: 'department', label: 'Bộ phận' },
         { key: 'contract', label: 'Hợp đồng' },
-        { key: 'baseSalary', label: 'Lương cơ bản' },
+        { key: 'baseSalary', label: 'Lương cứng (cơ bản)' },
         { key: 'standardWorkDays', label: 'Ngày công chuẩn' },
         { key: 'actualWorkDays', label: 'Ngày công thực tế' },
         { key: 'receivedSalary', label: 'Lương cơ bản thực nhận' },
@@ -73,16 +73,22 @@ export class ShowComponent implements OnInit {
         { key: 'kpiPercentage', label: '% KPI đạt' },
         { key: 'kpiSalary', label: 'Lương KPI' },
         { key: 'bonus', label: 'Thưởng' },
-        { key: 'socialInsurance', label: 'BHXH' },
+        { key: 'allowanceMealTravel', label: 'Phụ cấp đi lại, ăn trưa' },
+        { key: 'parkingAmount', label: 'Tiền gửi xe công ty' },
+        { key: 'commissionAmount', label: 'Hoa hồng' },
+        { key: 'overtimeAmount', label: 'Lương tăng ca' },
+        { key: 'socialInsurance', label: 'Bảo hiểm (BHXH+BHTN+BHYT)' },
         { key: 'unionFee', label: 'Quỹ công đoàn' },
         { key: 'salaryRate', label: 'Tỉ lệ hưởng lương' },
         { key: 'totalDeduction', label: 'Khấu trừ' },
-        { key: 'totalAllowance', label: 'Phụ cấp' },
+        { key: 'totalAllowance', label: 'Phụ cấp (đi lại + gửi xe)' },
         { key: 'totalSalary', label: 'Tổng lương' },
         { key: 'totalReceivedSalary', label: 'Tổng lương thực nhận' },
         { key: 'status', label: 'Trạng thái' },
     ];
-    selectedColumnKeys: string[] = this.allColumns.map((c) => c.key);
+    /** Cột luôn hiển thị (Hoa hồng, Bảo hiểm, Quỹ công đoàn) - không cho ẩn hẳn. */
+    private readonly requiredColumnKeys = ['commissionAmount', 'socialInsurance', 'unionFee'];
+    selectedColumnKeys: string[] = [...this.allColumns.map((c) => c.key)];
     responseEmployeeVisiable: boolean = false;
     user: any;
     payRollUpdate: any;
@@ -203,6 +209,10 @@ export class ShowComponent implements OnInit {
             { label: 'Tính lương' },
             { label: 'Bảng lương chi tiết' },
         ];
+        // Đảm bảo cột Hoa hồng, BHXH, Quỹ công đoàn luôn có trong danh sách hiển thị
+        const keysSet = new Set(this.selectedColumnKeys);
+        this.requiredColumnKeys.forEach((k) => keysSet.add(k));
+        this.selectedColumnKeys = Array.from(keysSet);
         // Lấy dữ liệu từ `state`
         this.route.queryParams.subscribe((params) => {
             console.log('params', params);
@@ -220,6 +230,13 @@ export class ShowComponent implements OnInit {
 
     isColumnVisible(key: string) {
         return this.selectedColumnKeys.includes(key);
+    }
+
+    /** Đảm bảo Hoa hồng, BHXH, Quỹ công đoàn luôn nằm trong cột hiển thị (gọi khi đóng dialog cột). */
+    ensureRequiredColumns(): void {
+        const keysSet = new Set(this.selectedColumnKeys);
+        this.requiredColumnKeys.forEach((k) => keysSet.add(k));
+        this.selectedColumnKeys = Array.from(keysSet);
     }
     contractTypes: any = null;
     getContractType() {
@@ -242,8 +259,18 @@ export class ShowComponent implements OnInit {
                 this.payrollDetails = result.items;
                 console.log('this.payrollDetails', result.items);
                 this.payrollDetails = this.payrollDetails.map((shift: any) => {
+                    const allowance = Number(shift.allowanceMealTravel) || 0;
+                    const parking = Number(shift.parkingAmount) || 0;
+                    const deductionSum = (shift.deductions || []).reduce(
+                        (s: number, d: any) => s + (Number(d?.value) || 0),
+                        0
+                    );
                     return {
                         ...shift,
+                        socialInsurance: shift.socialInsurance ?? shift.bhxhAmount ?? 0,
+                        totalAllowance: shift.totalAllowance ?? (allowance + parking),
+                        totalDeduction: shift.totalDeduction ?? deductionSum,
+                        unionFee: shift.unionFee ?? 0,
                         contractTypeName: this.getContractTypeName(
                             shift.contractTypeId
                         ),

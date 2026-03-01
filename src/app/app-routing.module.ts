@@ -692,6 +692,20 @@ import { EditLeaveApplicationComponent } from './modules/pages/leave-application
                         },
 
                         {
+                            path: 'revenue-commission',
+                            canActivate: [PermissionGuard],
+                            data: {
+                                requiredPermissions: [
+                                    PermissionConstant.ManageSalaryComponentsView,
+                                ],
+                            },
+                            loadChildren: () =>
+                                import(
+                                    'src/app/modules/pages/revenue-commission/revenue-commission.module'
+                                ).then((m) => m.RevenueCommissionModule),
+                        },
+
+                        {
                             path: 'salary',
                             canActivate: [PermissionGuard],
                             data: {

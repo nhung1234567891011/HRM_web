@@ -282,28 +282,65 @@
                                     class="text-center"
                                     [hidden]="!listable[4].status"
                                 >
-                                    <ng-container
-                                        *ngIf="
-                                            isNumber(rowData?.valueFormula);
-                                            else nonNumber
-                                        "
-                                    >
-                                        {{
-                                            rowData?.valueFormula
-                                                | number : "1.3-3"
-                                        }}
-                                        <!-- <span
-                                            *ngIf="
-                                                rowData?.valueFormula != '' &&
-                                                rowData?.valueFormula !=
-                                                    undefined
-                                            "
-                                            >đ</span
-                                        > -->
+                                    <!-- Hiển thị theo rule mới; fallback về ValueFormula nếu chưa cấu hình -->
+                                    <ng-container [ngSwitch]="rowData?.calcType">
+                                        <!-- FixedAmount -->
+                                        <ng-container *ngSwitchCase="0">
+                                            <ng-container
+                                                *ngIf="rowData?.fixedAmount != null; else legacyFixed"
+                                            >
+                                                {{ rowData?.fixedAmount | number : "1.0-0" }} đ
+                                            </ng-container>
+                                            <ng-template #legacyFixed>
+                                                <ng-container
+                                                    *ngIf="isNumber(rowData?.valueFormula); else nonNumber"
+                                                >
+                                                    {{ rowData?.valueFormula | number : "1.0-0" }}
+                                                    <span
+                                                        *ngIf="
+                                                            rowData?.valueFormula != '' &&
+                                                            rowData?.valueFormula != undefined
+                                                        "
+                                                        >đ</span
+                                                    >
+                                                </ng-container>
+                                                <ng-template #nonNumber>
+                                                    {{ rowData?.valueFormula }}
+                                                </ng-template>
+                                            </ng-template>
+                                        </ng-container>
+
+                                        <!-- PerAttendanceDay -->
+                                        <ng-container *ngSwitchCase="1">
+                                            <ng-container *ngIf="rowData?.unitAmount != null; else legacyPerDay">
+                                                {{ rowData?.unitAmount | number : "1.0-0" }} đ/ngày đi làm
+                                            </ng-container>
+                                            <ng-template #legacyPerDay>
+                                                {{ rowData?.valueFormula }}
+                                            </ng-template>
+                                        </ng-container>
+
+                                        <!-- PercentOfBase -->
+                                        <ng-container *ngSwitchCase="2">
+                                            <ng-container *ngIf="rowData?.ratePercent != null; else legacyPercent">
+                                                {{ rowData?.ratePercent }}%
+                                                <span *ngIf="rowData?.baseSource === 1"> * Lương đóng BH</span>
+                                                <span *ngIf="rowData?.baseSource === 0"> * Lương cơ bản</span>
+                                                <span *ngIf="rowData?.baseSource === 2"> * Lương theo ngày công</span>
+                                                <span *ngIf="rowData?.capAmount != null">
+                                                    (trần {{ rowData?.capAmount | number : "1.0-0" }} đ)
+                                                </span>
+                                            </ng-container>
+                                            <ng-template #legacyPercent>
+                                                {{ rowData?.valueFormula }}
+                                            </ng-template>
+                                        </ng-container>
+
+                                        <!-- default -->
+                                        <ng-container *ngSwitchDefault>
+                                            {{ rowData?.valueFormula }}
+                                        </ng-container>
                                     </ng-container>
-                                    <ng-template #nonNumber>
-                                        {{ rowData?.valueFormula }}
-                                    </ng-template>
                                 </td>
 
                                 <td
@@ -674,21 +711,52 @@
             <!-- giá trị -->
             <div class="row align-items-center mb-3">
                 <div class="col-md-4">
-                    <label for="position">giá trị</label>
+                    <label for="position">Cách tính</label>
+                </div>
+                <div class="col-md-8">
+                    <p-dropdown
+                        containerStyleClass="w-full"
+                        [options]="calcTypeOptions"
+                        optionLabel="name"
+                        optionValue="value"
+                        placeholder="Chọn cách tính"
+                        [showClear]="false"
+                        [style]="{ width: '340px' }"
+                        formControlName="calcType"
+                    ></p-dropdown>
+                </div>
+            </div>
+
+            <!-- Giá trị theo cách tính -->
+            <div class="row align-items-center mb-3">
+                <div class="col-md-4">
+                    <label for="position">Giá trị</label>
                 </div>
                 <div class="col-md-8 input-value">
-                    <textarea
-                        rows="3"
-                        cols="5"
-                        pInputTextarea
-                        placeholder="Nhập giá trị"
-                        [style]="{
-                            width: '340px'
-                        }"
-                        formControlName="valueSalary"
-                        (input)="onInputCreate($event)"
-                        (keydown)="onKeyDown($event)"
-                    ></textarea>
+                    <!-- FixedAmount -->
+                    <div *ngIf="createForm.get('calcType')?.value === 0">
+                        <input
+                            type="number"
+                            pInputText
+                            placeholder="Số tiền cố định"
+                            [style]="{ width: '340px' }"
+                            formControlName="fixedAmount"
+                        />
+                        <small class="text-muted">
+                            Nếu bỏ trống, hệ thống sẽ dùng trường ValueFormula (cũ) bên dưới (nếu có).
+                        </small>
+
+                        <textarea
+                            class="mt-2"
+                            rows="2"
+                            cols="5"
+                            pInputTextarea
+                            placeholder="ValueFormula (cũ - tùy chọn)"
+                            [style]="{ width: '340px' }"
+                            formControlName="valueSalary"
+                            (input)="onInputCreate($event)"
+                            (keydown)="onKeyDown($event)"
+                        ></textarea>
 
                     <div
                         class="listValueSalary"
@@ -745,6 +813,48 @@
                                 </ul>
                             </div>
                         </div>
+                    </div>
+                    </div>
+
+                    <!-- PerAttendanceDay -->
+                    <div *ngIf="createForm.get('calcType')?.value === 1">
+                        <input
+                            type="number"
+                            pInputText
+                            placeholder="Đơn giá / ngày đi làm"
+                            [style]="{ width: '340px' }"
+                            formControlName="unitAmount"
+                        />
+                    </div>
+
+                    <!-- PercentOfBase -->
+                    <div *ngIf="createForm.get('calcType')?.value === 2">
+                        <input
+                            type="number"
+                            pInputText
+                            placeholder="Tỷ lệ % (ví dụ 8)"
+                            [style]="{ width: '340px' }"
+                            formControlName="ratePercent"
+                        />
+                        <p-dropdown
+                            class="mt-2"
+                            containerStyleClass="w-full"
+                            [options]="baseSourceOptions"
+                            optionLabel="name"
+                            optionValue="value"
+                            placeholder="Chọn nguồn lương"
+                            [showClear]="true"
+                            [style]="{ width: '340px' }"
+                            formControlName="baseSource"
+                        ></p-dropdown>
+                        <input
+                            class="mt-2"
+                            type="number"
+                            pInputText
+                            placeholder="Trần (nếu có)"
+                            [style]="{ width: '340px' }"
+                            formControlName="capAmount"
+                        />
                     </div>
                 </div>
             </div>
@@ -950,80 +1060,142 @@
                 </div>
             </div>
 
-            <!-- giá trị -->
+            <!-- cách tính -->
             <div class="row align-items-center mb-3">
                 <div class="col-md-4">
-                    <label for="position">giá trị</label>
+                    <label for="position">Cách tính</label>
+                </div>
+                <div class="col-md-8">
+                    <p-dropdown
+                        containerStyleClass="w-full"
+                        [options]="calcTypeOptions"
+                        optionLabel="name"
+                        optionValue="value"
+                        placeholder="Chọn cách tính"
+                        [showClear]="false"
+                        [style]="{ width: '340px' }"
+                        formControlName="calcTypeUpdate"
+                    ></p-dropdown>
+                </div>
+            </div>
+
+            <!-- Giá trị theo cách tính -->
+            <div class="row align-items-center mb-3">
+                <div class="col-md-4">
+                    <label for="position">Giá trị</label>
                 </div>
                 <div class="col-md-8 input-value">
-                    <textarea
-                        rows="3"
-                        cols="5"
-                        pInputTextarea
-                        placeholder="Nhập giá trị"
-                        [style]="{
-                            width: '340px'
-                        }"
-                        formControlName="valueSalaryUpdate"
-                        (input)="onInputCreate($event)"
-                        (keydown)="onKeyDownUpdate($event)"
-                    ></textarea>
+                    <!-- FixedAmount -->
+                    <div *ngIf="updateForm.get('calcTypeUpdate')?.value === 0">
+                        <input
+                            type="number"
+                            pInputText
+                            placeholder="Số tiền cố định"
+                            [style]="{ width: '340px' }"
+                            formControlName="fixedAmountUpdate"
+                        />
+                        <small class="text-muted">
+                            Nếu bỏ trống, hệ thống sẽ dùng trường ValueFormula (cũ) bên dưới (nếu có).
+                        </small>
 
-                    <div
-                        class="listValueSalary"
-                        *ngIf="filteredList.length > 0"
-                        (mouseleave)="hideList()"
-                    >
-                        <div class="d-flex list_title_value">
-                            <span
-                                class="title_value"
-                                [class.title_value_click]="
-                                    activeTab === 'formula'
-                                "
-                                (click)="clicksetActiveTab('formula')"
-                                >Công thức</span
-                            >
-                            <span
-                                class="title_value"
-                                [class.title_value_click]="
-                                    activeTab === 'parameter'
-                                "
-                                (click)="clicksetActiveTab('parameter')"
-                                >Tham số</span
-                            >
-                        </div>
-                        <div class="list_value_salary">
-                            <!--  công thức -->
-                            <div
-                                class="list_value_salary-1"
-                                *ngIf="activeTab === 'formula'"
-                            >
-                                <ul class="list_value_math">
-                                    <li
-                                        (click)="onClickItemliUPadte(item.name)"
-                                        class="item_value_math"
-                                        *ngFor="let item of filteredList"
-                                    >
-                                        <span>{{ item.name }}</span>
-                                    </li>
-                                </ul>
-                            </div>
+                        <textarea
+                            class="mt-2"
+                            rows="2"
+                            cols="5"
+                            pInputTextarea
+                            placeholder="ValueFormula (cũ - tùy chọn)"
+                            [style]="{ width: '340px' }"
+                            formControlName="valueSalaryUpdate"
+                            (input)="onInputCreate($event)"
+                            (keydown)="onKeyDownUpdate($event)"
+                        ></textarea>
 
-                            <div
-                                class="list_value_salary-2"
-                                *ngIf="activeTab === 'parameter'"
-                            >
-                                <ul class="list_value_data">
-                                    <li
-                                        (click)="onClickItemliUPadte(item.name)"
-                                        class="item_value_data"
-                                        *ngFor="let item of filteredList"
-                                    >
-                                        <span>{{ item?.name }}</span>
-                                    </li>
-                                </ul>
+                        <div
+                            class="listValueSalary"
+                            *ngIf="filteredList.length > 0"
+                            (mouseleave)="hideList()"
+                        >
+                            <div class="d-flex list_title_value">
+                                <span
+                                    class="title_value"
+                                    [class.title_value_click]="activeTab === 'formula'"
+                                    (click)="clicksetActiveTab('formula')"
+                                    >Công thức</span
+                                >
+                                <span
+                                    class="title_value"
+                                    [class.title_value_click]="activeTab === 'parameter'"
+                                    (click)="clicksetActiveTab('parameter')"
+                                    >Tham số</span
+                                >
+                            </div>
+                            <div class="list_value_salary">
+                                <div class="list_value_salary-1" *ngIf="activeTab === 'formula'">
+                                    <ul class="list_value_math">
+                                        <li
+                                            (click)="onClickItemliUPadte(item.name)"
+                                            class="item_value_math"
+                                            *ngFor="let item of filteredList"
+                                        >
+                                            <span>{{ item.name }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="list_value_salary-2" *ngIf="activeTab === 'parameter'">
+                                    <ul class="list_value_data">
+                                        <li
+                                            (click)="onClickItemliUPadte(item.name)"
+                                            class="item_value_data"
+                                            *ngFor="let item of filteredList"
+                                        >
+                                            <span>{{ item?.name }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- PerAttendanceDay -->
+                    <div *ngIf="updateForm.get('calcTypeUpdate')?.value === 1">
+                        <input
+                            type="number"
+                            pInputText
+                            placeholder="Đơn giá / ngày đi làm"
+                            [style]="{ width: '340px' }"
+                            formControlName="unitAmountUpdate"
+                        />
+                    </div>
+
+                    <!-- PercentOfBase -->
+                    <div *ngIf="updateForm.get('calcTypeUpdate')?.value === 2">
+                        <input
+                            type="number"
+                            pInputText
+                            placeholder="Tỷ lệ % (ví dụ 8)"
+                            [style]="{ width: '340px' }"
+                            formControlName="ratePercentUpdate"
+                        />
+                        <p-dropdown
+                            class="mt-2"
+                            containerStyleClass="w-full"
+                            [options]="baseSourceOptions"
+                            optionLabel="name"
+                            optionValue="value"
+                            placeholder="Chọn nguồn lương"
+                            [showClear]="true"
+                            [style]="{ width: '340px' }"
+                            formControlName="baseSourceUpdate"
+                        ></p-dropdown>
+                        <input
+                            class="mt-2"
+                            type="number"
+                            pInputText
+                            placeholder="Trần (nếu có)"
+                            [style]="{ width: '340px' }"
+                            formControlName="capAmountUpdate"
+                        />
                     </div>
                 </div>
             </div>
@@ -1112,7 +1284,7 @@
     [modal]="true"
     [(visible)]="showdialogdelete"
     [style]="{ width: '25rem' }"
-    (onHide)="closeDialogstatus()"
+    (onHide)="closeDeleteDialog()"
 >
     <ng-container>
         <p>

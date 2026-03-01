@@ -24,4 +24,8 @@ export class SalaryComponentsService {
     getformulasuggestions(id: number): Observable<any> {
         return this.http.get(`salary-component/get-formula-suggestions?organizationId=${id}`,{});
     }
+
+    deleteSalaryComponent(id: number): Observable<any> {
+        return this.http.delete(`salary-component/delete?Id=${id}`);
+    }
 }

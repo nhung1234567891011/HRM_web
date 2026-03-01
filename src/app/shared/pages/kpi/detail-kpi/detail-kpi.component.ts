@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TreeNode } from 'primeng/api';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { EmployeeService } from 'src/app/core/services/employee.service';
 import { ToastService } from 'src/app/core/services/global/toast.service';
 import { AuthService } from 'src/app/core/services/identity/auth.service';
 import { KpiService } from 'src/app/core/services/kpi.service';
 import { OrganizationService } from 'src/app/core/services/organization.service';
+import { RevenueCommissionPolicyService } from 'src/app/core/services/revenue-commission-policy.service';
 import { StaffPositionService } from 'src/app/core/services/staff-position.service';
 
 @Component({
@@ -34,6 +37,10 @@ export class DetailKpiComponent implements OnInit {
   user: any;
   editingRowIndex: number | null = null;
   editingRowIndex2: number | null = null;
+  editingRowIndex3: number | null = null;
+
+  commissionPolicies: Record<number, any | null> = { 0: null, 1: null }; // 0: SALE, 1: CTV
+  private commissionPolicyLoadedForOrgId: number | null = null;
 
   constructor(
     private employeesService: EmployeeService,
@@ -44,6 +51,7 @@ export class DetailKpiComponent implements OnInit {
     private kpiService: KpiService,
     private staffPositionService: StaffPositionService,
     private authService: AuthService,
+    private revenueCommissionPolicyService: RevenueCommissionPolicyService,
   ) {
     this.authService.userCurrent.subscribe(res => {
       this.user = res;
@@ -61,6 +69,7 @@ export class DetailKpiComponent implements OnInit {
     this.fetchEmployees();
     this.CallSnaphot();
     this.fetchData();
+    this.loadCommissionPolicies();
   }
 
   CallSnaphot(): void {
@@ -79,11 +88,21 @@ export class DetailKpiComponent implements OnInit {
 
     this.kpiService.getPagingDetailKpi(request).subscribe(response => {
       if (response.status) {
-        this.detailKpi = response.data.items;
+        const items = response.data?.items ?? [];
+        this.detailKpi = items.map((row: any) => ({
+          ...row,
+          isRevenueEditable: row.isRevenueEditable ?? row.IsRevenueEditable ?? false,
+          staffPositionCode: row.staffPositionCode ?? row.StaffPositionCode ?? null,
+        }));
         this.totalRecords = response.data.totalRecords;
         this.updateCurrentPageReport();
       }
     });
+  }
+
+  onOrgChange(): void {
+    this.fetchData();
+    this.loadCommissionPolicies(true);
   }
 
 
@@ -166,36 +185,92 @@ export class DetailKpiComponent implements OnInit {
     this.editingRowIndex2 = rowIndex;
   }
 
+  startEditing3(rowIndex: number): void {
+    this.editingRowIndex3 = rowIndex;
+  }
+
   stopEditing(): void {
     this.editingRowIndex = null;
   }
   stopEditing2(): void {
     this.editingRowIndex2 = null;
   }
+  stopEditing3(): void {
+    this.editingRowIndex3 = null;
+  }
 
   stopEditingAndSave(rowData: any) {
-    this.stopEditing();
+    this.saveRow(rowData, 'completionRate');
+  }
+
+  stopEditingAndSave2(rowData: any) {
+    this.saveRow(rowData, 'bonus');
+  }
+
+  stopEditingAndSave3(rowData: any) {
+    this.saveRow(rowData, 'revenue');
+  }
+
+  /** Gọi khi blur hoặc Enter ở ô doanh thu (input luôn hiển thị) */
+  onRevenueBlur(rowData: any) {
+    if (rowData?.id != null) this.saveRow(rowData, 'revenue');
+  }
+
+  private saveRow(rowData: any, field?: 'completionRate' | 'bonus' | 'revenue') {
+    if (field === 'completionRate') this.stopEditing();
+    if (field === 'bonus') this.stopEditing2();
+    if (field === 'revenue') this.stopEditing3();
+
+    const completionRate = this.toNumberOrZero(rowData.completionRate);
+    const bonus = this.toNumberOrZero(rowData.bonus);
+    const revenue = this.toNumberOrZero(rowData.revenue);
+
+    if (field === 'revenue') {
+      if (revenue < 0) {
+        this.messages = [
+          {
+            severity: 'warn',
+            summary: 'Dữ liệu không hợp lệ',
+            detail: 'Doanh thu không được âm',
+            life: 3000,
+          },
+        ];
+        return;
+      }
+    }
 
     const payload = {
       employeeId: rowData.employeeId,
       employeeCode: rowData.employeeCode,
       employeeName: rowData.employeeName,
-      completionRate: rowData.completionRate || 0,
-      bonus: rowData.bonus || 0
+      completionRate,
+      bonus,
+      revenue,
     };
 
+    const fieldSaved = field;
     this.kpiService.updateRateKpi(rowData.id, payload).subscribe(
       (response) => {
-        console.log('Cập nhật thành công:', response);
+        this.fetchData();
+        this.loadCommissionPolicies(true);
+
+        let detailMsg = 'Cập nhật thành công.';
+        if (fieldSaved === 'revenue') {
+          const commission = this.getCommissionValue(rowData);
+          if (commission !== null && commission >= 0) {
+            detailMsg = `Đã lưu doanh thu. Hoa hồng nhận được: ${this.formatMoney(commission)} ₫`;
+          } else {
+            detailMsg = 'Đã lưu doanh thu. (Hoa hồng tính theo cấu hình cho SALE/CTV)';
+          }
+        }
         this.messages = [
           {
             severity: 'success',
             summary: 'Thành công',
-            detail: 'Cập nhật thành công',
-            life: 3000,
+            detail: detailMsg,
+            life: 5000,
           },
         ];
-        this.fetchData();
       },
       (error) => {
         console.error('Lỗi khi cập nhật:', error);
@@ -210,42 +285,150 @@ export class DetailKpiComponent implements OnInit {
       }
     );
   }
-  stopEditingAndSave2(rowData: any) {
-    this.stopEditing2();
 
-    const payload = {
-      employeeId: rowData.employeeId,
-      employeeCode: rowData.employeeCode,
-      employeeName: rowData.employeeName,
-      completionRate: rowData.completionRate || 0,
-      bonus: rowData.bonus || 0
+  private formatMoney(value: number): string {
+    if (value == null || !Number.isFinite(value)) return '0';
+    return Math.round(value).toLocaleString('vi-VN');
+  }
+
+  private toNumberOrZero(value: any): number {
+    if (value === null || value === undefined || value === '') return 0;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  private getCurrentOrgId(): number | null {
+    const selectedOrgId = this.selectedNode?.data?.id;
+    if (Number.isFinite(Number(selectedOrgId))) return Number(selectedOrgId);
+
+    const userOrgId =
+      this.user?.organizationId ??
+      this.user?.OrganizationId ??
+      this.user?.organization?.id ??
+      this.user?.Organization?.Id ??
+      null;
+
+    return Number.isFinite(Number(userOrgId)) ? Number(userOrgId) : null;
+  }
+
+  private pickEffectivePolicy(res: any): any | null {
+    const data = res?.data ?? res;
+    const items = data?.items ?? data;
+    const list: any[] = Array.isArray(items) ? items : [];
+    if (list.length === 0) return null;
+
+    const now = new Date();
+    const isEffectiveNow = (p: any) => {
+      const from = p?.effectiveFrom ? new Date(p.effectiveFrom) : null;
+      const to = p?.effectiveTo ? new Date(p.effectiveTo) : null;
+      if (from && now < from) return false;
+      if (to && now > to) return false;
+      return true;
     };
 
-    this.kpiService.updateRateKpi(rowData.id, payload).subscribe(
-      (response) => {
-        console.log('Cập nhật thành công:', response);
-        this.messages = [
-          {
-            severity: 'success',
-            summary: 'Thành công',
-            detail: 'Cập nhật thành công',
-            life: 3000,
-          },
-        ];
-        this.fetchData();
-      },
-      (error) => {
-        console.error('Lỗi khi cập nhật:', error);
-        this.messages = [
-          {
-            severity: 'error',
-            summary: 'Không thể lưu vì:',
-            detail: 'Đang có lỗi cần được chỉnh sửa',
-            life: 3000,
-          },
-        ];
-      }
+    const effective = list.filter(isEffectiveNow);
+    const candidates = effective.length > 0 ? effective : list;
+
+    candidates.sort((a, b) => {
+      const af = a?.effectiveFrom ? new Date(a.effectiveFrom).getTime() : 0;
+      const bf = b?.effectiveFrom ? new Date(b.effectiveFrom).getTime() : 0;
+      return bf - af;
+    });
+
+    return candidates[0] ?? null;
+  }
+
+  private loadCommissionPolicies(force: boolean = false): void {
+    const orgId = this.getCurrentOrgId();
+    if (!orgId) {
+      this.commissionPolicies = { 0: null, 1: null };
+      this.commissionPolicyLoadedForOrgId = null;
+      return;
+    }
+
+    if (!force && this.commissionPolicyLoadedForOrgId === orgId) return;
+    this.commissionPolicyLoadedForOrgId = orgId;
+
+    const baseRequest: any = {
+      pageSize: 999,
+      pageIndex: 1,
+      OrganizationId: orgId,
+      Status: 0,
+    };
+
+    forkJoin({
+      sale: this.revenueCommissionPolicyService
+        .paging({ ...baseRequest, TargetType: 0 })
+        .pipe(catchError(() => of(null))),
+      ctv: this.revenueCommissionPolicyService
+        .paging({ ...baseRequest, TargetType: 1 })
+        .pipe(catchError(() => of(null))),
+    }).subscribe(({ sale, ctv }) => {
+      this.commissionPolicies[0] = this.pickEffectivePolicy(sale);
+      this.commissionPolicies[1] = this.pickEffectivePolicy(ctv);
+    });
+  }
+
+  /** Xác định đối tượng áp dụng hoa hồng: 0 = SALE, 1 = CTV. Dùng mã hoặc tên vị trí. */
+  private getTargetTypeFromStaffPositionCode(code: any, positionName?: any): 0 | 1 | null {
+    const c = (code ?? '').toString().trim().toUpperCase();
+    const name = (positionName ?? '').toString().toUpperCase();
+    if (c.startsWith('SALE') || name.includes('SALE')) return 0;
+    if (c === 'CTV' || name.includes('CTV')) return 1;
+    if (!c && !name) return null;
+    return null;
+  }
+
+  private calculateProgressiveCommission(revenue: number, tiers: any[]): number {
+    if (!Array.isArray(tiers) || tiers.length === 0) return 0;
+
+    const sorted = [...tiers].sort((a, b) => {
+      const sa = Number(a?.sortOrder ?? 0);
+      const sb = Number(b?.sortOrder ?? 0);
+      if (sa !== sb) return sa - sb;
+      return Number(a?.fromAmount ?? 0) - Number(b?.fromAmount ?? 0);
+    });
+
+    let commission = 0;
+
+    for (const t of sorted) {
+      const from = Number(t?.fromAmount ?? 0);
+      const toRaw = t?.toAmount;
+      const to = toRaw === null || toRaw === undefined || toRaw === '' ? Number.POSITIVE_INFINITY : Number(toRaw);
+      const ratePercent = Number(t?.ratePercent ?? 0);
+
+      if (!Number.isFinite(from) || !Number.isFinite(ratePercent)) continue;
+      if (!(to > from)) continue;
+      if (revenue <= from) continue;
+
+      const upper = Number.isFinite(to) ? Math.min(revenue, to) : revenue;
+      const amountInTier = upper - from;
+      if (amountInTier > 0) commission += amountInTier * (ratePercent / 100);
+
+      if (revenue <= to) break;
+    }
+
+    return commission > 0 ? commission : 0;
+  }
+
+  /**
+   * Tính hoa hồng theo cấu hình bậc luỹ tiến khi có doanh thu và áp dụng được policy (SALE/CTV).
+   * Trả về null nếu không áp dụng được (không phải SALE/CTV hoặc chưa có cấu hình).
+   */
+  getCommissionValue(rowData: any): number | null {
+    const revenue = this.toNumberOrZero(rowData?.revenue);
+    if (revenue < 0) return null;
+    const targetType = this.getTargetTypeFromStaffPositionCode(
+      rowData?.staffPositionCode ?? rowData?.StaffPositionCode,
+      rowData?.staffPositionName ?? rowData?.StaffPositionName ?? rowData?.positionName
     );
+    if (targetType === null) return null;
+
+    const policy = this.commissionPolicies[targetType];
+    const tiers = policy?.tiers ?? policy?.Tiers ?? [];
+    if (!Array.isArray(tiers) || tiers.length === 0) return null;
+
+    return this.calculateProgressiveCommission(revenue, tiers);
   }
 
   onPageChange(event: any): void {

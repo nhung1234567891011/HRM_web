@@ -226,10 +226,34 @@
                                     Thưởng
                                 </th>
                                 <th
+                                    *ngIf="isColumnVisible('allowanceMealTravel')"
+                                    class="text-center"
+                                >
+                                    Phụ cấp đi lại, ăn trưa
+                                </th>
+                                <th
+                                    *ngIf="isColumnVisible('parkingAmount')"
+                                    class="text-center"
+                                >
+                                    Tiền gửi xe công ty
+                                </th>
+                                <th
+                                    *ngIf="isColumnVisible('commissionAmount')"
+                                    class="text-center"
+                                >
+                                    Hoa hồng
+                                </th>
+                                <th
+                                    *ngIf="isColumnVisible('overtimeAmount')"
+                                    class="text-center"
+                                >
+                                    Lương tăng ca
+                                </th>
+                                <th
                                     *ngIf="isColumnVisible('socialInsurance')"
                                     class="text-center"
                                 >
-                                    BHXH
+                                    Bảo hiểm (BHXH+BHTN+BHYT)
                                 </th>
                                 <th
                                     *ngIf="isColumnVisible('unionFee')"
@@ -354,6 +378,30 @@
                                     class="text-center"
                                 >
                                     {{ rowData.bonus | number : "1.0-0" }}
+                                </td>
+                                <td
+                                    *ngIf="isColumnVisible('allowanceMealTravel')"
+                                    class="text-center"
+                                >
+                                    {{ rowData.allowanceMealTravel | number : "1.0-0" }}
+                                </td>
+                                <td
+                                    *ngIf="isColumnVisible('parkingAmount')"
+                                    class="text-center"
+                                >
+                                    {{ rowData.parkingAmount | number : "1.0-0" }}
+                                </td>
+                                <td
+                                    *ngIf="isColumnVisible('commissionAmount')"
+                                    class="text-center"
+                                >
+                                    {{ rowData.commissionAmount | number : "1.0-0" }}
+                                </td>
+                                <td
+                                    *ngIf="isColumnVisible('overtimeAmount')"
+                                    class="text-center"
+                                >
+                                    {{ rowData.overtimeAmount | number : "1.0-0" }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('socialInsurance')"
@@ -598,6 +646,7 @@
     [modal]="true"
     [(visible)]="displayColumnDialog"
     [style]="{ width: '420px' }"
+    (onHide)="ensureRequiredColumns()"
 >
     <div class="p-fluid">
         <p-multiSelect

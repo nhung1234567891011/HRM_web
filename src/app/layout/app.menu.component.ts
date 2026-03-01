@@ -537,6 +537,13 @@ export class AppMenuComponent implements OnInit {
                                                         '/salary-composition',
                                                     ],
                                                 },
+                                                {
+                                                    label: 'Hoa hồng doanh thu',
+                                                    icon: 'pi pi-calendar-minus',
+                                                    routerLink: [
+                                                        '/revenue-commission',
+                                                    ],
+                                                },
                                             ]
                                           : []),
 

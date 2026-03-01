@@ -32,6 +32,8 @@ import { LogarithmicScale } from 'chart.js';
 import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { HasPermissionHelper } from 'src/app/core/helpers/has-permission.helper';
 import { PermissionConstant } from 'src/app/core/constants/permission-constant';
+import { SalaryComponentStatus } from 'src/app/core/enums/salary-component.enum';
+import { TreeNode } from 'primeng/api';
 
 interface Status {
     name: string;
@@ -94,6 +96,8 @@ export class SalaryCompositionComponent implements OnInit {
     suggestions: any;
     previousValue: string = '';
     showdialogdelete: boolean
+    salaryComponentsEnum: typeof SalaryComponentStatus = SalaryComponentStatus;
+    private editingSalaryComponent: any = null;
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -141,8 +145,13 @@ export class SalaryCompositionComponent implements OnInit {
             // { name: 'DIV()', type: 'formula' },
         ];
         this.authService.userCurrent.subscribe((user) => {
-            this.idoraganization = user.organization.id;
-            console.log(user)
+            const orgId = user?.organization?.id;
+            if (!orgId) return;
+            this.idoraganization = orgId;
+            this.getFormulaSuggestions(this.idoraganization);
+            this.getAllOrganiStruct();
+            this.listCompany();
+            this.getAllEmployee(this.pageIndex, this.pageSize);
         });
         this.items = [{ label: 'Vị trí nhân sự' }];
         this.listheaderTable = [
@@ -191,11 +200,6 @@ export class SalaryCompositionComponent implements OnInit {
             },
         ];
 
-        this.getFormulaSuggestions(this.idoraganization);
-        this.getAllOrganiStruct();
-        this.listCompany();
-
-        this.getAllEmployee(this.pageIndex, this.pageSize);
         const storedData = localStorage.getItem('listheaderTableSalary');
         if (storedData) {
             this.listable = JSON.parse(storedData);
@@ -777,6 +781,7 @@ export class SalaryCompositionComponent implements OnInit {
         this.salaryService.getformulasuggestions(id).subscribe((res) => {
             console.log(res)
             this.listSalary = res.data;
+            this.listvalueSalary = [];
             res.data.suggestions.forEach((item) => {
                 if (item.componentCode) {
                     this.listvalueSalary.push({
@@ -836,16 +841,36 @@ export class SalaryCompositionComponent implements OnInit {
 
     //   sửa
     idupdate: number;
+    private findNodeByData(nodes: TreeNode[] = [], data: any): TreeNode | null {
+        for (const node of nodes) {
+            if ((node as any)?.data === data) return node;
+            const children = (node as any)?.children as TreeNode[] | undefined;
+            if (children?.length) {
+                const found = this.findNodeByData(children, data);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
     showDialogUpdate(id: number) {
         this.idupdate = id;
         this.salaryService.getIDSalaryComponent(id).subscribe((res) => {
-            this.nodes = this.listAllcompany.filter(
-                (item) => item.data == res.organizationId
+            this.editingSalaryComponent = res;
+            const selectedOrgNode = this.findNodeByData(
+                this.nodes as any,
+                res?.organizationId
             );
             this.updateForm.patchValue({
                 nameSalaryUpdate: res?.componentName,
                 codeSalaryUpdate: res?.componentCode,
-                origanoSalaryUpdate: this.nodes,
+                origanoSalaryUpdate:
+                    selectedOrgNode ??
+                    (res?.organizationId
+                        ? {
+                              label: res?.organizationName ?? 'Đơn vị',
+                              data: res.organizationId,
+                          }
+                        : null),
                 characteristicUpdate: res?.characteristic,
                 natureUpdate: res?.nature,
                 valueSalaryUpdate: res?.valueFormula,
@@ -856,9 +881,10 @@ export class SalaryCompositionComponent implements OnInit {
         this.updateDialog = true;
     }
     handleUpdate() {
+        const selectedOrgNode = this.updateForm.get('origanoSalaryUpdate')?.value;
         const dataupdate = {
-            organizationId: this.updateForm.get('origanoSalaryUpdate').value[0]
-                .data,
+            organizationId:
+                selectedOrgNode?.data ?? this.editingSalaryComponent?.organizationId,
             componentName: this.updateForm.get('nameSalaryUpdate').value,
             componentCode: this.updateForm.get('codeSalaryUpdate').value,
             nature: this.updateForm.get('natureUpdate').value,
@@ -866,6 +892,12 @@ export class SalaryCompositionComponent implements OnInit {
             valueFormula: this.updateForm.get('valueSalaryUpdate').value,
             description: this.updateForm.get('descriptionSalaryUpdate').value,
             status: this.updateForm.get('status').value,
+            calcType: this.editingSalaryComponent?.calcType,
+            baseSource: this.editingSalaryComponent?.baseSource,
+            fixedAmount: this.editingSalaryComponent?.fixedAmount,
+            unitAmount: this.editingSalaryComponent?.unitAmount,
+            ratePercent: this.editingSalaryComponent?.ratePercent,
+            capAmount: this.editingSalaryComponent?.capAmount,
         };
 
         this.salaryService  
@@ -910,11 +942,20 @@ export class SalaryCompositionComponent implements OnInit {
             organizationId: this.updatestatus?.organizationId,
             componentName: this.updatestatus?.componentName,
             componentCode: this.updatestatus?.componentCode,
-            nature: this.updatestatus?.characteristic,
-            characteristic: this.updatestatus?.nature,
+            nature: this.updatestatus?.nature,
+            characteristic: this.updatestatus?.characteristic,
             valueFormula: this.updatestatus?.valueFormula,
             description: this.updatestatus?.description,
-            status: 1,
+            calcType: this.updatestatus?.calcType,
+            baseSource: this.updatestatus?.baseSource,
+            fixedAmount: this.updatestatus?.fixedAmount,
+            unitAmount: this.updatestatus?.unitAmount,
+            ratePercent: this.updatestatus?.ratePercent,
+            capAmount: this.updatestatus?.capAmount,
+            status:
+                this.updatestatus?.status == this.salaryComponentsEnum.Tracking
+                    ? this.salaryComponentsEnum.UnTracking
+                    : this.salaryComponentsEnum.Tracking,
         };
 
         this.salaryService
@@ -954,6 +995,7 @@ export class SalaryCompositionComponent implements OnInit {
         const data = {
             pageIndex: 1,
             pageSize: 10000000,
+            OrganizationId: this.idoraganization,
         };
 
         this.salaryService.getAllSalaryComponent(data).subscribe((res) => {
@@ -995,10 +1037,39 @@ export class SalaryCompositionComponent implements OnInit {
     openDeleteDialog(data:any) {
         console.log(data)
         this.namedeletesalary = data.componentName
+        this.updatestatus = data;
         this.showdialogdelete = true;
       }
       closeDeleteDialog(){
         this.showdialogdelete= false;
         this.namedeletesalary= ''
+      }
+
+      hadleDelete() {
+        const id = this.updatestatus?.id;
+        if (!id) return;
+        this.salaryService.deleteSalaryComponent(id).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Thông báo',
+                    detail: ' Xóa thành công',
+                });
+                this.getAllEmployee(this.pageIndex, this.pageSize);
+                this.showdialogdelete = false;
+            },
+            error: (error) => {
+                const detail =
+                    error?.error?.message ||
+                    error?.error?.Message ||
+                    'Xóa thất bại';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Thông báo',
+                    detail,
+                });
+                this.showdialogdelete = false;
+            },
+        });
       }
 }

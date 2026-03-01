@@ -53,8 +53,8 @@
                             [placeholder]="'Chọn đơn vị'"
                             [showClear]="true"
                             [style]="{ width: '300px' }"
-                            (onNodeSelect)="fetchData()"
-                            (onClear)="fetchData()"
+                            (onNodeSelect)="onOrgChange()"
+                            (onClear)="onOrgChange()"
                         ></p-treeSelect>
                     </div>
                 </div>
@@ -78,6 +78,8 @@
                             <th style="width: 10%;">Mã nhân viên</th>
                             <th style="width: 20%;">Tên nhân viên</th>
                             <th style="width: 20%;">Tỷ lệ hoàn thành KPI</th>
+                            <th style="width: 20%;">Doanh thu</th>
+                            <th style="width: 20%;">Hoa hồng</th>
                             <th style="width: 20%;">Thưởng</th>
                         </tr>
                     </ng-template>
@@ -105,6 +107,28 @@
                                     <span (click)="startEditing(i)" style="cursor: pointer;">
                                         {{ rowData.completionRate || 0 }}%
                                     </span>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <!-- Luôn hiển thị input để nhập doanh thu trực tiếp -->
+                                <input
+                                    type="number"
+                                    [(ngModel)]="rowData.revenue"
+                                    (blur)="onRevenueBlur(rowData)"
+                                    (keydown.enter)="onRevenueBlur(rowData)"
+                                    class="p-inputtext p-component"
+                                    style="width: 90%; min-width: 100px;"
+                                    min="0"
+                                    placeholder="0"
+                                />
+                            </td>
+                            <td>
+                                <!-- Tính hoa hồng theo cấu hình khi có doanh thu (áp dụng cho SALE/CTV) -->
+                                <ng-container *ngIf="getCommissionValue(rowData) !== null; else commissionEmpty">
+                                    <span>{{ getCommissionValue(rowData) | number:'1.0-0' }} ₫</span>
+                                </ng-container>
+                                <ng-template #commissionEmpty>
+                                    <span style="color: #999;">-</span>
                                 </ng-template>
                             </td>
                             <td>
