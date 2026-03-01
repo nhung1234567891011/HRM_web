@@ -691,18 +691,41 @@ export class DetailSummaryTimesheetComponent implements OnInit {
         console.log('this.date', this.date);
         this.summaryTimesheetNameEmployeeConfirmService
             .createOrUpdateMultiple(request)
-            .subscribe((res) => {
-                if (res.status == true) {
-                    this.fetchData();
+            .subscribe({
+                next: (res) => {
+                    if (res?.status === true) {
+                        this.fetchData();
+                        this.showSendConfirm = false;
+                        this.messages = [
+                            {
+                                severity: 'success',
+                                summary: 'Thành công',
+                                detail: res?.message || 'Gửi xác nhận thành công',
+                                life: 3000,
+                            },
+                        ];
+                    } else {
+                        this.messages = [
+                            {
+                                severity: 'error',
+                                summary: 'Lỗi',
+                                detail: res?.message || 'Gửi xác nhận thất bại',
+                                life: 3000,
+                            },
+                        ];
+                    }
+                },
+                error: (err) => {
+                    const msg = err?.error?.message || err?.message || 'Gửi xác nhận thất bại';
                     this.messages = [
                         {
-                            severity: 'success',
-                            summary: 'Thành công',
-                            detail: res.message,
+                            severity: 'error',
+                            summary: 'Lỗi',
+                            detail: msg,
                             life: 3000,
                         },
                     ];
-                }
+                },
             });
     }
     getsummaryTimesheetNameStatus(

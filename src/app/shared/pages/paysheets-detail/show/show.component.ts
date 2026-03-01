@@ -42,7 +42,7 @@ export class ShowComponent implements OnInit {
     shiftVisible: boolean = false;
     isRowSelectable: any;
     shiftWorks: any;
-    selectedPayroll: any;
+    selectedPayroll: any[] = [];
     clockWorkDialog: boolean = false;
     workConfirmDialog: boolean = false;
     workConfirmTime: any;
@@ -706,34 +706,57 @@ export class ShowComponent implements OnInit {
         console.log(this.selectedPayroll);
     }
     handleSendPayrollDetailConfirm(): void {
-        console.log(this.selectedPayroll);
+        if (!this.selectedPayroll?.length) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Cảnh báo',
+                detail: 'Cần chọn ít nhất 1 phiếu lương để gửi xác nhận',
+            });
+            return;
+        }
+        if (!this.workConfirmTime) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Cảnh báo',
+                detail: 'Vui lòng chọn thời hạn nhận phản hồi',
+            });
+            return;
+        }
         const payrollDetailIds = this.selectedPayroll.map(
             (item: any) => item.id
         );
-        console.log(payrollDetailIds);
         this.payrollDetailService
             .sendPayrollDetailConfirm({
                 payrollDetailIds: payrollDetailIds,
                 responseDeadline: this.workConfirmTime,
             })
-            .subscribe((results: any) => {
-                if (results.status) {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Thành công',
-                        detail: 'Gửi bảng lương thành công',
-                    });
-                    this.reloadData();
-                } else {
+            .subscribe({
+                next: (results: any) => {
+                    if (results?.status) {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Thành công',
+                            detail: results?.message || 'Gửi bảng lương thành công',
+                        });
+                        this.reloadData();
+                        this.workConfirmDialog = false;
+                        this.workConfirmTime = null;
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Lỗi',
+                            detail: results?.message || 'Gửi bảng lương thất bại',
+                        });
+                    }
+                },
+                error: (err) => {
+                    const msg = err?.error?.message || err?.message || 'Gửi bảng lương thất bại';
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Lỗi',
-                        detail: 'Gửi bảng lương thất bại',
+                        detail: msg,
                     });
-                }
-                console.log(results);
-                this.workConfirmDialog = false;
-                this.workConfirmTime = null;
+                },
             });
     }
     displayEditDialog = false;
