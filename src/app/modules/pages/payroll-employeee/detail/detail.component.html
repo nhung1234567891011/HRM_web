@@ -4,6 +4,7 @@
             <div class="">
                 <strong
                     class="font-size-16 flex gap-3 flex align-items-center d-block"
+                    *ngIf="payrollDetailEmployees?.length"
                     ><i class="pi pi-arrow-left"></i>
                     {{
                         payrollDetailEmployees[0]?.payroll?.payrollName
@@ -115,8 +116,8 @@
                                     >Thông tin lương {{ i + 1 }}</span
                                 >
                                 <span class="block text-800 font-medium mb-3">{{
-                                    payrollDetailEmployee.contract.contractType
-                                        .name
+                                    payrollDetailEmployee?.contract?.contractType
+                                        ?.name
                                 }}</span>
                             </div>
                             <div
@@ -390,7 +391,10 @@
                     </div>
                 </div>
 
-                <div class="col-12 lg:col-12 xl:col-12">
+                <div
+                    class="col-12 lg:col-12 xl:col-12"
+                    *ngIf="payrollDetailEmployees?.length"
+                >
                     <div class="card mb-0">
                         <div
                             class="flex justify-content-center align-items-center gap-3"
