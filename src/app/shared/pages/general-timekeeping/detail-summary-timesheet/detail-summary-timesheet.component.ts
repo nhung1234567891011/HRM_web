@@ -8,6 +8,7 @@ import { HasPermissionHelper } from 'src/app/core/helpers/has-permission.helper'
 import { EmployeeService } from 'src/app/core/services/employee.service';
 import { AuthService } from 'src/app/core/services/identity/auth.service';
 import { OrganizationService } from 'src/app/core/services/organization.service';
+import { PayrollService } from 'src/app/core/services/payroll.service';
 import { StaffDetailService } from 'src/app/core/services/staff-detail.service';
 import { StaffPositionService } from 'src/app/core/services/staff-position.service';
 import { SummaryTimesheetNameEmployeeConfirmService } from 'src/app/core/services/summary-timesheet-name-employee-confirm.service';
@@ -89,6 +90,7 @@ export class DetailSummaryTimesheetComponent implements OnInit {
         private employeesService: EmployeeService,
         private authService: AuthService,
         private summaryTimesheetNameEmployeeConfirmService: SummaryTimesheetNameEmployeeConfirmService,
+        private payrollService: PayrollService,
         public permisionHelper: HasPermissionHelper
     ) {
         this.authService.userCurrent.subscribe((res) => {
@@ -214,8 +216,94 @@ export class DetailSummaryTimesheetComponent implements OnInit {
                     this.detaisummary = response.data.items;
                     this.totalRecords = response.data.totalRecords;
                     this.updateCurrentPageReport();
+                    this.autoConfirmExpired(response.data.items);
                 }
             });
+    }
+
+    autoConfirmExpired(items: any[]): void {
+        const today = new Date();
+        const expiredItems = items.filter(
+            (i) =>
+                (i.status === SummaryTimesheetNameEmployeeConfirmStatus.Pending ||
+                    i.status === SummaryTimesheetNameEmployeeConfirmStatus.SendedNotConfirm) &&
+                i.confirmDate &&
+                new Date(i.confirmDate) < today
+        );
+        if (expiredItems.length === 0) return;
+
+        const request = {
+            summaryTimesheetNameId: this.summaryTimesheetNameId,
+            employeeIds: expiredItems.map((i) => i.id),
+            status: SummaryTimesheetNameEmployeeConfirmStatus.Confirm,
+            date: null,
+        };
+
+        this.summaryTimesheetNameEmployeeConfirmService
+            .createOrUpdateMultiple(request)
+            .subscribe({
+                next: () => {
+                    this.fetchData();
+                },
+            });
+    }
+
+    handleTransferToPayroll(): void {
+        if (!this.summarysheet) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: 'Cảnh báo',
+                    detail: 'Không tìm thấy thông tin bảng chấm công tổng hợp',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
+        const formData = {
+            organizationId: this.summarysheet.organizationId,
+            payrollName: this.summarysheet.timekeepingSheetName,
+            summaryTimesheetNameIds: [this.detailSummaryById],
+            staffPositionIds: (this.summarysheet.summaryTimesheetNameStaffPositions ?? []).map(
+                (p: any) => p.staffPositionId ?? p.id
+            ),
+        };
+
+        this.payrollService.create(formData).subscribe({
+            next: (response: any) => {
+                if (response?.status) {
+                    this.messages = [
+                        {
+                            severity: 'success',
+                            summary: 'Thành công',
+                            detail: 'Chuyển tính lương thành công',
+                            life: 3000,
+                        },
+                    ];
+                } else {
+                    this.messages = [
+                        {
+                            severity: 'error',
+                            summary: 'Lỗi',
+                            detail: response?.message || 'Chuyển tính lương thất bại',
+                            life: 3000,
+                        },
+                    ];
+                }
+            },
+            error: (err: any) => {
+                const msg = err?.error?.message || err?.message || 'Chuyển tính lương thất bại';
+                this.messages = [
+                    {
+                        severity: 'error',
+                        summary: 'Lỗi',
+                        detail: msg,
+                        life: 3000,
+                    },
+                ];
+            },
+        });
     }
 
     getButtonText(): string {

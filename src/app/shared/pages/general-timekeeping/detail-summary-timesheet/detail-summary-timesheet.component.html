@@ -46,6 +46,7 @@
                             <div class="salary-transfer">
                                 <button
                                     class="salary-transfer-button"
+                                    (click)="handleTransferToPayroll()"
                                     *ngIf="
                                         this.permisionHelper.hasPermissions([
                                             permissionConstant.ManageGeneralTimekeepingTransferSalary
