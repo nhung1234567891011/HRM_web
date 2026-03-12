@@ -36,6 +36,10 @@ export class TimeSheetService {
         return this.http.put(`time-sheet/update?id=${id}`, request);
     }
 
+    create(request: any): Observable<any> {
+        return this.http.post('time-sheet/create', request);
+    }
+
     getByShiftWorkdId(request: any = null): Observable<any> {
         return this.http.get('time-sheet/get-by-shiftworkid', request);
     }

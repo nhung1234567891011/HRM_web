@@ -153,11 +153,17 @@ export class OrganiStructListComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
+          const detail =
+            err?.error?.detail ||
+            err?.error?.message ||
+            err?.message ||
+            'Có lỗi xảy ra';
+
           this.messages = [
             {
               severity: 'error',
               summary: 'Thất bại',
-              detail: 'Có lỗi xảy ra',
+              detail,
               life: 3000,
             },
           ];

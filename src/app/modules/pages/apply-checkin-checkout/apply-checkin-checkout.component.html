@@ -31,37 +31,14 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-3 mt-3">
-                            <p-autoComplete
+                            <input
+                                pInputText
                                 [style]="{ height: '43px', width: '100%' }"
-                                [(ngModel)]="selectedEmployee"
-                                [suggestions]="filteredEmployees"
-                                (completeMethod)="searchEmployee($event)"
-                                [field]="'displayName'"
-                                [forceSelection]="true"
-                                [showClear]="true"
-                                placeholder="Tìm kiếm nhân viên">
-                            </p-autoComplete>
+                                [(ngModel)]="keyWord"
+                                placeholder="Tìm kiếm nhân viên"
+                                (keyup.enter)="getPaging()" />
                         </div>
 
-                        <!-- <div class="col-lg-3 mt-3">
-                            <p-dropdown
-                                [(ngModel)]="selectedContractStatus"
-                                [options]="contractOption"
-                                optionLabel="name"
-                                [showClear]="true"
-                                placeholder="Tất cả hợp đồng"
-
-                                [style]="{ height: '43px', width: '100%' }"
-                            ></p-dropdown>
-                        </div>
-                        <div class="col-lg-3 mt-3">
-                            <p-treeSelect
-                                [options]="treeData"
-                                [(ngModel)]="selectedNode"
-                                [placeholder]="'Tất cả đơn vị'"
-                                [style]="{ width: '100%' }"
-                            ></p-treeSelect>
-                        </div> -->
                         <div class="col-lg-1 mt-3">
                             <button
                                 style="height: 43px"
@@ -72,30 +49,41 @@
                                 (click)="getPaging()"
                             ></button>
                         </div>
-                        <div class="col-lg-1 mt-3">
-                            <div style="display: flex">
+                        <div class="col-lg-2 mt-3">
+                            <div style="display: flex; position: relative;">
                                 <p-button
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-filter"
-                                ></p-button>
-
-                                <p-button
-                                    style="margin-left: 10px"
+                                    pTooltip="Xuất Excel"
                                     label=""
                                     [outlined]="true"
                                     severity="secondary"
                                     icon="pi pi-file-export"
+                                    (onClick)="exportExcel()"
                                 ></p-button>
 
                                 <p-button
                                     style="margin-left: 10px"
+                                    pTooltip="Ẩn/hiện cột"
                                     label=""
                                     [outlined]="true"
                                     severity="secondary"
-                                    icon="pi pi-spin pi-cog"
+                                    icon="pi pi-table"
+                                    (onClick)="colPanelRef.toggle($event)"
                                 ></p-button>
+
+                                <p-overlayPanel #colPanelRef>
+                                    <div style="padding: 8px; min-width: 200px;">
+                                        <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
+                                        <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
+                                            <p-checkbox
+                                                [binary]="true"
+                                                [label]="col.header"
+                                                [ngModel]="isColVisible(col.field)"
+                                                (onChange)="onColumnToggle($event, col)"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </p-checkbox>
+                                        </div>
+                                    </div>
+                                </p-overlayPanel>
                             </div>
                         </div>
                     </div>
@@ -112,52 +100,41 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="width: 1%">
-                                        <p-checkbox
-                                            [binary]="true"
-                                            inputId="binary"
-                                        ></p-checkbox>
+                                        <p-checkbox [binary]="true" inputId="binary"></p-checkbox>
                                     </th>
-                                    <th style="width: 6%">Mã nhân viên</th>
-                                    <th style="width: 6%">Họ và Tên NLĐ</th>
-                                    <th style="width: 5%">Thời gian xin chấm vào</th>
-                                    <th style="width: 6%">Thời gian xin chấm ra</th>
-                                    <th style="width: 5%">Lý do</th>
-                                    <th style="width: 4%">Ngày gửi</th>
-                                    <th style="width: 4%">Người duyệt</th>
-                                    <th style="width: 4%">Trạng thái</th>
+                                    <th *ngIf="isColVisible('employeeCode')" style="width: 6%">Mã nhân viên</th>
+                                    <th *ngIf="isColVisible('fullName')" style="width: 6%">Họ và Tên NLĐ</th>
+                                    <th *ngIf="isColVisible('timeCheckIn')" style="width: 5%">Thời gian xin chấm vào</th>
+                                    <th *ngIf="isColVisible('timeCheckOut')" style="width: 6%">Thời gian xin chấm ra</th>
+                                    <th *ngIf="isColVisible('reason')" style="width: 5%">Lý do</th>
+                                    <th *ngIf="isColVisible('date')" style="width: 4%">Ngày gửi</th>
+                                    <th *ngIf="isColVisible('approver')" style="width: 4%">Người duyệt</th>
+                                    <th *ngIf="isColVisible('status')" style="width: 4%">Trạng thái</th>
                                     <th style="width: 2%">Thao tác</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-contract>
                                 <tr>
                                     <td>
-                                        <p-checkbox
-                                            [binary]="true"
-                                            inputId="binary"
-                                        ></p-checkbox>
+                                        <p-checkbox [binary]="true" inputId="binary"></p-checkbox>
                                     </td>
-                                    <td>{{ contract.employee.employeeCode }}</td>
-                                    <td>{{ contract.employee.lastName }} {{ contract.employee.firstName }}</td>
-                                    <td>{{ contract.timeCheckIn }}</td>
-                                    <td>{{ contract.timeCheckOut }}</td>
-                                    <td>{{ contract.reason }}</td>
-                                    <td>
-                                        {{
-                                            contract.date | date : "dd/MM/yyyy"
-                                        }}
-                                    </td>
-                                    <td>{{ contract.approver.lastName }} {{ contract.approver.firstName }}</td>
-                                        <div style="margin: 10px 20px" [ngSwitch]="contract.checkInCheckOutStatus">
+                                    <td *ngIf="isColVisible('employeeCode')">{{ contract.employee.employeeCode }}</td>
+                                    <td *ngIf="isColVisible('fullName')">{{ contract.employee.lastName }} {{ contract.employee.firstName }}</td>
+                                    <td *ngIf="isColVisible('timeCheckIn')">{{ contract.timeCheckIn }}</td>
+                                    <td *ngIf="isColVisible('timeCheckOut')">{{ contract.timeCheckOut }}</td>
+                                    <td *ngIf="isColVisible('reason')">{{ contract.reason }}</td>
+                                    <td *ngIf="isColVisible('date')">{{ contract.date | date : "dd/MM/yyyy" }}</td>
+                                    <td *ngIf="isColVisible('approver')">{{ contract.approver.lastName }} {{ contract.approver.firstName }}</td>
+                                    <td *ngIf="isColVisible('status')">
+                                        <div style="margin: 4px 0" [ngSwitch]="contract.checkInCheckOutStatus">
                                             <span *ngSwitchCase="0" class="status-pending">Chờ duyệt</span>
                                             <span *ngSwitchCase="1" class="status-approved">Đã duyệt</span>
                                             <span *ngSwitchCase="2" class="status-rejected">Từ chối</span>
                                             <span *ngSwitchDefault>Không xác định</span>
                                         </div>
+                                    </td>
                                     <td style="text-align: center">
-                                        <i
-                                            class="pi pi-ellipsis-v"
-                                            (click)="menu.toggle($event)"
-                                        ></i>
+                                        <i class="pi pi-ellipsis-v" (click)="menu.toggle($event)"></i>
                                         <p-overlayPanel #menu>
                                             <div class="menu-items">
                                                 <button *ngIf="user.id == contract.employee?.id" class="menu-btn" (click)="showDialogEdit(contract.id)">

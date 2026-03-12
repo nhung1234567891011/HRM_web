@@ -1,48 +1,58 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { HttpLoadingService } from '../../https/http-loading.service';
+import { ApiResult } from '../../models/identity/api-result.interface';
+import { PagingResult } from '../../models/common/paging-result.interface';
+import {
+  RoleDto,
+  CreateRoleRequest,
+  EditRoleRequest,
+} from '../../models/identity/role.interface';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class RoleService {
+  // Dùng đường dẫn tương đối, HttpInterceptor sẽ tự prepend baseApiUrl
+  private readonly apiUrl = '/role';
 
-    constructor(private http: HttpLoadingService,
-        private httpCl: HttpClient
-    ) { }
+  constructor(private http: HttpClient) {}
 
+  getPaging(params: any) {
+    return this.http.get<ApiResult<PagingResult<RoleDto>>>(`${this.apiUrl}/paging`, {
+      params,
+    });
+  }
 
-    paging(request: any = null): Observable<any> {
-        return this.http.get('role/paging', request);
-    }
+  // alias để không phải sửa nhiều component cũ
+  paging(params: any) {
+    return this.getPaging(params);
+  }
 
-    getById(request: any ): Observable<any> {
-        return this.http.get('role/get-by-id', request);
-    }
+  getById(id: number) {
+    return this.http.get<ApiResult<RoleDto>>(`${this.apiUrl}/get-by-id`, {
+      params: { id },
+    });
+  }
 
-    userHaveRole(request: any): Observable<any> {
-        return this.http.get('role/user-have-role', request);
-    }
+  getRoleByEmployee(request: { employeeId: number }) {
+    return this.http.get<ApiResult<RoleDto[]>>(`${this.apiUrl}/get-by-employee`, {
+      params: { employeeId: request.employeeId },
+    });
+  }
 
-    getRoleByEmployee(request: any ): Observable<any> {
-        return this.http.get('role/get-by-employee', request);
-    }
+  create(body: CreateRoleRequest) {
+    return this.http.post<ApiResult<RoleDto>>(`${this.apiUrl}/create`, body);
+  }
 
-    create(request: any): Observable<any> {
-        return this.http.post('role/create', request);
-    }
+  edit(body: EditRoleRequest) {
+    return this.http.put<ApiResult<RoleDto>>(`${this.apiUrl}/edit`, body);
+  }
 
-    edit(request: any): Observable<any> {
-        return this.http.put('role/edit', request);
-    }
+  delete(id: number) {
+    return this.http.put<ApiResult<RoleDto>>(`${this.apiUrl}/delete`, { id });
+  }
 
-    delete(request: any): Observable<any> {
-        return this.http.put('role/delete', request);
-    }
-
-    deleteMultiple(request: any): Observable<any> {
-        return this.http.post('role/delete-multiple', request);
-    }
-
+  deleteMultiple(ids: (number | null)[]) {
+    return this.http.put<ApiResult<RoleDto[]>>(`${this.apiUrl}/delete-multiple`, {
+      ids,
+    });
+  }
 }

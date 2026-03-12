@@ -74,6 +74,17 @@ export class TimesheetComponent implements OnInit {
     afternoonTimeSheetId: any;
     summaryTimesheetStatus = TimeKeepingLeaveStatus;
 
+    isAddAbsentDialogVisible: boolean = false;
+    addAbsentForm: any;
+    addAbsentEmployeeId: number | null = null;
+    addAbsentDate: string = '';
+    leaveStatusOptions = [
+        { label: 'Đi làm bình thường', value: 0 },
+        { label: 'Nghỉ có phép', value: 1 },
+        { label: 'Nghỉ không phép', value: 2 },
+        { label: 'Nghỉ không phép hưởng lương', value: 3 },
+    ];
+
     showErrorOrganizationId: boolean = false;
     showErrorTimekeepingSheetName: boolean = false;
     showErrorStartDate: boolean = false;
@@ -132,13 +143,20 @@ export class TimesheetComponent implements OnInit {
             date: [null, Validators.required],
             numberOfWorkingHour: [null, Validators.required],
             startTime: [null, Validators.required],
-            endTime: [null, Validators.required],
+            endTime: [null],
             startTakeABreak: [null, Validators.required],
             endTakeABreak: [null, Validators.required],
             newBreakStartTime: [null, Validators.required],
             newBreakEndTime: [null, Validators.required],
             lateDuration: [null],
             earlyLeaveDuration: [null],
+            overtimeHours: [{ value: null, disabled: true }],
+        });
+
+        this.addAbsentForm = this.fb.group({
+            startTime: [null],
+            endTime: [null],
+            leaveStatus: [0, Validators.required],
         });
     }
 
@@ -464,8 +482,24 @@ export class TimesheetComponent implements OnInit {
                                         !shift.shiftTableName.includes('chiều')
                                 );
 
+                                // Tổng giờ làm trong ngày (tất cả ca): > 8h → tăng ca
+                                const totalDayHours = (timesheet?.shifts ?? [])
+                                    .reduce((sum: number, s: any) => sum + (s.numberOfWorkingHour ?? 0), 0);
+                                const hasOvertime = totalDayHours > 8;
+
+                                // LeaveNotPermission = 2 (nghỉ không phép, không lương) → xám
+                                const LEAVE_NOT_PERMISSION = 2;
+                                const shiftColor = (shift: any): string => {
+                                    if (!shift) return 'lightgray';
+                                    if (shift.timeKeepingLeaveStatus === LEAVE_NOT_PERMISSION)
+                                        return 'rgb(174, 174, 174)';
+                                    if (hasOvertime) return '#1565c0';
+                                    return shift.isEnoughWork ? 'green' : 'yellow';
+                                };
+
                                 if (singleShift) {
                                     return {
+                                        date: date.date,
                                         morning: `${this.formatTime(
                                             singleShift.startTime || '00:00'
                                         )} - ${this.formatTime(
@@ -478,9 +512,7 @@ export class TimesheetComponent implements OnInit {
                                             singleShift.timeSheetId,
                                         morningtimeKeepingLeaveStatus:
                                             singleShift.timeKeepingLeaveStatus,
-                                        morningColor: singleShift.isEnoughWork
-                                            ? 'green'
-                                            : 'yellow',
+                                        morningColor: shiftColor(singleShift),
                                         afternoon: null,
                                         afternoonName: null,
                                         afternoonshiftWorkId: null,
@@ -493,6 +525,7 @@ export class TimesheetComponent implements OnInit {
                                     };
                                 } else {
                                     return {
+                                        date: date.date,
                                         morning: shiftMorning
                                             ? `${this.formatTime(
                                                   shiftMorning?.startTime ||
@@ -509,7 +542,7 @@ export class TimesheetComponent implements OnInit {
                                         morningtimeSheetId:
                                             shiftMorning?.timeSheetId || null,
                                         morningtimeKeepingLeaveStatus:
-                                            singleShift?.timeKeepingLeaveStatus,
+                                            shiftMorning?.timeKeepingLeaveStatus || null,
                                         afternoon: shiftAfternoon
                                             ? `${this.formatTime(
                                                   shiftAfternoon.startTime ||
@@ -531,13 +564,8 @@ export class TimesheetComponent implements OnInit {
                                         afternoontimeKeepingLeaveStatus:
                                             shiftAfternoon?.timeKeepingLeaveStatus ||
                                             null,
-                                        morningColor: shiftMorning?.isEnoughWork
-                                            ? 'green'
-                                            : 'yellow',
-                                        afternoonColor:
-                                            shiftAfternoon?.isEnoughWork
-                                                ? 'green'
-                                                : 'yellow',
+                                        morningColor: shiftColor(shiftMorning),
+                                        afternoonColor: shiftColor(shiftAfternoon),
                                         singleShift: false,
                                         holiday: holiday ? holiday.name : null,
                                         isToday,
@@ -545,6 +573,7 @@ export class TimesheetComponent implements OnInit {
                                 }
                             } else {
                                 return {
+                                    date: date.date,
                                     morning: null,
                                     morningName: null,
                                     afternoon: null,
@@ -913,13 +942,9 @@ export class TimesheetComponent implements OnInit {
             const startTime = this.timeSheetRaw?.startTime
                 ? this.convertToDate(this.timeSheetRaw.startTime)
                 : null;
-            let endTime = this.timeSheetRaw?.endTime
+            const endTime = this.timeSheetRaw?.endTime
                 ? this.convertToDate(this.timeSheetRaw.endTime)
                 : null;
-            if (!endTime) {
-                endTime = new Date();
-                endTime.setHours(17, 15, 0, 0); // Đặt thời gian là 17:15
-            }
             const startTakeABreak = this.selectedShiftData?.startTakeABreak
                 ? this.convertToDate(this.selectedShiftData.startTakeABreak)
                 : null;
@@ -931,6 +956,7 @@ export class TimesheetComponent implements OnInit {
                 endTime: endTime,
                 startTakeABreak: startTakeABreak,
                 endTakeABreak: endTakeABreak,
+                overtimeHours: this.timeSheetRaw?.overtimeHours ?? null,
             });
         }
     }
@@ -941,6 +967,81 @@ export class TimesheetComponent implements OnInit {
         this.timeTrackingForm.patchValue({
             breakStartTime: null,
             breakEndTime: null,
+        });
+    }
+
+    openAddAbsentDialog(day: any, employeeId: number) {
+        if (this.isLocked) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: '',
+                    detail: 'Thao tác đang bị khóa.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+        this.addAbsentEmployeeId = employeeId;
+        this.addAbsentDate = day.date;
+        this.addAbsentForm.reset({ startTime: null, endTime: null, leaveStatus: 0 });
+        this.isAddAbsentDialogVisible = true;
+    }
+
+    saveAbsentDay() {
+        if (!this.addAbsentEmployeeId || !this.addAbsentDate) return;
+
+        const formValues = this.addAbsentForm.value;
+        const startTime = formValues.startTime
+            ? this.formatToTimeString(this.convertToDateTime(formValues.startTime))
+            : null;
+        const endTime = formValues.endTime
+            ? this.formatToTimeString(this.convertToDateTime(formValues.endTime))
+            : null;
+
+        let numberOfWorkingHour: number | null = null;
+        if (formValues.startTime && formValues.endTime) {
+            const s = new Date(formValues.startTime);
+            const e = new Date(formValues.endTime);
+            numberOfWorkingHour = Math.max((e.getTime() - s.getTime()) / (1000 * 3600), 0);
+            numberOfWorkingHour = Math.round(numberOfWorkingHour * 100) / 100;
+        }
+
+        const request = {
+            employeeId: this.addAbsentEmployeeId,
+            date: this.addAbsentDate,
+            startTime,
+            endTime,
+            numberOfWorkingHour,
+            timeKeepingLeaveStatus: formValues.leaveStatus,
+            lateDuration: 0,
+            earlyLeaveDuration: 0,
+        };
+
+        this.timeSheetService.create(request).subscribe({
+            next: () => {
+                this.messages = [
+                    {
+                        severity: 'success',
+                        summary: 'Thành công',
+                        detail: 'Đã thêm ngày chấm công',
+                        life: 3000,
+                    },
+                ];
+                this.isAddAbsentDialogVisible = false;
+                this.getTimesheetDetails();
+            },
+            error: (err) => {
+                console.error('Lỗi khi tạo chấm công:', err);
+                this.messages = [
+                    {
+                        severity: 'error',
+                        summary: 'Lỗi',
+                        detail: 'Không thể thêm ngày chấm công',
+                        life: 3000,
+                    },
+                ];
+            },
         });
     }
 

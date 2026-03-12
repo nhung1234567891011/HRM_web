@@ -9,11 +9,14 @@
 
 <div class="flex justify-content-between mb-2 card-custom">
     <div class="flex">
-        <input class="ml-3" [(ngModel)]="queryParameters.name" id="employeeName" placeholder="Nhập tên" pInputText (keydown.enter)="onSearch()" />
-        <input class="ml-3" [(ngModel)]="queryParameters.displayName" id="employeeName" placeholder="Nhập tên hiển thị"
-            pInputText (keydown.enter)="onSearch()" />
-        <input class="ml-3" [(ngModel)]="queryParameters.description" id="employeeName" placeholder="Nhập mô tả"
-            pInputText (keydown.enter)="onSearch()" />
+        <input
+            class="ml-3"
+            [(ngModel)]="queryParameters.keyword"
+            id="permissionKeyword"
+            placeholder="Nhập từ khóa (tên, tên hiển thị, mô tả)"
+            pInputText
+            (keydown.enter)="onSearch()"
+        />
         <div class="flex justify-content-center">
             <p-button class="ml-4" (click)="onSearch()" label="Lọc" />
             <p-button class="ml-2" (click)="onRefreshSearch()" icon="pi pi-sync" />

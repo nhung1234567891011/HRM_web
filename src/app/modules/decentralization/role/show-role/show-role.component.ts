@@ -26,6 +26,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { RoleService } from 'src/app/core/services/decentralization/role.service';
 import { TruncatePipe } from 'src/app/core/pipes/truncate.pipe';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	selector: 'app-show-role',
@@ -60,6 +61,8 @@ export class ShowRoleComponent implements OnInit {
 	user: any;
 	roles:any[]=[];
 	selectedRoles:any[]=[];
+
+	@ViewChild(ConfirmDialogComponent) confirmDialog!: ConfirmDialogComponent;
 	//search
 	paging: any = {
 		pageIndex: DEFAULT_PAGE_INDEX,
@@ -89,7 +92,8 @@ export class ShowRoleComponent implements OnInit {
 		private employeeService: EmployeeService,
 		private authService: AuthService,
 		private messageService: MessageService,
-		private roleService: RoleService
+		private roleService: RoleService,
+		private toastr: ToastrService,
 
 	) {
 		this.authService.userCurrent.subscribe(user => {
@@ -131,7 +135,7 @@ export class ShowRoleComponent implements OnInit {
 
 	//get data
 	getRoles(request: any) {
-		this.roleService.paging(request).subscribe(res => {
+		this.roleService.getPaging(request).subscribe(res => {
 			if (res.status == true) {
 				this.roles = res.data.items;
 				if (this.roles.length === 0) {
@@ -203,9 +207,43 @@ export class ShowRoleComponent implements OnInit {
 	}
 
 	//handle data
-	handleDelete(role:any){
-
+	handleDelete(role: any) {
+		this.confirmDialog.message = `Bạn có chắc chắn muốn xoá vai trò "${role.name}"?`;
+		this.confirmDialog.showDialog(() => {
+			this.roleService.delete(role.id).subscribe({
+				next: (res: any) => {
+					if (res?.status) {
+						this.toastr.success(res.message || 'Xoá vai trò thành công!');
+					} else {
+						this.toastr.error(res?.message || 'Xoá vai trò thất bại!');
+					}
+					this.reloadRoles();
+				},
+				error: (err) => {
+					console.error(err);
+					this.toastr.error('Có lỗi xảy ra khi xoá vai trò!');
+				}
+			});
+		});
 	}
+
+	  reloadRoles() {
+		const params = this.route.snapshot.queryParams;
+		const request = {
+		  ...params,
+		  organizationId: params['organizationId']
+			? params['organizationId']
+			: this.user.organization.id,
+		  pageIndex: params['pageIndex']
+			? params['pageIndex']
+			: this.config.paging.pageIndex,
+		  pageSize: params['pageSize']
+			? params['pageSize']
+			: this.config.paging.pageSize,
+		};
+	
+		this.getRoles(request);
+	  }
 
 	onAdd(){
 		this.router.navigate(['/decentralization/role/create'])

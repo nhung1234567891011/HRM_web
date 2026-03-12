@@ -95,9 +95,7 @@ export class ShowPermissionComponent implements OnInit {
 	queryParameters: any = {
 		...this.config.paging,
 		organizationId: null,
-		name: null,
-		description: null,
-		displayName: null,
+		keyword: null,
 		sortBy: null,
 		orderBy: null,
 	};
@@ -122,26 +120,35 @@ export class ShowPermissionComponent implements OnInit {
 			{ label: 'Danh sách' },
 		];
 		this.route.queryParams.subscribe((params) => {
+			const keyword = params['keyword'] ? String(params['keyword']).trim() : null;
+			const pageIndex = params['pageIndex']
+				? Number(params['pageIndex'])
+				: this.config.paging.pageIndex;
+			const pageSize = params['pageSize']
+				? Number(params['pageSize'])
+				: this.config.paging.pageSize;
+
 			const request = {
 				...params,
 				organizationId: params['organizationId']
-					? params['organizationId'] : this.user.organization.id,
-				pageIndex: params['pageIndex']
-					? params['pageIndex']
-					: this.config.paging.pageIndex,
-				pageSize: params['pageSize']
-					? params['pageSize']
-					: this.config.paging.pageSize
+					? params['organizationId']
+					: this.user?.organization?.id,
+				pageIndex,
+				pageSize,
+				keyword,
 			};
+
 			this.queryParameters = {
-				...params,
-				organizationId: this.queryParameters.organization?.data || null,
-				name: this.queryParameters.name ? this.queryParameters.name.trim() : null,
-				description: this.queryParameters.description ? this.queryParameters.description : null,
-				displayName: this.queryParameters.displayName || null,
-				sortBy: this.queryParameters.sortBy || null,
-				orderBy: this.queryParameters.orderBy || null
+				...this.queryParameters,
+				keyword,
+				organizationId: request.organizationId,
+				sortBy: params['sortBy'] || null,
+				orderBy: params['orderBy'] || null,
 			};
+
+			this.paging.pageIndex = pageIndex;
+			this.paging.pageSize = pageSize;
+
 			this.getPermissions(request);
 		});
 	}
@@ -170,7 +177,14 @@ export class ShowPermissionComponent implements OnInit {
 
 	//get data
 	getPermissions(request: any) {
-		this.permissionService.paging(request).subscribe(res => {
+		const apiRequest = {
+			...request,
+			name: request.keyword ? request.keyword : null,
+			description: request.keyword ? request.keyword : null,
+			displayName: request.keyword ? request.keyword : null
+		};
+
+		this.permissionService.paging(apiRequest).subscribe(res => {
 			if (res.status == true) {
 				this.permissionsTree = res.data.items;
 				this.permissions = this.flattenPermissions(res.data.items);
@@ -189,13 +203,14 @@ export class ShowPermissionComponent implements OnInit {
 	//search data
 	onSearch() {
 		const params = this.route.snapshot.queryParams;
+		const keyword = this.queryParameters.keyword
+			? String(this.queryParameters.keyword).trim()
+			: null;
 		const request = {
 			...params,
 			pageIndex: 1,
-			organizationId: this.queryParameters.organization?.data || null,
-			name: this.queryParameters.name ? this.queryParameters.name.trim() : null,
-			description: this.queryParameters.description ? this.queryParameters.description : null,
-			displayName: this.queryParameters.displayName ? this.queryParameters.displayName.trim() : null,
+			organizationId: params['organizationId'] || this.user?.organization?.id || null,
+			keyword: keyword,
 			sortBy: this.queryParameters.sortBy || null,
 			orderBy: this.queryParameters.orderBy || null
 		};
@@ -210,38 +225,37 @@ export class ShowPermissionComponent implements OnInit {
 	onPageChange(event: any) {
 		this.paging.pageIndex = event.page + 1;
 		this.paging.pageSize = event.rows;
-		this.route.queryParams.subscribe((params) => {
-			const request = {
-				...params,
-				pageIndex: event.page + 1,
-				pageSize: event.rows,
-			};
+		const params = this.route.snapshot.queryParams;
+		const request = {
+			...params,
+			pageIndex: event.page + 1,
+			pageSize: event.rows,
+		};
 
-			this.router.navigate([], {
-				relativeTo: this.route,
-				queryParams: request,
-				queryParamsHandling: 'merge',
-			});
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: request,
+			queryParamsHandling: 'merge',
 		});
 	}
 
 	onRefreshSearch() {
-		this.route.queryParams.subscribe(params => {
-			const request = {
-				...params,
-				organizationId: null,
-				name: null,
-				description: null,
-				displayName: null,
-				sortBy: null,
-				orderBy: null
-			};
+		this.queryParameters.keyword = null;
 
-			this.router.navigate([], {
-				relativeTo: this.route,
-				queryParams: request,
-				queryParamsHandling: 'merge',
-			});
+		const params = this.route.snapshot.queryParams;
+		const request = {
+			...params,
+			pageIndex: 1,
+			organizationId: null,
+			keyword: null,
+			sortBy: null,
+			orderBy: null
+		};
+
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: request,
+			queryParamsHandling: 'merge',
 		});
 	}
 

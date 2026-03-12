@@ -28,22 +28,18 @@ export class CheckinCheckoutService {
         return this.httpld.get<any>(`/checkin-checkout-application/get-by-id?Id=${id}`);
       }
 
-      updateCheckInCheckOutStatus(contractId: number, status: number, contract: any): Observable<any> {
-        const url = `checkin-checkout-application/update?id=${contractId}`;
+      updateCheckInCheckOutStatus(id: number, status: number): Observable<any> {
+        const dataQueryParams = { id };
+        const dataBody = status;
+        return this.http.putBodyAndQueryParams(
+          'checkin-checkout-application/update-status',
+          dataQueryParams,
+          dataBody
+        );
+      }
 
-        const request = {
-            approverId: contract.approver.id,
-            date: contract.date,
-            timeCheckIn: contract.timeCheckIn,
-            timeCheckOut: contract.timeCheckOut,
-            checkType: contract.checkType, // Cập nhật nếu cần
-            checkInCheckOutStatus: status, // 0: Approved, 1: Rejected
-            shiftCatalogId: contract.shiftCatalogId, // Cập nhật nếu cần
-            reason: contract.reason,
-            description: contract.description
-        };
-
-        return this.http.put(url, request);
+      exportExcel(request: any = null): Observable<Blob> {
+          return this.http.getBlob('checkin-checkout-application/export-excel', request);
       }
 
       updateBodyAndQueryParams(

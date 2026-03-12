@@ -53,7 +53,21 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
   showEmojiPicker = false;
   emojiList = ['😀', '😂', '😍', '😎', '🤔', '😭', '😡', '🥳', '😜', '😇'];
   user: any;
-  selected: any
+  selected: any;
+
+  allColumns = [
+    { field: 'employeeCode', header: 'Mã nhân viên' },
+    { field: 'fullName', header: 'Họ và Tên NLĐ' },
+    { field: 'timeCheckIn', header: 'Thời gian chấm vào' },
+    { field: 'timeCheckOut', header: 'Thời gian chấm ra' },
+    { field: 'reason', header: 'Lý do' },
+    { field: 'date', header: 'Ngày gửi' },
+    { field: 'approver', header: 'Người duyệt' },
+    { field: 'status', header: 'Trạng thái' },
+  ];
+  selectedColumns: any[] = [...this.allColumns];
+  showColumnPanel = false;
+
   contractOption = [
     { name: 'Tất cả hợp đồng', value: null },
     { name: 'Hợp đồng đang có hiệu lực', value: false },
@@ -75,25 +89,25 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     this.checkInForm = this.fb.group({
       approverId: [null, Validators.required],
       date: [null, Validators.required],
-      time: [null, Validators.required],
-      timeCheckIn: [null, Validators.required],
-      timeCheckOut: [null, Validators.required],
+      time: [null],
+      timeCheckIn: [null],
+      timeCheckOut: [null],
       checkType: [[]],
       shiftCatalogId: [null, Validators.required],
       reason: [null, Validators.required],
-      description: [null, Validators.required],
+      description: [null],
     });
 
     this.checkInUpdateForm = this.fb.group({
       approverId: [null, Validators.required],
       date: [null, Validators.required],
-      time: [null, Validators.required],
-      timeCheckIn: [null, Validators.required],
-      timeCheckOut: [null, Validators.required],
+      time: [null],
+      timeCheckIn: [null],
+      timeCheckOut: [null],
       checkType: [[]],
       shiftCatalogId: [null, Validators.required],
       reason: [null, Validators.required],
-      description: [null, Validators.required],
+      description: [null],
     });
 
     this.authService.userCurrent.subscribe((user) => {
@@ -110,7 +124,6 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     this.getPaging();
     this.loadEmployees();
     this.getAllShiftWork();
-    this.fetchEmployees();
   }
 
   onEdit(contract: any) {
@@ -141,13 +154,13 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     const request: any = {
       pageSize: this.pageSize,
       pageIndex: this.pageIndex,
-      employeeId: this.selectedEmployee ? this.selectedEmployee.id : null
+      keyWord: this.keyWord ? this.keyWord.trim() : null
     };
 
     this.checkinCheckoutService.getPaging(request).subscribe(
       (response: any) => {
         this.checkInCheckOuts = response.data.items;
-        this.totalRecords = response.totalRecords;
+        this.totalRecords = response.data.totalRecords;
         this.updateCurrentPageReport();
       },
       (error: any) => {
@@ -156,25 +169,7 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     );
   }
 
-  fetchEmployees() {
-    const request: any = {
-      pageSize: this.pageSize,
-      pageIndex: this.pageIndex,
-    };
-    this.employeeService.getEmployees(request).subscribe((data: any) => {
-      this.employees = data.items.map((employee) => ({
-        ...employee,
-        displayName: `${employee.lastName} ${employee.firstName}`,
-      }));
-    });
-  }
-
-  searchEmployee(event: any) {
-    const query = event.query.toLowerCase();
-    this.filteredEmployees = this.employees.filter((employee) =>
-      employee.displayName.toLowerCase().includes(query)
-    );
-  }
+  // Tìm kiếm theo từ khóa, không cần gợi ý
 
   showDialog() {
     this.displayDialog = true;
@@ -467,7 +462,7 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     );
   }
   updateStatus(contract: any, status: number) {
-    this.checkinCheckoutService.updateCheckInCheckOutStatus(contract.id, status, contract).subscribe(
+    this.checkinCheckoutService.updateCheckInCheckOutStatus(contract.id, status).subscribe(
       response => {
         if (status === 1) {
           this.messages = [
@@ -511,6 +506,47 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     const textarea = document.getElementById("descriptionBox") as HTMLTextAreaElement;
     textarea.value += emoji;
     this.showEmojiPicker = false; // Đóng popup sau khi chọn emoji
+  }
+
+  exportExcel(): void {
+    const request: any = {
+      keyWord: this.keyWord ? this.keyWord.trim() : null
+    };
+    this.checkinCheckoutService.exportExcel(request).subscribe(
+      (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `DonCheckInCheckOut_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      (error: any) => {
+        console.error('Lỗi export excel:', error);
+        this.messages = [{ severity: 'error', summary: 'Thất bại', detail: 'Không thể xuất file Excel', life: 3000 }];
+      }
+    );
+  }
+
+  isColVisible(field: string): boolean {
+    return this.selectedColumns.some(c => c.field === field);
+  }
+
+  onColumnToggle(event: any, col: any): void {
+    if (event.checked) {
+      if (!this.selectedColumns.some(c => c.field === col.field)) {
+        const originalIndex = this.allColumns.findIndex(c => c.field === col.field);
+        this.selectedColumns = this.allColumns.filter(c =>
+          this.selectedColumns.some(s => s.field === c.field) || c.field === col.field
+        );
+      }
+    } else {
+      this.selectedColumns = this.selectedColumns.filter(c => c.field !== col.field);
+    }
+  }
+
+  toggleColumnPanel(): void {
+    this.showColumnPanel = !this.showColumnPanel;
   }
 
   onPageChange(event: any): void {

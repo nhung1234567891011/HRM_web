@@ -47,6 +47,11 @@
     color: green;
 }
 
+.blue-dot::before {
+    content: "●";
+    color: #1565c0;
+}
+
 .orange-dot::before {
     content: "●";
     color: orange;

@@ -1571,17 +1571,26 @@ export class ShowComponent implements OnInit {
     }
     async handleDeleteEmployee() {
         let allDeleted = true;
+        let errorMessage = '';
         for (const id of this.selectedEmployeeIds) {
             try {
                 await this.employeeObject.deleteEmployee(id).toPromise();
-            } catch (error) {
+            } catch (error: any) {
                 allDeleted = false;
+                if (!errorMessage) {
+                    if (error?.error?.detail) {
+                        errorMessage = error.error.detail;
+                    } else if (error?.message) {
+                        errorMessage = error.message;
+                    } else {
+                        errorMessage = 'Xóa nhân viên không thành công';
+                    }
+                }
             }
         }
         if (allDeleted) {
             this.selectedEmployeeIds = [];
             this.istwo1 = true;
-            // this.toastService.showSuccess('Xóa', 'Xóa nhân viên thành công');
             this.messageService.add({
                 severity: 'success',
                 summary: 'Thông báo',
@@ -1594,14 +1603,10 @@ export class ShowComponent implements OnInit {
             this.istwo1 = true;
             this.selectedEmployeeIds = [];
             this.isdelete = false;
-            // this.toastService.showError(
-            //     'Lỗi',
-            //     'Xóa một số nhân viên không thành công'
-            // );
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Thông báo',
-                detail: 'Xóa nhân viên không thành cồn ',
+                detail: errorMessage || 'Xóa nhân viên không thành công',
             });
         }
     }
@@ -1640,14 +1645,15 @@ export class ShowComponent implements OnInit {
                     console.error('Error deleting employee:', err);
                     this.isdeleteOne = false;
 
-                    // this.toastService.showError(
-                    //     'Lỗi',
-                    //     'Xóa nhân viên không thành công'
-                    // );
+                    const detail =
+                        err?.error?.detail ||
+                        err?.message ||
+                        'Xóa nhân viên không thành công';
+
                     this.messageService.add({
                         severity: 'warn',
                         summary: 'Thông báo',
-                        detail: 'Xóa nhân viên không thành công',
+                        detail,
                     });
                 },
             });
