@@ -1,4 +1,4 @@
-<!-- <p-confirmPopup></p-confirmPopup> -->
+<p-confirmPopup></p-confirmPopup>
 
 <div class="grid">
     <div class="col-12">
@@ -47,13 +47,22 @@
                         [suggestions]="filteredEmployees"
                         (completeMethod)="searchEmployee($event)"
                         [field]="'displayName'"
-                        [forceSelection]="true"
+                        [forceSelection]="false"
                         [showClear]="true"
                         placeholder="Tìm kiếm tên bảng KPI"
                         (onSelect)="loadKpiData()"
                         (onClear)="loadKpiData()"
                     >
                     </p-autoComplete>
+                </div>
+                <div class="flex flex-column">
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-filter"
+                        label="Lọc"
+                        (click)="loadKpiData(true)"
+                    ></button>
                 </div>
                 <div class="flex gap-3">
                     <div class="flex flex-column">
@@ -230,6 +239,7 @@
                                         <i
                                             style="display: block"
                                             class="pi pi-trash"
+                                            (click)="confirmDeleteKpi($event, rowData)"
                                         ></i>
                                     </span>
                                 </div>

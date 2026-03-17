@@ -31,5 +31,9 @@ export class RevenueCommissionPolicyService {
   delete(id: number): Observable<any> {
     return this.http.delete(`revenue-commission-policy/delete?Id=${id}`);
   }
+
+  hardDelete(id: number): Observable<any> {
+    return this.http.delete(`revenue-commission-policy/hard-delete?Id=${id}`);
+  }
 }
 

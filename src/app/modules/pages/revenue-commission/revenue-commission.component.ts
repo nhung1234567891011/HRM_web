@@ -89,7 +89,7 @@ export class RevenueCommissionComponent implements OnInit {
 
   confirmRemoveTier(event: Event, index: number): void {
     this.confirmationService.confirm({
-      target: event.target as EventTarget,
+      target: event.currentTarget as HTMLElement,
       message: 'Chắc chắn xoá bậc hoa hồng này không?',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Xoá',
@@ -206,25 +206,37 @@ export class RevenueCommissionComponent implements OnInit {
   confirmDeletePolicy(event: Event, row: any): void {
     const policyName = row?.organizationName ? ` của đơn vị "${row.organizationName}"` : '';
     this.confirmationService.confirm({
-      target: event.target as EventTarget,
+      target: event.currentTarget as HTMLElement,
       message: `Chắc chắn xoá cấu hình hoa hồng${policyName} không?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Xoá',
       rejectLabel: 'Huỷ',
       accept: () => {
-        this.revenueCommissionPolicyService.delete(row.id).subscribe(
-          () => {
+        this.revenueCommissionPolicyService.hardDelete(row.id).subscribe({
+          next: (res: any) => {
+            if (res?.status === false) {
+              this.messages = [
+                {
+                  severity: 'error',
+                  summary: 'Lỗi',
+                  detail: res?.message || 'Không thể xoá cấu hình',
+                  life: 3000,
+                },
+              ];
+              return;
+            }
+
             this.messages = [
-              { severity: 'success', summary: 'Thành công', detail: 'Đã xoá cấu hình', life: 3000 },
+              { severity: 'success', summary: 'Thành công', detail: res?.message || 'Đã xoá cấu hình', life: 3000 },
             ];
             this.fetchData();
           },
-          () => {
+          error: () => {
             this.messages = [
               { severity: 'error', summary: 'Lỗi', detail: 'Không thể xoá cấu hình', life: 3000 },
             ];
-          }
-        );
+          },
+        });
       },
     });
   }

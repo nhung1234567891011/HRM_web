@@ -54,6 +54,7 @@ export class ShowComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private toastService: ToastService,
+        private confirmationService: ConfirmationService,
         private organizationService: OrganizationService,
         private kpiService: KpiService,
         private staffPositionService: StaffPositionService,
@@ -93,12 +94,21 @@ export class ShowComponent implements OnInit {
         });
     }
 
-    loadKpiData() {
+    loadKpiData(resetPage: boolean = false) {
+        if (resetPage) {
+            this.pageIndex = 1;
+        }
+
+        const selectedName =
+            typeof this.selectedEmployee === 'string'
+                ? this.selectedEmployee
+                : this.selectedEmployee?.nameKpiTable || this.selectedEmployee?.displayName || '';
+
         const request: any = {
             pageSize: this.pageSize,
             pageIndex: this.pageIndex,
             OrganizationId: this.selectedNode?.data?.id,
-            NameKpiTable: this.selectedEmployee ? this.selectedEmployee.displayName.replace('+', ' ') : '',
+            NameKpiTable: selectedName ? selectedName.toString().replace(/\+/g, ' ').trim() : '',
         };
         this.kpiService.getPaging(request).subscribe((response: any) => {
             if (response?.status) {
@@ -112,6 +122,55 @@ export class ShowComponent implements OnInit {
                 this.totalRecords = response.data.totalRecords;
                 this.updateCurrentPageReport();
             }
+        });
+    }
+
+    confirmDeleteKpi(event: Event, rowData: any): void {
+        event.stopPropagation();
+
+        const name = rowData?.nameKpiTable ? ` "${rowData.nameKpiTable}"` : '';
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            message: `Chắc chắn xoá bảng KPI${name} không?`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Xoá',
+            rejectLabel: 'Huỷ',
+            accept: () => {
+                this.kpiService.deleteKpiTable(rowData.id).subscribe({
+                    next: (res: any) => {
+                        if (res?.status) {
+                            this.messages = [
+                                {
+                                    severity: 'success',
+                                    summary: 'Thành công',
+                                    detail: res?.message || 'Đã xoá bảng KPI',
+                                    life: 3000,
+                                },
+                            ];
+                            this.loadKpiData(true);
+                        } else {
+                            this.messages = [
+                                {
+                                    severity: 'error',
+                                    summary: 'Thất bại',
+                                    detail: res?.message || 'Không thể xoá bảng KPI',
+                                    life: 3000,
+                                },
+                            ];
+                        }
+                    },
+                    error: () => {
+                        this.messages = [
+                            {
+                                severity: 'error',
+                                summary: 'Thất bại',
+                                detail: 'Có lỗi xảy ra khi xoá bảng KPI',
+                                life: 3000,
+                            },
+                        ];
+                    },
+                });
+            },
         });
     }
 

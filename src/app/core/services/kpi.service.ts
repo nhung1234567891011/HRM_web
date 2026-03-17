@@ -31,5 +31,9 @@ export class KpiService {
   updateRateKpi(KpiTableDetailId:number, request: any): Observable<any> {
     return this.http.put(`kpi-table-detail/update?KpiTableDetailId=${KpiTableDetailId}`, request);
   }
+
+  deleteKpiTable(id: number): Observable<any> {
+    return this.http.delete(`kpi-table/hard-delete?Id=${id}`);
+  }
   
 }
