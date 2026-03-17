@@ -773,6 +773,71 @@ import { EditLeaveApplicationComponent } from './modules/pages/leave-application
                                     'src/app/modules/pages/apply-checkin-checkout/apply-checkin-checkout.module'
                                 ).then((m) => m.ApplyCheckinCheckoutModule),
                         },
+                        {
+                            path: 'statistical-report',
+                            canActivate: [PermissionGuard],
+                            data: {
+                                requiredPermissions: [
+                                    PermissionConstant.ManageStatisticalReportView,
+                                ],
+                            },
+                            loadChildren: () =>
+                                import(
+                                    'src/app/modules/pages/statistical-report/statistical-report.module'
+                                ).then((m) => m.StatisticalReportModule),
+                        },
+                        {
+                            path: 'report-hr-distribution',
+                            canActivate: [PermissionGuard],
+                            data: {
+                                requiredPermissions: [
+                                    PermissionConstant.ManageStatisticalReportView,
+                                ],
+                            },
+                            loadChildren: () =>
+                                import(
+                                    'src/app/modules/pages/report-hr-distribution/report-hr-distribution.module'
+                                ).then((m) => m.ReportHrDistributionModule),
+                        },
+                        {
+                            path: 'report-monthly-income',
+                            canActivate: [PermissionGuard],
+                            data: {
+                                requiredPermissions: [
+                                    PermissionConstant.ManageStatisticalReportView,
+                                ],
+                            },
+                            loadChildren: () =>
+                                import(
+                                    'src/app/modules/pages/report-monthly-income/report-monthly-income.module'
+                                ).then((m) => m.ReportMonthlyIncomeModule),
+                        },
+                        {
+                            path: 'report-performance',
+                            canActivate: [PermissionGuard],
+                            data: {
+                                requiredPermissions: [
+                                    PermissionConstant.ManageStatisticalReportView,
+                                ],
+                            },
+                            loadChildren: () =>
+                                import(
+                                    'src/app/modules/pages/report-performance/report-performance.module'
+                                ).then((m) => m.ReportPerformanceModule),
+                        },
+                        {
+                            path: 'report-attendance',
+                            canActivate: [PermissionGuard],
+                            data: {
+                                requiredPermissions: [
+                                    PermissionConstant.ManageStatisticalReportView,
+                                ],
+                            },
+                            loadChildren: () =>
+                                import(
+                                    'src/app/modules/pages/report-attendance/report-attendance.module'
+                                ).then((m) => m.ReportAttendanceModule),
+                        },
                         //tadd
                     ],
                 },
@@ -799,4 +864,4 @@ import { EditLeaveApplicationComponent } from './modules/pages/leave-application
     ],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

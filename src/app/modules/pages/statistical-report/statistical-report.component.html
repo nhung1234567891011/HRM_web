@@ -1,0 +1,89 @@
+<div class="grid">
+    <div class="col-12">
+        <h2>Báo cáo thống kê tổng hợp</h2>
+    </div>
+
+    <!-- Báo cáo phân bổ nhân sự -->
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Phân bổ nhân sự</h4>
+                <div class="flex align-items-center gap-2">
+                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="hrChartType" optionLabel="label"
+                        optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
+                        (onChange)="onChartTypeChange('hr', $event)"></p-dropdown>
+                    <a routerLink="/report-hr-distribution" class="p-button p-button-text p-button-sm">
+                        <i class="pi pi-external-link"></i>
+                    </a>
+                </div>
+            </div>
+            <div style="height: 350px;">
+                <p-chart *ngIf="hrChartData" [type]="hrChartType" [data]="hrChartData" [options]="hrChartOptions"
+                    [style]="{ width: '100%', height: '100%' }"></p-chart>
+            </div>
+        </div>
+    </div>
+
+    <!-- Báo cáo thu nhập theo tháng -->
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Thu nhập theo tháng</h4>
+                <div class="flex align-items-center gap-2">
+                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="incomeChartType" optionLabel="label"
+                        optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
+                        (onChange)="onChartTypeChange('income', $event)"></p-dropdown>
+                    <a routerLink="/report-monthly-income" class="p-button p-button-text p-button-sm">
+                        <i class="pi pi-external-link"></i>
+                    </a>
+                </div>
+            </div>
+            <div style="height: 350px;">
+                <p-chart *ngIf="incomeChartData" [type]="incomeChartType" [data]="incomeChartData"
+                    [options]="incomeChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+            </div>
+        </div>
+    </div>
+
+    <!-- Báo cáo hiệu suất -->
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Hiệu suất</h4>
+                <div class="flex align-items-center gap-2">
+                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="perfChartType" optionLabel="label"
+                        optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
+                        (onChange)="onChartTypeChange('performance', $event)"></p-dropdown>
+                    <a routerLink="/report-performance" class="p-button p-button-text p-button-sm">
+                        <i class="pi pi-external-link"></i>
+                    </a>
+                </div>
+            </div>
+            <div style="height: 350px;">
+                <p-chart *ngIf="perfChartData" [type]="perfChartType" [data]="perfChartData"
+                    [options]="perfChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+            </div>
+        </div>
+    </div>
+
+    <!-- Báo cáo chuyên cần -->
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Chuyên cần</h4>
+                <div class="flex align-items-center gap-2">
+                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="attendanceChartType" optionLabel="label"
+                        optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
+                        (onChange)="onChartTypeChange('attendance', $event)"></p-dropdown>
+                    <a routerLink="/report-attendance" class="p-button p-button-text p-button-sm">
+                        <i class="pi pi-external-link"></i>
+                    </a>
+                </div>
+            </div>
+            <div style="height: 350px;">
+                <p-chart *ngIf="attendanceChartData" [type]="attendanceChartType" [data]="attendanceChartData"
+                    [options]="attendanceChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+            </div>
+        </div>
+    </div>
+</div>

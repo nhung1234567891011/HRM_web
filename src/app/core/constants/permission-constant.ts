@@ -184,5 +184,9 @@ export enum PermissionConstant {
     //Bảng lương
     ManageTimeSheep = 'MTS',
 
-    ManagePro = 'MPRO'
+    ManagePro = 'MPRO',
+
+    // Statistical Report Permissions
+    ManageStatisticalReport = 'MSR',
+    ManageStatisticalReportView = 'MSR.V',
 }

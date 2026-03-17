@@ -1,0 +1,67 @@
+<div class="grid">
+    <div class="col-12">
+        <p-breadcrumb [model]="items"></p-breadcrumb>
+    </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h3 class="m-0">Báo cáo phân bổ nhân sự</h3>
+                <div class="flex align-items-center gap-2">
+                    <span class="font-semibold text-primary">Tổng: {{ totalEmployees }} nhân viên</span>
+                    <p-treeSelect [options]="treeData" [(ngModel)]="selectedOrganization" placeholder="Chọn phòng ban"
+                        [style]="{ width: '250px' }" (onNodeSelect)="onOrganizationChange($event)"
+                        [showClear]="true"></p-treeSelect>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phân bổ theo phòng ban -->
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Theo phòng ban</h4>
+                <p-dropdown [options]="chartTypeOptions" [(ngModel)]="deptChartType" optionLabel="label"
+                    optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
+                    (onChange)="onChartTypeChange('dept', $event)"></p-dropdown>
+            </div>
+            <div style="height: 400px;">
+                <p-chart *ngIf="deptChartData" [type]="deptChartType" [data]="deptChartData"
+                    [options]="deptChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phân bổ theo vị trí -->
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Theo vị trí</h4>
+                <p-dropdown [options]="chartTypeOptions" [(ngModel)]="posChartType" optionLabel="label"
+                    optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
+                    (onChange)="onChartTypeChange('pos', $event)"></p-dropdown>
+            </div>
+            <div style="height: 400px;">
+                <p-chart *ngIf="posChartData" [type]="posChartType" [data]="posChartData" [options]="posChartOptions"
+                    [style]="{ width: '100%', height: '100%' }"></p-chart>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phân bổ theo trạng thái -->
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Theo trạng thái làm việc</h4>
+                <p-dropdown [options]="chartTypeOptions" [(ngModel)]="statusChartType" optionLabel="label"
+                    optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
+                    (onChange)="onChartTypeChange('status', $event)"></p-dropdown>
+            </div>
+            <div style="height: 400px;">
+                <p-chart *ngIf="statusChartData" [type]="statusChartType" [data]="statusChartData"
+                    [options]="statusChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+            </div>
+        </div>
+    </div>
+</div>
