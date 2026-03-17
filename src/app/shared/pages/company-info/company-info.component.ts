@@ -49,7 +49,7 @@ export class CompanyInfoComponent implements OnInit {
     ) {}
     ngOnInit(): void {
         this.items = [
-            { label: 'Hệ thống', route: '/installation' },
+            { label: 'Hệ thống', routerLink: '/installation' },
             { label: 'Thông tin công ty' },
         ];
 

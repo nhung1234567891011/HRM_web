@@ -35,7 +35,7 @@ export class ShowComponent {
 
     ngOnInit() {
         this.items = [
-            { label: 'Hệ thống', route: '/installation' },
+            { label: 'Hệ thống', routerLink: '/installation' },
             { label: 'Cơ cấu tổ chức' },
         ];
 

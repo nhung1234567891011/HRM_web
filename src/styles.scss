@@ -34,3 +34,48 @@ li{
 .font-size-16{
     font-size: 1.5rem;
 }
+
+/* Breadcrumb (PrimeNG) - unified style */
+.p-breadcrumb {
+    padding: 0;
+    background: transparent;
+    border: 0;
+}
+
+.p-breadcrumb .p-breadcrumb-list {
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.p-breadcrumb .p-breadcrumb-chevron {
+    color: rgba(0, 0, 0, 0.35);
+    font-size: 0.75rem;
+    margin: 0 0.25rem;
+}
+
+.p-breadcrumb a {
+    color: rgba(0, 0, 0, 0.72);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.15rem 0.35rem;
+}
+
+.p-breadcrumb a:hover {
+    color: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.p-breadcrumb .p-menuitem-text {
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.p-breadcrumb .p-menuitem-icon {
+    font-size: 0.95rem;
+}
+
+.p-breadcrumb .p-menuitem:last-child .p-menuitem-text {
+    color: rgba(0, 0, 0, 0.9);
+    font-weight: 700;
+}

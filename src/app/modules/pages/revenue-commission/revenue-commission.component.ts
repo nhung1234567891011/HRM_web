@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
-import { TreeNode } from 'primeng/api';
+import { ConfirmationService, TreeNode } from 'primeng/api';
 import { OrganizationService } from 'src/app/core/services/organization.service';
 import { RevenueCommissionPolicyService } from 'src/app/core/services/revenue-commission-policy.service';
 
@@ -8,6 +8,7 @@ import { RevenueCommissionPolicyService } from 'src/app/core/services/revenue-co
   selector: 'app-revenue-commission',
   templateUrl: './revenue-commission.component.html',
   styleUrl: './revenue-commission.component.scss',
+  providers: [ConfirmationService],
 })
 export class RevenueCommissionComponent implements OnInit {
   items: any;
@@ -52,13 +53,14 @@ export class RevenueCommissionComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private confirmationService: ConfirmationService,
     private organizationService: OrganizationService,
     private revenueCommissionPolicyService: RevenueCommissionPolicyService
   ) {}
 
   ngOnInit(): void {
     this.items = [
-      { label: 'Tính lương', route: '/installation' },
+      { label: 'Tính lương', routerLink: '/installation' },
       { label: 'Cấu hình hoa hồng doanh thu' },
     ];
 
@@ -83,6 +85,17 @@ export class RevenueCommissionComponent implements OnInit {
 
   removeTier(index: number): void {
     this.tiers.removeAt(index);
+  }
+
+  confirmRemoveTier(event: Event, index: number): void {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Chắc chắn xoá bậc hoa hồng này không?',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Xoá',
+      rejectLabel: 'Huỷ',
+      accept: () => this.removeTier(index),
+    });
   }
 
   resetTiers(): void {
@@ -190,16 +203,30 @@ export class RevenueCommissionComponent implements OnInit {
     );
   }
 
-  delete(row: any): void {
-    this.revenueCommissionPolicyService.delete(row.id).subscribe(
-      () => {
-        this.messages = [{ severity: 'success', summary: 'Thành công', detail: 'Đã xoá cấu hình', life: 3000 }];
-        this.fetchData();
+  confirmDeletePolicy(event: Event, row: any): void {
+    const policyName = row?.organizationName ? ` của đơn vị "${row.organizationName}"` : '';
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Chắc chắn xoá cấu hình hoa hồng${policyName} không?`,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Xoá',
+      rejectLabel: 'Huỷ',
+      accept: () => {
+        this.revenueCommissionPolicyService.delete(row.id).subscribe(
+          () => {
+            this.messages = [
+              { severity: 'success', summary: 'Thành công', detail: 'Đã xoá cấu hình', life: 3000 },
+            ];
+            this.fetchData();
+          },
+          () => {
+            this.messages = [
+              { severity: 'error', summary: 'Lỗi', detail: 'Không thể xoá cấu hình', life: 3000 },
+            ];
+          }
+        );
       },
-      () => {
-        this.messages = [{ severity: 'error', summary: 'Lỗi', detail: 'Không thể xoá cấu hình', life: 3000 }];
-      }
-    );
+    });
   }
 
   fetchData(): void {

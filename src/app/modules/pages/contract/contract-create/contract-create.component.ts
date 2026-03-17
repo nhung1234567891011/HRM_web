@@ -95,7 +95,7 @@ export class ContractCreateComponent implements OnInit {
 
     ngOnInit() {
         this.items = [
-            { label: 'Hành chính', route: '/pages/products/show-product' },
+            { label: 'Hành chính', routerLink: '/pages/products/show-product' },
             { label: 'Thêm hợp đồng' },
         ];
         this.initForm();

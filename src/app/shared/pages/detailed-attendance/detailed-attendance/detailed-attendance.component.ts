@@ -74,7 +74,7 @@ export class DetailedAttendanceComponent implements OnInit {
 
   ngOnInit() {
     this.items = [
-      { label: 'Chấm công', route: '/installation' },
+      { label: 'Chấm công', routerLink: '/installation' },
       { label: 'Chấm công chi tiết' },
     ];
 

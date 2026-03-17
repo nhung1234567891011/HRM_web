@@ -60,7 +60,7 @@ export class DetailKpiComponent implements OnInit {
 
   ngOnInit() {
     this.items = [
-      { label: 'Tính lương', route: '/installation' },
+      { label: 'Tính lương', routerLink: '/installation' },
       { label: 'Bảng chi tiết KPI' },
     ];
 

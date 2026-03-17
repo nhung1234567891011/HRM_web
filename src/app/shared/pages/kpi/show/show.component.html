@@ -7,7 +7,7 @@
                 <strong class="font-size-16">Bảng KPI</strong>
                 <p-breadcrumb
                     [model]="items"
-                    [home]="{ icon: 'pi pi-home' }"
+                    [home]="{ icon: 'pi pi-home', routerLink: '/installation' }"
                 ></p-breadcrumb>
             </div>
             <div class="toast-container">
@@ -49,7 +49,7 @@
                         [field]="'displayName'"
                         [forceSelection]="true"
                         [showClear]="true"
-                        placeholder="Tìm kiếm tên bảng KPI"
+                        placeholder="Tìm kiếm doanh thu hoa hồng"
                         (onSelect)="loadKpiData()"
                         (onClear)="loadKpiData()"
                     >
