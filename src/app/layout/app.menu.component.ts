@@ -497,114 +497,73 @@ export class AppMenuComponent implements OnInit {
                     ...(this.hasPermissionHelper.hasPermissionMain(
                         PermissionConstant.ManagePayrollTable
                     ) ||
-                        this.hasPermissionHelper.hasPermissionMain(
-                            PermissionConstant.ManageKPI
-                        ) ||
-                        this.hasPermissionHelper.hasPermissionMain(
-                            PermissionConstant.ManageSalaryComponents
-                        )
+                    this.hasPermissionHelper.hasPermissionMain(
+                        PermissionConstant.ManageKPI
+                    ) ||
+                    this.hasPermissionHelper.hasPermissionMain(
+                        PermissionConstant.ManageSalaryComponents
+                    )
                         ? [
-                            {
-                                label: 'Tính lương',
-                                icon: 'pi pi-calendar-plus',
-                                items: [
-                                    ...(this.hasPermissionHelper.hasPermissions(
-                                        [
-                                            PermissionConstant.ManageKPI,
-                                            PermissionConstant.ManageKPIView,
-                                        ]
-                                    )
-                                        ? [
-                                            {
-                                                label: 'Dữ liệu KPI',
-                                                icon: 'pi pi-calendar-minus',
-                                                routerLink: ['/kpi'],
-                                            },
-                                        ]
-                                        : []),
                               {
                                   label: 'Tính lương',
                                   icon: 'pi pi-calendar-plus',
                                   items: [
-                                      ...(this.hasPermissionHelper.hasPermissions(
-                                          [
-                                              PermissionConstant.ManageKPI,
-                                              PermissionConstant.ManageKPIView,
-                                          ]
-                                      )
+                                      ...(this.hasPermissionHelper.hasPermissions([
+                                          PermissionConstant.ManageKPI,
+                                          PermissionConstant.ManageKPIView,
+                                      ])
                                           ? [
                                                 {
-                                                    label: 'Doanh thu hoa hồng',
+                                                    label: 'Dữ liệu KPI',
                                                     icon: 'pi pi-calendar-minus',
                                                     routerLink: ['/kpi'],
                                                 },
                                             ]
                                           : []),
-
-                                    ...(this.hasPermissionHelper.hasPermissions(
-                                        [
-                                            PermissionConstant.ManageSalaryComponents,
-                                            PermissionConstant.ManageSalaryComponentsView,
-                                        ]
-                                    )
-                                        ? [
-                                            {
-                                                label: 'Thành phần lương',
-                                                icon: 'pi pi-calendar-minus',
-                                                routerLink: [
-                                                    '/salary-composition',
-                                                ],
-                                            },
-                                            {
-                                                label: 'Hoa hồng doanh thu',
-                                                icon: 'pi pi-calendar-minus',
-                                                routerLink: [
-                                                    '/revenue-commission',
-                                                ],
-                                            },
-                                        ]
-                                        : []),
-
-                                    ...(this.hasPermissionHelper.hasPermissions(
-                                        [
-                                            PermissionConstant.ManagePayrollTable,
-                                            PermissionConstant.ManagePayrollTableView,
-                                        ]
-                                    )
-                                        ? [
-                                            {
-                                                label: 'Bảng lương',
-                                                icon: 'pi pi-calendar-minus',
-                                                routerLink: ['/salary'],
-                                            },
-                                        ]
-                                        : []),
-                                    ...(this.hasPermissionHelper.hasPermissions(
-                                        [
-                                            PermissionConstant.ManagePayrollTable,
-                                            PermissionConstant.ManagePayrollTableView,
-                                        ]
-                                    )
-                                        ? [
-                                            {
-                                                label: 'Bảng lương nhân viên',
-                                                icon: 'pi pi-calendar-minus',
-                                                routerLink: [
-                                                    '/paysheet-employee',
-                                                ],
-                                            },
-                                        ]
-                                        : []),
-                                ],
-                            },
-                        ]
-                        : [
-                            {
-                                label: 'Bảng lương nhân viên',
-                                icon: 'pi pi-calendar-minus',
-                                routerLink: ['/paysheet-employee'],
-                            },
-                        ]),
+                                      ...(this.hasPermissionHelper.hasPermissions([
+                                          PermissionConstant.ManageSalaryComponents,
+                                          PermissionConstant.ManageSalaryComponentsView,
+                                      ])
+                                          ? [
+                                                {
+                                                    label: 'Thành phần lương',
+                                                    icon: 'pi pi-calendar-minus',
+                                                    routerLink: [
+                                                        '/salary-composition',
+                                                    ],
+                                                },
+                                                {
+                                                    label: 'Hoa hồng doanh thu',
+                                                    icon: 'pi pi-calendar-minus',
+                                                    routerLink: [
+                                                        '/revenue-commission',
+                                                    ],
+                                                },
+                                            ]
+                                          : []),
+                                      ...(this.hasPermissionHelper.hasPermissions([
+                                          PermissionConstant.ManagePayrollTable,
+                                          PermissionConstant.ManagePayrollTableView,
+                                      ])
+                                          ? [
+                                                {
+                                                    label: 'Bảng lương',
+                                                    icon: 'pi pi-calendar-minus',
+                                                    routerLink: ['/salary'],
+                                                },
+                                                {
+                                                    label: 'Bảng lương nhân viên',
+                                                    icon: 'pi pi-calendar-minus',
+                                                    routerLink: [
+                                                        '/paysheet-employee',
+                                                    ],
+                                                },
+                                            ]
+                                          : []),
+                                  ],
+                              },
+                          ]
+                        : []),
                 ],
             },
             {

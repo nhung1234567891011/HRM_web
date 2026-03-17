@@ -89,7 +89,7 @@ export class RevenueCommissionComponent implements OnInit {
 
   confirmRemoveTier(event: Event, index: number): void {
     this.confirmationService.confirm({
-      target: event.currentTarget as HTMLElement,
+      header: 'Xác nhận',
       message: 'Chắc chắn xoá bậc hoa hồng này không?',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Xoá',
@@ -206,7 +206,7 @@ export class RevenueCommissionComponent implements OnInit {
   confirmDeletePolicy(event: Event, row: any): void {
     const policyName = row?.organizationName ? ` của đơn vị "${row.organizationName}"` : '';
     this.confirmationService.confirm({
-      target: event.currentTarget as HTMLElement,
+      header: 'Xác nhận',
       message: `Chắc chắn xoá cấu hình hoa hồng${policyName} không?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Xoá',

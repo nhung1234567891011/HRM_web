@@ -4,6 +4,7 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { RevenueCommissionRoutingModule } from './revenue-commission-routing.module';
 import { RevenueCommissionComponent } from './revenue-commission.component';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [RevenueCommissionComponent],
@@ -12,6 +13,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
     RevenueCommissionRoutingModule,
     SharedModule,
     ConfirmPopupModule,
+    ConfirmDialogModule,
   ],
 })
 export class RevenueCommissionModule {}
