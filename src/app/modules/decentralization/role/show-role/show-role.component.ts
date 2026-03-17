@@ -82,7 +82,6 @@ export class ShowRoleComponent implements OnInit {
 		...this.config.paging,
 		organizationId: null,
 		name: null,
-		description: null,
 		sortBy: null,
 		orderBy: null,
 	};
@@ -124,7 +123,6 @@ export class ShowRoleComponent implements OnInit {
 				...params,
 				organizationId: this.queryParameters.organization?.data || null,
 				name: this.queryParameters.name ? this.queryParameters.name.trim() : null,
-				description: this.queryParameters.description ? this.queryParameters.description : null,
 				sortBy: this.queryParameters.sortBy || null,
 				orderBy: this.queryParameters.orderBy || null
 			};
@@ -156,7 +154,6 @@ export class ShowRoleComponent implements OnInit {
 				...params,
 				organizationId: this.queryParameters.organization?.data || null,
 				name: this.queryParameters.name ? this.queryParameters.name.trim() : null,
-				description: this.queryParameters.description ? this.queryParameters.description : null,
 				sortBy: this.queryParameters.sortBy || null,
 				orderBy: this.queryParameters.orderBy || null
 			};
@@ -193,7 +190,6 @@ export class ShowRoleComponent implements OnInit {
 				...params,
 				organizationId: null,
 				name: null,
-				description: null,
 				sortBy: null,
 				orderBy: null
 			};

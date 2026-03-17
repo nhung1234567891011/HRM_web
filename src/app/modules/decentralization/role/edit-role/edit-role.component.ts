@@ -30,7 +30,7 @@ import { PermissionService } from 'src/app/core/services/decentralization/permis
 import { Section, SectionLabel } from 'src/app/core/enums/section.enum';
 import { markAllAsTouched } from 'src/app/core/helpers/validatorHelper';
 @Component({
-	selector: 'app-create-role',
+	selector: 'app-edit-role',
 	standalone: true,
 	imports: [
 		CommonModule,
@@ -91,7 +91,7 @@ export class EditRoleComponent implements OnInit {
 	ngOnInit(): void {
 		this.breadcrumbs = [
 			{ label: 'Danh sách vai trò', routeLink: '/decentralization/role' },
-			{ label: 'Thêm vai trò' },
+			{ label: 'Sửa vai trò' },
 		];
 
 		this.route.paramMap.subscribe((params) => {
