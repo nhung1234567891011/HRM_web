@@ -198,7 +198,7 @@ export class EditComponent {
                         address: response.address,
                         phoneNumber: response.phoneNumber,
                         personalEmail: response.personalEmail,
-                        organizationId: this.organizations,
+                        // organizationId sẽ được bind TreeNode trong loadOrganization()
                         staffPositionId: response.staffPositionId,
                         companyId: response.companyId,
                         staffTitleId: response.staffTitleId,
@@ -451,7 +451,8 @@ export class EditComponent {
     onParentUnitChange(event: any): void {
         const selectedNode = event.node;
         const organizationId = selectedNode ? selectedNode.data : null;
-        this.employeeForm.get('organizationId')?.setValue(organizationId);
+        // TreeSelect cần giữ nguyên TreeNode, nếu set number sẽ bị hiển thị empty
+        this.employeeForm.get('organizationId')?.setValue(selectedNode ?? null);
         this.validateParentUnit();
         console.log('selectNode', selectedNode);
         console.log('changeOrganization', organizationId);
