@@ -1,10 +1,13 @@
 /* General */
-$scale:14px;                    /* main font size */ 
-$borderRadius:4px;             /* border radius of layout element e.g. card, sidebar */ 
-$transitionDuration:.2s;        /* transition duration of layout elements e.g. sidebar, overlay menus */ 
+$scale:14px;
+$borderRadius:4px;
+$transitionDuration:.2s;
 $height: 70px;
 
-$primaryColor: #222247;
+$primaryColor: #1a2a4a;
+$primaryColorLight: #243656;
+$primaryColorDark: #12203a;
+$accentColor: #d4a843;
 
 $textColor: #fff;
 $whiteColor: #fff;

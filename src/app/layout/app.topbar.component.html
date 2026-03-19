@@ -1,7 +1,7 @@
 <p-confirmDialog />
 <div class="layout-topbar">
     <a class="layout-topbar-logo" [routerLink]="['/']">
-        <img src="assets\image\logospin.png" /> SMO HRM
+        <img src="assets/image/logo.png" alt="EUCHOICE" />
     </a>
 
     <button
@@ -11,7 +11,7 @@
     >
         <i class="pi pi-bars"></i>
     </button>
-    <p-dropdown
+    <!-- <p-dropdown
         class="ml-5"
         [options]="departments"
         optionLabel="label"
@@ -21,7 +21,7 @@
         placeholder="Chọn phòng ban"
         [style]="{ width: '100%' }"
     >
-    </p-dropdown>
+    </p-dropdown> -->
     <span
         class="ml-5"
         *ngIf="selectedDepartment"
@@ -62,7 +62,7 @@
     >
         <div style="display: flex" class="box-user" *ngIf="userCurrent != null">
             <div class="button-out-in">
-                <p-button
+                <!-- <p-button
                     label="Danh sách dự án"
                     [outlined]="true"
                     (click)="listProjectByEmployeeComponent.showDialog()"
@@ -70,7 +70,6 @@
                 <button class="dropdown-button" (click)="showMenu = !showMenu">
                     <i class="pi pi-plus-circle"></i>
                     <span class="ml-2 me-2">Thêm công việc</span>
-                    <!-- <i class="pi pi-caret-down"></i> -->
                 </button>
                 <div *ngIf="showMenu" class="dropdown-content">
                     <div class="dropdown-job-info-header"></div>
@@ -90,19 +89,19 @@
                         <i class="me-2 pi pi-folder"></i>
                         <span> Thêm phòng ban </span>
                     </span>
-                </div>
+                </div> -->
                 <button
-                    class="btn cham-vao font-semibold"
+                    class="btn-checkin font-semibold"
                     (click)="handleCheckInOut('chamVao', $event)"
                     >
-                    <!-- [disabled]="isDisabled('chamVao')" -->
+                    <i class="pi pi-sign-in"></i>
                     Chấm vào
                 </button>
                 <button
-                    class="btn cham-ra font-semibold"
+                    class="btn-checkout font-semibold"
                     (click)="handleCheckInOut('chamRa', $event)"
                     >
-                    <!-- [disabled]="isDisabled('chamRa')" -->
+                    <i class="pi pi-sign-out"></i>
                     Chấm ra
                 </button>
             </div>
@@ -247,7 +246,7 @@
                         <div class="user-email">{{ userCurrent.email }}</div>
                     </div>
                 </div>
-                <div class="user-company-info">SMO Media</div>
+                <div class="user-company-info">EUCHOICE</div>
 
                 <ul class="user-info-list">
                     <li class="user-info-item" (click)="handleOpenInfoDialog()">

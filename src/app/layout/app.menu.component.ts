@@ -648,36 +648,36 @@ export class AppMenuComponent implements OnInit {
                         : []),
                 ],
             },
-            {
-                label: '',
-                items: [
-                    ...(this.hasPermissionHelper.hasPermissionMain(
-                        PermissionConstant.Admin
-                    ) ||
-                        this.hasPermissionHelper.hasPermissionMain(
-                            PermissionConstant.Master
-                        )
-                        ? [
-                            {
-                                label: 'Công việc',
-                                icon: 'pi pi-briefcase',
-                                items: [
-                                    {
-                                        label: 'Tổng quan',
-                                        icon: 'pi pi-users',
-                                        routerLink: ['/overview'],
-                                    },
-                                    {
-                                        label: 'Quản lý công việc theo lịch',
-                                        icon: 'pi pi-users',
-                                        routerLink: ['/work-calendar'],
-                                    },
-                                ],
-                            },
-                        ]
-                        : []),
-                ],
-            },
+            // {
+            //     label: '',
+            //     items: [
+            //         ...(this.hasPermissionHelper.hasPermissionMain(
+            //             PermissionConstant.Admin
+            //         ) ||
+            //             this.hasPermissionHelper.hasPermissionMain(
+            //                 PermissionConstant.Master
+            //             )
+            //             ? [
+            //                 {
+            //                     label: 'Công việc',
+            //                     icon: 'pi pi-briefcase',
+            //                     items: [
+            //                         {
+            //                             label: 'Tổng quan',
+            //                             icon: 'pi pi-users',
+            //                             routerLink: ['/overview'],
+            //                         },
+            //                         {
+            //                             label: 'Quản lý công việc theo lịch',
+            //                             icon: 'pi pi-users',
+            //                             routerLink: ['/work-calendar'],
+            //                         },
+            //                     ],
+            //                 },
+            //             ]
+            //             : []),
+            //     ],
+            // },
         ];
     }
 }

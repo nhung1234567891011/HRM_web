@@ -728,20 +728,6 @@ export class AppTopBarComponent implements OnInit {
 
     projects: any = [];
     selectedProject: any = null;
-    handleRedirectDepartment(event: any) {
-        if (event.value == null) {
-            this.projects = [];
-            this.router.navigate(['']);
-        } else {
-            this.projects = this.departments.find(
-                (x) => x.value == event.value
-            ).projects;
-            this.router.navigate([
-                '/department/container-view-department',
-                event.value,
-            ]);
-        }
-    }
 
     handleRedirectProject(event: any) {
         if (event.value == null) {
