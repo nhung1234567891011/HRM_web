@@ -78,8 +78,9 @@ export class CreateComponent implements OnInit {
     }
     ngOnInit() {
         this.items = [
-            { label: 'Danh sách vị trí', routeLink: '/staff-position' },
-            { label: 'Thêm mới vị trí nhân sự' },
+            { label: 'Hệ thống' },
+            { label: 'Vị trí', routerLink: '/staff-position' },
+            { label: 'Thêm mới' },
         ];
 
         this.cities = [

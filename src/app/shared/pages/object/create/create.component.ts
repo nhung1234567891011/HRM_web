@@ -110,8 +110,9 @@ export class CreateComponent implements OnInit {
     this.accountStatus = emailstatus.NotSend;
 
     this.items = [
-      { label: 'Danh sách vị trí', routeLink: '/staff-position' },
-      { label: 'Thêm mới vị trí nhân sự' },
+      { label: 'Hệ thống' },
+      { label: 'Đối tượng', routerLink: '/object' },
+      { label: 'Thêm mới' },
     ];
 
     this.loadOrganization();

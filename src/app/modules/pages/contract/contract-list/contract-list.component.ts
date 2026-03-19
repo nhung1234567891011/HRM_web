@@ -60,7 +60,7 @@ export class ContractListComponent implements OnInit {
 
     ngOnInit() {
         this.items = [
-            { label: 'Thông tin nhân sự', routerLink: '/installation' },
+            { label: 'Thông tin nhân sự' },
             { label: 'Hợp đồng' },
         ];
 

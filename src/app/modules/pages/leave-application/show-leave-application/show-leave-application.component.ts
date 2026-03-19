@@ -128,11 +128,8 @@ export class ShowLeaveApplicationComponent implements OnInit {
 
     ngOnInit(): void {
         this.breadcrumbs = [
-            {
-                label: 'Danh sách đơn xin nghỉ',
-                routeLink: '/leave-application',
-            },
-            { label: 'Danh sách' },
+            { label: 'Đơn từ' },
+            { label: 'Đơn xin nghỉ' },
         ];
         this.statuses = [
             { label: 'Chọn trạng thái', value: null },

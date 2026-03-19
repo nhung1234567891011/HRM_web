@@ -40,7 +40,7 @@ export class ReportMonthlyIncomeComponent implements OnInit {
 
     ngOnInit(): void {
         this.items = [
-            { label: 'Báo cáo thống kê', routerLink: '/statistical-report' },
+            { label: 'Báo cáo thống kê' },
             { label: 'Báo cáo tổng hợp thu nhập' },
         ];
         const currentYear = new Date().getFullYear();

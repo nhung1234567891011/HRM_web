@@ -82,7 +82,11 @@ export class CreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.items = [{ label: 'Thêm bảng lương' }];
+        this.items = [
+            { label: 'Tính lương' },
+            { label: 'Bảng lương', routerLink: '/payroll/salary' },
+            { label: 'Thêm mới' },
+        ];
         this.getOrganizations();
         this.getStaffPosition();
         this.loadTimesheetDetail();

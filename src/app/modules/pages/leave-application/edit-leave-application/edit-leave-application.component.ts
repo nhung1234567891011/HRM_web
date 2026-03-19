@@ -136,11 +136,9 @@ export class EditLeaveApplicationComponent implements OnInit {
     }
     ngOnInit(): void {
         this.breadcrumbs = [
-            {
-                label: 'Danh sách đơn xin nghỉ',
-                routeLink: '/leave-application',
-            },
-            { label: 'Cập nhật đơn xin nghị' },
+            { label: 'Đơn từ' },
+            { label: 'Đơn xin nghỉ', routerLink: '/leave-application' },
+            { label: 'Cập nhật' },
         ];
 
         //get data

@@ -90,8 +90,9 @@ export class EditRoleComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.breadcrumbs = [
-			{ label: 'Danh sách vai trò', routeLink: '/decentralization/role' },
-			{ label: 'Sửa vai trò' },
+			{ label: 'Quyền hạn' },
+			{ label: 'Vai trò/Nhóm quyền', routerLink: '/decentralization/role' },
+			{ label: 'Chỉnh sửa' },
 		];
 
 		this.route.paramMap.subscribe((params) => {

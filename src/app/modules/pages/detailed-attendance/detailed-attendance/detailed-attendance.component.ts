@@ -72,10 +72,10 @@ export class DetailedAttendanceComponent implements OnInit {
 
 
   ngOnInit() {
-    this.items = [
-      { label: 'Chấm công', routerLink: '/installation' },
-      { label: 'Chấm công chi tiết' },
-    ];
+        this.items = [
+            { label: 'Chấm công' },
+            { label: 'Chấm công chi tiết' },
+        ];
 
     this.currentMonthYear = new Date(); // Tháng năm hiện tại
     this.initForm();

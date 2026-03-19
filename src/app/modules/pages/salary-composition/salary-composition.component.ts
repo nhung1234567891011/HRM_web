@@ -179,7 +179,10 @@ export class SalaryCompositionComponent implements OnInit {
             this.listCompany();
             this.getAllEmployee(this.pageIndex, this.pageSize);
         });
-        this.items = [{ label: 'Vị trí nhân sự' }];
+        this.items = [
+            { label: 'Tính lương' },
+            { label: 'Thành phần lương' },
+        ];
         this.listheaderTable = [
             { name: 'Mã thành phần ', status: true, code: 1 },
             { name: 'Tên thành phần', status: true, code: 1 },

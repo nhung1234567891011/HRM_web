@@ -126,7 +126,10 @@ export class ShowComponent implements OnInit {
 
     @ViewChild(CreateComponent) createComponent!: CreateComponent;
     ngOnInit() {
-        this.items = [{ label: 'Danh sách lương' }];
+        this.items = [
+            { label: 'Tính lương' },
+            { label: 'Bảng lương' },
+        ];
         this.getOrganizations();
         this.route.queryParams.subscribe((params) => {
             const request = {

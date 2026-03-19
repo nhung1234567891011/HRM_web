@@ -122,8 +122,8 @@ export class ShowTimeSheetComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.breadcrumbs = [
-			{ label: 'Danh sách bảng chấm công', routeLink: '/time-sheet' },
-			{ label: 'Danh sách' },
+			{ label: 'Bảng công' },
+			{ label: 'Danh sách bảng công' },
 		];
 
 		this.route.queryParams.subscribe((params) => {

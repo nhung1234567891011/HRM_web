@@ -100,8 +100,9 @@ export class DetailSummaryTimesheetComponent implements OnInit {
 
     ngOnInit() {
         this.items = [
-            { label: 'Chấm công', routerLink: '/installation' },
-            { label: 'Bảng chi tiết chấm công tổng hợp' },
+            { label: 'Chấm công' },
+            { label: 'Chấm công tổng hợp', routerLink: '/general-timekeep' },
+            { label: 'Chi tiết' },
         ];
 
         this.initForm();

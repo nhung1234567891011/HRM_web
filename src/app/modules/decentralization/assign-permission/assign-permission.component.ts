@@ -118,8 +118,8 @@ export class AssignPermissionComponent implements OnInit {
 
     ngOnInit(): void {
         this.breadcrumbs = [
-            { label: 'Gán quyền', routeLink: '/decentralization/permission' },
-            { label: 'Gán quyền cho nhân viên' },
+            { label: 'Quyền hạn' },
+            { label: 'Gán quyền' },
         ];
         this.route.queryParams.subscribe((params) => {
             const request = {

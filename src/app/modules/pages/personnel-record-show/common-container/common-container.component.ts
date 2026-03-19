@@ -43,8 +43,9 @@ export class CommonContainerComponent implements OnInit {
         });
 
         this.items = [
-            { label: 'Danh sách hồ sơ', routeLink: '/profile' },
-            { label: 'Chi tiết hồ sơ' },
+            { label: 'Thông tin nhân sự' },
+            { label: 'Hồ sơ', routerLink: '/profile' },
+            { label: 'Chi tiết' },
         ];
         this.id = +this.router1.snapshot.paramMap.get('id')!;
         const request = { Id: this.id };

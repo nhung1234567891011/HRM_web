@@ -70,7 +70,11 @@ export class OrganiStructCreateComponent implements OnInit {
           private messageService: MessageService
     ) {}
     ngOnInit() {
-        this.items = [{ label: 'Thêm cơ cấu tổ chức' }];
+        this.items = [
+            { label: 'Hệ thống' },
+            { label: 'Cơ cấu tổ chức', routerLink: '/organizational-structure/show' },
+            { label: 'Thêm mới' },
+        ];
         this.listAllOrganiStruct();
         this.getAllEmployee();
         this.listOrganitype();

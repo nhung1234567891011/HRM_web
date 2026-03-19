@@ -57,7 +57,8 @@ export class DetailLeaveApplicationComponent implements OnInit {
     ngOnInit(): void {
 
         this.breadcrumbs = [
-            { label: 'Chi tiết đơn xin nghỉ', routeLink: '/leave-application' },
+            { label: 'Đơn từ' },
+            { label: 'Đơn xin nghỉ', routerLink: '/leave-application' },
             { label: 'Chi tiết' },
         ];
 

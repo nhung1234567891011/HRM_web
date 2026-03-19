@@ -41,8 +41,9 @@ export class UpdateCommonContainerComponent implements OnInit {
 		});
 	
 		this.items = [
-			{ label: 'Danh sách hồ sơ', routeLink: '/profile' },
-			{ label: 'Sửa thông tin hồ sơ' },
+			{ label: 'Thông tin nhân sự' },
+			{ label: 'Hồ sơ', routerLink: '/profile' },
+			{ label: 'Chỉnh sửa' },
 		];
 	}
 

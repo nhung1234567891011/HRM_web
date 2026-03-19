@@ -102,8 +102,9 @@ export class ContractUpdateComponent {
 
     ngOnInit() {
         this.items = [
-            { label: 'Hành chính', routerLink: '/pages/products/show-product' },
-            { label: 'Chỉnh sửa hợp đồng' },
+            { label: 'Thông tin nhân sự' },
+            { label: 'Hợp đồng', routerLink: '/contract/show' },
+            { label: 'Chỉnh sửa' },
         ];
         this.CallSnaphot();
         this.getContractById();

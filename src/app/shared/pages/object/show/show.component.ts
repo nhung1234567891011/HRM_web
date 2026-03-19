@@ -207,7 +207,10 @@ export class ShowComponent implements OnInit {
         this.authService.userCurrent.subscribe((user) => {
             this.idoraganization = user.organization.id;
         });
-        this.items = [{ label: 'Vị trí nhân sự' }];
+        this.items = [
+            { label: 'Hệ thống' },
+            { label: 'Đối tượng' },
+        ];
         this.route.queryParams.subscribe((params) => {
             const request = {
                 ...params,

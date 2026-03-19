@@ -42,8 +42,9 @@ export class CommonContainerComponent implements OnInit {
 		});
 	
 		this.items = [
-			{ label: 'Danh sách hồ sơ', routeLink: '/profile' },
-			{ label: 'Thêm mới hồ sơ' },
+			{ label: 'Thông tin nhân sự' },
+			{ label: 'Hồ sơ', routerLink: '/profile' },
+			{ label: 'Thêm mới' },
 		];
 	}
 

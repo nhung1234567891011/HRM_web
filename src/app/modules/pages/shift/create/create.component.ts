@@ -128,8 +128,9 @@ export class CreateComponent implements OnInit {
     }
     ngOnInit() {
         this.items = [
-            { label: 'Ca làm việc', routeLink: '/staff-position' },
-            { label: 'Thiết lập ca' },
+            { label: 'Ca làm việc' },
+            { label: 'Danh sách ca', routerLink: '/shift' },
+            { label: 'Thêm mới' },
         ];
         const currentYear = new Date().getFullYear();
         this.date = new Date(currentYear, 0); // Tạo ngày 1/1 của năm hiện tại

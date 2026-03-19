@@ -73,7 +73,10 @@ export class ShowComponent implements OnInit {
     };
 
     ngOnInit() {
-        this.items = [{ label: 'Vị trí nhân sự' }];
+        this.items = [
+            { label: 'Tính lương' },
+            { label: 'Thành phần lương' },
+        ];
         this.route.queryParams.subscribe((params) => {
             const request = {
                 ...params,

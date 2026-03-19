@@ -39,9 +39,9 @@ export class CommonContainerComponent {
       
     });
     this.items = [
-			{ label: 'Danh sách hồ sơ', routeLink: '/profile' },
-			{ label: 'Thêm mới hồ sơ' },
-		];
+            { label: 'Thiết lập' },
+            { label: 'Quy định chấm công' },
+        ];
 
    
 

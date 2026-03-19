@@ -143,8 +143,9 @@ export class CreateComponent implements OnInit {
 
     ngOnInit() {
         this.items = [
-            { label: 'Ca làm việc', routeLink: '/staff-position' },
-            { label: 'Thiết lập phân ca' },
+            { label: 'Ca làm việc' },
+            { label: 'Phân ca', routerLink: '/shift-scheduling' },
+            { label: 'Thêm mới' },
         ];
         let date = new Date();
         this.date = new Date();

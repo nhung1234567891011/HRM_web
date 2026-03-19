@@ -143,10 +143,8 @@ export class CreateLeaveApplicationComponent implements OnInit {
 
         //
         this.breadcrumbs = [
-            {
-                label: 'Danh sách đơn xin nghỉ',
-                routeLink: '/leave-application',
-            },
+            { label: 'Đơn từ' },
+            { label: 'Đơn xin nghỉ', routerLink: '/leave-application' },
             { label: 'Tạo mới' },
         ];
 

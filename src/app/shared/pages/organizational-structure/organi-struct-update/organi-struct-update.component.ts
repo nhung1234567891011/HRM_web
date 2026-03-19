@@ -76,7 +76,11 @@ export class OrganiStructUpdateComponent {
          private messageService: MessageService
     ) {}
     ngOnInit() {
-        this.items = [{ label: 'Cập nhật cơ cấu tổ chức' }];
+        this.items = [
+            { label: 'Hệ thống' },
+            { label: 'Cơ cấu tổ chức', routerLink: '/organizational-structure/show' },
+            { label: 'Cập nhật' },
+        ];
         this.authService.userCurrent.subscribe((user) => {
             this.idoraganization = user.organization.id})
         this.listAllOrganiStruct();

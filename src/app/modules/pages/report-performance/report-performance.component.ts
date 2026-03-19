@@ -61,7 +61,7 @@ export class ReportPerformanceComponent implements OnInit {
 
     ngOnInit(): void {
         this.items = [
-            { label: 'Báo cáo thống kê', routerLink: '/statistical-report' },
+            { label: 'Báo cáo thống kê' },
             { label: 'Báo cáo hiệu suất' },
         ];
         const currentYear = new Date().getFullYear();

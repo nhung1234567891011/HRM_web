@@ -151,11 +151,8 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.breadcrumbs = [
-			{
-				label: 'Danh sách đơn xin nghỉ',
-				routeLink: '/leave-application',
-			},
-			{ label: 'Duyệt đơn' },
+			{ label: 'Đơn từ' },
+			{ label: 'Duyệt đơn xin nghỉ' },
 		];
 		this.statuses = [
 			{ label: 'Chọn trạng thái', value: null },

@@ -88,8 +88,9 @@ export class CreateRoleComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.breadcrumbs = [
-			{ label: 'Danh sách vai trò', routeLink: '/decentralization/role' },
-			{ label: 'Thêm vai trò' },
+			{ label: 'Quyền hạn' },
+			{ label: 'Vai trò/Nhóm quyền', routerLink: '/decentralization/role' },
+			{ label: 'Thêm mới' },
 		];
 		const request = {
 			pageIndex: 1,

@@ -541,8 +541,9 @@ export class ContactInformationComponent {
                 });
         });
         this.items = [
-            { label: 'Danh sách hồ sơ', routeLink: '/profile' },
-            { label: 'Thêm mới hồ sơ' },
+            { label: 'Thông tin nhân sự' },
+            { label: 'Hồ sơ', routerLink: '/profile' },
+            { label: 'Thêm mới' },
         ];
         // this.cities = [{ name: 'Việt Nam', code: 'VN' }];
         this.loadPositionGroups();

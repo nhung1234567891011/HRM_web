@@ -43,7 +43,7 @@ export class ReportHrDistributionComponent implements OnInit {
 
     ngOnInit(): void {
         this.items = [
-            { label: 'Báo cáo thống kê', routerLink: '/statistical-report' },
+            { label: 'Báo cáo thống kê' },
             { label: 'Báo cáo phân bổ nhân sự' },
         ];
         this.getOrganizations();

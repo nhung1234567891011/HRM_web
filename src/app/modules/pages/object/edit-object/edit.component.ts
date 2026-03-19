@@ -236,8 +236,9 @@ export class EditComponent {
         ];
 
         this.items = [
-            { label: 'Danh sách vị trí', routeLink: '/staff-position' },
-            { label: 'Thêm mới vị trí nhân sự' },
+            { label: 'Hệ thống' },
+            { label: 'Đối tượng', routerLink: '/object' },
+            { label: 'Chỉnh sửa' },
         ];
 
         this.loadPositionGroups();

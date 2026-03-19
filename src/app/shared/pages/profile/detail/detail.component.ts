@@ -10,8 +10,9 @@ export class DetailComponent implements OnInit {
     profile: any;
     constructor() {
         this.items = [
-            { label: 'Danh sách hồ sơ' },
-            { label: 'Chi tiết hồ sơ' },
+            { label: 'Thông tin nhân sự' },
+            { label: 'Hồ sơ', routerLink: '/profile' },
+            { label: 'Chi tiết' },
         ];
     }
 

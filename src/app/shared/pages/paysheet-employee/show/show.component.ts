@@ -95,7 +95,10 @@ export class ShowComponent implements OnInit {
 
     // @ViewChild(CreateComponent) createComponent!: CreateComponent;
     ngOnInit() {
-        this.items = [{ label: 'Bảng lương nhân viên' }];
+        this.items = [
+            { label: 'Tính lương' },
+            { label: 'Bảng lương nhân viên' },
+        ];
         this.currentYear = new Date().getFullYear();
         this.getOrganizations();
         this.authService.userCurrent.subscribe((user) => {

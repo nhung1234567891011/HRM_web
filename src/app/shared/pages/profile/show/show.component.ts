@@ -139,7 +139,10 @@ export class ShowComponent implements OnInit {
             },
         };
 
-        this.items = [{ label: 'Danh sách hồ sơ' }];
+        this.items = [
+            { label: 'Thông tin nhân sự' },
+            { label: 'Hồ sơ' },
+        ];
     }
 
     getAttributeNames(data: any[]): string[] {

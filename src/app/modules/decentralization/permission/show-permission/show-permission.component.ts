@@ -116,8 +116,8 @@ export class ShowPermissionComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.breadcrumbs = [
-			{ label: 'Danh sách quyền hạn', routeLink: '/decentralization/permission' },
-			{ label: 'Danh sách' },
+			{ label: 'Quyền hạn' },
+			{ label: 'Quyền' },
 		];
 		this.route.queryParams.subscribe((params) => {
 			const keyword = params['keyword'] ? String(params['keyword']).trim() : null;

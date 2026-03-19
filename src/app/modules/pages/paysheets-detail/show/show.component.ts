@@ -207,7 +207,8 @@ export class ShowComponent implements OnInit {
     ngOnInit() {
         this.items = [
             { label: 'Tính lương' },
-            { label: 'Bảng lương chi tiết' },
+            { label: 'Bảng lương', routerLink: '/payroll/salary' },
+            { label: 'Chi tiết' },
         ];
         // Đảm bảo cột Hoa hồng, BHXH, Quỹ công đoàn luôn có trong danh sách hiển thị
         const keysSet = new Set(this.selectedColumnKeys);

@@ -39,8 +39,8 @@ export class RegulationsCommonComponent {
         
       });
       this.items = [
-        { label: 'Danh sách hồ sơ', routeLink: '/profile' },
-        { label: 'Thêm mới hồ sơ' },
+        { label: 'Thiết lập' },
+        { label: 'Quy định nghỉ' },
       ];
   
      

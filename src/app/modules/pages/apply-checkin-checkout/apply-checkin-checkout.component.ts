@@ -117,7 +117,7 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
 
   ngOnInit() {
     this.items = [
-      { label: 'Đơn từ', routerLink: '/installation' },
+      { label: 'Đơn từ' },
       { label: 'Đơn xin CheckIn/CheckOut' },
     ];
 

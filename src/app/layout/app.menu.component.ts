@@ -516,7 +516,7 @@ export class AppMenuComponent implements OnInit {
                                                 {
                                                     label: 'Dữ liệu KPI',
                                                     icon: 'pi pi-calendar-minus',
-                                                    routerLink: ['/kpi'],
+                                                    routerLink: ['/payroll/kpi'],
                                                 },
                                             ]
                                           : []),
@@ -529,14 +529,14 @@ export class AppMenuComponent implements OnInit {
                                                     label: 'Thành phần lương',
                                                     icon: 'pi pi-calendar-minus',
                                                     routerLink: [
-                                                        '/salary-composition',
+                                                        '/payroll/salary-composition',
                                                     ],
                                                 },
                                                 {
                                                     label: 'Hoa hồng doanh thu',
                                                     icon: 'pi pi-calendar-minus',
                                                     routerLink: [
-                                                        '/revenue-commission',
+                                                        '/payroll/revenue-commission',
                                                     ],
                                                 },
                                             ]
@@ -549,13 +549,13 @@ export class AppMenuComponent implements OnInit {
                                                 {
                                                     label: 'Bảng lương',
                                                     icon: 'pi pi-calendar-minus',
-                                                    routerLink: ['/salary'],
+                                                    routerLink: ['/payroll/salary'],
                                                 },
                                                 {
                                                     label: 'Bảng lương nhân viên',
                                                     icon: 'pi pi-calendar-minus',
                                                     routerLink: [
-                                                        '/paysheet-employee',
+                                                        '/payroll/paysheet-employee',
                                                     ],
                                                 },
                                             ]

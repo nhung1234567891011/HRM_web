@@ -103,8 +103,8 @@ export class ShowRoleComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.breadcrumbs = [
-			{ label: 'Danh sách vai trò', routeLink: '/decentralization/role' },
-			{ label: 'Danh sách' },
+			{ label: 'Quyền hạn' },
+			{ label: 'Vai trò/Nhóm quyền' },
 		];
 
 		this.route.queryParams.subscribe((params) => {

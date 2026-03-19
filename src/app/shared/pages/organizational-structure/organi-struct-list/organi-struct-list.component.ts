@@ -47,7 +47,7 @@ export class OrganiStructListComponent implements OnInit {
 
   ngOnInit() {
     this.items = [
-      { label: 'Hệ thống', routerLink: '/installation' },
+      { label: 'Hệ thống' },
       { label: 'Cơ cấu tổ chức' },
     ];
     this.loadOrganizationData();

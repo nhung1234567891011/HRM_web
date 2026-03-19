@@ -60,8 +60,8 @@ export class RevenueCommissionComponent implements OnInit {
 
   ngOnInit(): void {
     this.items = [
-      { label: 'Tính lương', routerLink: '/installation' },
-      { label: 'Cấu hình hoa hồng doanh thu' },
+      { label: 'Tính lương' },
+      { label: 'Hoa hồng doanh thu' },
     ];
 
     this.getOrganizations();

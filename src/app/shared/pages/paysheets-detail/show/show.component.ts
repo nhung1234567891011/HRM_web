@@ -158,7 +158,8 @@ export class ShowComponent implements OnInit {
     ngOnInit() {
         this.items = [
             { label: 'Tính lương' },
-            { label: 'Bảng lương chi tiết' },
+            { label: 'Bảng lương', routerLink: '/payroll/salary' },
+            { label: 'Chi tiết' },
         ];
         // Lấy dữ liệu từ `state`
         this.route.queryParams.subscribe((params) => {

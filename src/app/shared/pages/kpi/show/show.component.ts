@@ -65,8 +65,8 @@ export class ShowComponent implements OnInit {
 
     ngOnInit() {
         this.items = [
-            { label: 'Tính lương', routerLink: '/installation' },
-            { label: 'Chính sách lương' },
+            { label: 'Tính lương' },
+            { label: 'Dữ liệu KPI' },
         ];
         this.initForm();
         this.loadKpiData();

@@ -48,6 +48,7 @@ import { EditLeaveApplicationComponent } from './modules/pages/leave-application
                                     'src/app/modules/pages/staff-position/create/create.module'
                                 ).then((m) => m.CreateModule),
                         },
+                        // Nhóm route cũ cho KPI (giữ lại để không gãy link)
                         {
                             path: 'kpi',
                             canActivate: [PermissionGuard],
@@ -677,59 +678,103 @@ import { EditLeaveApplicationComponent } from './modules/pages/leave-application
                                     'src/app/modules/pages/payroll-employeee/detail/detail.module'
                                 ).then((m) => m.DetailModule),
                         },
+                        // Nhóm route mới dạng cây cho Tính lương: /payroll/...
                         {
-                            path: 'salary-composition',
-                            canActivate: [PermissionGuard],
-                            data: {
-                                requiredPermissions: [
-                                    PermissionConstant.ManageSalaryComponentsView,
-                                ],
-                            },
-                            loadChildren: () =>
-                                import(
-                                    'src/app/modules/pages/salary-composition/salary-composition.module'
-                                ).then((m) => m.SalaryCompositionModule),
-                        },
-
-                        {
-                            path: 'revenue-commission',
-                            canActivate: [PermissionGuard],
-                            data: {
-                                requiredPermissions: [
-                                    PermissionConstant.ManageSalaryComponentsView,
-                                ],
-                            },
-                            loadChildren: () =>
-                                import(
-                                    'src/app/modules/pages/revenue-commission/revenue-commission.module'
-                                ).then((m) => m.RevenueCommissionModule),
-                        },
-
-                        {
-                            path: 'salary',
-                            canActivate: [PermissionGuard],
-                            data: {
-                                requiredPermissions: [
-                                    PermissionConstant.ManagePayrollTableView,
-                                ],
-                            },
-                            loadChildren: () =>
-                                import(
-                                    'src/app/modules/pages/salary/show/show.module'
-                                ).then((m) => m.ShowModule),
-                        },
-                        {
-                            path: 'salary/create',
-                            canActivate: [PermissionGuard],
-                            data: {
-                                requiredPermissions: [
-                                    PermissionConstant.ManagePayrollTableCreate,
-                                ],
-                            },
-                            loadChildren: () =>
-                                import(
-                                    'src/app/modules/pages/salary/create/create.module'
-                                ).then((m) => m.CreateModule),
+                            path: 'payroll',
+                            children: [
+                                {
+                                    path: 'kpi',
+                                    canActivate: [PermissionGuard],
+                                    data: {
+                                        requiredPermissions: [
+                                            PermissionConstant.ManageKPIView,
+                                        ],
+                                    },
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/kpi/show/show.module'
+                                        ).then((m) => m.ShowModule),
+                                },
+                                {
+                                    path: 'kpi/:id',
+                                    canActivate: [PermissionGuard],
+                                    data: {
+                                        requiredPermissions: [
+                                            PermissionConstant.ManageKPIEdit,
+                                        ],
+                                    },
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/kpi/detail-kpi/detail-kpi.module'
+                                        ).then((m) => m.DetailKpiModule),
+                                },
+                                {
+                                    path: 'salary-composition',
+                                    canActivate: [PermissionGuard],
+                                    data: {
+                                        requiredPermissions: [
+                                            PermissionConstant.ManageSalaryComponentsView,
+                                        ],
+                                    },
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/salary-composition/salary-composition.module'
+                                        ).then((m) => m.SalaryCompositionModule),
+                                },
+                                {
+                                    path: 'revenue-commission',
+                                    canActivate: [PermissionGuard],
+                                    data: {
+                                        requiredPermissions: [
+                                            PermissionConstant.ManageSalaryComponentsView,
+                                        ],
+                                    },
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/revenue-commission/revenue-commission.module'
+                                        ).then((m) => m.RevenueCommissionModule),
+                                },
+                                {
+                                    path: 'salary',
+                                    canActivate: [PermissionGuard],
+                                    data: {
+                                        requiredPermissions: [
+                                            PermissionConstant.ManagePayrollTableView,
+                                        ],
+                                    },
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/salary/show/show.module'
+                                        ).then((m) => m.ShowModule),
+                                },
+                                {
+                                    path: 'salary/create',
+                                    canActivate: [PermissionGuard],
+                                    data: {
+                                        requiredPermissions: [
+                                            PermissionConstant.ManagePayrollTableCreate,
+                                        ],
+                                    },
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/salary/create/create.module'
+                                        ).then((m) => m.CreateModule),
+                                },
+                                {
+                                    path: 'paysheet-employee',
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/paysheet-employee/show/show.module'
+                                        ).then((m) => m.ShowModule),
+                                },
+                                {
+                                    path: 'paysheet-detail/:id',
+                                    loadChildren: () =>
+                                        import(
+                                            'src/app/modules/pages/paysheets-detail/show/show.module'
+                                        ).then((m) => m.ShowModule),
+                                },
+                            ],
                         },
                         {
                             path: 'overview',

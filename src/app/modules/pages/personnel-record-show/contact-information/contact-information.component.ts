@@ -233,8 +233,9 @@ export class ContactInformationComponent {
         };
         this.getById(resquest);
         this.items = [
-            { label: 'Danh sách hồ sơ', routeLink: '/profile' },
-            { label: 'Thêm mới hồ sơ' },
+            { label: 'Thông tin nhân sự' },
+            { label: 'Hồ sơ', routerLink: '/profile' },
+            { label: 'Chi tiết' },
         ];
         this.loadPositionGroups();
         this.loadPosition();

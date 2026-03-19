@@ -120,8 +120,9 @@ export class EditComponent implements OnInit {
     }
     ngOnInit() {
         this.items = [
-            { label: 'Ca làm việc', routeLink: '/staff-position' },
-            { label: 'Thiết lập ca' },
+            { label: 'Ca làm việc' },
+            { label: 'Phân ca', routerLink: '/shift-scheduling' },
+            { label: 'Chỉnh sửa' },
         ];
         let date = new Date();
         this.date = new Date();
