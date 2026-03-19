@@ -1,87 +1,203 @@
-// // tny 
-// @import url("assets/template/css/bootstrap.css");
-// @import url("assets/template/css/app.css");
-// @import url("assets/template/css/custom.css");
-
-
-// tny 
-@import url("../../../../assets/template/css/bootstrap.css");
-@import url("../../../../assets/template/css/app.css");
-@import url("../../../../assets/template/css/custom.css");
-
-.btn-primary {
-    color: #fff;
-    background-color: #2A2A86;
-    border-color: #2A2A86;
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
-.custom-control-label::after {
-    background-color: #2A2A86;
-    border-color: #2A2A86;
-    border-radius: 2px;
-}
-
-.authentication-page-content {
-    height: 70vh;
-    display: flex;
-}
-.max-vw-100 {
-    max-width: 100vw;
-}
-.ml-100{
-    margin-left: 80%;
-    margin-bottom: 20px;
-}
-
-// footer
-.icon {
-    color: #2A2A86;
-}
-
-.support-chat {
+.login-wrapper {
     position: relative;
-    background-color: #2A2A86;
-    color: white;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    animation: shake 1.5s infinite;
 }
 
-.support-chat:hover {
-    animation: none;
-}
+.login-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
 
-@keyframes shake {
-    0%, 100% {
-        transform: translateX(0);
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    25% {
-        transform: translateX(-3px);
-    }
-
-    50% {
-        transform: translateX(3px);
-    }
-
-    75% {
-        transform: translateX(-3px);
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
     }
 }
 
-.support-item {
+.login-card {
+    position: relative;
+    z-index: 1;
+    width: 420px;
+    max-width: 92vw;
+    padding: 40px 36px 28px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.logo-row {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
-.support-hotline {
-    font-weight: bold;
-    font-size: 1rem;
-} 
+.logo-img {
+    height: 52px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a3a6b;
+    letter-spacing: 1.5px;
+}
+
+.company-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a3a6b;
+    margin: 0;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-group-custom {
+    position: relative;
+
+    .input-icon {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        color: #8a9ab5;
+        font-size: 16px;
+        z-index: 1;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px 14px 12px 42px;
+        border: 1px solid #d0d7e2;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #333;
+        background: #fff;
+        outline: none;
+        transition: border-color 0.2s;
+
+        &::placeholder {
+            color: #a0aec0;
+        }
+
+        &:focus {
+            border-color: #2a5daa;
+            box-shadow: 0 0 0 2px rgba(42, 93, 170, 0.12);
+        }
+    }
+}
+
+.remember-me {
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        color: #4a5568;
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #1a3a6b;
+            cursor: pointer;
+        }
+    }
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: #1a3a6b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, transform 0.1s;
+
+    &:hover {
+        background: #15305a;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.forgot-password {
+    text-align: center;
+
+    a {
+        color: #1a3a6b;
+        font-size: 13px;
+        text-decoration: underline;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+            color: #2a5daa;
+        }
+    }
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: #6b7a8d;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 28px 20px 20px;
+    }
+
+    .logo-img {
+        height: 40px;
+    }
+
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .company-name {
+        font-size: 13px;
+    }
+}

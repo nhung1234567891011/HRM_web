@@ -2,12 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import roleConstant from 'src/app/core/constants/role.constant';
 import { Page } from 'src/app/core/enums/page.enum';
-import { ToastService } from 'src/app/core/services/global/toast.service';
 import { AuthService } from 'src/app/core/services/identity/auth.service';
-import { ValidationService } from 'src/app/core/utils/validation.utils';
-import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
 @Component({
 	selector: 'app-login',
@@ -24,7 +20,7 @@ export class LoginComponent implements OnInit {
 	loginForm: FormGroup;
 	validationMessages = {
 		email: [
-			{ type: 'required', message: 'Email không được để trống' },
+			{ type: 'required', message: 'Tên đăng nhập không được để trống' },
 		],
 		password: [
 			{ type: 'required', message: 'Mật khẩu không được để trống' },

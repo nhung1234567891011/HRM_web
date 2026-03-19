@@ -48,7 +48,7 @@
 
 .auth-header {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .logo-row {
@@ -56,7 +56,6 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 12px;
 }
 
 .logo-img {
@@ -71,83 +70,45 @@
     letter-spacing: 1.5px;
 }
 
-.page-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1a3a6b;
-    margin: 0 0 4px;
+.error-content {
+    text-align: center;
+    padding: 12px 0;
 }
 
-.page-subtitle {
-    font-size: 13px;
-    color: #6b7a8d;
-    margin: 0;
-}
-
-.input-group-custom {
-    position: relative;
-    margin-bottom: 16px;
-
-    .input-icon {
-        position: absolute;
-        left: 14px;
-        top: 14px;
-        color: #8a9ab5;
-        font-size: 16px;
-        z-index: 1;
-    }
-
-    input {
-        width: 100%;
-        padding: 12px 44px 12px 42px;
-        border: 1px solid #d0d7e2;
-        border-radius: 6px;
-        font-size: 14px;
-        color: #333;
-        background: #fff;
-        outline: none;
-        transition: border-color 0.2s;
-        box-sizing: border-box;
-
-        &::placeholder {
-            color: #a0aec0;
-        }
-
-        &:focus {
-            border-color: #2a5daa;
-            box-shadow: 0 0 0 2px rgba(42, 93, 170, 0.12);
-        }
-    }
-}
-
-.toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 12px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #8a9ab5;
-    padding: 0;
+.error-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff0f0;
     display: flex;
     align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
 
     i {
-        font-size: 16px;
-    }
-
-    &:hover {
-        color: #1a3a6b;
+        font-size: 28px;
+        color: #e53e3e;
     }
 }
 
-.error-msg {
-    font-size: 12px;
-    color: #e53e3e;
-    margin-top: 4px;
+.error-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a3a6b;
+    margin: 0 0 8px;
+}
+
+.error-message {
+    font-size: 14px;
+    color: #6b7a8d;
+    margin: 0 0 24px;
+    line-height: 1.5;
 }
 
 .btn-auth {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     padding: 12px;
     background: #1a3a6b;
@@ -159,7 +120,7 @@
     cursor: pointer;
     letter-spacing: 0.5px;
     transition: background 0.2s, transform 0.1s;
-    margin-top: 4px;
+    text-decoration: none;
 
     &:hover {
         background: #15305a;
@@ -167,14 +128,6 @@
 
     &:active {
         transform: scale(0.98);
-    }
-
-    &.btn-secondary {
-        background: #6b7a8d;
-
-        &:hover {
-            background: #566577;
-        }
     }
 }
 
