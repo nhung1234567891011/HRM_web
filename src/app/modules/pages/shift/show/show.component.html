@@ -1,4 +1,4 @@
-<p-confirmPopup></p-confirmPopup>
+<p-confirmDialog appendTo="body" [closable]="false"></p-confirmDialog>
 
 <div class="grid">
     <div class="col-12">
@@ -79,8 +79,11 @@
                     >
                         <ng-template pTemplate="header">
                             <tr>
-                                <th class="sticky-column" [style]="{ 'min-width': '150px' }">Mã ca</th>
-                                <th class="sticky-column" [style]="{ 'min-width': '150px' }">Tên ca</th>
+                                <th style="width: 4rem">
+                                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                </th>
+                                <th [style]="{ 'min-width': '150px' }">Mã ca</th>
+                                <th [style]="{ 'min-width': '150px' }">Tên ca</th>
                                 <th [style]="{ 'min-width': '150px' }">
                                     Giờ bắt đầu
                                 </th>
@@ -121,6 +124,9 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-rowData let-i="rowIndex">
                             <tr>
+                                <td>
+                                    <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                                </td>
                                 <td class="sticky-column">
                                     {{ rowData.code }}
                                 </td>

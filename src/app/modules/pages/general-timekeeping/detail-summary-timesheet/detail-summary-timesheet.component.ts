@@ -54,6 +54,7 @@ export class DetailSummaryTimesheetComponent implements OnInit {
     showErrorTimekeepingSheetName: boolean = false;
     showErrorDetailTimesheet: boolean = false;
     showErrorTimekeepingMethod: boolean = false;
+    isTransferringPayroll: boolean = false;
     summaryTimesheetNameId: any = null;
     summaryTimesheet: any[];
     permissionConstant = PermissionConstant;
@@ -291,6 +292,10 @@ export class DetailSummaryTimesheetComponent implements OnInit {
     }
 
     handleTransferToPayroll(): void {
+        if (this.isTransferringPayroll) {
+            return;
+        }
+
         if (!this.summarysheet) {
             this.messages = [
                 {
@@ -302,6 +307,8 @@ export class DetailSummaryTimesheetComponent implements OnInit {
             ];
             return;
         }
+
+        this.isTransferringPayroll = true;
 
         const formData = {
             organizationId: this.summarysheet.organizationId,
@@ -324,6 +331,7 @@ export class DetailSummaryTimesheetComponent implements OnInit {
                         },
                     ];
                 } else {
+                    this.isTransferringPayroll = false;
                     this.messages = [
                         {
                             severity: 'error',
@@ -335,6 +343,7 @@ export class DetailSummaryTimesheetComponent implements OnInit {
                 }
             },
             error: (err: any) => {
+                this.isTransferringPayroll = false;
                 const msg = err?.error?.message || err?.message || 'Chuyển tính lương thất bại';
                 this.messages = [
                     {

@@ -20,7 +20,7 @@ export class PayrollService {
     }
 
     create(request: any): Observable<any> {
-        return this.http.postFormData('payroll/create', request);
+        return this.http.post('payroll/create', request);
     }
 
     update(request: any): Observable<any> {

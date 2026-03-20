@@ -70,7 +70,7 @@ export class HttpLoadingService {
         const queryParams = this.buildQueryParams(data);
         // this.loadingUi.show();
         return this.http
-            .put(`/${endpoint}${queryParams ? `?${queryParams}` : ''}`, {
+            .put(`/${endpoint}${queryParams ? `?${queryParams}` : ''}`, null, {
                 headers,
             })
             .pipe(

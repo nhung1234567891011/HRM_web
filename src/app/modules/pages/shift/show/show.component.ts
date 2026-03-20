@@ -292,8 +292,7 @@ export class ShowComponent implements OnInit {
 
     public handleDeleteItem(event: any, data: any) {
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
-            message: `Bạn có chắc chắn muốn xóa "${data.positionName}" ?`,
+            message: `Bạn có chắc chắn muốn xóa ca "${data.name}"?`,
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Có',
             rejectLabel: 'Không',
@@ -315,7 +314,7 @@ export class ShowComponent implements OnInit {
                         });
                         this.toastService.showSuccess(
                             'Thành công',
-                            'Xóa vị trí thành công!'
+                            'Xóa ca thành công!'
                         );
                     });
             },
@@ -354,8 +353,7 @@ export class ShowComponent implements OnInit {
         const selectedIds = this.selectedShift.map((item) => item.id);
         if (selectedIds.length > 0) {
             this.confirmationService.confirm({
-                target: event.target as EventTarget,
-                message: `Bạn có chắc chắn muốn xóa "${selectedIds}" ?`,
+                message: `Bạn có chắc chắn muốn xóa ${selectedIds.length} ca đã chọn?`,
                 icon: 'pi pi-exclamation-triangle',
                 acceptLabel: 'Có',
                 rejectLabel: 'Không',
@@ -378,7 +376,7 @@ export class ShowComponent implements OnInit {
                                 });
                                 this.toastService.showSuccess(
                                     'Thành công',
-                                    'Xóa vị trí thành công!'
+                                    'Xóa ca thành công!'
                                 );
                             } else {
                                 this.toastService.showError(
@@ -393,7 +391,7 @@ export class ShowComponent implements OnInit {
         } else {
             this.toastService.showWarning(
                 'Chú ý',
-                'Vui lòng chọn vị trí muốn xóa'
+                'Vui lòng chọn ca muốn xóa'
             );
         }
 

@@ -441,7 +441,14 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 								createdAt: formattedCreatedAt,
 							};
 						}
-					);
+					).filter((item: any) => {
+						const isAdmin = this.user.roleNames?.includes('Admin');
+						const isApproverOfItem = item.leaveApplicationApprovers
+							?.map((a: any) => a.approverId)
+							.includes(this.user.employee.id);
+						const isCreator = item.employeeId === this.user.employee.id;
+						return isAdmin || isApproverOfItem || isCreator;
+					});
 					if (this.leaveApplications.length === 0) {
 						this.paging.pageIndex = 1;
 					}
@@ -639,6 +646,14 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 	//handle update
 
 	handleUpdateStatus(leaveApplication: any, status: any) {
+		if (!this.isApprover(leaveApplication)) {
+			this.messageService.add({
+				severity: 'warn',
+				summary: 'Cảnh báo',
+				detail: 'Bạn không có quyền duyệt đơn này',
+			});
+			return;
+		}
 		const employeeName =
 			'|' +
 			leaveApplication.employee.lastName +
@@ -682,12 +697,12 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 		let employeeName = '';
 		const request = [];
 		this.selectedLeaveApplications.forEach((leaveApp) => {
-			if (leaveApp.status == this.leaveApplicationStatus.Pending) {
+			if (leaveApp.status == this.leaveApplicationStatus.Pending && this.isApprover(leaveApp)) {
 				employeeName +=
 					'|' +
-					leaveApp.employee.lastName +
+					(leaveApp.employee?.lastName ?? '') +
 					' ' +
-					leaveApp.employee.firstName +
+					(leaveApp.employee?.firstName ?? '') +
 					'|';
 				const requestObject = {
 					id: leaveApp.id,

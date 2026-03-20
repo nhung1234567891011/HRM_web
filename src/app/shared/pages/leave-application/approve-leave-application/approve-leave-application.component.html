@@ -173,16 +173,16 @@
             >
                 {{
                     col.field.includes("employeeName")
-                        ? leaveApp.employee.lastName +
+                        ? (leaveApp.employee?.lastName ?? '') +
                           " " +
-                          leaveApp.employee.firstName
+                          (leaveApp.employee?.firstName ?? '')
                         : ""
                 }}
 
                 <span *ngIf="col.field.includes('position')">
                     <span
                         *ngFor="
-                            let position of leaveApp.employee.staffPositions
+                            let position of leaveApp.employee?.staffPositions
                         "
                     >
                         {{ position.positionName }}
@@ -194,8 +194,8 @@
                             let approver of leaveApp.leaveApplicationApprovers
                         "
                     >
-                        | {{ approver.approver.lastName }}
-                        {{ approver.approver.firstName }} |
+                        | {{ approver.approver?.lastName }}
+                        {{ approver.approver?.firstName }} |
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('substitute')">
@@ -204,8 +204,8 @@
                             let replacement of leaveApp.leaveApplicationReplacements
                         "
                     >
-                        | {{ replacement.replacement.lastName }}
-                        {{ replacement.replacement.firstName }} |
+                        | {{ replacement.replacement?.lastName }}
+                        {{ replacement.replacement?.firstName }} |
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('relatedPerson')">
@@ -214,19 +214,19 @@
                             let relatedPerson of leaveApp.leaveApplicationRelatedPeople
                         "
                     >
-                        | {{ relatedPerson.relatedPerson.lastName }}
-                        {{ relatedPerson.relatedPerson.firstName }} |
+                        | {{ relatedPerson.relatedPerson?.lastName }}
+                        {{ relatedPerson.relatedPerson?.firstName }} |
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('typeOfLeave')">
                     <span>
-                        {{ leaveApp.typeOfLeave.name }}
+                        {{ leaveApp.typeOfLeave?.name }}
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('affiliatedDocument')">
                     <span>
                         {{
-                            leaveApp.employee!?.organization!?.organizationName
+                            leaveApp.employee?.organization?.organizationName
                         }}
                     </span>
                 </span>
