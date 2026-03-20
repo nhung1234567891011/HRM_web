@@ -38,6 +38,8 @@ import { EstablishComponent } from '../modules/pages/department/establish/establ
 import { ListProjectByEmployeeComponent } from '../modules/pages/project/list-project-by-employee/list-project-by-employee.component';
 import { OnlineUsersComponent } from './online-users/online-users.component';
 import { ChatBoxComponent } from './chat-box/chat-box.component';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { SharedBreadcrumbComponent } from './breadcrumb/shared-breadcrumb.component';
 
 @NgModule({
     declarations: [
@@ -50,6 +52,7 @@ import { ChatBoxComponent } from './chat-box/chat-box.component';
         LoadingComponent,
         OnlineUsersComponent,
         ChatBoxComponent,
+        SharedBreadcrumbComponent,
     ],
     imports: [
         BrowserModule,
@@ -78,6 +81,7 @@ import { ChatBoxComponent } from './chat-box/chat-box.component';
         CreateWorkComponent,
         EstablishComponent,
         ListProjectByEmployeeComponent,
+        BreadcrumbModule,
     ],
     exports: [AppLayoutComponent],
     providers: [MessageService, provideHttpClient(withInterceptorsFromDi())],
