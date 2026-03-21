@@ -7,6 +7,7 @@ import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcrumb.module';
 
 
 
@@ -15,7 +16,8 @@ import { ButtonModule } from 'primeng/button';
   imports: [
     CommonModule,
     DialogModule,
-    ButtonModule
+    ButtonModule,
+    SharedBreadcrumbModule
   ],
   exports: [
     FormsModule,
@@ -23,6 +25,7 @@ import { ButtonModule } from 'primeng/button';
     ValidationMessageModule,
     LoadingUiModule,
     BreadcrumbModule,
+    SharedBreadcrumbModule,
     ConfirmDialogComponent
   ],
 })

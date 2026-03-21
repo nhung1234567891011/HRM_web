@@ -4,6 +4,41 @@
     border-radius: 5px;
     margin: auto 0px  auto 5px;
 }
+
+.object-switch-card {
+    border: 1px solid #dbe3ec;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(19, 41, 68, 0.06);
+    margin-bottom: 8px;
+}
+
+.object-list-body {
+    margin-top: 8px;
+}
+
+.object-filter-row {
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.object-search-col {
+    min-width: 300px;
+}
+
+.object-filter-actions {
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.table-section.table-panel {
+    margin-top: 8px !important;
+}
+
+.table-section .paging-bot {
+    margin-top: 4px;
+}
 .img-item{
     width: 20px;
     height: 20px;

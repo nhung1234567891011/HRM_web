@@ -3,7 +3,7 @@
         <p-toolbar styleClass="mb-2">
             <div>
                 <strong class="font-size-16">Thành phần lương</strong>
-                <p-breadcrumb></p-breadcrumb>
+                <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
             </div>
             <div class="btn-add-wrapper">
                 <!-- <button

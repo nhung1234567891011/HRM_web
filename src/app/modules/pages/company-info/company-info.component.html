@@ -3,7 +3,7 @@
         <div class="page-header">
             <div class="page-title-wrap">
                 <strong class="page-title">Thông tin công ty</strong>
-                <app-shared-breadcrumb [model]="items"></app-shared-breadcrumb>
+                <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
             </div>
 
             <div class="page-actions">

@@ -4,7 +4,7 @@
     <p-toolbar styleClass="mb-2">
       <div class="">
         <strong class="font-size-16">Cấu hình hoa hồng doanh thu</strong>
-        <p-breadcrumb [model]="items" [home]="{ icon: 'pi pi-home', routerLink: '/dashboard' }"></p-breadcrumb>
+        <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
       </div>
       <div class="p-toolbar-group-end">
         <button pButton type="button" label="Thêm mới" icon="pi pi-plus" (click)="openCreate()"></button>

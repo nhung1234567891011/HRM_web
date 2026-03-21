@@ -2,7 +2,7 @@
   <div class="page-header">
     <div class="page-title-block">
       <strong class="page-title">Cơ cấu tổ chức</strong>
-      <app-shared-breadcrumb [model]="items"></app-shared-breadcrumb>
+      <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
     </div>
 
     <div class="header-actions">
@@ -29,19 +29,31 @@
             <div class="filter-action-col">
               <button pButton pRipple label="Lọc" class="buttonfilter" (click)="loadOrganizationData()"></button>
             </div>
+            <div class="filter-action-col column-toggle-wrap">
+              <button pButton pRipple type="button" label="Ẩn/hiện cột" icon="pi pi-sliders-h"
+                class="buttonfilter button-outline" (click)="toggleColumnPanel()"></button>
+              <div class="column-panel" *ngIf="showColumnPanel">
+                <div class="column-panel-title">Hiển thị cột</div>
+                <label class="column-item" *ngFor="let col of columnOptions">
+                  <input type="checkbox" [checked]="isColumnVisible(col.key)" (change)="onColumnToggle(col.key)" />
+                  <span>{{ col.label }}</span>
+                </label>
+              </div>
+            </div>
           </div>
-          <div class="table-panel mt-3">
+          <div class="table-panel mt-2">
+            <div class="table-scroll">
             <table class="table text-center table-no-border">
               <thead>
                 <tr>
                   <th style="width: 18%;">Tên đơn vị</th>
-                  <th style="width: 10%;">Mã đơn vị</th>
-                  <th style="width: 10%;">Tên viết tắt</th>
-                  <th style="width: 8%;">Số nhân viên</th>
-                  <th style="width: 8%;">Độ ưu tiên</th>
-                  <th style="width: 10%;">Cấp tổ chức</th>
-                  <th style="width: 13%;">Trưởng đơn vị</th>
-                  <th style="width: 10%;">Trạng thái</th>
+                  <th *ngIf="isColumnVisible('organizationCode')" style="width: 10%;">Mã đơn vị</th>
+                  <th *ngIf="isColumnVisible('abbreviation')" style="width: 10%;">Tên viết tắt</th>
+                  <th *ngIf="isColumnVisible('totalEmployees')" style="width: 8%;">Số nhân viên</th>
+                  <th *ngIf="isColumnVisible('rank')" style="width: 8%;">Độ ưu tiên</th>
+                  <th *ngIf="isColumnVisible('organizational')" style="width: 10%;">Cấp tổ chức</th>
+                  <th *ngIf="isColumnVisible('unithead')" style="width: 13%;">Trưởng đơn vị</th>
+                  <th *ngIf="isColumnVisible('status')" style="width: 10%;">Trạng thái</th>
                   <th style="width: 9%;">Hành động</th>
                 </tr>
               </thead>
@@ -59,16 +71,16 @@
                         <span class="tree-label" [class.root-label]="unit.level === 1">{{ unit.organizationName }}</span>
                       </div>
                     </td>
-                    <td>{{ unit.organizationCode }}</td>
-                    <td>{{ unit.abbreviation }}</td>
-                    <td>{{ unit.totalEmployees }}</td>
-                    <td>{{ unit.rank }}</td>
-                    <td>{{ unit.organizational }}</td>
-                    <td>{{ unit.unithead }}</td>
+                    <td *ngIf="isColumnVisible('organizationCode')">{{ unit.organizationCode }}</td>
+                    <td *ngIf="isColumnVisible('abbreviation')">{{ unit.abbreviation }}</td>
+                    <td *ngIf="isColumnVisible('totalEmployees')">{{ unit.totalEmployees }}</td>
+                    <td *ngIf="isColumnVisible('rank')">{{ unit.rank }}</td>
+                    <td *ngIf="isColumnVisible('organizational')">{{ unit.organizational }}</td>
+                    <td *ngIf="isColumnVisible('unithead')">{{ unit.unithead }}</td>
                     <!-- <td
                     [ngClass]="{'status-active': unit.status === 'Đang theo dõi', 'status-inactive': unit.status === 'Ngừng theo dõi'}">
                     {{ unit.status }} -->
-                    <td>
+                    <td *ngIf="isColumnVisible('status')">
                       <!-- {{ unit.status }} -->
                       <span class="work-status-span status-pill"
                         [ngStyle]="{'color': getWorkStatus(unit.status).color, 'background-color': getWorkStatus(unit.status).bgcolor}">
@@ -100,17 +112,17 @@
                             <span class="tree-label">{{ child.organizationName }}</span>
                           </div>
                         </td>
-                        <td>{{ child.organizationCode }}</td>
-                        <td>{{ child.abbreviation }}</td>
-                        <td>{{ child.totalEmployees }}</td>
-                        <td>{{ child.rank }}</td>
-                        <td>{{ child.organizational }}</td>
-                        <td>{{ child.unithead }}</td>
+                        <td *ngIf="isColumnVisible('organizationCode')">{{ child.organizationCode }}</td>
+                        <td *ngIf="isColumnVisible('abbreviation')">{{ child.abbreviation }}</td>
+                        <td *ngIf="isColumnVisible('totalEmployees')">{{ child.totalEmployees }}</td>
+                        <td *ngIf="isColumnVisible('rank')">{{ child.rank }}</td>
+                        <td *ngIf="isColumnVisible('organizational')">{{ child.organizational }}</td>
+                        <td *ngIf="isColumnVisible('unithead')">{{ child.unithead }}</td>
                         <!-- <td
                           [ngClass]="{'status-active': unit.status === 'Đang theo dõi', 'status-inactive': unit.status === 'Ngừng theo dõi'}">
                           {{ unit.status }}
                         </td> -->
-                        <td>
+                        <td *ngIf="isColumnVisible('status')">
                           <span class="work-status-span status-pill"
                             [ngStyle]="{'color': getWorkStatus(child.status).color, 'background-color': getWorkStatus(child.status).bgcolor}">
                             <i class="pi pi-check" *ngIf="child.status === '1'"></i>
@@ -136,17 +148,17 @@
                               <span class="tree-label">{{ grandChild.organizationName }}</span>
                             </div>
                           </td>
-                          <td>{{ grandChild.organizationCode }}</td>
-                          <td>{{ grandChild.abbreviation }}</td>
-                          <td>{{ grandChild.totalEmployees }}</td>
-                          <td>{{ grandChild.rank }}</td>
-                          <td>{{ grandChild.organizational }}</td>
-                          <td>{{ grandChild.unithead }}</td>
+                          <td *ngIf="isColumnVisible('organizationCode')">{{ grandChild.organizationCode }}</td>
+                          <td *ngIf="isColumnVisible('abbreviation')">{{ grandChild.abbreviation }}</td>
+                          <td *ngIf="isColumnVisible('totalEmployees')">{{ grandChild.totalEmployees }}</td>
+                          <td *ngIf="isColumnVisible('rank')">{{ grandChild.rank }}</td>
+                          <td *ngIf="isColumnVisible('organizational')">{{ grandChild.organizational }}</td>
+                          <td *ngIf="isColumnVisible('unithead')">{{ grandChild.unithead }}</td>
                           <!-- <td
                             [ngClass]="{'status-active': unit.status === 'Đang theo dõi', 'status-inactive': unit.status === 'Ngừng theo dõi'}">
                             {{ unit.status }}
                           </td> -->
-                          <td>
+                          <td *ngIf="isColumnVisible('status')">
                             <span class="work-status-span status-pill"
                               [ngStyle]="{'color': getWorkStatus(grandChild.status).color, 'background-color': getWorkStatus(grandChild.status).bgcolor}">
                               <i class="pi pi-check" *ngIf="grandChild.status === '1'"></i>
@@ -169,6 +181,7 @@
                 </ng-container>
               </tbody>
             </table>
+            </div>
 
             <div class="paging-bot dg-fix">
               <div class="paging-info">

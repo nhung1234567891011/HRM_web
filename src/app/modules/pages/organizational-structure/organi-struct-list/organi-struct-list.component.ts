@@ -33,6 +33,25 @@ export class OrganiStructListComponent implements OnInit {
   unitRank: number;
   public userCurrent: any;
   permissionConstant = PermissionConstant;
+  columnOptions = [
+    { key: 'organizationCode', label: 'Mã đơn vị' },
+    { key: 'abbreviation', label: 'Tên viết tắt' },
+    { key: 'totalEmployees', label: 'Số nhân viên' },
+    { key: 'rank', label: 'Độ ưu tiên' },
+    { key: 'organizational', label: 'Cấp tổ chức' },
+    { key: 'unithead', label: 'Trưởng đơn vị' },
+    { key: 'status', label: 'Trạng thái' }
+  ];
+  columnVisibility: Record<string, boolean> = {
+    organizationCode: true,
+    abbreviation: true,
+    totalEmployees: true,
+    rank: true,
+    organizational: true,
+    unithead: true,
+    status: true
+  };
+  showColumnPanel = false;
 
   constructor(
     private organizationService: OrganizationService,
@@ -181,6 +200,18 @@ export class OrganiStructListComponent implements OnInit {
     this.pageSize = event.rows;
     this.pageIndex = event.page + 1;
     this.loadOrganizationData();
+  }
+
+  toggleColumnPanel(): void {
+    this.showColumnPanel = !this.showColumnPanel;
+  }
+
+  onColumnToggle(key: string): void {
+    this.columnVisibility[key] = !this.columnVisibility[key];
+  }
+
+  isColumnVisible(key: string): boolean {
+    return this.columnVisibility[key] !== false;
   }
 
   goToPreviousPage(): void {

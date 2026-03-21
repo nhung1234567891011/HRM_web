@@ -2,10 +2,7 @@
     <p-toolbar styleClass="mb-2">
         <div class="">
             <strong class="font-size-16">Hồ sơ</strong>
-            <p-breadcrumb
-                [model]="items"
-[home]="{ icon: 'pi pi-home', routerLink: '/installation' }"
-            ></p-breadcrumb>
+            <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
         </div>
     </p-toolbar>
 </div>

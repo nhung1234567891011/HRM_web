@@ -5,10 +5,7 @@
         <p-toolbar styleClass="mb-2">
             <div class="">
                 <strong class="font-size-16">Doanh thu hoa hồng</strong>
-                <p-breadcrumb
-                    [model]="items"
-                    [home]="{ icon: 'pi pi-home', routerLink: '/dashboard' }"
-                ></p-breadcrumb>
+                <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
             </div>
             <div class="toast-container">
                 <p-messages

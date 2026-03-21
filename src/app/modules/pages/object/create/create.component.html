@@ -4,7 +4,7 @@
     <p-toolbar>
       <div class="p-toolbar-group-left">
         <strong class="font-size-16">Thêm đối tượng</strong>
-        <p-breadcrumb [model]="items" class="breadcrumb-left"></p-breadcrumb>
+        <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
       </div>
     </p-toolbar>
   </div>

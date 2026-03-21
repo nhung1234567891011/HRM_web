@@ -4,7 +4,7 @@
             <strong class="font-size-16"
                 >Bảng chi tiết chấm công tổng hợp</strong
             >
-            <p-breadcrumb [model]="items"> </p-breadcrumb>
+            <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
         </div>
     </div>
     <div class="toast-container">

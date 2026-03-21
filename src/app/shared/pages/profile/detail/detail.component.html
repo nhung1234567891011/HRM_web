@@ -3,10 +3,7 @@
         <p-toolbar styleClass="mb-2">
             <div class="">
                 <strong class="font-size-16">Chi tiết hồ sơ</strong>
-                <p-breadcrumb
-                    [model]="items"
-[home]="{ icon: 'pi pi-home', routerLink: '/installation' }"
-                ></p-breadcrumb>
+<app-shared-breadcrumb></app-shared-breadcrumb>
             </div>
             <ng-template pTemplate="right">
                 <button

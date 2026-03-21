@@ -48,7 +48,8 @@
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: var(--shadow);
-  padding: 12px 12px 0 !important;
+  padding: 10px 10px 10px !important;
+  margin-bottom: 12px;
 }
 
 .filter-row {
@@ -82,11 +83,58 @@
   border-radius: 8px;
 }
 
+.button-outline {
+  background: #fff !important;
+  color: #1a3557 !important;
+  border: 1px solid #cfdced !important;
+}
+
+.column-toggle-wrap {
+  position: relative;
+}
+
+.column-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  width: 230px;
+  background: #fff;
+  border: 1px solid #d9e3ef;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(19, 41, 68, 0.14);
+  padding: 10px;
+}
+
+.column-panel-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: #2e3f52;
+  margin-bottom: 8px;
+}
+
+.column-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #33465b;
+  padding: 5px 2px;
+  cursor: pointer;
+}
+
 .table-panel {
   border: 1px solid var(--border);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   background: var(--panel);
+  position: relative;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  border-radius: 10px 10px 0 0;
 }
 
 table {
@@ -363,9 +411,10 @@ td i.pi.pi-trash:hover::after {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-top: 1px solid var(--border);
   background: linear-gradient(180deg, #fbfdff 0%, #f3f7fb 100%);
+  border-radius: 0 0 10px 10px;
 }
 
 .paging-info {
@@ -417,6 +466,10 @@ td i.pi.pi-trash:hover::after {
   border-color: #cdd9e6;
 }
 
+:host ::ng-deep .org-paginator .p-dropdown-panel {
+  z-index: 1102 !important;
+}
+
 :host ::ng-deep .org-paginator .p-paginator-rpp-options {
   margin: 0;
   align-self: center;
@@ -443,7 +496,7 @@ td i.pi.pi-trash:hover::after {
   }
 
   .table-panel {
-    overflow-x: auto;
+    overflow: visible;
   }
 
   table {
@@ -451,6 +504,7 @@ td i.pi.pi-trash:hover::after {
   }
 
   .paging-bot {
+    position: static;
     flex-direction: column;
     align-items: stretch;
   }

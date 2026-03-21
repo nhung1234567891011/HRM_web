@@ -3,7 +3,7 @@
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Bảng chấm công chi tiết</strong>
-            <p-breadcrumb [model]="items"> </p-breadcrumb>
+<app-shared-breadcrumb></app-shared-breadcrumb>
         </div>
 
         <div class="btn-add-wrapper" *ngIf="this.permisionHelper.hasPermissions([permissionConstant.ManageDetailedTimekeepingCreate])">

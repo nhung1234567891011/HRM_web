@@ -1,31 +1,33 @@
-<div class="toast-container">
-    <p-messages [enableService]="false" [closable]="false"></p-messages>
-</div>
-<div class="grid">
-    <div class="col-12">
-        <p-toolbar styleClass="mb-2">
-            <div>
-                <strong class="font-size-16">Đối tượng</strong>
-                <p-breadcrumb></p-breadcrumb>
-            </div>
-            <div
-                class="btn-add-wrapper"
-                *ngIf="
-                    this.permisionHelper.hasPermissions([
-                        permissionConstant.ManageObjectCreate
-                    ])
-                "
-            >
-                <button
-                    pButton
-                    pRipple
-                    label="+Thêm mới"
-                    style="height: 40px; width: 130px; border-radius: 10px"
-                    [routerLink]="['/object/create']"
-                ></button>
-            </div>
-        </p-toolbar>
-        <div class="card">
+<main id="main" class="main">
+    <section class="section k-list-table">
+        <div class="toast-container">
+            <p-messages [enableService]="false" [closable]="false"></p-messages>
+        </div>
+        <div class="grid">
+            <div class="col-12">
+                <div class="page-header">
+                    <div class="page-title-block">
+                        <strong class="page-title">Đối tượng</strong>
+                        <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+                    </div>
+                    <div
+                        class="header-actions"
+                        *ngIf="
+                            this.permisionHelper.hasPermissions([
+                                permissionConstant.ManageObjectCreate
+                            ])
+                        "
+                    >
+                        <button
+                            pButton
+                            pRipple
+                            label="+Thêm mới"
+                            class="btn-add"
+                            [routerLink]="['/object/create']"
+                        ></button>
+                    </div>
+                </div>
+        <div class="card object-switch-card">
             <div class="d-flex">
                 <!-- <span
                     class="item-object"
@@ -504,7 +506,7 @@
         </p-dialog>
 
         <!--  danh sách nhân viên -->
-        <div class="card">
+        <div class="card-body object-list-body">
             <div class="flex justify-content-center" *ngIf="!istwo1">
                 <span
                     class="block mt-2 md:mt-0 p-input-icon-left cursor-pointer"
@@ -768,21 +770,22 @@
                 </span>
             </div>
 
-            <div class="flex justify-content-between" *ngIf="istwo1">
+            <div class="filter-row object-filter-row" *ngIf="istwo1">
                 <!--  input search -->
-                <div class="">
-                    <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <div class="search-col object-search-col">
+                    <span class="block mt-2 md:mt-0 p-input-icon-left search-input-wrap">
                         <i class="pi pi-search"></i>
                         <input
                             pInputText
                             type="text"
                             placeholder="Tìm theo tên, điện thoại"
-                            style="width: 300px"
+                            class="form-control"
+                            style="width: 100%"
                             [(ngModel)]="textSearch"
                         />
                     </span>
                 </div>
-                <div class="flex">
+                <div class="filter-action-col object-filter-actions flex">
                     <!--  chọn đơn vị -->
                     <div class="ml-2 select-tree" style="width: 300px">
                         <p-treeSelect
@@ -886,7 +889,7 @@
                 </div>
             </div>
 
-            <div class="table-section" style="margin-top: 20px">
+            <div class="table-section table-panel mt-2">
                 <p-table
                     responsiveLayout="scroll"
                     styleClass="p-datatable-striped"
@@ -1301,13 +1304,14 @@
 
                 <div>
                     <div
-                        class="flex justify-content-between"
+                        class="paging-bot"
                         *ngIf="totalItems > 0"
                     >
                         <div class="paging-info">
                             <p [innerHTML]="currentPageReport"></p>
                         </div>
                         <p-paginator
+                            class="org-paginator"
                             [rows]="pageSize"
                             [totalRecords]="totalItems"
                             [rowsPerPageOptions]="[10, 20, 30]"
@@ -1322,6 +1326,8 @@
         </div>
     </div>
 </div>
+</section>
+</main>
 
 <p-dialog
     header="Thông báo"
