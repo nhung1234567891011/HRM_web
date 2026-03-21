@@ -1,4 +1,72 @@
 .app-shared-breadcrumb {
     margin-bottom: 1rem;
-    padding: 0.125rem 0;
+    padding: 0.25rem 0;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-breadcrumb {
+    border: 1px solid #d9e2ea;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%);
+    box-shadow: 0 6px 16px rgba(17, 45, 78, 0.08);
+    padding: 0.45rem 0.85rem;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-breadcrumb ul {
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem-link {
+    border-radius: 999px;
+    padding: 0.3rem 0.65rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem-link:focus {
+    box-shadow: none;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-breadcrumb-home .p-menuitem-link {
+    background: #0f3c68;
+    color: #ffffff;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-breadcrumb-home .p-menuitem-icon {
+    color: #ffffff;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem-text,
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem-icon {
+    color: #425466;
+    font-weight: 600;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem-link:hover {
+    background: #e8f1fa;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem-link:hover .p-menuitem-text,
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem-link:hover .p-menuitem-icon {
+    color: #123c67;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-breadcrumb-chevron {
+    color: #8ca0b3;
+    font-size: 0.82rem;
+}
+
+:host ::ng-deep .app-shared-breadcrumb .p-menuitem.p-disabled .p-menuitem-text {
+    color: #1f2a36;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    :host ::ng-deep .app-shared-breadcrumb .p-breadcrumb {
+        border-radius: 14px;
+        padding: 0.5rem 0.6rem;
+    }
+
+    :host ::ng-deep .app-shared-breadcrumb .p-menuitem-link {
+        padding: 0.25rem 0.45rem;
+    }
 }

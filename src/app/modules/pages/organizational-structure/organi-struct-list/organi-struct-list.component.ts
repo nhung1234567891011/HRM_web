@@ -21,7 +21,7 @@ export class OrganiStructListComponent implements OnInit {
   messages: any[] = [];
   items: MenuItem[] | undefined;
   struct!: any;
-  pageSize: number = 30;
+  pageSize: number = 10;
   pageIndex: number = 1;
   totalRecords: number = 0;
   currentPageReport: string = '';

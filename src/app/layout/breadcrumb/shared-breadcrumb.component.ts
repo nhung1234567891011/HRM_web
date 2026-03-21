@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import {
     ActivatedRoute,
     NavigationEnd,
@@ -24,6 +24,8 @@ interface BreadcrumbMatcher {
     styleUrls: ['./shared-breadcrumb.component.scss'],
 })
 export class SharedBreadcrumbComponent implements OnInit, OnDestroy {
+    @Input() model: MenuItem[] | null = null;
+
     home: MenuItem = { icon: 'pi pi-home', routerLink: '/dashboard' };
     items: MenuItem[] = [];
 

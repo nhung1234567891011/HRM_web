@@ -27,9 +27,11 @@ import { MenuModule } from 'primeng/menu';
 import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
+import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcrumb.module';
 
 @NgModule({
-    declarations: [],
+    declarations: [ 
+    ],
     imports: [
         CommonModule,
         FormsModule,
@@ -57,8 +59,9 @@ import { MessageService } from 'primeng/api';
         InputNumberModule,
         DialogModule,
         BreadcrumbModule,
+        SharedBreadcrumbModule,
         TreeSelectModule,
-        CheckboxModule,
+        CheckboxModule
     ],
     exports: [
         CommonModule,
@@ -89,6 +92,7 @@ import { MessageService } from 'primeng/api';
         BreadcrumbModule,
         TreeSelectModule,
         CheckboxModule,
+        SharedBreadcrumbModule
     ],
     providers: [
         MessageService, // Cung cấp MessageService

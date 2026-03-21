@@ -1,411 +1,482 @@
 <form [formGroup]="companyForm" (ngSubmit)="updateCompanyInfo()">
-    <main id="main" class="main">
-        <div class="pagetitle">
-            <div>
-                <strong class="font-size-16">Thông tin công ty</strong>
-                <p-breadcrumb
-                    [model]="items">
-                </p-breadcrumb>
+    <main id="main" class="main company-info-page">
+        <div class="page-header">
+            <div class="page-title-wrap">
+                <strong class="page-title">Thông tin công ty</strong>
+                <app-shared-breadcrumb [model]="items"></app-shared-breadcrumb>
             </div>
-            <div class="toast-container">
-                <p-messages
-                  [(value)]="messages"
-                  [enableService]="false"
-                  [closable]="false"
-                ></p-messages>
-              </div>
-    
-            <div class="btn-add-wrapper" *ngIf="!isEditing">
-                <button
-                    pButton
-                    pRipple
-                    label="Chỉnh sửa"
-                    style="height: 40px; width: 130px; border-radius: 10px;"
-                    (click)="startEditing()">
-                </button>
-            </div>
-            
-            <div class="btn-add-wrapper" *ngIf="isEditing"> 
-                <button
-                    pButton
-                    pRipple
-                    label="Hủy"
-                    style="height: 40px; width: 60px; margin-right: 10px;"   
-                    (click)="cancelEditing()">
-                </button>
-                <button
-                    pButton
-                    pRipple
-                    label="Lưu"
-                    type="submit"
-                    style="height: 40px; width: 60px;"
-                    >
-                </button>
+
+            <div class="page-actions">
+                <div class="toast-container">
+                    <p-messages
+                        [(value)]="messages"
+                        [enableService]="false"
+                        [closable]="false"
+                    ></p-messages>
+                </div>
+
+                <div class="btn-add-wrapper" *ngIf="!isEditing">
+                    <button pButton pRipple label="Chỉnh sửa" class="btn-primary" (click)="startEditing()"></button>
+                </div>
+
+                <div class="btn-add-wrapper" *ngIf="isEditing">
+                    <button pButton pRipple label="Hủy" class="btn-cancel" (click)="cancelEditing()"></button>
+                    <button pButton pRipple label="Lưu" type="submit" class="btn-primary"></button>
+                </div>
             </div>
         </div>
-        <section class="section show-product-component k-list-table">
-            <div class="col-lg-12">
-                <div class="card-body">
-                    <div class="container">
-                        <div class="section">
-                            <div class="info">
-                                <div class="info-title">
-                                    <span>CÔNG TY</span>
-                                </div>
-                                <div class="info-content">
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Tên đầy đủ <span
-                                                class="red-asterisk">*</span>
-                                            </span>
-                                            <span class="value" *ngIf="!isEditing">
-                                                {{ companyForm.get('fullName')?.value === 'string' ? '' : companyForm.get('fullName')?.value }}
-                                            </span>
-                                                
-                                            <input
-                                                *ngIf="isEditing"
-                                                type="text"
-                                                class="form-control"
-                                                pInputText
-                                                [style]="{ height: '40px' }"
-                                                formControlName="fullName"
-                                                placeholder="Nhập thông tin"
-                                                maxlength="100"
-                                                (focus)="showErrorsFullName = true"
-                                            />
-                                        </div>
-                                        <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="showErrorsFullName && companyForm.get('fullName')?.touched && companyForm.get('fullName')?.invalid">
-                                            <span class="red-asterisk" *ngIf="companyForm.get('fullName')?.hasError('required')">Không được để trống</span>
-                                            <span class="red-asterisk" *ngIf="companyForm.get('fullName')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
-                                        </div>
-                                    </div>
-                                    <div class="row-info">
-                                        <span class="label">Tên giao dịch/viết tắt</span>
-                                        <span class="value" *ngIf="!isEditing">{{ companyForm.get('abbreviation')?.value === 'string' ? '' : companyForm.get('abbreviation')?.value }}</span>
-                                        
-                                        <input
-                                            *ngIf="isEditing"
-                                            type="text"
-                                            class="form-control"
-                                            pInputText
-                                            [style]="{ height: '40px' }"
-                                            formControlName="abbreviation"
-                                            placeholder="Nhập thông tin"
-                                            maxlength="50"
-                                            (input)="onShortNameInput(); preventSpace($event)"         
-                                        />
-                                    </div>
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Mã số thuế  <span
-                                                class="red-asterisk">*</span></span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('taxCode')?.value === 'string' ? '' : companyForm.get('taxCode')?.value }}</span>
-                                            <input
-                                                *ngIf="isEditing"
-                                                type="text"
-                                                class="form-control"
-                                                pInputText
-                                                [style]="{ height: '40px' }"
-                                                formControlName="taxCode"
-                                                placeholder="Nhập thông tin"
-                                                maxlength="100"
-                                                (focus)="showErrorsTaxCode = true"
-                                                (input)="onInputChangeTaxCode($event); preventSpace($event)"
-                                                
-                                            />
-                                        </div>
-                                        <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="showErrorsTaxCode  && companyForm.get('taxCode')?.touched && companyForm.get('taxCode')?.invalid">
-                                            <span class="red-asterisk" *ngIf="companyForm.get('taxCode')?.hasError('required')">Không được để trống</span>
-                                        </div>
-                                        <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="showErrorsTaxCode">
-                                            <span class="red-asterisk">{{ taxCodeErrorMessage }}</span>
-                                        </div>                                        
-                                    </div>
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Mã công ty  <span
-                                                class="red-asterisk">*</span></span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('companyCode')?.value === 'string' ? '' : companyForm.get('companyCode')?.value }}</span>
-                                            <input
-                                                *ngIf="isEditing"
-                                                type="text"
-                                                class="form-control"
-                                                pInputText
-                                                [style]="{ height: '40px' }"
-                                                formControlName="companyCode"
-                                                placeholder="Nhập thông tin"
-                                                maxlength="30"
-                                                (input)="onCompanyCodeInput(); preventSpace($event)"
-                                                readonly
-                                            />
-                                        </div>
-                                        <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="showErrorsCompanyCode  && companyForm.get('companyCode')?.touched && companyForm.get('companyCode')?.invalid">
-                                            <span class="red-asterisk" *ngIf="companyForm.get('companyCode')?.hasError('required')">Không được để trống</span>
-                                        </div>
 
-                                    </div>
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Ngày thành lập</span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('incorporationDate')?.value === 'string' ? '' : companyForm.get('incorporationDate')?.value | date: 'dd/MM/yyyy' }}</span>
-    
-                                            <p-calendar
-                                              class="pcander"
-                                              *ngIf="isEditing"
-                                              formControlName="incorporationDate"
-                                              [showIcon]="true"
-                                              [icon]="calendarIcon"
-                                              dateFormat="dd/mm/yy"
-                                              placeholder="Chọn ngày"
-                                              [style]="{ height: '40px', width: '350px', }"
-                                              [readonlyInput]="true"
-                                            ></p-calendar>
-                                        </div>
-                                    </div>
-                                    <div class="row-info">
-                                        <span class="label">Logo công ty</span>
-                                        <span *ngIf="!isEditing" class="value">
-                                            <img *ngIf="this.selectedCompany.logoPath !== null" [src]="imageUrl" alt="Logo" width="50" height="50"/>
-                                            <svg *ngIf="this.selectedCompany.logoPath === null"
-                                              viewBox="0 0 24 24"
-                                              fill="none"
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              style="color: rgb(232, 234, 235); height: 50px;">
-                                              <path
-                                                d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2ZM5 19V5h14l.002 14H5Z"
-                                                fill="currentColor">
-                                              </path>
-                                              <path
-                                                d="m10 14-1-1-3 4h12l-5-7-3 4ZM8.5 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"
-                                                fill="currentColor">
-                                              </path>
-                                            </svg>
-                                        </span>                                                      
-                                        <div class="upload-container" *ngIf="!imageUrl && isEditing">
-                                            <input
-                                                type="file"
-                                                id="fileInput"
-                                                accept="image/*"
-                                                (change)="onFileSelect($event)"
-                                                style="display: none;"
-                                            />
-                                            <div class="upload-box" (click)="triggerFileInput()">
-                                                <div class="upload-icon"><i class="pi pi-upload"></i></div>
-                                                <div class="upload-text">Tải ảnh</div>
-                                            </div>
-                                        </div>
-                                        <div *ngIf="imageUrl && isEditing" class="image-container">
-                                            <img [src]="imageUrl" alt="Image" class="news-image" />
-                                            
-                                            <!-- Biểu tượng trash khi hover vào ảnh -->
-                                            <i *ngIf="imageUrl" 
-                                            class="pi pi-trash trash-icon" 
-                                            (click)="removeImage()"></i>
-                                        </div>
-                                    </div>
-                                </div>
+        <section class="company-display" *ngIf="!isEditing">
+            <article class="company-hero">
+                <div class="hero-logo">
+                    <img *ngIf="selectedCompany.logoPath !== null" [src]="imageUrl" alt="Logo công ty" />
+                    <img *ngIf="selectedCompany.logoPath === null" src="assets/image/logo.png" alt="Logo mặc định" />
+                </div>
+
+                <div class="hero-content">
+                    <div class="hero-top">
+                        <div>
+                            <h2>{{ companyForm.get('fullName')?.value }}</h2>
+                            <p>{{ companyForm.get('abbreviation')?.value }}</p>
+                        </div>
+                        <div class="status-badge smart-status">
+                            <span class="dot"></span>
+                            Active
+                        </div>
+                    </div>
+
+                    <div class="hero-metrics">
+                        <div class="metric-item">
+                            <i class="pi pi-id-card"></i>
+                            <div>
+                                <span>MST</span>
+                                <strong>{{ companyForm.get('taxCode')?.value }}</strong>
                             </div>
                         </div>
-    
-                        <div class="section">
-                            <h3></h3>
-                            <div class="info">
-                                <div class="info-title">
-                                    <span>ĐĂNG KÝ KINH DOANH</span>
-                                </div>
-                                <div class="info-content-2">
-                                    <div class="row-info">
-                                        <span class="label">Mã số ĐKKD</span>
-                                        <span class="value" *ngIf="!isEditing">{{ companyForm.get('businessRegistrationCode')?.value === 'string' ? '' : companyForm.get('businessRegistrationCode')?.value }}</span>
-                                        <input
-                                            *ngIf="isEditing"
-                                            type="text"
-                                            class="form-control"
-                                            pInputText
-                                            [style]="{ height: '40px' }"
-                                            formControlName="businessRegistrationCode"
-                                            placeholder="Nhập thông tin"
-                                            maxlength="100"
-                                            
-                                        />
-                                    </div>
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Ngày cấp</span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('businessRegistrationDate')?.value === 'string' ? '' : companyForm.get('businessRegistrationDate')?.value  | date: 'dd/MM/yyyy' }}</span>
-    
-                                            <p-calendar
-                                              *ngIf="isEditing"
-                                              formControlName="businessRegistrationDate"
-                                              [showIcon]="true"
-                                              [icon]="calendarIcon"
-                                              dateFormat="dd/mm/yy"
-                                              placeholder="Chọn ngày"
-                                              [style]="{ height: '40px', width: '350px'}"
-                                              [readonlyInput]="true"
-                                            ></p-calendar>
-                                        </div>
-                                        <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="isEditing && companyForm.get('businessRegistrationDate')?.touched && companyForm.get('businessRegistrationDate')?.hasError('invalidDate')">
-                                            <small class="error-message">Vui lòng chọn ngày nhỏ hơn hoặc bằng ngày hiện tại.</small>
-                                        </div>
-                                    </div>
-                                    <div class="row-info">
-                                        <span class="label">Nơi cấp</span>
-                                        <span class="value" *ngIf="!isEditing">{{ companyForm.get('issuingAuthority')?.value === 'string' ? '' : companyForm.get('issuingAuthority')?.value }}</span>
-                                        <input
-                                            *ngIf="isEditing"
-                                            type="text"
-                                            class="form-control"
-                                            pInputText
-                                            [style]="{ height: '40px' }"
-                                            formControlName="issuingAuthority"
-                                            placeholder="Nhập thông tin"
-                                            maxlength="100"
-                                            
-                                        />
-                                    </div>
-                                    <div class="row-info">
-                                        <span class="label">Người đại diện pháp
-                                            luật</span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('legalRepresentative')?.value === 'string' ? '' : companyForm.get('legalRepresentative')?.value }}</span>
-                                            <input
-                                                *ngIf="isEditing"
-                                                type="text"
-                                                class="form-control"
-                                                pInputText
-                                                [style]="{ height: '40px' }"
-                                                formControlName="legalRepresentative"
-                                                placeholder="Nhập thông tin"
-                                                maxlength="100"
-                                                
-                                            />
-                                    </div>
-                                    <div class="row-info">
-                                        <span class="label">Chức danh</span>
-                                        <span class="value" *ngIf="!isEditing">{{ companyForm.get('legalRepresentativeTitle')?.value === 'string' ? '' : companyForm.get('legalRepresentativeTitle')?.value }}</span>
-                                        <input
-                                            *ngIf="isEditing"
-                                            type="text"
-                                            class="form-control"
-                                            pInputText
-                                            [style]="{ height: '43px' }"
-                                            formControlName="legalRepresentativeTitle"
-                                            placeholder="Nhập thông tin"
-                                            maxlength="100"
-                                            
-                                        />
-                                    </div>
-                                </div>
+                        <div class="metric-item">
+                            <i class="pi pi-ticket"></i>
+                            <div>
+                                <span>Mã công ty</span>
+                                <strong>{{ companyForm.get('companyCode')?.value }}</strong>
                             </div>
                         </div>
-    
-                        <div class="section">
-                            <h3></h3>
-                            <div class="info">
-                                <div class="info-title">
-                                    <span>LIÊN HỆ</span>
-                                </div>
-                                <div class="info-content-3">
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Địa chỉ</span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('address')?.value === 'string' ? '' : companyForm.get('address')?.value }}</span>
-                                            <input
-                                                *ngIf="isEditing"
-                                                type="text"
-                                                class="form-control"
-                                                pInputText
-                                                [style]="{ height: '40px' }"
-                                                formControlName="address"
-                                                placeholder="Nhập thông tin"
-                                                maxlength="100"
-                                               
-                                            />
-                                        </div>
-                                        <!-- <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="showErrorsAdress || companyForm.get('address')?.touched && companyForm.get('address')?.invalid">
-                                            <span class="red-asterisk" *ngIf="companyForm.get('address')?.hasError('required')">Không được để trống</span>
-                                            <span class="red-asterisk" *ngIf="companyForm.get('address')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
-                                        </div> -->
-                                        
-                                    </div>
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Điện thoại</span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('phoneNumber')?.value === 'string' ? '' : companyForm.get('phoneNumber')?.value }}</span>
-                                            <input
-                                                *ngIf="isEditing"
-                                                type="text"
-                                                class="form-control"
-                                                pInputText
-                                                [style]="{ height: '40px' }"
-                                                formControlName="phoneNumber"
-                                                placeholder="Nhập thông tin"
-                                                maxlength="100"
-                                            />
-                                        </div>
-                                        <!-- <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="showErrorsPhoneNumber || companyForm.get('phoneNumber')?.touched && companyForm.get('phoneNumber')?.invalid">
-                                            <span class="red-asterisk" *ngIf="companyForm.get('phoneNumber')?.hasError('required')">Không được để trống</span>
-                                            <span class="red-asterisk" *ngIf="companyForm.get('phoneNumber')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
-                                        </div> -->
-                                    </div>
-                                    <div class="validate-info">
-                                        <div class="row-info">
-                                            <span class="label">Fax</span>
-                                            <span class="value" *ngIf="!isEditing">{{ companyForm.get('fax')?.value === 'string' ? '' : companyForm.get('fax')?.value }}</span>
-                                            <input
-                                                *ngIf="isEditing"
-                                                type="text"
-                                                class="form-control"
-                                                pInputText
-                                                [style]="{ height: '40px' }"
-                                                formControlName="fax"
-                                                placeholder="Nhập thông tin"
-                                                maxlength="100"
-                                               
-                                                
-                                            />
-                                        </div>
-                                        <!-- <div style="margin-left: 300px; margin-bottom: 10px;" *ngIf="showErrorsFax && companyForm.get('fax')?.touched && companyForm.get('fax')?.invalid">
-                                            <span class="red-asterisk" *ngIf="companyForm.get('fax')?.hasError('required')">Không được để trống</span>
-                                            <span class="red-asterisk" *ngIf="companyForm.get('fax')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
-                                        </div> -->
-                                    </div>
-                                    <div class="row-info">
-                                        <span class="label">Email</span>
-                                        <span class="value" *ngIf="!isEditing">{{ companyForm.get('email')?.value === 'string' ? '' : companyForm.get('email')?.value }}</span>
-                                        <input
-                                            *ngIf="isEditing"
-                                            type="text"
-                                            class="form-control"
-                                            pInputText
-                                            [style]="{ height: '40px' }"
-                                            formControlName="email"
-                                            placeholder="Nhập thông tin"
-                                            maxlength="100"
-                                            
-                                        />
-                                    </div>
-                                    <div class="row-info">
-                                        <span class="label">Website</span>
-                                        <span class="value" *ngIf="!isEditing">{{ companyForm.get('website')?.value === 'string' ? '' : companyForm.get('website')?.value }}</span>
-                                        <input
-                                            *ngIf="isEditing"
-                                            type="text"
-                                            class="form-control"
-                                            pInputText
-                                            [style]="{ height: '40px' }"
-                                            formControlName="website"
-                                            placeholder="Nhập thông tin"
-                                            maxlength="100"
-                                            
-                                        />
-                                    </div>
-                                </div>
+                        <div class="metric-item">
+                            <i class="pi pi-calendar"></i>
+                            <div>
+                                <span>Ngày thành lập</span>
+                                <strong>{{ companyForm.get('incorporationDate')?.value | date: 'dd/MM/yyyy' }}</strong>
                             </div>
                         </div>
                     </div>
                 </div>
+            </article>
+
+            <div class="smart-grid">
+                <article class="smart-card">
+                    <div class="smart-card-header">
+                        <i class="pi pi-file-edit"></i>
+                        <h3>ĐĂNG KÝ KINH DOANH</h3>
+                    </div>
+
+                    <div class="smart-row">
+                        <span><i class="pi pi-id-card"></i>Mã ĐKKD</span>
+                        <strong>{{ companyForm.get('businessRegistrationCode')?.value }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-calendar"></i>Ngày cấp</span>
+                        <strong>{{ companyForm.get('businessRegistrationDate')?.value | date: 'dd/MM/yyyy' }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-map-marker"></i>Nơi cấp</span>
+                        <strong>{{ companyForm.get('issuingAuthority')?.value }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-user"></i>Người đại diện</span>
+                        <strong>{{ companyForm.get('legalRepresentative')?.value }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-briefcase"></i>Chức danh</span>
+                        <strong>{{ companyForm.get('legalRepresentativeTitle')?.value }}</strong>
+                    </div>
+                </article>
+
+                <article class="smart-card">
+                    <div class="smart-card-header">
+                        <i class="pi pi-phone"></i>
+                        <h3>LIÊN HỆ</h3>
+                    </div>
+
+                    <div class="contact-content">
+                    <div class="smart-row">
+                        <span><i class="pi pi-map-marker"></i>Địa chỉ</span>
+                        <strong>{{ companyForm.get('address')?.value }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-phone"></i>Điện thoại</span>
+                        <strong>{{ companyForm.get('phoneNumber')?.value }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-envelope"></i>Email</span>
+                        <strong>{{ companyForm.get('email')?.value }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-globe"></i>Website</span>
+                        <strong>{{ companyForm.get('website')?.value }}</strong>
+                    </div>
+                    <div class="smart-row">
+                        <span><i class="pi pi-map"></i>Google Maps</span>
+                        <a class="map-open-link" [href]="googleMapOpenUrl" target="_blank" rel="noopener noreferrer">Mở bản đồ</a>
+                    </div>
+
+                    <div class="contact-map-corner">
+                        <iframe
+                            class="contact-map-frame"
+                            [src]="googleMapEmbedUrl"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Bản đồ liên hệ"
+                        ></iframe>
+                    </div>
+                    </div>
+                </article>
             </div>
+        </section>
+
+        <section class="company-panels" *ngIf="isEditing">
+            <article class="info-card">
+                <div class="card-header">
+                    <h3>CÔNG TY</h3>
+                    <div class="status-badge">
+                        <span class="dot"></span>
+                        active
+                    </div>
+                </div>
+
+                <div class="company-identity" *ngIf="!isEditing">
+                    <div class="company-main-name">{{ companyForm.get('fullName')?.value || 'Chưa cập nhật tên công ty' }}</div>
+                    <div class="company-short-name">{{ companyForm.get('abbreviation')?.value || 'Tên viết tắt chưa cập nhật' }}</div>
+                </div>
+
+                <div class="card-grid with-media">
+                    <div class="media-col">
+                        <div class="logo-preview" *ngIf="!isEditing">
+                            <img *ngIf="selectedCompany.logoPath !== null" src="assets/image/logo.png" alt="Logo công ty" />
+                            <svg *ngIf="selectedCompany.logoPath === null" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2ZM5 19V5h14l.002 14H5Z" fill="currentColor"></path>
+                                <path d="m10 14-1-1-3 4h12l-5-7-3 4ZM8.5 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+
+                        <div class="upload-container" *ngIf="!imageUrl && isEditing">
+                            <input type="file" id="fileInput" accept="image/*" (change)="onFileSelect($event)" style="display: none" />
+                            <div class="upload-box" (click)="triggerFileInput()">
+                                <div class="upload-icon"><i class="pi pi-upload"></i></div>
+                                <div class="upload-text">Tải ảnh logo</div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="imageUrl && isEditing" class="image-container">
+                            <img [src]="imageUrl" alt="Logo" class="news-image" />
+                            <i *ngIf="imageUrl" class="pi pi-trash trash-icon" (click)="removeImage()"></i>
+                        </div>
+                    </div>
+
+                    <div class="fields-col">
+                        <div class="field-row validate-info">
+                            <div class="field-label">Tên đầy đủ <span class="red-asterisk">*</span></div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('fullName')?.value === 'string' ? '' : companyForm.get('fullName')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="fullName"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                                (focus)="showErrorsFullName = true"
+                            />
+                        </div>
+                        <div class="field-error" *ngIf="showErrorsFullName && companyForm.get('fullName')?.touched && companyForm.get('fullName')?.invalid">
+                            <span class="red-asterisk" *ngIf="companyForm.get('fullName')?.hasError('required')">Không được để trống</span>
+                            <span class="red-asterisk" *ngIf="companyForm.get('fullName')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Tên giao dịch viết tắt</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('abbreviation')?.value === 'string' ? '' : companyForm.get('abbreviation')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="abbreviation"
+                                placeholder="Nhập thông tin"
+                                maxlength="50"
+                                (input)="onShortNameInput(); preventSpace($event)"
+                            />
+                        </div>
+
+                        <div class="field-row validate-info">
+                            <div class="field-label">Mã số thuế <span class="red-asterisk">*</span></div>
+                            <div class="field-value with-check" *ngIf="!isEditing">
+                                {{ companyForm.get('taxCode')?.value === 'string' ? '' : companyForm.get('taxCode')?.value }}
+                                <i class="pi pi-check-circle"></i>
+                            </div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="taxCode"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                                (focus)="showErrorsTaxCode = true"
+                                (input)="onInputChangeTaxCode($event); preventSpace($event)"
+                            />
+                        </div>
+                        <div class="field-error" *ngIf="showErrorsTaxCode && companyForm.get('taxCode')?.touched && companyForm.get('taxCode')?.invalid">
+                            <span class="red-asterisk" *ngIf="companyForm.get('taxCode')?.hasError('required')">Không được để trống</span>
+                        </div>
+                        <div class="field-error" *ngIf="showErrorsTaxCode">
+                            <span class="red-asterisk">{{ taxCodeErrorMessage }}</span>
+                        </div>
+
+                        <div class="field-row validate-info">
+                            <div class="field-label">Mã công ty <span class="red-asterisk">*</span></div>
+                            <div class="field-value with-check" *ngIf="!isEditing">
+                                {{ companyForm.get('companyCode')?.value === 'string' ? '' : companyForm.get('companyCode')?.value }}
+                                <i class="pi pi-check-circle"></i>
+                            </div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="companyCode"
+                                placeholder="Nhập thông tin"
+                                maxlength="30"
+                                (input)="onCompanyCodeInput(); preventSpace($event)"
+                                readonly
+                            />
+                        </div>
+                        <div class="field-error" *ngIf="showErrorsCompanyCode && companyForm.get('companyCode')?.touched && companyForm.get('companyCode')?.invalid">
+                            <span class="red-asterisk" *ngIf="companyForm.get('companyCode')?.hasError('required')">Không được để trống</span>
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Ngày thành lập</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('incorporationDate')?.value === 'string' ? '' : companyForm.get('incorporationDate')?.value | date: 'dd/MM/yyyy' }}</div>
+                            <p-calendar
+                                *ngIf="isEditing"
+                                formControlName="incorporationDate"
+                                [showIcon]="true"
+                                [icon]="calendarIcon"
+                                dateFormat="dd/mm/yy"
+                                placeholder="Chọn ngày"
+                                [readonlyInput]="true"
+                            ></p-calendar>
+                        </div>
+
+                        <div class="field-row" *ngIf="!isEditing && selectedCompany.logoPath !== null">
+                            <div class="field-label">Logo công ty</div>
+                            <div class="field-value logo-inline">
+                                <img [src]="imageUrl" alt="Logo" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="info-card">
+                <div class="card-header">
+                    <h3>ĐĂNG KÝ KINH DOANH</h3>
+                </div>
+
+                <div class="card-grid">
+                    <div class="fields-col full-width">
+                        <div class="field-row">
+                            <div class="field-label">Mã số ĐKKD</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('businessRegistrationCode')?.value === 'string' ? '' : companyForm.get('businessRegistrationCode')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="businessRegistrationCode"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div class="field-row validate-info">
+                            <div class="field-label">Ngày cấp</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('businessRegistrationDate')?.value === 'string' ? '' : companyForm.get('businessRegistrationDate')?.value | date: 'dd/MM/yyyy' }}</div>
+                            <p-calendar
+                                *ngIf="isEditing"
+                                formControlName="businessRegistrationDate"
+                                [showIcon]="true"
+                                [icon]="calendarIcon"
+                                dateFormat="dd/mm/yy"
+                                placeholder="Chọn ngày"
+                                [readonlyInput]="true"
+                            ></p-calendar>
+                        </div>
+                        <div class="field-error" *ngIf="isEditing && companyForm.get('businessRegistrationDate')?.touched && companyForm.get('businessRegistrationDate')?.hasError('invalidDate')">
+                            <small class="error-message">Vui lòng chọn ngày nhỏ hơn hoặc bằng ngày hiện tại.</small>
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Nơi cấp</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('issuingAuthority')?.value === 'string' ? '' : companyForm.get('issuingAuthority')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="issuingAuthority"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Người đại diện pháp luật</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('legalRepresentative')?.value === 'string' ? '' : companyForm.get('legalRepresentative')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="legalRepresentative"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Chức danh</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('legalRepresentativeTitle')?.value === 'string' ? '' : companyForm.get('legalRepresentativeTitle')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="legalRepresentativeTitle"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="info-card">
+                <div class="card-header">
+                    <h3>LIÊN HỆ</h3>
+                </div>
+
+                <div class="card-grid with-media">
+                    <div class="media-col map-col">
+                        <div class="map-card">
+                            <iframe
+                                class="map-frame"
+                                [src]="googleMapEmbedUrl"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                title="Bản đồ công ty"
+                            ></iframe>
+
+                            <div class="map-meta">
+                                <span class="coord-line">
+                                    <i class="pi pi-map-marker"></i>
+                                    {{ googleMapLatitude | number: '1.5-5' }}, {{ googleMapLongitude | number: '1.5-5' }}
+                                </span>
+                                <a
+                                    class="map-open-link"
+                                    [href]="googleMapOpenUrl"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <i class="pi pi-external-link"></i>
+                                    Xem trên Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fields-col">
+                        <div class="field-row">
+                            <div class="field-label">Địa chỉ</div>
+                            <div class="field-value" *ngIf="!isEditing">{{ companyForm.get('address')?.value === 'string' ? '' : companyForm.get('address')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="address"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Điện thoại</div>
+                            <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-phone"></i>{{ companyForm.get('phoneNumber')?.value === 'string' ? '' : companyForm.get('phoneNumber')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="phoneNumber"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Fax</div>
+                            <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-phone"></i>{{ companyForm.get('fax')?.value === 'string' ? '' : companyForm.get('fax')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="fax"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Email</div>
+                            <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-envelope"></i>{{ companyForm.get('email')?.value === 'string' ? '' : companyForm.get('email')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="email"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-label">Website</div>
+                            <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-globe"></i>{{ companyForm.get('website')?.value === 'string' ? '' : companyForm.get('website')?.value }}</div>
+                            <input
+                                *ngIf="isEditing"
+                                type="text"
+                                class="form-control"
+                                pInputText
+                                formControlName="website"
+                                placeholder="Nhập thông tin"
+                                maxlength="100"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </article>
         </section>
     </main>
 </form>

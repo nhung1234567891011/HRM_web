@@ -1,38 +1,181 @@
+:host {
+  --surface: #f4f7fb;
+  --panel: #ffffff;
+  --border: #dbe3ec;
+  --text-main: #1e2834;
+  --text-sub: #5a6775;
+  --accent: #1a3557;
+  --shadow: 0 10px 24px rgba(19, 41, 68, 0.08);
+}
+
+.main {
+  background: linear-gradient(180deg, #f7f9fc 0%, #eef3f8 100%);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.page-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  font-size: 18px;
+  color: var(--text-main);
+  letter-spacing: 0.2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-add {
+  height: 40px;
+  width: 130px;
+  border-radius: 10px;
+}
+
+.card-body {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 12px 12px 0 !important;
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-col {
+  width: min(390px, 100%);
+}
+
+.search-input-wrap {
+  width: 100%;
+}
+
+.search-input-wrap .form-control {
+  padding-left: 30px;
+  height: 37px;
+  width: 100%;
+}
+
+.filter-action-col {
+  display: flex;
+  align-items: center;
+}
+
+.buttonfilter {
+  height: 37px;
+  border-radius: 8px;
+}
+
+.table-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 th,
 td {
-  border: 1px solid #ddd;
+  border: none;
   padding: 8px;
 }
 
-th {
-  background-color: #f2f2f2;
-  text-align: left;
+thead th {
+  background: #f3f6fa;
+  color: #33465b;
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
 }
 
-.bt-plus {
-  margin-right: 8px;
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
+tbody td {
+  border-bottom: 1px solid #edf1f5;
+  color: #2a3643;
+  vertical-align: middle;
+}
+
+.org-row:hover td {
+  background: #f9fbfe;
+}
+
+.org-tree-cell {
+  --tree-indent: 0px;
+  position: relative;
+  text-align: left;
+  padding-left: calc(var(--tree-indent) + 8px) !important;
+}
+
+.org-tree-cell.has-parent::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--tree-indent) - 9px);
+  top: 50%;
+  width: 12px;
+  border-top: 1px solid #ccd5df;
+}
+
+.tree-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+}
+
+.tree-spacer {
+  width: 16px;
+  height: 16px;
+}
+
+.tree-folder {
+  font-size: 13px;
+  color: #6b7785;
+}
+
+.tree-label {
+  font-size: 13px;
+  color: #1f2b39;
+  font-weight: 500;
+}
+
+.tree-label.root-label {
+  font-weight: 700;
 }
 
 .bt-plus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #bcc7d2;
+  border-radius: 3px;
   background-color: #fff;
-  font-size: 16px;
+  font-size: 12px;
+  line-height: 1;
   cursor: pointer;
   padding: 0;
+  color: #566477;
 }
 
 .bt-plus.expanded {
@@ -40,21 +183,28 @@ th {
 }
 
 .bt-plus:hover {
-  background-color: #f0f0f0;
-}
-
-
-.bt-plus {
-  // margin-right: 8px;
-  margin-left: 10px;
+  background-color: #edf2f7;
 }
 
 td i {
   font-size: 18px;
-  margin: 0 8px;
+  margin: 0 6px;
   color: #666;
   cursor: pointer;
   transition: color 0.3s, transform 0.2s;
+}
+
+.action-icon {
+  position: relative;
+  color: #637487;
+}
+
+.action-icon:hover {
+  color: #2b4b6e;
+}
+
+.action-icon.danger:hover {
+  color: #d23c3c;
 }
 
 td i:hover {
@@ -185,15 +335,127 @@ td i.pi.pi-trash:hover::after {
 // tny add
 .work-status-span {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 400;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
   text-align: center;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-pill i {
+  font-size: 10px;
 }
 
 .table-no-border,
 .table-no-border th,
 .table-no-border td {
-    border: none !important; /* Sử dụng !important để đảm bảo ưu tiên cao hơn các định nghĩa khác */
+    border: none !important;
+}
+
+.paging-bot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(180deg, #fbfdff 0%, #f3f7fb 100%);
+}
+
+.paging-info {
+  color: #4d5e71;
+  font-size: 13px;
+  font-weight: 600;
+  background: #eaf1f8;
+  border: 1px solid #d1dcea;
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+.paging-info strong {
+  color: #1f344a;
+}
+
+:host ::ng-deep .org-paginator .p-paginator {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  background: transparent;
+  border: none;
+  padding: 0;
+  gap: 4px;
+}
+
+:host ::ng-deep .org-paginator .p-paginator-pages .p-paginator-page,
+:host ::ng-deep .org-paginator .p-paginator-first,
+:host ::ng-deep .org-paginator .p-paginator-prev,
+:host ::ng-deep .org-paginator .p-paginator-next,
+:host ::ng-deep .org-paginator .p-paginator-last {
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  border: 1px solid #cdd9e6;
+  background: #ffffff;
+  color: #4a5f75;
+}
+
+:host ::ng-deep .org-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: #1a3557;
+  border-color: #1a3557;
+  color: #ffffff;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown {
+  height: 2rem;
+  border-radius: 8px;
+  border-color: #cdd9e6;
+}
+
+:host ::ng-deep .org-paginator .p-paginator-rpp-options {
+  margin: 0;
+  align-self: center;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown .p-dropdown-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+:host ::ng-deep .org-paginator .p-paginator-current {
+  color: #5d6d80;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    justify-content: flex-end;
+  }
+
+  .table-panel {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 980px;
+  }
+
+  .paging-bot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .paging-info {
+    width: fit-content;
+  }
 }

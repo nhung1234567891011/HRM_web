@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import {
     AbstractControl,
     FormBuilder,
-    FormControl,
     FormGroup,
     ValidationErrors,
     ValidatorFn,
     Validators,
 } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { CompanyInfoService } from 'src/app/core/services/company-info.service';
@@ -41,12 +41,20 @@ export class CompanyInfoComponent implements OnInit {
     selectedCompany: any = {};
     originalImageUrl: string | null = null;
     dateError: boolean = false;
+    googleMapLatitude: number = 21.00372;
+    googleMapLongitude: number = 105.84637;
+    googleMapEmbedUrl: SafeResourceUrl;
+    googleMapOpenUrl: string = '';
     constructor(
         private fb: FormBuilder,
         private companyService: CompanyInfoService,
         private route: ActivatedRoute,
-        private router: Router
-    ) {}
+        private router: Router,
+        private sanitizer: DomSanitizer
+    ) {
+        this.googleMapEmbedUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
+        this.updateGoogleMapUrls(this.googleMapLatitude, this.googleMapLongitude);
+    }
     ngOnInit(): void {
         this.items = [
             { label: 'Hệ thống' },
@@ -93,6 +101,7 @@ export class CompanyInfoComponent implements OnInit {
                 const data = response.data;
                 this.selectedCompany = data;
                 this.imageUrl = `${this.ImgUrl}/${data.logoPath}`;
+                this.applyCompanyCoordinates(data);
                 const incorporationDate = new Date(data.incorporationDate);
                 const businessRegistrationDate = new Date(data.businessRegistrationDate);
                 this.companyForm.patchValue({
@@ -116,6 +125,45 @@ export class CompanyInfoComponent implements OnInit {
                 });
             }
         });
+    }
+
+    private toCoordinate(value: any): number | null {
+        const coordinate = Number(value);
+        return Number.isFinite(coordinate) ? coordinate : null;
+    }
+
+    private updateGoogleMapUrls(latitude: number, longitude: number): void {
+        this.googleMapLatitude = latitude;
+        this.googleMapLongitude = longitude;
+
+        this.googleMapEmbedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+            `https://www.google.com/maps?q=${latitude},${longitude}&z=16&output=embed`
+        );
+        this.googleMapOpenUrl =
+            `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+    }
+
+    private applyCompanyCoordinates(data: any): void {
+        const latitude = this.toCoordinate(
+            data?.latitude ?? data?.lat ?? data?.mapLatitude
+        );
+        const longitude = this.toCoordinate(
+            data?.longitude ?? data?.lng ?? data?.mapLongitude
+        );
+
+        if (
+            latitude === null ||
+            longitude === null ||
+            latitude < -90 ||
+            latitude > 90 ||
+            longitude < -180 ||
+            longitude > 180
+        ) {
+            this.updateGoogleMapUrls(this.googleMapLatitude, this.googleMapLongitude);
+            return;
+        }
+
+        this.updateGoogleMapUrls(latitude, longitude);
     }
 
     whitespaceValidator(): ValidatorFn {
