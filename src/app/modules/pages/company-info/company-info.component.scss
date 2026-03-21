@@ -276,16 +276,12 @@
 }
 
 .info-card {
-    background: var(--panel-bg);
-    border: 1px solid var(--panel-border);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-    padding: 14px 16px;
-}
-
-.info-card:first-child {
-    border-color: #b8cadb;
-    box-shadow: 0 12px 24px rgba(15, 44, 76, 0.12);
+    border: 1px solid #d4d9df;
+    border-radius: 14px;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 5px 14px rgba(20, 35, 55, 0.07);
+    padding: 0;
 }
 
 .company-identity {
@@ -315,27 +311,30 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 0;
+    padding: 12px 14px;
+    border-bottom: 1px solid #e1e6ec;
+    background: linear-gradient(180deg, #f9fbfe 0%, #f3f7fb 100%);
 }
 
 .card-header h3 {
     margin: 0;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
-    color: #2b333c;
-    letter-spacing: 0.4px;
+    color: #121b25;
 }
 
 .status-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 12px;
+    padding: 8px 14px;
     border-radius: 999px;
-    font-size: 13px;
+    border: 1px solid #b8e2d5;
+    font-size: 14px;
     color: #23876f;
     background: var(--accent-soft);
-    text-transform: lowercase;
+    text-transform: none;
 }
 
 .dot {
@@ -348,7 +347,8 @@
 .card-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 0;
+    padding: 12px 14px;
 }
 
 .card-grid.with-media {
@@ -365,17 +365,25 @@
     grid-template-columns: 210px minmax(0, 1fr);
     align-items: center;
     gap: 10px;
-    padding: 5px 0;
+    padding: 8px 0;
+    border-bottom: 1px dashed #e5ebf2;
+}
+
+.fields-col .field-row:last-child {
+    border-bottom: none;
 }
 
 .field-label {
-    color: var(--text-muted);
-    font-weight: 600;
+    color: #273543;
+    font-size: 16px;
+    font-weight: 500;
     line-height: 1.4;
 }
 
 .field-value {
-    color: var(--text-main);
+    color: #101820;
+    font-size: 16px;
+    font-weight: 500;
     line-height: 1.45;
     word-break: break-word;
 }
@@ -426,16 +434,16 @@
 
 .map-card {
     width: 100%;
-    border: 1px solid #cedae6;
-    border-radius: 12px;
+    border: 1px solid #d5dfe9;
+    border-radius: 10px;
     background: #ffffff;
     overflow: hidden;
-    box-shadow: 0 10px 18px rgba(20, 40, 60, 0.08);
+    box-shadow: 0 8px 16px rgba(16, 34, 52, 0.14);
 }
 
 .map-frame {
     width: 100%;
-    height: 180px;
+    height: 216px;
     border: 0;
     display: block;
 }
@@ -523,7 +531,7 @@
 }
 
 .field-error {
-    margin: 2px 0 8px 220px;
+    margin: 6px 14px 10px 234px;
 }
 
 .red-asterisk,
@@ -561,7 +569,7 @@
 .upload-box {
     width: 140px;
     height: 120px;
-    border: 1.5px dashed #aac0d5;
+    border: 1.5px dashed #9fb3c8;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -596,7 +604,8 @@
 .news-image {
     width: 140px;
     height: 120px;
-    object-fit: cover;
+    object-fit: contain;
+    background: #ffffff;
     border-radius: 10px;
     border: 1px solid #d8dde3;
 }
@@ -605,11 +614,11 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    font-size: 14px;
+    font-size: 13px;
     color: #ffffff;
-    background-color: rgba(217, 56, 56, 0.9);
+    background-color: rgba(203, 48, 48, 0.92);
     border-radius: 999px;
-    padding: 6px;
+    padding: 7px;
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s ease;
@@ -654,7 +663,7 @@
     }
 
     .field-error {
-        margin-left: 0;
+        margin: 6px 0 10px;
     }
 
     .company-hero {
