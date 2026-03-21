@@ -96,11 +96,12 @@ export class EditRoleComponent implements OnInit {
 		];
 
 		this.route.paramMap.subscribe((params) => {
-			const request = {
-				id: params.get('id'),
-			};
-			this.permissionId=+request.id;
-			this.getPermission(request);
+			const id = Number(params.get('id'));
+			if (Number.isNaN(id)) {
+				return;
+			}
+			this.permissionId = id;
+			this.getPermission(id);
 		});
 
 		const request = {
@@ -124,8 +125,8 @@ export class EditRoleComponent implements OnInit {
 		});
 	}
 
-	getPermission(request: any) {
-		this.roleService.getById(request).subscribe(res => {
+	getPermission(id: number) {
+		this.roleService.getById(id).subscribe(res => {
 			if (res.status === true) {
 				this.roleForm.get('name').setValue(res.data.name);
 				this.roleForm.get('description').setValue(res.data.description);
