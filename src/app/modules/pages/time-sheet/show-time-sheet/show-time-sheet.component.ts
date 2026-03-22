@@ -55,8 +55,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 		UtilityModule,
 		CalendarModule,
 		InputTextareaModule,
-		TableColumnToggleDirective
-		InputTextareaModule,
+		TableColumnToggleDirective,
 		OverlayPanelModule
 	],
 	providers: [DatePipe],

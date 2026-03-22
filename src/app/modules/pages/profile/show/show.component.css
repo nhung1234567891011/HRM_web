@@ -22,7 +22,7 @@
 
 .filter-row {
     display: grid;
-    grid-template-columns: minmax(220px, 1fr) repeat(5, auto);
+    grid-template-columns: minmax(220px, 1fr) repeat(4, auto);
     gap: 0.5rem;
     align-items: center;
     padding: 0.25rem 0;
@@ -211,7 +211,7 @@
 .employee-name {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .icon-tool {
@@ -232,42 +232,16 @@
     border-color: #cbd5e1;
 }
 
-.dashboard {
-    background-color: #fff;
-}
-
-.dashboard-item {
-    position: relative;
 .code {
     color: #2563eb;
     font-weight: 600;
     cursor: pointer;
 }
 
-.paging-bot {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid #edf2f7;
-    padding: 0.8rem 0.2rem 0.1rem;
+.code:hover {
+    text-decoration: underline;
 }
 
-.dashboard-item .content {
-    font-size: 34px;
-    font-weight: 700;
-.paging-info {
-    color: #64748b;
-    font-size: 12px;
-}
-
-.title-heading {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: #000;
-    font-size: 13px;
 ::ng-deep .profile-show-page .p-datatable .p-datatable-header {
     background: #ffffff;
     border: none;
@@ -284,26 +258,12 @@
     padding: 0.7rem 0.75rem;
 }
 
-.trial {
-    background-color: #f5f1ff;
-}
-
-.trial .content {
-    color: #6c31ed;
-}
-
-.classify {
-    background-color: #f4feff;
 ::ng-deep .profile-show-page .p-datatable .p-datatable-tbody > tr > td {
     padding: 0.65rem 0.75rem;
     border-bottom: 1px solid #eef2f7;
     color: #1f2937;
 }
 
-.classify .content {}
-
-.maternity {
-    background-color: #ffdddc;
 ::ng-deep .profile-show-page .p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
     background: #fbfdff;
 }
@@ -317,87 +277,6 @@
 ::ng-deep .profile-show-page .p-dropdown,
 ::ng-deep .profile-show-page .p-treeselect {
     min-width: 180px;
-}
-
-.other {
-    background-color: #d5f4ef;
-}
-
-.other .content {
-    color: #78ccf0;
-}
-
-.setting-item svg {
-    font-size: 13px;
-    display: block;
-}
-
-.setting-item {
-    display: flex;
-    align-items: center;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.01s;
-}
-
-.setting-item:hover {
-    background-color: #ebe9f0;
-}
-
-.employee-image-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-
-@media (max-width: 1200px) {
-    .filter-row {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    .search-col {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (max-width: 768px) {
-    .filter-row {
-        grid-template-columns: 1fr;
-    }
-
-    .filter-action-col,
-    .buttonfilter,
-    ::ng-deep .profile-show-page .p-dropdown,
-    ::ng-deep .profile-show-page .p-treeselect {
-        width: 100%;
-        min-width: 100%;
-    }
-
-    .column-panel {
-        width: 100%;
-        min-width: 260px;
-        right: 0;
-    }
-
-    .paging-bot {
-        flex-direction: column;
-        gap: 0.6rem;
-        align-items: flex-start;
-    }
-}
-
-.employee-name {
-.employee-name {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.code:hover {
-.code:hover {
-    text-decoration: underline;
 }
 
 .table-footer {
@@ -472,6 +351,8 @@
 :host ::ng-deep .org-paginator .p-dropdown .p-dropdown-label {
     padding: 0 0.5rem;
     font-size: 12px;
+    display: inline-flex;
+    align-items: center;
 }
 
 :host ::ng-deep .org-paginator .p-dropdown .p-dropdown-trigger {
@@ -485,11 +366,6 @@
 :host ::ng-deep .org-paginator .p-paginator-rpp-options {
     margin: 0;
     align-self: center;
-}
-
-:host ::ng-deep .org-paginator .p-dropdown .p-dropdown-label {
-    display: inline-flex;
-    align-items: center;
 }
 
 :host ::ng-deep .org-paginator .p-paginator-current {
@@ -507,7 +383,6 @@
     margin: 0;
 }
 
-/* Search input - đồng bộ với dropdown và nút Lọc */
 .search-input-wrapper {
     display: inline-block;
     min-width: 200px;
@@ -536,7 +411,6 @@
     color: var(--p-input-placeholder-color, #6c757d);
 }
 
-/* Make organization TreeSelect wider in the filter bar */
 :host ::ng-deep .custom-tree-select {
     min-width: 320px;
 }
@@ -544,10 +418,31 @@
 :host ::ng-deep .custom-tree-select .p-treeselect {
     width: 100%;
     min-width: 320px;
-    height: 40px;
+    height: 44px;
+}
+
+@media (max-width: 1200px) {
+    .filter-row {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .search-col {
+        grid-column: 1 / -1;
+    }
 }
 
 @media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-action-col,
+    .buttonfilter,
+    ::ng-deep .profile-show-page .p-dropdown,
+    ::ng-deep .profile-show-page .p-treeselect {
+        width: 100%;
+        min-width: 100%;
+    }
 
     .search-input-wrapper,
     .search-input-wrapper input.search-input,
@@ -576,15 +471,4 @@
         left: 0;
         width: min(280px, 88vw);
     }
-}
-
-/* Make organization TreeSelect wider in the filter bar */
-:host ::ng-deep .custom-tree-select {
-    min-width: 320px;
-}
-
-:host ::ng-deep .custom-tree-select .p-treeselect {
-    width: 100%;
-    min-width: 320px;
-    height: 44px;
 }

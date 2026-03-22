@@ -539,9 +539,9 @@ li {}
     z-index: 2000;
 }
 
-[title]::after {
-    content: attr(title);
-}
+// [title]::after {
+//     content: attr(title);
+// }
 
 /* PrimeNG buttons often clip pseudo-elements, so tooltips need visible overflow. */
 button[data-tooltip],
