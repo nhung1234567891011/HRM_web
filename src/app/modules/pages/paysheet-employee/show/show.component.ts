@@ -56,11 +56,6 @@ export class ShowComponent implements OnInit {
         { field: 'createdAt', header: 'Ngày tổng hợp', selected: true },
         { field: 'updatedAt', header: 'Ngày cập nhật', selected: true },
         { field: 'payrollStatuslabel', header: 'Trạng thái', selected: true },
-        {
-            field: 'payrollConfirmationStatusLabel',
-            header: 'Trạng thái xác nhận',
-            selected: true,
-        },
     ];
 
     paging: any = {
