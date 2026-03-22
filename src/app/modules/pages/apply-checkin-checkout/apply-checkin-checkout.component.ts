@@ -18,6 +18,7 @@ import { ShiftService } from 'src/app/core/services/shift.service';
 export class ApplyCheckinCheckoutComponent implements OnInit {
   messages: any[] = [];
   checkInCheckOuts!: any;
+  selectedCheckInCheckOuts: any[] = [];
   employees: any[] = [];
   filteredEmployees: any[] = [];
   selectedEmployee: any;
