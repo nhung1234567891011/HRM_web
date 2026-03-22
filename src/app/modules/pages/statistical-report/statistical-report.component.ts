@@ -1,8 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { ChartModule } from 'primeng/chart';
+import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ReportService } from 'src/app/core/services/report.service';
 
 @Component({
     selector: 'app-statistical-report',
+    standalone: true,
+    imports: [CommonModule, RouterModule, SharedModule, ChartModule],
     templateUrl: './statistical-report.component.html',
     styleUrls: ['./statistical-report.component.scss'],
 })
