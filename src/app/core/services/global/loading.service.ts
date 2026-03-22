@@ -12,7 +12,6 @@ export class LoadingService {
     show() {
         this.activeRequests++;
         if (!this._loading.value) {
-            console.log("Start loading");
             this._loading.next(true);
         }
     }
@@ -20,7 +19,6 @@ export class LoadingService {
     hide() {
         this.activeRequests = Math.max(0, this.activeRequests - 1);
         if (this.activeRequests === 0 && this._loading.value) {
-            console.log("End loading");
             this._loading.next(false);
         }
     }
