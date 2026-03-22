@@ -90,6 +90,8 @@
                     <div class="card mt-3">
                         <p-table
                             [value]="checkInCheckOuts"
+                            [(selection)]="selectedCheckInCheckOuts"
+                            dataKey="id"
                             [paginator]="true"
                             [rows]="pageSize"
                             [totalRecords]="totalRecords"
@@ -100,7 +102,7 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="width: 1%">
-                                        <p-checkbox [binary]="true" inputId="binary"></p-checkbox>
+                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                                     </th>
                                     <th *ngIf="isColVisible('employeeCode')" style="width: 6%">Mã nhân viên</th>
                                     <th *ngIf="isColVisible('fullName')" style="width: 6%">Họ và Tên NLĐ</th>
@@ -116,7 +118,7 @@
                             <ng-template pTemplate="body" let-contract>
                                 <tr>
                                     <td>
-                                        <p-checkbox [binary]="true" inputId="binary"></p-checkbox>
+                                        <p-tableCheckbox [value]="contract"></p-tableCheckbox>
                                     </td>
                                     <td *ngIf="isColVisible('employeeCode')">{{ contract.employee.employeeCode }}</td>
                                     <td *ngIf="isColVisible('fullName')">{{ contract.employee.lastName }} {{ contract.employee.firstName }}</td>
