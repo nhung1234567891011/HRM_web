@@ -49,6 +49,31 @@
             (onChange)="fetchData()"
             (onClear)="fetchData()"
           ></p-dropdown>
+
+          <p-button
+            pTooltip="Ẩn/hiện cột"
+            label=""
+            [outlined]="true"
+            severity="secondary"
+            icon="pi pi-table"
+            (onClick)="colPanelRef.toggle($event)"
+          ></p-button>
+
+          <p-overlayPanel #colPanelRef>
+            <div style="padding: 8px; min-width: 220px;">
+              <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
+              <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
+                <p-checkbox
+                  [binary]="true"
+                  [label]="col.header"
+                  [ngModel]="isColVisible(col.field)"
+                  (onChange)="onColumnToggle($event, col)"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                </p-checkbox>
+              </div>
+            </div>
+          </p-overlayPanel>
         </div>
       </div>
 
@@ -63,22 +88,22 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 25%;">Đơn vị</th>
-              <th style="width: 10%;">Đối tượng</th>
-              <th style="width: 15%;">Hiệu lực từ</th>
-              <th style="width: 15%;">Hiệu lực đến</th>
-              <th style="width: 15%;">Trạng thái</th>
-              <th style="width: 20%;">Thao tác</th>
+              <th *ngIf="isColVisible('organizationName')" style="width: 25%;">Đơn vị</th>
+              <th *ngIf="isColVisible('targetType')" style="width: 10%;">Đối tượng</th>
+              <th *ngIf="isColVisible('effectiveFrom')" style="width: 15%;">Hiệu lực từ</th>
+              <th *ngIf="isColVisible('effectiveTo')" style="width: 15%;">Hiệu lực đến</th>
+              <th *ngIf="isColVisible('status')" style="width: 15%;">Trạng thái</th>
+              <th *ngIf="isColVisible('action')" style="width: 20%;">Thao tác</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowData>
             <tr>
-              <td>{{ rowData.organizationName }}</td>
-              <td>{{ rowData.targetType === 0 ? 'SALE' : 'CTV' }}</td>
-              <td>{{ rowData.effectiveFrom ? (rowData.effectiveFrom | date : 'dd/MM/yyyy') : '-' }}</td>
-              <td>{{ rowData.effectiveTo ? (rowData.effectiveTo | date : 'dd/MM/yyyy') : '-' }}</td>
-              <td>{{ rowData.status === 0 ? 'Đang áp dụng' : 'Ngừng áp dụng' }}</td>
-              <td>
+              <td *ngIf="isColVisible('organizationName')">{{ rowData.organizationName }}</td>
+              <td *ngIf="isColVisible('targetType')">{{ rowData.targetType === 0 ? 'SALE' : 'CTV' }}</td>
+              <td *ngIf="isColVisible('effectiveFrom')">{{ rowData.effectiveFrom ? (rowData.effectiveFrom | date : 'dd/MM/yyyy') : '-' }}</td>
+              <td *ngIf="isColVisible('effectiveTo')">{{ rowData.effectiveTo ? (rowData.effectiveTo | date : 'dd/MM/yyyy') : '-' }}</td>
+              <td *ngIf="isColVisible('status')">{{ rowData.status === 0 ? 'Đang áp dụng' : 'Ngừng áp dụng' }}</td>
+              <td *ngIf="isColVisible('action')">
                 <button
                   pButton
                   type="button"

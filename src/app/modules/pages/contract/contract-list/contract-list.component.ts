@@ -44,6 +44,19 @@ export class ContractListComponent implements OnInit {
     displayDialog: boolean = false;
     displayPreview: boolean = false;
     contractPreviewHtml: string = '';
+    allColumns = [
+        { field: 'signingDate', header: 'Ngày ký HĐ' },
+        { field: 'code', header: 'Số hợp đồng' },
+        { field: 'nameEmployee', header: 'Họ và Tên NLĐ' },
+        { field: 'position', header: 'Vị trí công việc' },
+        { field: 'unit', header: 'Đơn vị' },
+        { field: 'contractType', header: 'Loại hợp đồng' },
+        { field: 'contractDuration', header: 'Thời hạn HĐ' },
+        { field: 'effectiveDate', header: 'Ngày có hiệu lực' },
+        { field: 'expiryDate', header: 'Ngày hết' },
+        { field: 'action', header: 'Thao tác' },
+    ];
+    selectedColumns: any[] = [...this.allColumns];
     contractOption = [
         { name: 'Tất cả hợp đồng', value: null },
         { name: 'Hợp đồng đang có hiệu lực', value: false },
@@ -378,6 +391,26 @@ export class ContractListComponent implements OnInit {
         }
         if (this.totalRecords > 0) {
             this.currentPageReport = `<strong>${startRecord}</strong> - <strong>${endRecord}</strong> trong <strong>${this.totalRecords}</strong> bản ghi`;
+        }
+    }
+
+    isColVisible(field: string): boolean {
+        return this.selectedColumns.some((c) => c.field === field);
+    }
+
+    onColumnToggle(event: any, col: any): void {
+        if (event.checked) {
+            if (!this.selectedColumns.some((c) => c.field === col.field)) {
+                this.selectedColumns = this.allColumns.filter(
+                    (c) =>
+                        this.selectedColumns.some((s) => s.field === c.field) ||
+                        c.field === col.field
+                );
+            }
+        } else {
+            this.selectedColumns = this.selectedColumns.filter(
+                (c) => c.field !== col.field
+            );
         }
     }
 

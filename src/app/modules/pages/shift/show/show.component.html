@@ -61,6 +61,37 @@
                         Lọc
                     </button>
                 </div>
+                <div class="flex flex-column">
+                    <p-button
+                        pTooltip="Ẩn/hiện cột"
+                        label=""
+                        [outlined]="true"
+                        severity="secondary"
+                        icon="pi pi-table"
+                        (onClick)="colPanelRef.toggle($event)"
+                    ></p-button>
+
+                    <p-overlayPanel #colPanelRef>
+                        <div style="padding: 8px; min-width: 220px">
+                            <p style="font-weight: 600; margin-bottom: 8px">
+                                Chọn cột hiển thị
+                            </p>
+                            <div
+                                *ngFor="let col of allColumns"
+                                style="margin-bottom: 6px"
+                            >
+                                <p-checkbox
+                                    [binary]="true"
+                                    [label]="col.header"
+                                    [ngModel]="isColVisible(col.field)"
+                                    (onChange)="onColumnToggle($event, col)"
+                                    [ngModelOptions]="{ standalone: true }"
+                                >
+                                </p-checkbox>
+                            </div>
+                        </div>
+                    </p-overlayPanel>
+                </div>
             </div>
 
             <div class="table-section" style="margin-top: 20px">
@@ -79,37 +110,38 @@
                                 <th style="width: 4rem">
                                     <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">Mã ca</th>
-                                <th [style]="{ 'min-width': '150px' }">Tên ca</th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('code')" [style]="{ 'min-width': '150px' }">Mã ca</th>
+                                <th *ngIf="isColVisible('name')" [style]="{ 'min-width': '150px' }">Tên ca</th>
+                                <th *ngIf="isColVisible('startTime')" [style]="{ 'min-width': '150px' }">
                                     Giờ bắt đầu
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('endTime')" [style]="{ 'min-width': '150px' }">
                                     Giờ kết thúc
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('startTakeABreak')" [style]="{ 'min-width': '150px' }">
                                     Giờ bắt đầu nghỉ
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('endTakeABreak')" [style]="{ 'min-width': '150px' }">
                                     Giờ kết thúc nghỉ
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">Giờ công</th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('workingHours')" [style]="{ 'min-width': '150px' }">Giờ công</th>
+                                <th *ngIf="isColVisible('totalRestTime')" [style]="{ 'min-width': '150px' }">
                                     Tổng thời gian nghỉ
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('workingDays')" [style]="{ 'min-width': '150px' }">
                                     Ngày công
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('regularMultiplier')" [style]="{ 'min-width': '150px' }">
                                     Hệ số ngày thường
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('leaveDaysMultiplier')" [style]="{ 'min-width': '150px' }">
                                     Hệ số ngày nghỉ
                                 </th>
-                                <th [style]="{ 'min-width': '150px' }">
+                                <th *ngIf="isColVisible('holidayMultiplier')" [style]="{ 'min-width': '150px' }">
                                     Hệ số ngày lễ
                                 </th>
                                 <th
+                                    *ngIf="isColVisible('action')"
                                     [style]="{
                                         'min-width': '150px',
                                         'text-align': 'center'
@@ -124,39 +156,39 @@
                                 <td>
                                     <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
                                 </td>
-                                <td class="sticky-column">
+                                <td *ngIf="isColVisible('code')" class="sticky-column">
                                     {{ rowData.code }}
                                 </td>
-                                <td class="sticky-column">{{ rowData.name }}</td>
-                                <td>
+                                <td *ngIf="isColVisible('name')" class="sticky-column">{{ rowData.name }}</td>
+                                <td *ngIf="isColVisible('startTime')">
                                     {{ rowData.startTime }}
                                 </td>
-                                <td>{{ rowData.endTime }}</td>
-                                <td>
+                                <td *ngIf="isColVisible('endTime')">{{ rowData.endTime }}</td>
+                                <td *ngIf="isColVisible('startTakeABreak')">
                                     {{ rowData.startTakeABreak }}
                                 </td>
-                                <td>
+                                <td *ngIf="isColVisible('endTakeABreak')">
                                     {{ rowData.endTakeABreak }}
                                 </td>
-                                <td>
+                                <td *ngIf="isColVisible('workingHours')">
                                     {{ rowData.workingHours }}
                                 </td>
-                                <td>
+                                <td *ngIf="isColVisible('totalRestTime')">
                                     {{ rowData.totalRestTime }}
                                 </td>
-                                <td>
+                                <td *ngIf="isColVisible('workingDays')">
                                     {{ rowData.workingDays }}
                                 </td>
-                                <td>
+                                <td *ngIf="isColVisible('regularMultiplier')">
                                     {{ rowData.regularMultiplier }}
                                 </td>
-                                <td>
+                                <td *ngIf="isColVisible('leaveDaysMultiplier')">
                                     {{ rowData.leaveDaysMultiplier }}
                                 </td>
-                                <td>
+                                <td *ngIf="isColVisible('holidayMultiplier')">
                                     {{ rowData.holidayMultiplier }}
                                 </td>
-                                <td style="text-align: center">
+                                <td *ngIf="isColVisible('action')" style="text-align: center">
                                     <span
                                         class="icon-edit"
                                         [routerLink]="['/shift/edit', rowData?.id]"

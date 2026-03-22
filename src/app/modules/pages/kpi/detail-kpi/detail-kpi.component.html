@@ -32,6 +32,32 @@
                 </div>
                 <div class="flex gap-3">
                     <div class="flex flex-column">
+                        <p-button
+                            pTooltip="Ẩn/hiện cột"
+                            label=""
+                            [outlined]="true"
+                            severity="secondary"
+                            icon="pi pi-table"
+                            (onClick)="colPanelRef.toggle($event)"
+                        ></p-button>
+
+                        <p-overlayPanel #colPanelRef>
+                            <div style="padding: 8px; min-width: 220px;">
+                                <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
+                                <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
+                                    <p-checkbox
+                                        [binary]="true"
+                                        [label]="col.header"
+                                        [ngModel]="isColVisible(col.field)"
+                                        (onChange)="onColumnToggle($event, col)"
+                                        [ngModelOptions]="{ standalone: true }"
+                                    >
+                                    </p-checkbox>
+                                </div>
+                            </div>
+                        </p-overlayPanel>
+                    </div>
+                    <div class="flex flex-column">
                         <p-dropdown
                             [options]="staffPosition"
                             [(ngModel)]="selectedStaffPosition"
@@ -72,11 +98,11 @@
                             <!-- <th style="width: 5%;">
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th> -->
-                            <th style="width: 10%;">Mã nhân viên</th>
-                            <th style="width: 20%;">Tên nhân viên</th>
-                            <th style="width: 20%;">Doanh thu</th>
-                            <th style="width: 20%;">Hoa hồng</th>
-                            <th style="width: 20%;">Thưởng</th>
+                            <th *ngIf="isColVisible('employeeCode')" style="width: 10%;">Mã nhân viên</th>
+                            <th *ngIf="isColVisible('employeeName')" style="width: 20%;">Tên nhân viên</th>
+                            <th *ngIf="isColVisible('revenue')" style="width: 20%;">Doanh thu</th>
+                            <th *ngIf="isColVisible('commission')" style="width: 20%;">Hoa hồng</th>
+                            <th *ngIf="isColVisible('bonus')" style="width: 20%;">Thưởng</th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-rowData let-i="rowIndex">
@@ -84,9 +110,9 @@
                             <!-- <td>
                                 <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
                             </td> -->
-                            <td>{{ rowData.employeeCode }}</td>
-                            <td>{{ rowData.employeeName }}</td>
-                            <td>
+                            <td *ngIf="isColVisible('employeeCode')">{{ rowData.employeeCode }}</td>
+                            <td *ngIf="isColVisible('employeeName')">{{ rowData.employeeName }}</td>
+                            <td *ngIf="isColVisible('revenue')">
                                 <!-- Luôn hiển thị input để nhập doanh thu trực tiếp -->
                                 <input
                                     type="number"
@@ -99,7 +125,7 @@
                                     placeholder="0"
                                 />
                             </td>
-                            <td>
+                            <td *ngIf="isColVisible('commission')">
                                 <!-- Tính hoa hồng theo cấu hình khi có doanh thu (áp dụng cho SALE/CTV) -->
                                 <ng-container *ngIf="getCommissionValue(rowData) !== null; else commissionEmpty">
                                     <span>{{ getCommissionValue(rowData) | number:'1.0-0' }} ₫</span>
@@ -108,7 +134,7 @@
                                     <span style="color: #999;">-</span>
                                 </ng-template>
                             </td>
-                            <td>
+                            <td *ngIf="isColVisible('bonus')">
                                 <!-- Hiển thị input nếu hàng đang được chỉnh sửa -->
                                 <div *ngIf="editingRowIndex2 === i; else displayValue2">
                                 <input

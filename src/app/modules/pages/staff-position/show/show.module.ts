@@ -4,6 +4,7 @@ import { ShowComponent } from './show.component';
 import { ShowRoutingModule } from './show-routing.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcrumb.module';
 
 @NgModule({
     imports: [
@@ -11,6 +12,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
         ShowRoutingModule,
         SharedModule,
         ConfirmPopupModule,
+        SharedBreadcrumbModule,
     ],
     declarations: [ShowComponent],
 })

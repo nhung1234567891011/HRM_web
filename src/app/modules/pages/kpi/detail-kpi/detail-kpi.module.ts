@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { DetailKpiRoutingModule } from './detail-kpi-routing.module';
 import { DetailKpiComponent } from './detail-kpi.component';
 
@@ -12,7 +13,8 @@ import { DetailKpiComponent } from './detail-kpi.component';
     DetailKpiRoutingModule,
     SharedModule,
     ConfirmPopupModule,
-    MultiSelectModule
+    MultiSelectModule,
+    OverlayPanelModule
   ],
   declarations: [DetailKpiComponent],
 })

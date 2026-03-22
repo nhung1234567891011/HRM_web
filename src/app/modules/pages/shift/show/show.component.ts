@@ -28,6 +28,22 @@ export class ShowComponent implements OnInit {
     shiftVisible: boolean = false;
     isRowSelectable: any;
     permissionConstant = PermissionConstant;
+    allColumns = [
+        { field: 'code', header: 'Mã ca' },
+        { field: 'name', header: 'Tên ca' },
+        { field: 'startTime', header: 'Giờ bắt đầu' },
+        { field: 'endTime', header: 'Giờ kết thúc' },
+        { field: 'startTakeABreak', header: 'Giờ bắt đầu nghỉ' },
+        { field: 'endTakeABreak', header: 'Giờ kết thúc nghỉ' },
+        { field: 'workingHours', header: 'Giờ công' },
+        { field: 'totalRestTime', header: 'Tổng thời gian nghỉ' },
+        { field: 'workingDays', header: 'Ngày công' },
+        { field: 'regularMultiplier', header: 'Hệ số ngày thường' },
+        { field: 'leaveDaysMultiplier', header: 'Hệ số ngày nghỉ' },
+        { field: 'holidayMultiplier', header: 'Hệ số ngày lễ' },
+        { field: 'action', header: 'Hành động' },
+    ];
+    selectedColumns: any[] = [...this.allColumns];
 
     constructor(
         private confirmationService: ConfirmationService,
@@ -463,5 +479,25 @@ export class ShowComponent implements OnInit {
                     console.error('Cập nhật trạng thái thất bại', error);
                 }
             );
+    }
+
+    isColVisible(field: string): boolean {
+        return this.selectedColumns.some((c) => c.field === field);
+    }
+
+    onColumnToggle(event: any, col: any): void {
+        if (event.checked) {
+            if (!this.selectedColumns.some((c) => c.field === col.field)) {
+                this.selectedColumns = this.allColumns.filter(
+                    (c) =>
+                        this.selectedColumns.some((s) => s.field === c.field) ||
+                        c.field === col.field
+                );
+            }
+        } else {
+            this.selectedColumns = this.selectedColumns.filter(
+                (c) => c.field !== col.field
+            );
+        }
     }
 }

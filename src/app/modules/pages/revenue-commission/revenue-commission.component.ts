@@ -37,6 +37,15 @@ export class RevenueCommissionComponent implements OnInit {
 
   selectedTargetType: any = null;
   selectedStatus: any = null;
+  allColumns = [
+    { field: 'organizationName', header: 'Đơn vị' },
+    { field: 'targetType', header: 'Đối tượng' },
+    { field: 'effectiveFrom', header: 'Hiệu lực từ' },
+    { field: 'effectiveTo', header: 'Hiệu lực đến' },
+    { field: 'status', header: 'Trạng thái' },
+    { field: 'action', header: 'Thao tác' },
+  ];
+  selectedColumns: any[] = [...this.allColumns];
 
   policyDialog: boolean = false;
   isEdit: boolean = false;
@@ -310,6 +319,22 @@ export class RevenueCommissionComponent implements OnInit {
   onDialogOrgSelect(): void {
     const id = this.dialogOrgNode?.data?.id ?? null;
     this.form.patchValue({ organizationId: id });
+  }
+
+  isColVisible(field: string): boolean {
+    return this.selectedColumns.some(c => c.field === field);
+  }
+
+  onColumnToggle(event: any, col: any): void {
+    if (event.checked) {
+      if (!this.selectedColumns.some(c => c.field === col.field)) {
+        this.selectedColumns = this.allColumns.filter(c =>
+          this.selectedColumns.some(s => s.field === c.field) || c.field === col.field
+        );
+      }
+    } else {
+      this.selectedColumns = this.selectedColumns.filter(c => c.field !== col.field);
+    }
   }
 }
 

@@ -29,6 +29,16 @@ export class ShowComponent implements OnInit {
     isRowSelectable: any;
     permissionConstant = PermissionConstant;
     standardWorkDays: any;
+    allColumns = [
+        { field: 'shiftTableName', header: 'Tên bảng phân ca' },
+        { field: 'timeRange', header: 'Thời gian áp dụng' },
+        { field: 'shiftCatalog', header: 'Ca làm việc' },
+        { field: 'organizationName', header: 'Đơn vị áp dụng' },
+        { field: 'applyObject', header: 'Đối tượng áp dụng' },
+        { field: 'totalWork', header: 'Tổng số công chuẩn' },
+        { field: 'action', header: 'Hành động' },
+    ];
+    selectedColumns: any[] = [...this.allColumns];
 
     constructor(
         private confirmationService: ConfirmationService,
@@ -426,6 +436,27 @@ export class ShowComponent implements OnInit {
             });
         });
     }
+
+    isColVisible(field: string): boolean {
+        return this.selectedColumns.some((c) => c.field === field);
+    }
+
+    onColumnToggle(event: any, col: any): void {
+        if (event.checked) {
+            if (!this.selectedColumns.some((c) => c.field === col.field)) {
+                this.selectedColumns = this.allColumns.filter(
+                    (c) =>
+                        this.selectedColumns.some((s) => s.field === c.field) ||
+                        c.field === col.field
+                );
+            }
+        } else {
+            this.selectedColumns = this.selectedColumns.filter(
+                (c) => c.field !== col.field
+            );
+        }
+    }
+
     onStatusChange(rowData: any): void {
         // Thực hiện các hành động cần thiết khi trạng thái thay đổi
         console.log('Updated row data:', rowData);

@@ -18,6 +18,7 @@ import { AllComponent } from './all/all.component';
 import { HolidayComponent } from './holiday/holiday.component';
 import { TypeOfVacationComponent } from './type-of-vacation/type-of-vacation.component';
 import { regulationsRouting } from './regulation-routing.module';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 @NgModule({
     declarations: [RegulationsCommonComponent, AllComponent, HolidayComponent, TypeOfVacationComponent ],
     imports: [
@@ -35,7 +36,8 @@ import { regulationsRouting } from './regulation-routing.module';
         InputTextModule,
         SharedModule,
         BreadcrumbModule,
-        RadioButtonModule
+        RadioButtonModule,
+        OverlayPanelModule
     ],
 })
 export class TimekeepingRegulationsModule {}

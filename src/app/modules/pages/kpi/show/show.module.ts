@@ -5,6 +5,7 @@ import { ShowRoutingModule } from './show-routing.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
     imports: [
@@ -12,7 +13,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
         ShowRoutingModule,
         SharedModule,
         ConfirmPopupModule,
-        MultiSelectModule
+        MultiSelectModule,
+        OverlayPanelModule,
     ],
     declarations: [ShowComponent],
 })

@@ -38,6 +38,14 @@ export class DetailKpiComponent implements OnInit {
   editingRowIndex: number | null = null;
   editingRowIndex2: number | null = null;
   editingRowIndex3: number | null = null;
+  allColumns = [
+    { field: 'employeeCode', header: 'Mã nhân viên' },
+    { field: 'employeeName', header: 'Tên nhân viên' },
+    { field: 'revenue', header: 'Doanh thu' },
+    { field: 'commission', header: 'Hoa hồng' },
+    { field: 'bonus', header: 'Thưởng' },
+  ];
+  selectedColumns: any[] = [...this.allColumns];
 
   commissionPolicies: Record<number, any | null> = { 0: null, 1: null }; // 0: SALE, 1: CTV
   private commissionPolicyLoadedForOrgId: number | null = null;
@@ -464,6 +472,22 @@ export class DetailKpiComponent implements OnInit {
     }
     if (this.totalRecords > 0) {
       this.currentPageReport = `<strong>${startRecord}</strong> - <strong>${endRecord}</strong> trong <strong>${this.totalRecords}</strong> bản ghi`;
+    }
+  }
+
+  isColVisible(field: string): boolean {
+    return this.selectedColumns.some(c => c.field === field);
+  }
+
+  onColumnToggle(event: any, col: any): void {
+    if (event.checked) {
+      if (!this.selectedColumns.some(c => c.field === col.field)) {
+        this.selectedColumns = this.allColumns.filter(c =>
+          this.selectedColumns.some(s => s.field === c.field) || c.field === col.field
+        );
+      }
+    } else {
+      this.selectedColumns = this.selectedColumns.filter(c => c.field !== col.field);
     }
   }
 }
