@@ -512,13 +512,13 @@ li {}
     box-shadow: 0 6px 14px rgba(20, 87, 194, 0.25);
 }
 
-.app-table-column-toggle-button[data-tooltip],
-.app-table-column-toggle-panel [data-tooltip] {
+[data-tooltip],
+[title] {
     position: relative;
 }
 
-.app-table-column-toggle-button[data-tooltip]::after,
-.app-table-column-toggle-panel [data-tooltip]::after {
+[data-tooltip]::after,
+[title]::after {
     content: attr(data-tooltip);
     position: absolute;
     left: 50%;
@@ -539,8 +539,24 @@ li {}
     z-index: 2000;
 }
 
-.app-table-column-toggle-button[data-tooltip]:hover::after,
-.app-table-column-toggle-panel [data-tooltip]:hover::after {
+[title]::after {
+    content: attr(title);
+}
+
+/* PrimeNG buttons often clip pseudo-elements, so tooltips need visible overflow. */
+button[data-tooltip],
+button[title],
+[pButton][data-tooltip],
+[pButton][title],
+.p-button[data-tooltip],
+.p-button[title] {
+    overflow: visible !important;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after,
+[title]:hover::after,
+[title]:focus-visible::after {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0);
