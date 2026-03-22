@@ -32,11 +32,21 @@
         }
 
         &.layout-static {
+            .layout-topbar {
+                left: 220px;
+                width: calc(100% - 220px);
+            }
+
             .layout-main-container {
                 margin-left: 220px;
             }
 
             &.layout-static-inactive {
+                .layout-topbar {
+                    left: 0;
+                    width: 100%;
+                }
+
                 .layout-sidebar {
                     transform: translateX(-100%);
                     left: 0;

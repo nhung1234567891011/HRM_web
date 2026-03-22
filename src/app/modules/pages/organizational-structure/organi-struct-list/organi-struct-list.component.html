@@ -2,7 +2,7 @@
   <div class="page-header">
     <div class="page-title-block">
       <strong class="page-title">Cơ cấu tổ chức</strong>
-      <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+      <app-shared-breadcrumb></app-shared-breadcrumb>
     </div>
 
     <div class="header-actions">
@@ -34,10 +34,32 @@
                 class="buttonfilter button-outline" (click)="toggleColumnPanel()"></button>
               <div class="column-panel" *ngIf="showColumnPanel">
                 <div class="column-panel-title">Hiển thị cột</div>
-                <label class="column-item" *ngFor="let col of columnOptions">
-                  <input type="checkbox" [checked]="isColumnVisible(col.key)" (change)="onColumnToggle(col.key)" />
+
+                <span class="p-input-icon-left column-search-wrap">
+                  <i class="pi pi-search"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    class="column-search-input"
+                    placeholder="Tìm kiếm cột"
+                    [(ngModel)]="columnSearch"
+                  />
+                </span>
+
+                <div class="column-panel-actions-top">
+                  <button type="button" class="column-link-btn" (click)="selectAllColumns()">Chọn tất cả</button>
+                  <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
+                </div>
+
+                <label class="column-item" *ngFor="let col of filteredColumnOptions">
+                  <input type="checkbox" [checked]="isTempColumnVisible(col.key)" (change)="onTempColumnToggle(col.key)" />
                   <span>{{ col.label }}</span>
                 </label>
+
+                <div class="column-panel-footer">
+                  <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>
+                  <button type="button" class="column-footer-btn column-apply" (click)="applyColumnChanges()">Áp dụng</button>
+                </div>
               </div>
             </div>
           </div>

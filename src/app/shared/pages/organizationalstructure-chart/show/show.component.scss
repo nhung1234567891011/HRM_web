@@ -363,3 +363,32 @@ td > .p-organizationchart .p-organizationchart-node-content {
     text-align: center;
   }
 
+td i {
+    font-size: 18px;
+    margin: 0 8px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.2s;
+}
+
+td i:hover {
+    color: #007bff;
+    transform: scale(1.2);
+}
+
+td i.pi.pi-trash:hover {
+    color: red;
+}
+
+.card {
+    border-radius: 5px;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.table-no-border,
+.table-no-border th,
+.table-no-border td {
+    border: none !important;
+}
+

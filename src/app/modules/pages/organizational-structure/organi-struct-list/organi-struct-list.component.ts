@@ -51,6 +51,8 @@ export class OrganiStructListComponent implements OnInit {
     unithead: true,
     status: true
   };
+  tempColumnVisibility: Record<string, boolean> = { ...this.columnVisibility };
+  columnSearch: string = '';
   showColumnPanel = false;
 
   constructor(
@@ -203,11 +205,56 @@ export class OrganiStructListComponent implements OnInit {
   }
 
   toggleColumnPanel(): void {
-    this.showColumnPanel = !this.showColumnPanel;
+    if (this.showColumnPanel) {
+      this.closeColumnPanel();
+      return;
+    }
+
+    this.tempColumnVisibility = { ...this.columnVisibility };
+    this.columnSearch = '';
+    this.showColumnPanel = true;
   }
 
-  onColumnToggle(key: string): void {
-    this.columnVisibility[key] = !this.columnVisibility[key];
+  closeColumnPanel(): void {
+    this.showColumnPanel = false;
+    this.tempColumnVisibility = { ...this.columnVisibility };
+    this.columnSearch = '';
+  }
+
+  onTempColumnToggle(key: string): void {
+    this.tempColumnVisibility[key] = !this.tempColumnVisibility[key];
+  }
+
+  isTempColumnVisible(key: string): boolean {
+    return this.tempColumnVisibility[key] !== false;
+  }
+
+  selectAllColumns(): void {
+    this.columnOptions.forEach((col) => {
+      this.tempColumnVisibility[col.key] = true;
+    });
+  }
+
+  clearAllColumns(): void {
+    this.columnOptions.forEach((col) => {
+      this.tempColumnVisibility[col.key] = false;
+    });
+  }
+
+  applyColumnChanges(): void {
+    this.columnVisibility = { ...this.tempColumnVisibility };
+    this.showColumnPanel = false;
+  }
+
+  get filteredColumnOptions() {
+    const keyword = this.columnSearch.trim().toLowerCase();
+    if (!keyword) {
+      return this.columnOptions;
+    }
+
+    return this.columnOptions.filter((col) =>
+      col.label.toLowerCase().includes(keyword)
+    );
   }
 
   isColumnVisible(key: string): boolean {

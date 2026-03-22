@@ -3,7 +3,7 @@
     width: 220px;
     z-index: 900;
     user-select: none;
-    top: 70px;
+    top: 0;
     left: 0;
     bottom: 0;
     transition: transform $transitionDuration, left $transitionDuration;
@@ -30,12 +30,13 @@
     a {
         display: flex;
         align-items: center;
+        gap: 10px;
         text-decoration: none;
     }
 }
 
 .sidebar-logo-img {
-    height: 60px;
+    height: 48px;
     width: auto;
     filter: brightness(0) invert(1);
     transition: transform 0.2s;
@@ -43,6 +44,15 @@
     &:hover {
         transform: scale(1.05);
     }
+}
+
+.sidebar-brand-text {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .layout-menu {
