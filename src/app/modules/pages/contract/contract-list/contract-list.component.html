@@ -2,7 +2,7 @@
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Danh sách hợp đồng</strong>
-            <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+            <app-shared-breadcrumb></app-shared-breadcrumb>
         </div>
 
         <div
@@ -52,6 +52,9 @@
                                 [(ngModel)]="selectedContractStatus"
                                 [options]="contractOption"
                                 optionLabel="name"
+                                [filter]="true"
+                                filterBy="name"
+                                filterPlaceholder="Tìm trạng thái"
                                 [showClear]="true"
                                 placeholder="Tất cả hợp đồng"
                                 (onChange)="onContractStatusChange($event)"
@@ -76,33 +79,16 @@
                                 (click)="getPagingContract()"
                             ></button>
                         </div>
-                        <div class="col-lg-1 mt-3">
-                            <div style="display: flex; align-items: center; justify-content: flex-end;">
-                                <!-- <p-button
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-filter"
-                                ></p-button> -->
-
-                                <p-button
-                                    style="margin-left: 0"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-file-export"
-                                    class="single-action-btn"
-                                    (click)="exportContract()"
-                                ></p-button>
-<!-- 
-                                <p-button
-                                    style="margin-left: 10px"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-spin pi-cog"
-                                ></p-button> -->
-                            </div>
+                        <div class="col-lg-2 mt-3 d-flex align-items-center justify-content-end export-col">
+                            <p-button
+                                style="margin-left: 0"
+                                label=""
+                                [outlined]="true"
+                                severity="secondary"
+                                icon="pi pi-file-export"
+                                class="single-action-btn"
+                                (click)="exportContract()"
+                            ></p-button>
                         </div>
                     </div>
                     <div class="card mt-3">

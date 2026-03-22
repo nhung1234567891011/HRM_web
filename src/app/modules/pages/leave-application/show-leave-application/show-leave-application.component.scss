@@ -126,6 +126,20 @@
     box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
 }
 
+.table-shell {
+    border: 1px solid var(--la-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
+    background: #fff;
+}
+
+:host ::ng-deep .table-shell .leave-app-table {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
 :host ::ng-deep .leave-app-table .p-datatable-wrapper {
     background: var(--la-surface);
 }
@@ -170,4 +184,101 @@
 .status-span {
     font-weight: 600;
     border: 1px solid rgba(15, 39, 66, 0.08);
+}
+
+.filter-toolbar {
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+}
+
+.filter-tools {
+    gap: 0.5rem;
+}
+
+.filter-control {
+    height: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .filter-control.p-dropdown,
+:host ::ng-deep .filter-control .p-dropdown,
+:host ::ng-deep .filter-btn .p-button,
+:host ::ng-deep .filter-btn-icon .p-button {
+    height: 44px;
+    min-height: 44px;
+}
+
+:host ::ng-deep .filter-control .p-dropdown-label,
+:host ::ng-deep .filter-control .p-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .filter-btn-icon .p-button {
+    width: 44px;
+}
+
+.paging-bot {
+    margin-top: 0 !important;
+    gap: 12px;
+    padding: 10px 12px;
+    border-top: 1px solid #d7e2f0;
+    background: linear-gradient(180deg, #fbfdff 0%, #f3f7fb 100%);
+}
+
+:host ::ng-deep .aligned-paging .p-paginator {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+:host ::ng-deep .aligned-paging .p-paginator-pages .p-paginator-page,
+:host ::ng-deep .aligned-paging .p-paginator-first,
+:host ::ng-deep .aligned-paging .p-paginator-prev,
+:host ::ng-deep .aligned-paging .p-paginator-next,
+:host ::ng-deep .aligned-paging .p-paginator-last {
+    min-width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:host ::ng-deep .aligned-paging .p-paginator-rpp-options {
+    margin: 0;
+    align-self: center;
+}
+
+:host ::ng-deep .aligned-paging .p-dropdown {
+    height: 2rem;
+    min-height: 2rem;
+    min-width: 4.25rem;
+}
+
+:host ::ng-deep .aligned-paging .p-dropdown .p-dropdown-label,
+:host ::ng-deep .aligned-paging .p-dropdown .p-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+}
+
+@media (max-width: 991.98px) {
+    .filter-toolbar,
+    .filter-tools,
+    .filter-actions {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .paging-bot {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 8px;
+    }
 }
