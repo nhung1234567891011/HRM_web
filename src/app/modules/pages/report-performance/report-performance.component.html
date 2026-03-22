@@ -4,17 +4,19 @@
     </div>
 
     <div class="col-12">
-        <div class="card">
+        <div class="card filter-card">
             <div class="flex justify-content-between align-items-center mb-4">
                 <h3 class="m-0">Báo cáo hiệu suất</h3>
                 <div class="flex align-items-center gap-3">
-                    <p-dropdown [options]="yearOptions" [(ngModel)]="selectedYear" optionLabel="label"
+                    <p-dropdown [options]="yearOptions" [(ngModel)]="selectedYear" optionLabel="label" appendTo="body"
                         optionValue="value" placeholder="Chọn năm" [style]="{ width: '140px' }"
                         (onChange)="onFilterChange()"></p-dropdown>
                     <p-dropdown [options]="monthOptions" [(ngModel)]="selectedMonth" optionLabel="label"
+                        appendTo="body"
                         optionValue="value" placeholder="Chọn tháng" [style]="{ width: '140px' }"
                         (onChange)="onFilterChange()"></p-dropdown>
                     <p-treeSelect [options]="treeData" [(ngModel)]="selectedOrganization" placeholder="Chọn phòng ban"
+                        appendTo="body"
                         [style]="{ width: '250px' }" (onNodeSelect)="onOrganizationChange($event)"
                         (onClear)="onOrganizationClear()" [showClear]="true"></p-treeSelect>
                 </div>
@@ -28,6 +30,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">KPI theo vị trí</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="deptKpiChartType" optionLabel="label"
+                    appendTo="body"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('deptKpi', $event)"></p-dropdown>
             </div>
@@ -44,6 +47,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Phân phối KPI nhân viên</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="histogramChartType" optionLabel="label"
+                    appendTo="body"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('histogram', $event)"></p-dropdown>
             </div>
@@ -60,6 +64,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Top nhân viên theo KPI (Top 20)</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="empKpiChartType" optionLabel="label"
+                    appendTo="body"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('empKpi', $event)"></p-dropdown>
             </div>
@@ -76,6 +81,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Hiệu suất làm việc (Top 20)</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="efficiencyChartType" optionLabel="label"
+                    appendTo="body"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('efficiency', $event)"></p-dropdown>
             </div>
