@@ -90,43 +90,48 @@ export class StatisticalReportComponent implements OnInit {
                         {
                             label: 'Lương cứng',
                             data: data.monthlySummaries?.map((m: any) => m.totalBaseSalary) || [],
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 0,
                             stack: 'income',
                         },
                         {
                             label: 'Phụ cấp',
                             data: data.monthlySummaries?.map((m: any) => m.totalAllowance) || [],
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 0,
                             stack: 'income',
                         },
                         {
                             label: 'Thưởng',
                             data: data.monthlySummaries?.map((m: any) => m.totalBonus) || [],
-                            backgroundColor: 'rgba(255, 206, 86, 0.6)',
-                            borderColor: 'rgba(255, 206, 86, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                            borderColor: 'rgba(245, 158, 11, 1)',
+                            borderWidth: 0,
                             stack: 'income',
                         },
                         {
                             label: 'Tăng ca',
                             data: data.monthlySummaries?.map((m: any) => m.totalOvertimePay) || [],
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                            borderColor: 'rgba(168, 85, 247, 1)',
+                            borderWidth: 0,
                             stack: 'income',
                         },
                         {
                             label: 'Thực nhận',
                             data: data.monthlySummaries?.map((m: any) => m.totalNetSalary) || [],
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 2,
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
                             fill: false,
                             type: 'line',
-                            pointRadius: 4,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            tension: 0.4,
                         },
                     ],
                 };
@@ -134,12 +139,44 @@ export class StatisticalReportComponent implements OnInit {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true, position: 'bottom' },
-                        title: { display: true, text: 'Thu nhập theo tháng', font: { size: 14 } },
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '500' },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                            },
+                        },
+                        title: {
+                            display: true,
+                            text: 'Thu nhập theo tháng',
+                            font: { size: 16, weight: '600' },
+                            padding: { top: 10, bottom: 20 },
+                            color: '#1e293b',
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                        },
                     },
                     scales: {
-                        x: { stacked: true, beginAtZero: true },
-                        y: { stacked: true, beginAtZero: true },
+                        x: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
                     },
                 };
             }
@@ -150,20 +187,20 @@ export class StatisticalReportComponent implements OnInit {
         this.reportService.getPerformance({ year: this.currentYear }).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
-                const labels = data.departmentPerformances?.map((d: any) => d.organizationName) || [];
+                const labels = data.positionPerformances?.map((d: any) => d.positionName) || [];
                 this.perfChartData = {
                     labels: labels,
                     datasets: [
                         {
                             label: 'KPI trung bình',
-                            data: data.departmentPerformances?.map((d: any) => d.averageKpi) || [],
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                            data: data.positionPerformances?.map((d: any) => d.averageKpi) || [],
+                            backgroundColor: this.generateColors(labels.length),
                             borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1,
+                            borderWidth: 2,
                         },
                     ],
                 };
-                this.perfChartOptions = this.getChartOptions('Hiệu suất theo phòng ban');
+                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí');
             }
         });
     }
@@ -179,33 +216,38 @@ export class StatisticalReportComponent implements OnInit {
                         {
                             label: 'Ngày làm việc',
                             data: data.monthlyAttendances?.map((m: any) => m.totalWorkDays) || [],
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Đi muộn',
                             data: data.monthlyAttendances?.map((m: any) => m.totalLateDays) || [],
-                            backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(251, 146, 60, 0.75)',
+                            borderColor: 'rgba(251, 146, 60, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Nghỉ phép',
                             data: data.monthlyAttendances?.map((m: any) => m.totalLeaveDays) || [],
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(239, 68, 68, 0.75)',
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Giờ tăng ca',
                             data: data.monthlyAttendances?.map((m: any) => m.totalOvertimeHours) || [],
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 2,
+                            borderColor: 'rgba(168, 85, 247, 1)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            borderWidth: 3,
                             fill: false,
                             type: 'line',
-                            pointRadius: 4,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(168, 85, 247, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
                             yAxisID: 'yOt',
+                            tension: 0.4,
                         },
                     ],
                 };
@@ -213,13 +255,51 @@ export class StatisticalReportComponent implements OnInit {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true, position: 'bottom' },
-                        title: { display: true, text: 'Chuyên cần theo tháng', font: { size: 14 } },
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '500' },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                            },
+                        },
+                        title: {
+                            display: true,
+                            text: 'Chuyên cần theo tháng',
+                            font: { size: 16, weight: '600' },
+                            padding: { top: 10, bottom: 20 },
+                            color: '#1e293b',
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                        },
                     },
                     scales: {
-                        x: { beginAtZero: true },
-                        y: { beginAtZero: true, position: 'left', title: { display: true, text: 'Ngày' } },
-                        yOt: { beginAtZero: true, position: 'right', title: { display: true, text: 'Giờ tăng ca' }, grid: { drawOnChartArea: false } },
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            position: 'left',
+                            title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
+                        yOt: {
+                            beginAtZero: true,
+                            position: 'right',
+                            title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
+                            grid: { drawOnChartArea: false },
+                            ticks: { font: { size: 11 } },
+                        },
                     },
                 };
             }
@@ -239,7 +319,7 @@ export class StatisticalReportComponent implements OnInit {
                 break;
             case 'performance':
                 this.perfChartType = type === 'horizontalBar' ? 'bar' : type;
-                this.perfChartOptions = this.getChartOptions('Hiệu suất theo phòng ban', type === 'horizontalBar');
+                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', type === 'horizontalBar');
                 break;
             case 'attendance':
                 this.attendanceChartType = type === 'horizontalBar' ? 'bar' : type;
@@ -254,28 +334,58 @@ export class StatisticalReportComponent implements OnInit {
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
-                legend: { display: true, position: 'bottom' },
-                title: { display: true, text: title, font: { size: 14 } },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                },
             },
             scales: {
-                x: { beginAtZero: true },
-                y: { beginAtZero: true },
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
             },
         };
     }
 
     private generateColors(count: number): string[] {
         const palette = [
-            'rgba(255, 99, 132, 0.7)',
-            'rgba(54, 162, 235, 0.7)',
-            'rgba(255, 206, 86, 0.7)',
-            'rgba(75, 192, 192, 0.7)',
-            'rgba(153, 102, 255, 0.7)',
-            'rgba(255, 159, 64, 0.7)',
-            'rgba(199, 199, 199, 0.7)',
-            'rgba(83, 102, 255, 0.7)',
-            'rgba(255, 99, 255, 0.7)',
-            'rgba(99, 255, 132, 0.7)',
+            'rgba(99, 102, 241, 0.8)',
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+            'rgba(239, 68, 68, 0.8)',
+            'rgba(168, 85, 247, 0.8)',
+            'rgba(236, 72, 153, 0.8)',
+            'rgba(14, 165, 233, 0.8)',
+            'rgba(34, 197, 94, 0.8)',
+            'rgba(251, 146, 60, 0.8)',
         ];
         const colors: string[] = [];
         for (let i = 0; i < count; i++) {

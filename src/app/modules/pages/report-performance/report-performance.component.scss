@@ -1,8 +1,101 @@
-:host {
-    display: block;
+:host ::ng-deep {
+    .card {
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        &:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+
+            &::before {
+                opacity: 1;
+            }
+        }
+
+        h3 {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 1.625rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h4 {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.125rem;
+            letter-spacing: -0.02em;
+        }
+    }
+
+    .p-breadcrumb {
+        background: transparent;
+        border: none;
+        padding: 0.75rem 0;
+
+        .p-breadcrumb-list {
+            li {
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+        }
+    }
+
+    .p-dropdown,
+    .p-treeselect {
+        border-radius: 10px;
+        border: 1.5px solid #e5e7eb;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+        &:hover {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .p-dropdown-label,
+        .p-treeselect-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+    }
+
+    canvas {
+        border-radius: 8px;
+    }
+
+    .p-chart {
+        padding: 1rem;
+        background: #ffffff;
+        border-radius: 8px;
+    }
 }
 
-.card {
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.grid {
+    padding: 0.75rem;
+    gap: 1rem;
+
+    .col-12 {
+        margin-bottom: 0.5rem;
+    }
 }

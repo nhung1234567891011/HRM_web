@@ -5,9 +5,9 @@
 
     <div class="col-12">
         <div class="card">
-            <div class="flex justify-content-between align-items-center mb-3">
+            <div class="flex justify-content-between align-items-center mb-4">
                 <h3 class="m-0">Báo cáo chuyên cần</h3>
-                <div class="flex align-items-center gap-2">
+                <div class="flex align-items-center gap-3">
                     <p-dropdown [options]="yearOptions" [(ngModel)]="selectedYear" optionLabel="label"
                         optionValue="value" placeholder="Chọn năm" [style]="{ width: '140px' }"
                         (onChange)="onFilterChange()"></p-dropdown>
@@ -25,13 +25,13 @@
     <!-- Chuyên cần theo tháng -->
     <div class="col-12">
         <div class="card">
-            <div class="flex justify-content-between align-items-center mb-3">
+            <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Chuyên cần theo tháng</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="monthlyChartType" optionLabel="label"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('monthly', $event)"></p-dropdown>
             </div>
-            <div style="height: 450px;">
+            <div style="height: 470px;">
                 <p-chart *ngIf="monthlyChartData" [type]="monthlyChartType" [data]="monthlyChartData"
                     [options]="monthlyChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>
@@ -39,15 +39,15 @@
     </div>
 
     <!-- Phân bổ loại nghỉ -->
-    <div class="col-12 md:col-6">
+    <div class="col-12 lg:col-6">
         <div class="card">
-            <div class="flex justify-content-between align-items-center mb-3">
+            <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Phân bổ loại nghỉ</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="leaveChartType" optionLabel="label"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('leave', $event)"></p-dropdown>
             </div>
-            <div style="height: 400px;">
+            <div style="height: 420px;">
                 <p-chart *ngIf="leaveChartData" [type]="leaveChartType" [data]="leaveChartData"
                     [options]="leaveChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>
@@ -55,31 +55,31 @@
     </div>
 
     <!-- Chuyên cần theo nhân viên -->
-    <div class="col-12 md:col-6">
+    <div class="col-12 lg:col-6">
         <div class="card">
-            <div class="flex justify-content-between align-items-center mb-3">
-                <h4 class="m-0">Chuyên cần theo nhân viên</h4>
+            <div class="flex justify-content-between align-items-center mb-4">
+                <h4 class="m-0">Chuyên cần theo nhân viên (Top 20)</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="empChartType" optionLabel="label"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('employee', $event)"></p-dropdown>
             </div>
-            <div style="height: 400px;">
+            <div style="height: 420px;">
                 <p-chart *ngIf="empChartData" [type]="empChartType" [data]="empChartData" [options]="empChartOptions"
                     [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>
         </div>
     </div>
 
-    <!-- Chuyên cần & Tăng ca theo phòng ban -->
+    <!-- Chuyên cần & Tăng ca theo vị trí -->
     <div class="col-12">
         <div class="card">
-            <div class="flex justify-content-between align-items-center mb-3">
-                <h4 class="m-0">Chuyên cần & Tăng ca theo phòng ban</h4>
+            <div class="flex justify-content-between align-items-center mb-4">
+                <h4 class="m-0">Chuyên cần & Tăng ca theo vị trí</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="deptOtChartType" optionLabel="label"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('deptOt', $event)"></p-dropdown>
             </div>
-            <div style="height: 450px;">
+            <div style="height: 470px;">
                 <p-chart *ngIf="deptOtChartData" [type]="deptOtChartType" [data]="deptOtChartData"
                     [options]="deptOtChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>
@@ -89,13 +89,13 @@
     <!-- Xu hướng tăng ca -->
     <div class="col-12">
         <div class="card">
-            <div class="flex justify-content-between align-items-center mb-3">
+            <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Xu hướng tăng ca theo tháng</h4>
                 <p-dropdown [options]="chartTypeOptions" [(ngModel)]="otTrendChartType" optionLabel="label"
                     optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                     (onChange)="onChartTypeChange('otTrend', $event)"></p-dropdown>
             </div>
-            <div style="height: 450px;">
+            <div style="height: 470px;">
                 <p-chart *ngIf="otTrendChartData" [type]="otTrendChartType" [data]="otTrendChartData"
                     [options]="otTrendChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>

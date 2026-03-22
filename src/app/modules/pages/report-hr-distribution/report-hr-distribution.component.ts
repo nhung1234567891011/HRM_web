@@ -152,18 +152,58 @@ export class ReportHrDistributionComponent implements OnInit {
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
-                legend: { display: true, position: 'bottom' },
-                title: { display: true, text: title, font: { size: 14 } },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                },
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
             },
         };
     }
 
     private generateColors(count: number): string[] {
         const palette = [
-            'rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)',
-            'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)',
-            'rgba(199, 199, 199, 0.7)', 'rgba(83, 102, 255, 0.7)', 'rgba(255, 99, 255, 0.7)',
-            'rgba(99, 255, 132, 0.7)',
+            'rgba(99, 102, 241, 0.8)',
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+            'rgba(239, 68, 68, 0.8)',
+            'rgba(168, 85, 247, 0.8)',
+            'rgba(236, 72, 153, 0.8)',
+            'rgba(14, 165, 233, 0.8)',
+            'rgba(34, 197, 94, 0.8)',
+            'rgba(251, 146, 60, 0.8)',
         ];
         return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
     }

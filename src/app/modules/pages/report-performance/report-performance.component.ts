@@ -107,35 +107,35 @@ export class ReportPerformanceComponent implements OnInit {
             if (res.status && res.data) {
                 const data = res.data;
 
-                // Department KPI with HighPerformers vs LowPerformers
-                const deptLabels = data.departmentPerformances?.map((d: any) => d.organizationName) || [];
+                // Position KPI with HighPerformers vs LowPerformers
+                const positionLabels = data.positionPerformances?.map((d: any) => d.positionName) || [];
                 this.deptKpiChartData = {
-                    labels: deptLabels,
+                    labels: positionLabels,
                     datasets: [
                         {
                             label: 'KPI trung bình',
-                            data: data.departmentPerformances?.map((d: any) => d.averageKpi) || [],
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 2,
+                            data: data.positionPerformances?.map((d: any) => d.averageKpi) || [],
+                            backgroundColor: 'rgba(99, 102, 241, 0.75)',
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Xuất sắc (≥80%)',
-                            data: data.departmentPerformances?.map((d: any) => d.highPerformers) || [],
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
+                            data: data.positionPerformances?.map((d: any) => d.highPerformers) || [],
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Cần cải thiện (<50%)',
-                            data: data.departmentPerformances?.map((d: any) => d.lowPerformers) || [],
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1,
+                            data: data.positionPerformances?.map((d: any) => d.lowPerformers) || [],
+                            backgroundColor: 'rgba(239, 68, 68, 0.75)',
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            borderWidth: 0,
                         },
                     ],
                 };
-                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo phòng ban');
+                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo vị trí');
 
                 // KPI Distribution Histogram
                 const histLabels = data.kpiDistributions?.map((d: any) => d.rangeLabel) || [];
@@ -147,20 +147,20 @@ export class ReportPerformanceComponent implements OnInit {
                             label: 'Số nhân viên',
                             data: histValues,
                             backgroundColor: [
-                                'rgba(255, 99, 132, 0.7)',
-                                'rgba(255, 159, 64, 0.7)',
-                                'rgba(255, 206, 86, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(239, 68, 68, 0.75)',
+                                'rgba(251, 146, 60, 0.75)',
+                                'rgba(245, 158, 11, 0.75)',
+                                'rgba(59, 130, 246, 0.75)',
+                                'rgba(16, 185, 129, 0.75)',
                             ],
                             borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(255, 159, 64, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(75, 192, 192, 1)',
+                                'rgba(239, 68, 68, 1)',
+                                'rgba(251, 146, 60, 1)',
+                                'rgba(245, 158, 11, 1)',
+                                'rgba(59, 130, 246, 1)',
+                                'rgba(16, 185, 129, 1)',
                             ],
-                            borderWidth: 2,
+                            borderWidth: 0,
                         },
                     ],
                 };
@@ -188,9 +188,9 @@ export class ReportPerformanceComponent implements OnInit {
                         {
                             label: 'Hiệu suất (%)',
                             data: topEmployees.map((e: any) => e.workEfficiency),
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 0,
                         },
                     ],
                 };
@@ -207,7 +207,7 @@ export class ReportPerformanceComponent implements OnInit {
         switch (chart) {
             case 'deptKpi':
                 this.deptKpiChartType = actualType;
-                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo phòng ban', isHorizontal);
+                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo vị trí', isHorizontal);
                 break;
             case 'histogram':
                 this.histogramChartType = actualType;
@@ -230,22 +230,58 @@ export class ReportPerformanceComponent implements OnInit {
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
-                legend: { display: true, position: 'bottom' },
-                title: { display: true, text: title, font: { size: 14 } },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                },
             },
             scales: {
-                x: { beginAtZero: true },
-                y: { beginAtZero: true },
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
             },
         };
     }
 
     private generateColors(count: number): string[] {
         const palette = [
-            'rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)',
-            'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)',
-            'rgba(199, 199, 199, 0.7)', 'rgba(83, 102, 255, 0.7)', 'rgba(255, 99, 255, 0.7)',
-            'rgba(99, 255, 132, 0.7)',
+            'rgba(99, 102, 241, 0.8)',
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+            'rgba(239, 68, 68, 0.8)',
+            'rgba(168, 85, 247, 0.8)',
+            'rgba(236, 72, 153, 0.8)',
+            'rgba(14, 165, 233, 0.8)',
+            'rgba(34, 197, 94, 0.8)',
+            'rgba(251, 146, 60, 0.8)',
         ];
         return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
     }

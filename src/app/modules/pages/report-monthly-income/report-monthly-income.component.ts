@@ -96,7 +96,8 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                             type: 'bar',
                             label: 'Lương cứng',
                             data: data.monthlySummaries?.map((m: any) => m.totalBaseSalary) || [],
-                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                            borderWidth: 0,
                             stack: 'income',
                             order: 2,
                         },
@@ -104,7 +105,8 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                             type: 'bar',
                             label: 'Phụ cấp',
                             data: data.monthlySummaries?.map((m: any) => m.totalAllowance) || [],
-                            backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderWidth: 0,
                             stack: 'income',
                             order: 2,
                         },
@@ -112,7 +114,8 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                             type: 'bar',
                             label: 'Thưởng',
                             data: data.monthlySummaries?.map((m: any) => m.totalBonus) || [],
-                            backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                            borderWidth: 0,
                             stack: 'income',
                             order: 2,
                         },
@@ -120,7 +123,8 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                             type: 'bar',
                             label: 'Lương tăng ca',
                             data: data.monthlySummaries?.map((m: any) => m.totalOvertimePay) || [],
-                            backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                            borderWidth: 0,
                             stack: 'income',
                             order: 2,
                         },
@@ -128,47 +132,53 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                             type: 'line',
                             label: 'Tổng thực nhận',
                             data: data.monthlySummaries?.map((m: any) => m.totalNetSalary) || [],
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
                             borderWidth: 3,
                             pointRadius: 5,
-                            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                            pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
                             fill: false,
-                            tension: 0.3,
+                            tension: 0.4,
                             order: 1,
                         },
                     ],
                 };
                 this.monthlyChartOptions = this.getComboChartOptions('Xu hướng thu nhập theo tháng');
 
-                // Department comparison - component breakdown
-                const deptLabels = data.departmentIncomes?.map((d: any) => d.organizationName) || [];
+                // Position comparison - component breakdown
+                const positionLabels = data.positionIncomes?.map((d: any) => d.positionName) || [];
                 this.deptChartData = {
-                    labels: deptLabels,
+                    labels: positionLabels,
                     datasets: [
                         {
                             label: 'Lương cứng',
-                            data: data.departmentIncomes?.map((d: any) => d.totalBaseSalary) || [],
-                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                            data: data.positionIncomes?.map((d: any) => d.totalBaseSalary) || [],
+                            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Phụ cấp',
-                            data: data.departmentIncomes?.map((d: any) => d.totalAllowance) || [],
-                            backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                            data: data.positionIncomes?.map((d: any) => d.totalAllowance) || [],
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Thưởng',
-                            data: data.departmentIncomes?.map((d: any) => d.totalBonus) || [],
-                            backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                            data: data.positionIncomes?.map((d: any) => d.totalBonus) || [],
+                            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Lương tăng ca',
-                            data: data.departmentIncomes?.map((d: any) => d.totalOvertimePay) || [],
-                            backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                            data: data.positionIncomes?.map((d: any) => d.totalOvertimePay) || [],
+                            backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                            borderWidth: 0,
                         },
                     ],
                 };
-                this.deptChartOptions = this.getChartOptions('Chi phí nhân sự theo phòng ban');
+                this.deptChartOptions = this.getChartOptions('Chi phí nhân sự theo vị trí');
             }
         });
     }
@@ -185,7 +195,7 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                 break;
             case 'dept':
                 this.deptChartType = actualType;
-                this.deptChartOptions = this.getChartOptions('Chi phí nhân sự theo phòng ban', isHorizontal);
+                this.deptChartOptions = this.getChartOptions('Chi phí nhân sự theo vị trí', isHorizontal);
                 break;
         }
     }
@@ -196,9 +206,29 @@ export class ReportMonthlyIncomeComponent implements OnInit {
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
-                legend: { display: true, position: 'bottom' },
-                title: { display: true, text: title, font: { size: 14 } },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
                 tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
                     callbacks: {
                         label: (context: any) => {
                             const value = context.parsed.y ?? context.parsed.x ?? 0;
@@ -208,8 +238,18 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                 },
             },
             scales: {
-                x: { stacked: true, beginAtZero: true },
-                y: { stacked: true, beginAtZero: true },
+                x: {
+                    stacked: true,
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
             },
         };
     }
@@ -220,12 +260,42 @@ export class ReportMonthlyIncomeComponent implements OnInit {
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
-                legend: { display: true, position: 'bottom' },
-                title: { display: true, text: title, font: { size: 14 } },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                },
             },
             scales: {
-                x: { beginAtZero: true },
-                y: { beginAtZero: true },
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
             },
         };
     }

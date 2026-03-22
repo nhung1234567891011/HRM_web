@@ -119,52 +119,52 @@ export class ReportAttendanceComponent implements OnInit {
                         {
                             label: 'Ngày làm việc',
                             data: data.monthlyAttendances?.map((m: any) => m.totalWorkDays) || [],
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 2,
-                            fill: false,
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Đi muộn',
                             data: data.monthlyAttendances?.map((m: any) => m.totalLateDays) || [],
-                            backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            borderWidth: 2,
-                            fill: false,
+                            backgroundColor: 'rgba(251, 146, 60, 0.75)',
+                            borderColor: 'rgba(251, 146, 60, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Về sớm',
                             data: data.monthlyAttendances?.map((m: any) => m.totalEarlyLeaveDays) || [],
-                            backgroundColor: 'rgba(255, 206, 86, 0.6)',
-                            borderColor: 'rgba(255, 206, 86, 1)',
-                            borderWidth: 2,
-                            fill: false,
+                            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                            borderColor: 'rgba(245, 158, 11, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Nghỉ phép',
                             data: data.monthlyAttendances?.map((m: any) => m.totalLeaveDays) || [],
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 2,
-                            fill: false,
+                            backgroundColor: 'rgba(99, 102, 241, 0.75)',
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Vắng mặt',
                             data: data.monthlyAttendances?.map((m: any) => m.totalAbsentDays) || [],
-                            backgroundColor: 'rgba(201, 203, 207, 0.6)',
-                            borderColor: 'rgba(201, 203, 207, 1)',
-                            borderWidth: 2,
-                            fill: false,
+                            backgroundColor: 'rgba(156, 163, 175, 0.75)',
+                            borderColor: 'rgba(156, 163, 175, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Giờ tăng ca',
                             data: data.monthlyAttendances?.map((m: any) => m.totalOvertimeHours) || [],
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 2,
+                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            borderColor: 'rgba(168, 85, 247, 1)',
+                            borderWidth: 3,
                             fill: false,
                             type: 'line',
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(168, 85, 247, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
                             yAxisID: 'yOt',
+                            tension: 0.4,
                         },
                     ],
                 };
@@ -172,46 +172,87 @@ export class ReportAttendanceComponent implements OnInit {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true, position: 'bottom' },
-                        title: { display: true, text: 'Chuyên cần theo tháng', font: { size: 14 } },
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '500' },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                            },
+                        },
+                        title: {
+                            display: true,
+                            text: 'Chuyên cần theo tháng',
+                            font: { size: 16, weight: '600' },
+                            padding: { top: 10, bottom: 20 },
+                            color: '#1e293b',
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                        },
                     },
                     scales: {
-                        x: { beginAtZero: true },
-                        y: { beginAtZero: true, position: 'left', title: { display: true, text: 'Ngày' } },
-                        yOt: { beginAtZero: true, position: 'right', title: { display: true, text: 'Giờ tăng ca' }, grid: { drawOnChartArea: false } },
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            position: 'left',
+                            title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
+                        yOt: {
+                            beginAtZero: true,
+                            position: 'right',
+                            title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
+                            grid: { drawOnChartArea: false },
+                            ticks: { font: { size: 11 } },
+                        },
                     },
                 };
 
-                // Department attendance + OT
-                const deptData = data.departmentAttendances || [];
-                const deptLabels = deptData.map((d: any) => d.organizationName);
+                // Position attendance + OT
+                const positionData = data.positionAttendances || [];
+                const positionLabels = positionData.map((d: any) => d.positionName);
                 this.deptOtChartData = {
-                    labels: deptLabels,
+                    labels: positionLabels,
                     datasets: [
                         {
                             label: 'Ngày làm việc',
-                            data: deptData.map((d: any) => d.totalWorkDays),
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            data: positionData.map((d: any) => d.totalWorkDays),
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Đi muộn',
-                            data: deptData.map((d: any) => d.totalLateDays),
-                            backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                            data: positionData.map((d: any) => d.totalLateDays),
+                            backgroundColor: 'rgba(251, 146, 60, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Vắng mặt',
-                            data: deptData.map((d: any) => d.totalAbsentDays),
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                            data: positionData.map((d: any) => d.totalAbsentDays),
+                            backgroundColor: 'rgba(239, 68, 68, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Giờ tăng ca',
-                            data: deptData.map((d: any) => d.totalOvertimeHours),
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                            type: 'bar',
+                            data: positionData.map((d: any) => d.totalOvertimeHours),
+                            backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                            borderWidth: 0,
                         },
                     ],
                 };
-                this.deptOtChartOptions = this.getChartOptions('Chuyên cần & Tăng ca theo phòng ban');
+                this.deptOtChartOptions = this.getChartOptions('Chuyên cần & Tăng ca theo vị trí');
 
                 // OT trend (monthly OT hours + pay)
                 const otData = data.overtimeSummaries || [];
@@ -222,18 +263,24 @@ export class ReportAttendanceComponent implements OnInit {
                         {
                             label: 'Giờ tăng ca',
                             data: otData.map((o: any) => o.totalOvertimeHours),
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 2,
+                            backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                            borderColor: 'rgba(168, 85, 247, 1)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Tiền tăng ca (triệu)',
                             data: otData.map((o: any) => (o.totalOvertimePay || 0) / 1000000),
-                            backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            borderWidth: 2,
+                            backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                            borderColor: 'rgba(251, 146, 60, 1)',
+                            borderWidth: 3,
                             type: 'line',
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(251, 146, 60, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
                             yAxisID: 'yPay',
+                            tension: 0.4,
+                            fill: false,
                         },
                     ],
                 };
@@ -241,9 +288,29 @@ export class ReportAttendanceComponent implements OnInit {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true, position: 'bottom' },
-                        title: { display: true, text: 'Xu hướng tăng ca theo tháng', font: { size: 14 } },
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '500' },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                            },
+                        },
+                        title: {
+                            display: true,
+                            text: 'Xu hướng tăng ca theo tháng',
+                            font: { size: 16, weight: '600' },
+                            padding: { top: 10, bottom: 20 },
+                            color: '#1e293b',
+                        },
                         tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
                             callbacks: {
                                 label: (ctx: any) => {
                                     if (ctx.dataset.yAxisID === 'yPay') {
@@ -255,9 +322,25 @@ export class ReportAttendanceComponent implements OnInit {
                         },
                     },
                     scales: {
-                        x: { beginAtZero: true },
-                        y: { beginAtZero: true, position: 'left', title: { display: true, text: 'Giờ' } },
-                        yPay: { beginAtZero: true, position: 'right', title: { display: true, text: 'Tiền (triệu đ)' }, grid: { drawOnChartArea: false } },
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            position: 'left',
+                            title: { display: true, text: 'Giờ', font: { size: 12, weight: '600' } },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 11 } },
+                        },
+                        yPay: {
+                            beginAtZero: true,
+                            position: 'right',
+                            title: { display: true, text: 'Tiền (triệu đ)', font: { size: 12, weight: '600' } },
+                            grid: { drawOnChartArea: false },
+                            ticks: { font: { size: 11 } },
+                        },
                     },
                 };
 
@@ -283,22 +366,26 @@ export class ReportAttendanceComponent implements OnInit {
                         {
                             label: 'Ngày làm việc',
                             data: topEmployees.map((e: any) => e.workDays),
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Đi muộn',
                             data: topEmployees.map((e: any) => e.lateDays),
-                            backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                            backgroundColor: 'rgba(251, 146, 60, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Nghỉ phép',
                             data: topEmployees.map((e: any) => e.leaveDays),
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                            backgroundColor: 'rgba(99, 102, 241, 0.75)',
+                            borderWidth: 0,
                         },
                         {
                             label: 'Giờ tăng ca',
                             data: topEmployees.map((e: any) => e.overtimeHours),
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                            borderWidth: 0,
                         },
                     ],
                 };
@@ -327,7 +414,7 @@ export class ReportAttendanceComponent implements OnInit {
                 break;
             case 'deptOt':
                 this.deptOtChartType = actualType;
-                this.deptOtChartOptions = this.getChartOptions('Chuyên cần & Tăng ca theo phòng ban', isHorizontal);
+                this.deptOtChartOptions = this.getChartOptions('Chuyên cần & Tăng ca theo vị trí', isHorizontal);
                 break;
             case 'otTrend':
                 this.otTrendChartType = actualType;
@@ -341,22 +428,58 @@ export class ReportAttendanceComponent implements OnInit {
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
-                legend: { display: true, position: 'bottom' },
-                title: { display: true, text: title, font: { size: 14 } },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                },
             },
             scales: {
-                x: { beginAtZero: true },
-                y: { beginAtZero: true },
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
             },
         };
     }
 
     private generateColors(count: number): string[] {
         const palette = [
-            'rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)',
-            'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)',
-            'rgba(199, 199, 199, 0.7)', 'rgba(83, 102, 255, 0.7)', 'rgba(255, 99, 255, 0.7)',
-            'rgba(99, 255, 132, 0.7)',
+            'rgba(99, 102, 241, 0.8)',
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+            'rgba(239, 68, 68, 0.8)',
+            'rgba(168, 85, 247, 0.8)',
+            'rgba(236, 72, 153, 0.8)',
+            'rgba(14, 165, 233, 0.8)',
+            'rgba(34, 197, 94, 0.8)',
+            'rgba(251, 146, 60, 0.8)',
         ];
         return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
     }
