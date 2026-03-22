@@ -4,7 +4,7 @@
     <p-toolbar styleClass="mb-2">
       <div class="">
         <strong class="font-size-16">Cấu hình hoa hồng doanh thu</strong>
-        <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+        <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
       </div>
       <div class="p-toolbar-group-end">
         <button pButton type="button" label="Thêm mới" icon="pi pi-plus" (click)="openCreate()"></button>

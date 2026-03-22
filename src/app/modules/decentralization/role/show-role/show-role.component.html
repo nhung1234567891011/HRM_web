@@ -2,7 +2,7 @@
     <p-toolbar styleClass="mb-2">
         <div class="">
             <strong class="font-size-16">Danh sách vai trò/Nhóm quyền</strong>
-            <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+            <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
         </div>
     </p-toolbar>
 </div>
@@ -32,39 +32,6 @@
 
         <div class="filter-action-col">
             <button pButton pRipple label="Thêm" icon="pi pi-plus-circle" class="buttonfilter" (click)="onAdd()"></button>
-        </div>
-
-        <div class="filter-action-col column-toggle-wrap">
-            <button pButton pRipple type="button" label="Ẩn/hiện cột" icon="pi pi-sliders-h" class="buttonfilter button-outline" (click)="toggleColumnPanel()"></button>
-            <div class="column-panel" *ngIf="showColumnPanel">
-                <div class="column-panel-title">Hiển thị cột</div>
-
-                <span class="p-input-icon-left column-search-wrap">
-                    <i class="pi pi-search"></i>
-                    <input
-                        type="text"
-                        pInputText
-                        class="column-search-input"
-                        placeholder="Tìm kiếm cột"
-                        [(ngModel)]="columnSearch"
-                    />
-                </span>
-
-                <div class="column-panel-actions-top">
-                    <button type="button" class="column-link-btn" (click)="selectAllColumns()">Chọn tất cả</button>
-                    <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
-                </div>
-
-                <label class="column-item" *ngFor="let col of filteredColumnOptions">
-                    <input type="checkbox" [checked]="isTempColumnVisible(col.field)" (change)="onTempColumnToggle(col.field)" />
-                    <span>{{ col.header }}</span>
-                </label>
-
-                <div class="column-panel-footer">
-                    <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>
-                    <button type="button" class="column-footer-btn column-apply" (click)="applyColumnChanges()">Áp dụng</button>
-                </div>
-            </div>
         </div>
     </div>
 </div>

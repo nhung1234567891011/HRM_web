@@ -25,6 +25,7 @@ import { UtilityModule } from 'src/app/core/modules/utility/utility.module';
 import { DepartmentService } from 'src/app/core/services/department.service';
 import { MessageService } from 'primeng/api';
 import { markAllAsTouched } from 'src/app/core/helpers/validatorHelper';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
 	selector: 'app-establish',
@@ -46,7 +47,8 @@ import { markAllAsTouched } from 'src/app/core/helpers/validatorHelper';
 		TabViewModule,
 		CalendarModule,
 		InputTextareaModule,
-		UtilityModule
+		UtilityModule,
+		TableColumnToggleDirective,
 
 	],
 	templateUrl: './establish.component.html',

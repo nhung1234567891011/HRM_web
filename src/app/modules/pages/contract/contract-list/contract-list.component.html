@@ -2,7 +2,7 @@
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Danh sách hợp đồng</strong>
-            <app-shared-breadcrumb></app-shared-breadcrumb>
+            <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
         </div>
 
         <div
@@ -20,6 +20,8 @@
                 icon="pi pi-plus"
                 style="height: 40px; width: 130px; border-radius: 10px"
                 [routerLink]="['/contract/create']"
+                [attr.data-tooltip]="'Thêm hợp đồng mới'"
+                [title]="'Thêm hợp đồng mới'"
             ></button>
         </div>
     </div>
@@ -77,6 +79,8 @@
                                 label="Lọc"
                                 class="buttonfilter"
                                 (click)="getPagingContract()"
+                                [attr.data-tooltip]="'Lọc danh sách hợp đồng'"
+                                [title]="'Lọc danh sách hợp đồng'"
                             ></button>
                         </div>
                         <div class="col-lg-1 mt-3">
@@ -96,32 +100,9 @@
                                     icon="pi pi-file-export"
                                     class="single-action-btn"
                                     (click)="exportContract()"
+                                    [attr.data-tooltip]="'Xuất danh sách hợp đồng'"
+                                    [title]="'Xuất danh sách hợp đồng'"
                                 ></p-button>
-
-                                <p-button
-                                    style="margin-left: 10px"
-                                    pTooltip="Ẩn/hiện cột"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-table"
-                                    (onClick)="colPanelRef.toggle($event)"
-                                ></p-button>
-
-                                <p-overlayPanel #colPanelRef>
-                                    <div style="padding: 8px; min-width: 220px;">
-                                        <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
-                                        <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
-                                            <p-checkbox
-                                                [binary]="true"
-                                                [label]="col.header"
-                                                [ngModel]="isColVisible(col.field)"
-                                                (onChange)="onColumnToggle($event, col)"
-                                                [ngModelOptions]="{standalone: true}">
-                                            </p-checkbox>
-                                        </div>
-                                    </div>
-                                </p-overlayPanel>
 <!-- 
                                 <p-button
                                     style="margin-left: 10px"
@@ -205,6 +186,8 @@
                                         <i
                                             class="pi pi-ellipsis-v"
                                             (click)="menu.toggle($event)"
+                                            [attr.data-tooltip]="'Mở menu thao tác'"
+                                            [title]="'Mở menu thao tác'"
                                         ></i>
                                         <p-overlayPanel #menu>
                                             <div class="menu-items">
@@ -260,7 +243,10 @@
                                                     <i class="pi pi-file-pdf"></i>
                                                     Xuất file Pdf hợp đồng
                                                 </button>
-                                                <button class="menu-btn" (click)="generateViewPDF(contract)">
+                                                <button
+                                                    class="menu-btn"
+                                                    (click)="generateViewPDF(contract)"
+                                                >
                                                     <i class="pi pi-print"></i> Xem và in hợp đồng
                                                 </button>
                                                 <button
@@ -376,6 +362,8 @@
                                     label="Hủy"
                                     (click)="onCancelTerminate()"
                                     class="p-button-outlined"
+                                    [attr.data-tooltip]="'Hủy thao tác chấm dứt'"
+                                    [title]="'Hủy thao tác chấm dứt'"
                                 ></button>
                                 <button
                                     pButton
@@ -383,6 +371,8 @@
                                     label="Chấm dứt"
                                     (click)="onConfirmTerminate()"
                                     class="p-button-danger"
+                                    [attr.data-tooltip]="'Xác nhận chấm dứt hợp đồng'"
+                                    [title]="'Xác nhận chấm dứt hợp đồng'"
                                 ></button>
                             </p-footer>
                         </p-dialog>
@@ -781,6 +771,8 @@
             label="Hủy"
             class="p-button-secondary me-2"
             (click)="closeDiaLogDelete()"
+            [attr.data-tooltip]="'Hủy xóa hợp đồng'"
+            [title]="'Hủy xóa hợp đồng'"
         ></button>
         <button
             pButton
@@ -788,6 +780,8 @@
             label="Đồng ý"
             class="p-button-danger"
             (click)="ClickDelete()"
+            [attr.data-tooltip]="'Xác nhận xóa hợp đồng'"
+            [title]="'Xác nhận xóa hợp đồng'"
         ></button>
     </div>
 </p-dialog>

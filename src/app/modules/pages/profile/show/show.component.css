@@ -22,7 +22,7 @@
 
 .filter-row {
     display: grid;
-    grid-template-columns: minmax(220px, 1fr) repeat(5, auto);
+    grid-template-columns: minmax(220px, 1fr) repeat(4, auto);
     gap: 0.5rem;
     align-items: center;
     padding: 0.25rem 0;
@@ -211,7 +211,7 @@
 .employee-name {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .icon-tool {
@@ -238,17 +238,8 @@
     cursor: pointer;
 }
 
-.paging-bot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid #edf2f7;
-    padding: 0.8rem 0.2rem 0.1rem;
-}
-
-.paging-info {
-    color: #64748b;
-    font-size: 12px;
+.code:hover {
+    text-decoration: underline;
 }
 
 ::ng-deep .profile-show-page .p-datatable .p-datatable-header {
@@ -286,52 +277,6 @@
 ::ng-deep .profile-show-page .p-dropdown,
 ::ng-deep .profile-show-page .p-treeselect {
     min-width: 180px;
-}
-
-@media (max-width: 1200px) {
-    .filter-row {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    .search-col {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (max-width: 768px) {
-    .filter-row {
-        grid-template-columns: 1fr;
-    }
-
-    .filter-action-col,
-    .buttonfilter,
-    ::ng-deep .profile-show-page .p-dropdown,
-    ::ng-deep .profile-show-page .p-treeselect {
-        width: 100%;
-        min-width: 100%;
-    }
-
-    .column-panel {
-        width: 100%;
-        min-width: 260px;
-        right: 0;
-    }
-
-    .paging-bot {
-        flex-direction: column;
-        gap: 0.6rem;
-        align-items: flex-start;
-    }
-}
-
-.employee-name {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.code:hover {
-    text-decoration: underline;
 }
 
 .table-footer {
@@ -406,6 +351,8 @@
 :host ::ng-deep .org-paginator .p-dropdown .p-dropdown-label {
     padding: 0 0.5rem;
     font-size: 12px;
+    display: inline-flex;
+    align-items: center;
 }
 
 :host ::ng-deep .org-paginator .p-dropdown .p-dropdown-trigger {
@@ -419,11 +366,6 @@
 :host ::ng-deep .org-paginator .p-paginator-rpp-options {
     margin: 0;
     align-self: center;
-}
-
-:host ::ng-deep .org-paginator .p-dropdown .p-dropdown-label {
-    display: inline-flex;
-    align-items: center;
 }
 
 :host ::ng-deep .org-paginator .p-paginator-current {
@@ -441,7 +383,6 @@
     margin: 0;
 }
 
-/* Search input - đồng bộ với dropdown và nút Lọc */
 .search-input-wrapper {
     display: inline-block;
     min-width: 200px;
@@ -470,7 +411,6 @@
     color: var(--p-input-placeholder-color, #6c757d);
 }
 
-/* Make organization TreeSelect wider in the filter bar */
 :host ::ng-deep .custom-tree-select {
     min-width: 320px;
 }
@@ -478,10 +418,31 @@
 :host ::ng-deep .custom-tree-select .p-treeselect {
     width: 100%;
     min-width: 320px;
-    height: 40px;
+    height: 44px;
+}
+
+@media (max-width: 1200px) {
+    .filter-row {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .search-col {
+        grid-column: 1 / -1;
+    }
 }
 
 @media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-action-col,
+    .buttonfilter,
+    ::ng-deep .profile-show-page .p-dropdown,
+    ::ng-deep .profile-show-page .p-treeselect {
+        width: 100%;
+        min-width: 100%;
+    }
 
     .search-input-wrapper,
     .search-input-wrapper input.search-input,

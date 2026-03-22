@@ -27,6 +27,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { RoleService } from 'src/app/core/services/decentralization/role.service';
 import { TruncatePipe } from 'src/app/core/pipes/truncate.pipe';
 import { ToastrService } from 'ngx-toastr';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
 	selector: 'app-show-role',
@@ -49,7 +50,8 @@ import { ToastrService } from 'ngx-toastr';
 		UtilityModule,
 		CalendarModule,
 		InputTextareaModule,
-		TruncatePipe
+		TruncatePipe,
+		TableColumnToggleDirective,
 	],
 	providers: [DatePipe],
 	templateUrl: './show-role.component.html',

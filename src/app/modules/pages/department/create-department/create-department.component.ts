@@ -36,6 +36,7 @@ import { DepartmentService } from 'src/app/core/services/department.service';
 import { UtilityModule } from 'src/app/core/modules/utility/utility.module';
 import { MessageService } from 'primeng/api';
 import { markAllAsTouched } from 'src/app/core/helpers/validatorHelper';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 @Component({
     selector: 'app-create-department',
     standalone: true,
@@ -55,6 +56,7 @@ import { markAllAsTouched } from 'src/app/core/helpers/validatorHelper';
         InputTextModule,
         ReactiveFormsModule,
         UtilityModule,
+        TableColumnToggleDirective,
     ],
     templateUrl: './create-department.component.html',
     styleUrl: './create-department.component.scss',

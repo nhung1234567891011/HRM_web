@@ -3,7 +3,7 @@
         <p-toolbar styleClass="mb-2">
             <div>
                 <strong class="font-size-16">Thành phần lương</strong>
-                <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+                <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
             </div>
             <div class="btn-add-wrapper">
                 <!-- <button
@@ -76,73 +76,6 @@
                             [showClear]="true"
                             (onChange)="onParentUnitChangeSearch($event)"
                         />
-                    </div>
-                    <div
-                        class="p-10 rounded border icon-settings cursor-pointer"
-                        style="position: relative"
-                    >
-                        <i
-                            (click)="openDialog('right')"
-                            class="pi pi-spin pi-cog"
-                            style="font-size: 1rem"
-                        ></i>
-
-                        <p-dialog
-                            header="Tùy chỉnh cột"
-                            [(visible)]="visible1"
-                            class="custom-dialog"
-                            [baseZIndex]="1000"
-                            [dismissableMask]="true"
-                            [position]="position"
-                        >
-                            <span class="block p-input-icon-left">
-                                <i class="pi pi-search"></i>
-                                <input
-                                    pInputText
-                                    type="text"
-                                    placeholder="Tìm kiếm"
-                                    [(ngModel)]="searchText"
-                                    (input)="onSearch()"
-                                    [style]="{ paddingLeft: '30px' }"
-                                />
-                            </span>
-
-                            <div class="content-scroll">
-                                <div
-                                    class="flex align-items-center gap-3 mb-3 mt-3"
-                                    *ngFor="let pr of filteredListheaderTable"
-                                >
-                                    <label for="username" class="font-semibold">
-                                        <p-checkbox
-                                            [(ngModel)]="pr.status"
-                                            [binary]="true"
-                                            inputId="binary"
-                                        />
-                                    </label>
-                                    <span
-                                        class="d-flex justify-content-between"
-                                        >{{ pr.name }}</span
-                                    >
-                                </div>
-                            </div>
-
-                            <div class="p-dialog-footer">
-                                <p-button
-                                    (click)="resetDefaults()"
-                                    label="Mặc định"
-                                    [style]="{
-                                        color: 'white',
-                                        backgroundColor: '#ccc',
-                                        borderColor: '#ccc',
-                                        marginRight: '5px'
-                                    }"
-                                />
-                                <p-button
-                                    (click)="applyChanges()"
-                                    label="Áp dụng"
-                                />
-                            </div>
-                        </p-dialog>
                     </div>
                     <div class="flex justify-content-center">
                         <p-button class="ml-2" (click)="search()" label="Lọc" />

@@ -31,6 +31,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { an } from '@fullcalendar/core/internal-common';
 import { UtilityModule } from 'src/app/core/modules/utility/utility.module';
 import { ConfirmDialogComponent } from 'src/app/core/modules/confirm-dialog/confirm-dialog.component';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcrumb.module';
 
 @Component({
@@ -52,6 +53,7 @@ import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcr
         FormsModule,
         AutoCompleteModule,
         UtilityModule,
+        TableColumnToggleDirective,
         SharedBreadcrumbModule,
     ],
     providers: [DatePipe],

@@ -2,7 +2,7 @@
     <p-toolbar styleClass="mb-2">
         <div class="">
             <strong class="font-size-16">Đơn từ</strong>
-            <app-shared-breadcrumb></app-shared-breadcrumb>
+            <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
         </div>
         <div class="toast-container">
             <p-messages [(value)]="messages" [enableService]="false" [closable]="false"></p-messages>

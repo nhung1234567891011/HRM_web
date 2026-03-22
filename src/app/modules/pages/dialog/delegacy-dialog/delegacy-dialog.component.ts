@@ -19,6 +19,7 @@ import { DepartmentService } from 'src/app/core/services/department.service';
 import { EmployeeService } from 'src/app/core/services/employee.service';
 import { AuthService } from 'src/app/core/services/identity/auth.service';
 import { ProjectService } from 'src/app/core/services/project.service';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
 	selector: 'app-delegacy-dialog',
@@ -38,7 +39,8 @@ import { ProjectService } from 'src/app/core/services/project.service';
 			TreeModule,
 			BrowserModule,
 			TreeSelectModule,
-			UtilityModule
+			UtilityModule,
+			TableColumnToggleDirective,
 		],
 	providers: [DatePipe],
 
