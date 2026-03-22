@@ -37,26 +37,26 @@
     grid-area: other;
 }
 
-.dashboard{
+.dashboard {
     background-color: #fff;
 }
 
-.dashboard-item{
+.dashboard-item {
     position: relative;
     display: flex;
-    justify-content:center;
-    align-items:center;
+    justify-content: center;
+    align-items: center;
 }
 
-.dashboard-item .content{
+.dashboard-item .content {
     font-size: 34px;
-    font-weight:700;
+    font-weight: 700;
 }
 
-.title-heading{
+.title-heading {
     position: absolute;
     top: 10px;
-    left:10px;
+    left: 10px;
     color: #000;
     font-size: 13px;
     font-weight: 600;
@@ -79,12 +79,11 @@
     color: #6c31ed;
 }
 
-.classify{
+.classify {
     background-color: #f4feff;
 }
 
-.classify .content{
-}
+.classify .content {}
 
 .maternity {
     background-color: #ffdddc;
@@ -101,6 +100,7 @@
 .office_employee .content {
     color: #766d6e;
 }
+
 .other {
     background-color: #d5f4ef;
 }
@@ -109,12 +109,12 @@
     color: #78ccf0;
 }
 
-.setting-item svg{
+.setting-item svg {
     font-size: 13px;
     display: block;
 }
 
-.setting-item{
+.setting-item {
     display: flex;
     align-items: center;
     align-items: center;
@@ -124,22 +124,24 @@
     cursor: pointer;
     transition: all 0.01s;
 }
-.setting-item:hover{
+
+.setting-item:hover {
     background-color: #ebe9f0;
 }
-.employee-image-img{
+
+.employee-image-img {
     width: 40px;
     height: 40px;
-    border-radius:50%;
+    border-radius: 50%;
 }
 
-.employee-name{
+.employee-name {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.code:hover{
+.code:hover {
     text-decoration: underline;
 }
 
@@ -170,4 +172,15 @@
 .search-input-wrapper input.search-input::placeholder,
 :host ::ng-deep .search-input-wrapper .p-inputtext::placeholder {
     color: var(--p-input-placeholder-color, #6c757d);
+}
+
+/* Make organization TreeSelect wider in the filter bar */
+:host ::ng-deep .custom-tree-select {
+    min-width: 320px;
+}
+
+:host ::ng-deep .custom-tree-select .p-treeselect {
+    width: 100%;
+    min-width: 320px;
+    height: 44px;
 }
