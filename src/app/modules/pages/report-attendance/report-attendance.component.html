@@ -16,7 +16,7 @@
                         (onChange)="onFilterChange()"></p-dropdown>
                     <p-treeSelect [options]="treeData" [(ngModel)]="selectedOrganization" placeholder="Chọn phòng ban"
                         [style]="{ width: '250px' }" (onNodeSelect)="onOrganizationChange($event)"
-                        [showClear]="true"></p-treeSelect>
+                        (onClear)="onOrganizationClear()" [showClear]="true"></p-treeSelect>
                 </div>
             </div>
         </div>

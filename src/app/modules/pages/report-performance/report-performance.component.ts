@@ -51,6 +51,7 @@ export class ReportPerformanceComponent implements OnInit {
         { label: 'Tháng 11', value: 11 }, { label: 'Tháng 12', value: 12 },
     ];
     selectedOrganization: any = null;
+    selectedOrganizationId: number | null = null;
     treeData: TreeNode[] = [];
     items: any[] = [];
 
@@ -82,6 +83,7 @@ export class ReportPerformanceComponent implements OnInit {
 
     transformToTreeNode(data: any[]): TreeNode[] {
         return data.map((item) => ({
+            key: item.id,
             label: item.organizationName,
             data: item,
             children: item.organizationChildren ? this.transformToTreeNode(item.organizationChildren) : [],
@@ -90,7 +92,13 @@ export class ReportPerformanceComponent implements OnInit {
     }
 
     onOrganizationChange(event: any): void {
-        this.selectedOrganization = event?.node?.data?.id ?? null;
+        this.selectedOrganizationId = event?.node?.data?.id ?? event?.node?.key ?? null;
+        this.loadReport();
+    }
+
+    onOrganizationClear(): void {
+        this.selectedOrganization = null;
+        this.selectedOrganizationId = null;
         this.loadReport();
     }
 
@@ -101,7 +109,7 @@ export class ReportPerformanceComponent implements OnInit {
     loadReport(): void {
         const request: any = { year: this.selectedYear };
         if (this.selectedMonth) request.month = this.selectedMonth;
-        if (this.selectedOrganization) request.organizationId = this.selectedOrganization;
+        if (this.selectedOrganizationId) request.organizationId = this.selectedOrganizationId;
 
         this.reportService.getPerformance(request).subscribe((res: any) => {
             if (res.status && res.data) {

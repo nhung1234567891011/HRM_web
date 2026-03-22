@@ -33,6 +33,7 @@ export class ReportHrDistributionComponent implements OnInit {
 
     totalEmployees: number = 0;
     selectedOrganization: any = null;
+    selectedOrganizationId: number | null = null;
     treeData: TreeNode[] = [];
     items: any[] = [];
 
@@ -60,6 +61,7 @@ export class ReportHrDistributionComponent implements OnInit {
 
     transformToTreeNode(data: any[]): TreeNode[] {
         return data.map((item) => ({
+            key: item.id,
             label: item.organizationName,
             data: item,
             children: item.organizationChildren ? this.transformToTreeNode(item.organizationChildren) : [],
@@ -68,14 +70,20 @@ export class ReportHrDistributionComponent implements OnInit {
     }
 
     onOrganizationChange(event: any): void {
-        this.selectedOrganization = event?.node?.data?.id ?? null;
+        this.selectedOrganizationId = event?.node?.data?.id ?? event?.node?.key ?? null;
+        this.loadReport();
+    }
+
+    onOrganizationClear(): void {
+        this.selectedOrganization = null;
+        this.selectedOrganizationId = null;
         this.loadReport();
     }
 
     loadReport(): void {
         const request: any = {};
-        if (this.selectedOrganization) {
-            request.organizationId = this.selectedOrganization;
+        if (this.selectedOrganizationId) {
+            request.organizationId = this.selectedOrganizationId;
         }
 
         this.reportService.getHrDistribution(request).subscribe((res: any) => {
