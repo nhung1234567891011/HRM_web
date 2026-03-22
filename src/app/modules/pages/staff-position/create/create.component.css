@@ -88,3 +88,66 @@
     border-radius: 4px;
     /* Góc bo tròn cho track */
 }
+
+.staff-position-form-page {
+    background: linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
+    padding: 4px 2px;
+}
+
+.form-card {
+    border: 1px solid #d9e3ef;
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(19, 41, 68, 0.08);
+    overflow: hidden;
+}
+
+.staff-position-form .field {
+    margin-bottom: 18px;
+}
+
+.staff-position-form input[pInputText],
+.staff-position-form .p-inputtext {
+    width: 100% !important;
+    min-height: 42px;
+    border-radius: 10px;
+    border: 1px solid #cfdceb;
+    padding: 10px 12px;
+}
+
+.staff-position-form input[pInputText]:focus,
+.staff-position-form .p-inputtext:focus {
+    border-color: #7f9fc1;
+    box-shadow: 0 0 0 3px rgba(65, 108, 153, 0.12);
+}
+
+::ng-deep .staff-position-form .p-dropdown,
+::ng-deep .staff-position-form .p-treeselect {
+    width: 100% !important;
+    min-height: 42px;
+    border-radius: 10px;
+}
+
+::ng-deep .staff-position-form .p-dropdown-label,
+::ng-deep .staff-position-form .p-treeselect-label {
+    padding-top: 11px;
+    padding-bottom: 11px;
+}
+
+::ng-deep .staff-position-form .p-button {
+    min-height: 40px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.staff-position-form .error-message {
+    position: static;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+@media (max-width: 992px) {
+    .staff-position-form .field {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

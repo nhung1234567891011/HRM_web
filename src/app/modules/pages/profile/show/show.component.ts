@@ -18,8 +18,8 @@ import { ToastService } from 'src/app/core/services/global/toast.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import profileConstant from 'src/app/core/constants/profile.constant';
-import { M } from '@fullcalendar/core/internal-common';
 import { HasPermissionHelper } from 'src/app/core/helpers/has-permission.helper';
+import { PermissionConstant } from 'src/app/core/constants/permission-constant';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -31,6 +31,7 @@ import { saveAs } from 'file-saver';
 })
 export class ShowComponent implements OnInit, OnDestroy {
     imgUrl: string = environment.baseApiImageUrl;
+    permissionConstant = PermissionConstant;
     items: any;
     staffPositionVisible: boolean = false;
     profiles: any;
@@ -38,6 +39,28 @@ export class ShowComponent implements OnInit, OnDestroy {
     options: any;
     classifyOptions: any;
     organizations: any;
+    currentPageReport: string = '';
+    columnSearch: string = '';
+    showColumnPanel: boolean = false;
+    columnOptions = [
+        { key: 'sex', label: 'Giới tính' },
+        { key: 'dateOfBirth', label: 'Ngày sinh' },
+        { key: 'phoneNumber', label: 'Số điện thoại' },
+        { key: 'companyEmail', label: 'Email công việc' },
+        { key: 'staffTitle', label: 'Chức vụ' },
+        { key: 'staffPosition', label: 'Vị trí công việc' },
+        { key: 'organization', label: 'Đơn vị' },
+    ];
+    columnVisibility: Record<string, boolean> = {
+        sex: true,
+        dateOfBirth: true,
+        phoneNumber: true,
+        companyEmail: true,
+        staffTitle: true,
+        staffPosition: true,
+        organization: true,
+    };
+    tempColumnVisibility: Record<string, boolean> = { ...this.columnVisibility };
 
     constructor(
         private route: ActivatedRoute,
@@ -86,6 +109,18 @@ export class ShowComponent implements OnInit, OnDestroy {
         organizationId: null,
         organizationObject: null,
     };
+
+    get pageSize(): number {
+        return this.paging?.pageSize || DEFAULT_PAGE_SIZE;
+    }
+
+    get pageIndex(): number {
+        return this.paging?.pageIndex || DEFAULT_PAGE_INDEX;
+    }
+
+    get totalRecords(): number {
+        return this.paging?.totalRecords || 0;
+    }
 
     ngOnInit() {
         this.loadOrganization();
@@ -273,6 +308,7 @@ export class ShowComponent implements OnInit, OnDestroy {
 
             const { items, ...paging } = result;
             this.paging = paging;
+            this.updateCurrentPageReport();
 
             this.selectedProfile = [];
         });
@@ -280,9 +316,7 @@ export class ShowComponent implements OnInit, OnDestroy {
 
     public selectAllStaffPositions(event: any): void {
         if (event.target.checked) {
-            this.selectedProfile = this.staffPositiones.map(
-                (teacher: any) => teacher.id
-            );
+            this.selectedProfile = [...(this.profiles || [])];
         } else {
             this.selectedProfile = [];
         }
@@ -321,7 +355,7 @@ export class ShowComponent implements OnInit, OnDestroy {
     public handleSelectItem(id: number): void {
         if (this.isSelected(id)) {
             this.selectedProfile = this.selectedProfile.filter(
-                (id: any) => id !== id
+                (selectedId: any) => selectedId !== id
             );
         } else {
             this.selectedProfile.push(id);
@@ -421,6 +455,7 @@ export class ShowComponent implements OnInit, OnDestroy {
     onPageChange(event: any) {
         this.paging.pageIndex = event.page + 1;
         this.paging.pageSize = event.rows;
+        this.updateCurrentPageReport();
         this.route.queryParams.subscribe((params) => {
             const request = {
                 ...params,
@@ -435,6 +470,97 @@ export class ShowComponent implements OnInit, OnDestroy {
             });
         });
     }
+
+    toggleColumnPanel(): void {
+        if (this.showColumnPanel) {
+            this.closeColumnPanel();
+            return;
+        }
+
+        this.tempColumnVisibility = { ...this.columnVisibility };
+        this.columnSearch = '';
+        this.showColumnPanel = true;
+    }
+
+    closeColumnPanel(): void {
+        this.showColumnPanel = false;
+        this.tempColumnVisibility = { ...this.columnVisibility };
+        this.columnSearch = '';
+    }
+
+    applyColumnChanges(): void {
+        this.columnVisibility = { ...this.tempColumnVisibility };
+        this.showColumnPanel = false;
+    }
+
+    onTempColumnToggle(key: string): void {
+        this.tempColumnVisibility[key] = !this.tempColumnVisibility[key];
+    }
+
+    isTempColumnVisible(key: string): boolean {
+        return this.tempColumnVisibility[key] !== false;
+    }
+
+    selectAllColumns(): void {
+        this.columnOptions.forEach((col) => {
+            this.tempColumnVisibility[col.key] = true;
+        });
+    }
+
+    clearAllColumns(): void {
+        this.columnOptions.forEach((col) => {
+            this.tempColumnVisibility[col.key] = false;
+        });
+    }
+
+    isColumnVisible(key: string): boolean {
+        return this.columnVisibility[key] !== false;
+    }
+
+    get filteredColumnOptions() {
+        const keyword = this.columnSearch.trim().toLowerCase();
+        if (!keyword) {
+            return this.columnOptions;
+        }
+
+        return this.columnOptions.filter((col) =>
+            col.label.toLowerCase().includes(keyword)
+        );
+    }
+
+    updateCurrentPageReport(): void {
+        const totalRecords = Number(this.paging?.totalRecords || 0);
+        const pageIndex = Number(this.paging?.pageIndex || 1);
+        const pageSize = Number(this.paging?.pageSize || 10);
+
+        if (totalRecords <= 0) {
+            this.currentPageReport =
+                '<strong>0</strong> - <strong>0</strong> trong <strong>0</strong> bản ghi';
+            return;
+        }
+
+        const startRecord = (pageIndex - 1) * pageSize + 1;
+        const endRecord = Math.min(pageIndex * pageSize, totalRecords);
+        this.currentPageReport = `<strong>${startRecord}</strong> - <strong>${endRecord}</strong> trong <strong>${totalRecords}</strong> bản ghi`;
+    }
+
+    getStartRecord(): number {
+        if (!this.paging?.totalRecords) {
+            return 0;
+        }
+
+        return (this.paging.pageIndex - 1) * this.paging.pageSize + 1;
+    }
+
+    getEndRecord(): number {
+        if (!this.paging?.totalRecords) {
+            return 0;
+        }
+
+        const endRecord = this.paging.pageIndex * this.paging.pageSize;
+        return Math.min(endRecord, this.paging.totalRecords);
+    }
+
     public handleOnDeleteMultiple(event: any) {
         const selectedIds = this.selectedProfile.map((item) => item.id);
         if (selectedIds.length > 0) {
@@ -464,7 +590,7 @@ export class ShowComponent implements OnInit, OnDestroy {
                                 this.messageService.add({
                                     severity: 'success',
                                     summary: 'Thông báo',
-                                    detail: 'Xóa vị trí thành công!',
+                                    detail: 'Xóa hồ sơ thành công!',
                                 });
                             } else {
                                 this.messageService.add({
@@ -481,7 +607,7 @@ export class ShowComponent implements OnInit, OnDestroy {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Thông báo',
-                detail: 'Vui lòng chọn vị trí muốn xóa',
+                detail: 'Vui lòng chọn hồ sơ muốn xóa',
             });
         }
     }

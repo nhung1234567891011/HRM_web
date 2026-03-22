@@ -765,6 +765,28 @@ export class ShowComponent implements OnInit {
         this.visible1 = false;
     }
 
+    selectAllColumns() {
+        this.filteredListheaderTable = this.filteredListheaderTable.map(
+            (item: any) => ({
+                ...item,
+                status: true,
+            })
+        );
+    }
+
+    clearAllColumns() {
+        this.filteredListheaderTable = this.filteredListheaderTable.map(
+            (item: any) => ({
+                ...item,
+                status: false,
+            })
+        );
+    }
+
+    closeColumnPanel() {
+        this.visible1 = false;
+    }
+
     showConfirmation(event: Event) {
         this.isHandleTool = true;
     }

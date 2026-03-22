@@ -7,8 +7,8 @@
             <div class="col-12">
                 <div class="page-header">
                     <div class="page-title-block">
-                        <strong class="page-title">Đối tượng</strong>
-                        <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+                        <strong class="font-size-16">Đối tượng</strong>
+                        <app-shared-breadcrumb></app-shared-breadcrumb>
                     </div>
                     <div
                         class="header-actions"
@@ -591,6 +591,9 @@
                                         containerStyleClass="w-full"
                                         [(ngModel)]="organizatioParentIdObject"
                                         [options]="nodes"
+                                        [filter]="true"
+                                        filterBy="label"
+                                        filterPlaceholder="Tìm đơn vị"
                                         placeholder="Chọn đơn vị"
                                         [showClear]="true"
                                         (onClear)="validateParentUnit()"
@@ -618,6 +621,9 @@
                                     [options]="listAllStaff"
                                     [(ngModel)]="selectedLocationUpdate"
                                     optionLabel="positionName"
+                                    [filter]="true"
+                                    filterBy="positionName"
+                                    filterPlaceholder="Tìm vị trí"
                                     placeholder="Vị trí"
                                     [showClear]="true"
                                     [style]="{
@@ -779,7 +785,7 @@
                             pInputText
                             type="text"
                             placeholder="Tìm theo tên, điện thoại"
-                            class="form-control"
+                            class="form-control filter-input"
                             style="width: 100%"
                             [(ngModel)]="textSearch"
                         />
@@ -787,12 +793,15 @@
                 </div>
                 <div class="filter-action-col object-filter-actions flex">
                     <!--  chọn đơn vị -->
-                    <div class="ml-2 select-tree" style="width: 300px">
+                    <div class="ml-2 select-tree filter-control-wrap" style="width: 300px">
                         <p-treeSelect
-                            class="md:w-20rem w-full"
+                            class="md:w-20rem w-full filter-control"
                             containerStyleClass="w-full"
                             [(ngModel)]="organizatioParentSelect1"
                             [options]="nodes"
+                            [filter]="true"
+                            filterBy="label"
+                            filterPlaceholder="Tìm đơn vị"
                             placeholder="Chọn đơn vị"
                             [showClear]="true"
                             (onChange)="onParentUnitChangeSearch($event)"
@@ -801,90 +810,76 @@
 
                     <!--  vị trí -->
                     <p-dropdown
+                        class="filter-control"
                         [options]="listAllStaff"
                         [(ngModel)]="selectedLocation"
                         optionLabel="positionName"
+                        [filter]="true"
+                        filterBy="positionName"
+                        filterPlaceholder="Tìm vị trí"
                         placeholder="Vị trí"
                         [showClear]="true"
                         [style]="{ width: '150px', 'margin-right': '10px' }"
                     />
                     <!--  trạng thái tài khoản -->
                     <p-dropdown
+                        class="filter-control"
                         [options]="optionAccountStatus"
                         [(ngModel)]="selectedAccountStatus"
                         optionLabel="name"
+                        [filter]="true"
+                        filterBy="name"
+                        filterPlaceholder="Tìm trạng thái"
                         placeholder="Trạng thái"
                         [showClear]="true"
                         [style]="{ width: '250px' }"
                     ></p-dropdown>
 
-                    <div
-                        class="p-10 rounded border icon-settings cursor-pointer"
-                        style="position: relative"
-                    >
-                        <i
+                    <div class="filter-action-col column-toggle-wrap">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Ẩn/hiện cột"
+                            icon="pi pi-sliders-h"
+                            class="buttonfilter button-outline filter-btn"
                             (click)="openDialog('right')"
-                            class="pi pi-spin pi-cog"
-                            style="font-size: 1rem"
-                        ></i>
+                        ></button>
 
-                        <p-dialog
-                            header="Tùy chỉnh cột"
-                            [(visible)]="visible1"
-                            class="custom-dialog"
-                            [baseZIndex]="1000"
-                            [dismissableMask]="true"
-                            [position]="position"
-                        >
-                            <span class="block p-input-icon-left">
+                        <div class="column-panel" *ngIf="visible1">
+                            <div class="column-panel-title">Hiển thị cột</div>
+
+                            <span class="p-input-icon-left column-search-wrap">
                                 <i class="pi pi-search"></i>
                                 <input
-                                    pInputText
                                     type="text"
-                                    placeholder="Tìm kiếm"
+                                    pInputText
+                                    class="column-search-input"
+                                    placeholder="Tìm kiếm cột"
                                     [(ngModel)]="searchText"
                                     (input)="onSearch()"
-                                    [style]="{ paddingLeft: '30px' }"
-                                    [showClear]="true"
                                 />
                             </span>
 
-                            <div class="content-scroll">
-                                <div
-                                    class="flex align-items-center gap-3 mb-3 mt-3"
-                                    *ngFor="let pr of filteredListheaderTable"
-                                >
-                                    <label for="username" class="font-semibold">
-                                        <p-checkbox
-                                            [(ngModel)]="pr.status"
-                                            [binary]="true"
-                                            inputId="binary"
-                                        />
-                                    </label>
-                                    <span class="text-left">{{ pr.name }}</span>
-                                </div>
+                            <div class="column-panel-actions-top">
+                                <button type="button" class="column-link-btn" (click)="selectAllColumns()">Chọn tất cả</button>
+                                <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
                             </div>
 
-                            <div class="p-dialog-footer">
-                                <p-button
-                                    (click)="resetDefaults()"
-                                    label="Mặc định"
-                                    [style]="{
-                                        color: 'white',
-                                        backgroundColor: '#ccc',
-                                        borderColor: '#ccc',
-                                        marginRight: '5px'
-                                    }"
-                                />
-                                <p-button
-                                    (click)="applyChanges()"
-                                    label="Áp dụng"
-                                />
+                            <label class="column-item" *ngFor="let pr of filteredListheaderTable">
+                                <input type="checkbox" [(ngModel)]="pr.status" />
+                                <span>{{ pr.name }}</span>
+                            </label>
+
+                            <div class="column-panel-footer">
+                                <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>
+                                <button type="button" class="column-footer-btn column-default" (click)="resetDefaults()">Mặc định</button>
+                                <button type="button" class="column-footer-btn column-apply" (click)="applyChanges()">Áp dụng</button>
                             </div>
-                        </p-dialog>
+                        </div>
                     </div>
                     <div class="flex justify-content-center">
-                        <p-button class="ml-2" (click)="search()" label="Lọc" />
+                        <button pButton pRipple type="button" class="ml-2 buttonfilter filter-btn" (click)="search()" label="Lọc"></button>
                     </div>
                 </div>
             </div>

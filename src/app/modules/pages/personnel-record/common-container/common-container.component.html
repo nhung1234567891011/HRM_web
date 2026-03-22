@@ -1,41 +1,43 @@
-<div class="row p-3 pb-0 pt-0">
-    <p-toolbar styleClass="mb-2">
-        <div class="">
-            <strong class="font-size-16">Thêm mới hồ sơ</strong>
-            <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
-        </div>
-        <!-- <ng-template pTemplate="right">
-            <button pButton pRipple icon="pi pi-plus" label="Thêm vị trí" (click)="show()"></button>
-        </ng-template> -->
-    </p-toolbar>
-</div>
-<div class="row p-3 pt-0">
-    <div class="col-12 p-0">
-        <div class="sidebar-list flex">
-            <div
+<div class="personnel-record-container">
+    <div class="page-header">
+        <p-toolbar styleClass="header-toolbar">
+            <div class="header-content">
+                <strong class="page-title">Thêm mới hồ sơ</strong>
+                <app-shared-breadcrumb></app-shared-breadcrumb>
+            </div>
+        </p-toolbar>
+    </div>
+
+    <div class="tab-wrapper">
+        <div class="sidebar-list">
+            <button
+                type="button"
                 class="sidebar-item"
                 [ngClass]="{ active: pageFlag === Page.General }"
                 (click)="handleChangePage(Page.General)"
             >
                 Thông tin chung
-            </div>
-            <div
+            </button>
+            <button
+                type="button"
                 class="sidebar-item"
                 [ngClass]="{ active: pageFlag === Page.Contact }"
                 (click)="handleChangePage(Page.Contact)"
             >
                 Thông tin liên hệ
-            </div>
-            <div
+            </button>
+            <button
+                type="button"
                 class="sidebar-item"
                 [ngClass]="{ active: pageFlag === Page.Job }"
                 (click)="handleChangePage(Page.Job)"
             >
                 Thông tin công việc
-            </div>
+            </button>
         </div>
     </div>
-    <div class="col-12 p-0">
+
+    <div class="content-wrapper">
         <div class="common">
             <div class="general-information" *ngIf="pageFlag == Page.General">
                 <app-general-information></app-general-information>

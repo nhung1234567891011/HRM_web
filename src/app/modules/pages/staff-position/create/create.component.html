@@ -1,9 +1,9 @@
-<div class="grid">
+<div class="grid staff-position-form-page">
     <div class="col-12">
         <p-toolbar styleClass="mb-2">
             <div class="">
                 <strong class="font-size-16">Thêm mới vị trí</strong>
-                <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+                <app-shared-breadcrumb></app-shared-breadcrumb>
             </div>
             <ng-template pTemplate="right">
                 <button
@@ -15,8 +15,8 @@
                 ></button>
             </ng-template>
         </p-toolbar>
-        <div class="card">
-            <form [formGroup]="staffPositionCreateForm" (ngSubmit)="onSubmit()">
+        <div class="card form-card">
+            <form class="staff-position-form" [formGroup]="staffPositionCreateForm" (ngSubmit)="onSubmit()">
                 <div class="grid p-fluid p-3">
                     <!-- Mã vị trí -->
                     <div class="col-12 md:col-6 p-0">
@@ -91,6 +91,9 @@
                                     [options]="groupPositions"
                                     optionValue="id"
                                     optionLabel="groupPositionName"
+                                    [filter]="true"
+                                    filterBy="groupPositionName"
+                                    filterPlaceholder="Tìm nhóm vị trí"
                                     placeholder="Chọn nhóm vị trí"
                                 ></p-dropdown>
                             </div>
@@ -200,6 +203,9 @@
                                     [options]="staffTitles"
                                     optionValue="id"
                                     optionLabel="staffTitleName"
+                                    [filter]="true"
+                                    filterBy="staffTitleName"
+                                    filterPlaceholder="Tìm chức danh"
                                     placeholder="Chọn chức danh"
                                 ></p-dropdown>
                             </div>
@@ -253,6 +259,9 @@
                                     containerStyleClass="w-full"
                                     formControlName="organizations"
                                     [options]="organizations"
+                                    [filter]="true"
+                                    filterBy="label"
+                                    filterPlaceholder="Tìm đơn vị"
                                     display="chip"
                                     [metaKeySelection]="false"
                                     selectionMode="checkbox"

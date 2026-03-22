@@ -1,4 +1,4 @@
-<div class="grid">
+<div class="grid object-form-page">
     <!-- Header -->
     <div class="col-12">
         <p-toolbar>
@@ -11,7 +11,7 @@
 
     <!-- Form -->
     <div class="col-12">
-        <div class="card p-4">
+        <div class="card p-4 object-form-card">
             <div class="p-fluid">
                 <!-- Loại đối tượng -->
                 <div class="col-12">
@@ -95,7 +95,7 @@
                 </div>
 
                 <form
-                    class="grid-container"
+                    class="grid-container object-form-grid"
                     [formGroup]="employeeForm"
                     (ngSubmit)="onSubmitForm()"
                 >

@@ -359,6 +359,124 @@
     display: grid;
     grid-template-columns: 1fr 1fr; /* Chia layout thành 2 cột bằng nhau */
     gap: 20px; /* Khoảng cách giữa các cột */
+
+    }
+
+    .object-form-page {
+        background: linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
+        padding: 4px 2px;
+    }
+
+    .object-form-card {
+        border: 1px solid #d9e3ef;
+        border-radius: 14px;
+        box-shadow: 0 10px 24px rgba(19, 41, 68, 0.08);
+        overflow: hidden;
+    }
+
+    .object-form-grid {
+        margin-top: 8px;
+    }
+
+    .object-form-grid .p-field {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .object-form-grid .p-field label {
+        width: 150px;
+        margin-right: 0;
+        margin-top: 10px;
+        color: #1f2f42;
+        font-weight: 600;
+    }
+
+    .object-form-grid .p-field .p-inputtext,
+    .object-form-grid .p-field input,
+    .object-form-grid .p-field p-dropdown,
+    .object-form-grid .p-field p-calendar,
+    .object-form-grid .p-field p-treeselect {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .object-form-grid .p-field input,
+    .object-form-grid .p-field .p-inputtext {
+        width: 100% !important;
+        max-width: none;
+        min-height: 42px;
+        border-radius: 10px;
+        border: 1px solid #cfdceb;
+        padding: 10px 12px;
+    }
+
+    .object-form-grid .error-message {
+        position: static;
+        margin-top: 6px;
+        white-space: normal;
+        width: 100%;
+        padding-left: 166px;
+        font-size: 12px;
+    }
+
+    ::ng-deep .object-form-grid .p-dropdown,
+    ::ng-deep .object-form-grid .p-calendar,
+    ::ng-deep .object-form-grid .p-treeselect,
+    ::ng-deep .object-form-grid .p-multiselect {
+        width: 100% !important;
+        border-radius: 10px;
+    }
+
+    ::ng-deep .object-form-grid .p-dropdown-label,
+    ::ng-deep .object-form-grid .p-treeselect-label,
+    ::ng-deep .object-form-grid .p-multiselect-label {
+        padding-top: 11px;
+        padding-bottom: 11px;
+    }
+
+    .object-form-grid .button-container {
+        margin-left: 0;
+        margin-top: 28px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .object-form-grid .button {
+        min-width: 108px;
+        min-height: 40px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 992px) {
+        .object-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .object-form-grid .p-field {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .object-form-grid .p-field label {
+            width: auto;
+            margin-top: 0;
+        }
+
+        .object-form-grid .error-message {
+            padding-left: 0;
+        }
+
+        .upload-box {
+            margin-left: 0;
+        }
+
+        .news-image {
+            margin-left: 0;
+        }
   }
   
   .left-section {

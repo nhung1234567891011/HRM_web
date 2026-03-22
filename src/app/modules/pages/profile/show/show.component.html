@@ -1,11 +1,11 @@
 <p-confirmPopup></p-confirmPopup>
 
-<div class="grid">
+<div class="grid profile-show-page">
     <div class="col-12">
-        <p-toolbar styleClass="mb-2">
+        <p-toolbar styleClass="mb-2 profile-toolbar">
             <div class="">
                 <strong class="font-size-16">Danh sách hồ sơ</strong>
-                <p-breadcrumb [model]="$any(this).items || []"></p-breadcrumb>
+                <app-shared-breadcrumb></app-shared-breadcrumb>
             </div>
             <ng-template pTemplate="right">
                 <button
@@ -18,7 +18,7 @@
                 ></button>
             </ng-template>
         </p-toolbar>
-        <div class="card">
+        <div class="card profile-card">
             <p-table
                 responsiveLayout="scroll"
                 styleClass="p-datatable-striped"
@@ -30,20 +30,8 @@
             >
                 <ng-template pTemplate="caption">
                     <div
-                        class="flex justify-content-end gap-3 align-items-end md:flex-row"
+                        class="flex justify-content-end gap-3 align-items-end md:flex-row filter-bar"
                     >
-                        <div class="flex flex-column">
-                            <p-dropdown
-                                [options]="
-                                    constant.profileConstant.workingStatus
-                                "
-                                optionLabel="label"
-                                optionValue="value"
-                                [(ngModel)]="queryParameters.workingStatus"
-                                [showClear]="true"
-                                placeholder="Chọn trạng thái"
-                            />
-                        </div>
                         <div class="flex flex-column">
                             <span class="search-input-wrapper block mt-2 md:mt-0 p-input-icon-left">
                                 <i class="pi pi-search"></i>
@@ -58,6 +46,21 @@
                             </span>
                         </div>
                         <div class="flex flex-column">
+                            <p-dropdown
+                                [options]="
+                                    constant.profileConstant.workingStatus
+                                "
+                                optionLabel="label"
+                                optionValue="value"
+                                [(ngModel)]="queryParameters.workingStatus"
+                                [showClear]="true"
+                                [filter]="true"
+                                filterBy="label"
+                                filterPlaceholder="Tìm trạng thái"
+                                placeholder="Chọn trạng thái"
+                            />
+                        </div>
+                        <div class="flex flex-column">
                             <p-treeSelect
                                 class="w-full custom-tree-select"
                                 [(ngModel)]="queryParameters.organizationObject"
@@ -65,6 +68,9 @@
                                 optionValue="data"
                                 placeholder="Chọn đơn vị"
                                 [showClear]="true"
+                                [filter]="true"
+                                filterBy="label"
+                                filterPlaceholder="Tìm đơn vị"
                             >
                             </p-treeSelect>
                         </div>
@@ -73,9 +79,50 @@
                                 type="button"
                                 pButton
                                 pRipple
-                                label="Lọc"
+                                label="Tìm kiếm"
+                                icon="pi pi-search"
                                 (click)="handleSearchProfile()"
                             ></button>
+                        </div>
+                        <div class="flex flex-column column-toggle-wrap">
+                            <button
+                                pButton
+                                pRipple
+                                type="button"
+                                label="Ẩn/hiện cột"
+                                icon="pi pi-sliders-h"
+                                class="buttonfilter button-outline"
+                                (click)="toggleColumnPanel()"
+                            ></button>
+                            <div class="column-panel" *ngIf="showColumnPanel">
+                                <div class="column-panel-title">Hiển thị cột</div>
+
+                                <span class="p-input-icon-left column-search-wrap">
+                                    <i class="pi pi-search"></i>
+                                    <input
+                                        type="text"
+                                        pInputText
+                                        class="column-search-input"
+                                        placeholder="Tìm kiếm cột"
+                                        [(ngModel)]="columnSearch"
+                                    />
+                                </span>
+
+                                <div class="column-panel-actions-top">
+                                    <button type="button" class="column-link-btn" (click)="selectAllColumns()">Chọn tất cả</button>
+                                    <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
+                                </div>
+
+                                <label class="column-item" *ngFor="let col of filteredColumnOptions">
+                                    <input type="checkbox" [checked]="isTempColumnVisible(col.key)" (change)="onTempColumnToggle(col.key)" />
+                                    <span>{{ col.label }}</span>
+                                </label>
+
+                                <div class="column-panel-footer">
+                                    <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>
+                                    <button type="button" class="column-footer-btn column-apply" (click)="applyColumnChanges()">Áp dụng</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex flex-column">
                             <p-button
@@ -266,13 +313,13 @@
                         </th>
                         <th style="white-space: nowrap">Mã nhân viên</th>
                         <th style="white-space: nowrap">Họ và tên</th>
-                        <th style="white-space: nowrap">Giới tính</th>
-                        <th style="white-space: nowrap">Ngày sinh</th>
-                        <th style="white-space: nowrap">Số điện thoại</th>
-                        <th style="white-space: nowrap">Email công việc</th>
-                        <th style="white-space: nowrap">Chức vụ</th>
-                        <th style="white-space: nowrap">Vị trí công việc</th>
-                        <th style="white-space: nowrap">Đơn vị</th>
+                        <th *ngIf="isColumnVisible('sex')" style="white-space: nowrap">Giới tính</th>
+                        <th *ngIf="isColumnVisible('dateOfBirth')" style="white-space: nowrap">Ngày sinh</th>
+                        <th *ngIf="isColumnVisible('phoneNumber')" style="white-space: nowrap">Số điện thoại</th>
+                        <th *ngIf="isColumnVisible('companyEmail')" style="white-space: nowrap">Email công việc</th>
+                        <th *ngIf="isColumnVisible('staffTitle')" style="white-space: nowrap">Chức vụ</th>
+                        <th *ngIf="isColumnVisible('staffPosition')" style="white-space: nowrap">Vị trí công việc</th>
+                        <th *ngIf="isColumnVisible('organization')" style="white-space: nowrap">Đơn vị</th>
                         <th style="white-space: nowrap">Hành động</th>
                     </tr>
                 </ng-template>
@@ -302,13 +349,13 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ item?.sex }}</td>
-                        <td>{{ item?.dateOfBirth | date : "dd/MM/yyyy" }}</td>
-                        <td>{{ item?.phoneNumber }}</td>
-                        <td>{{ item?.companyEmail }}</td>
-                        <td>{{ item?.staffTitle?.staffTitleName }}</td>
-                        <td>{{ item?.staffPosition?.positionName }}</td>
-                        <td>
+                        <td *ngIf="isColumnVisible('sex')">{{ item?.sex }}</td>
+                        <td *ngIf="isColumnVisible('dateOfBirth')">{{ item?.dateOfBirth | date : "dd/MM/yyyy" }}</td>
+                        <td *ngIf="isColumnVisible('phoneNumber')">{{ item?.phoneNumber }}</td>
+                        <td *ngIf="isColumnVisible('companyEmail')">{{ item?.companyEmail }}</td>
+                        <td *ngIf="isColumnVisible('staffTitle')">{{ item?.staffTitle?.staffTitleName }}</td>
+                        <td *ngIf="isColumnVisible('staffPosition')">{{ item?.staffPosition?.positionName }}</td>
+                        <td *ngIf="isColumnVisible('organization')">
                             {{ item?.organization?.organizationName }}
                         </td>
 
@@ -381,36 +428,18 @@
                     </tr>
                 </ng-template>
             </p-table>
-            <div
-                class="flex align-items-center mt-3"
-                style="justify-content: space-between"
-            >
-                <p>
-                    <span style="font-weight: 500">{{
-                        1 + (paging.pageIndex - 1) * paging.pageSize
-                    }}</span>
-                    -
-                    <span style="font-weight: 500">{{
-                        1 +
-                            (paging.pageIndex - 1) * paging.pageSize +
-                            (paging.pageSize - 1)
-                    }}</span>
-                    trong
-                    <span style="font-weight: 500">{{
-                        paging.totalRecords
-                    }}</span>
-                    bản ghi
-                </p>
-                <div *ngIf="profiles?.length > 0">
-                    <p-paginator
-                        class="custum-paging"
-                        (onPageChange)="onPageChange($event)"
-                        [first]="(paging.pageIndex - 1) * paging.pageSize"
-                        [rows]="paging.pageSize"
-                        [totalRecords]="paging.totalRecords"
-                        [rowsPerPageOptions]="config.pageSizeOptions"
-                    />
+            <div class="paging-bot dg-fix">
+                <div class="paging-info">
+                    <div [innerHTML]="currentPageReport"></div>
                 </div>
+                <p-paginator
+                    class="org-paginator"
+                    [rows]="this.pageSize"
+                    (onPageChange)="onPageChange($event)"
+                    [totalRecords]="totalRecords > 0 ? totalRecords : 1"
+                    [rowsPerPageOptions]="[10, 20, 30]"
+                    [first]="(this.pageIndex - 1) * this.pageSize"
+                />
             </div>
         </div>
     </div>

@@ -20,6 +20,7 @@
 .object-filter-row {
     justify-content: space-between;
     gap: 10px;
+    align-items: center;
 }
 
 .object-search-col {
@@ -27,9 +28,26 @@
 }
 
 .object-filter-actions {
+    display: flex;
     align-items: center;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+}
+
+.filter-control-wrap {
+    min-width: 240px;
+}
+
+.filter-input {
+    height: 40px;
+    border: 1px solid #cfdceb;
+    border-radius: 8px;
+    padding-left: 34px;
+}
+
+.filter-input:focus {
+    border-color: #8ca8c7;
+    box-shadow: 0 0 0 3px rgba(66, 113, 163, 0.12);
 }
 
 .table-section.table-panel {
@@ -526,4 +544,299 @@ p-footer button:last-child:hover {
 }
 .sticky-col:nth-child(3) {
     left: 238px; 
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.page-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.page-title {
+    font-size: 18px;
+    color: #1e2834;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.btn-add {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.buttonfilter {
+    min-height: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.filter-btn {
+    min-width: 120px;
+    padding: 0 14px !important;
+}
+
+.buttonfilter .p-button-icon {
+    margin-right: 8px !important;
+    font-size: 14px;
+}
+
+.buttonfilter .p-button-label {
+    line-height: 1;
+    font-weight: 600;
+}
+
+.button-outline {
+    background: #fff !important;
+    color: #1a3557 !important;
+    border: 1px solid #cfdced !important;
+}
+
+.column-toggle-wrap {
+    position: relative;
+}
+
+.column-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1200;
+    width: 300px;
+    max-height: 420px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #d9e3ef;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(19, 41, 68, 0.14);
+    padding: 10px;
+}
+
+.column-panel-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: #2e3f52;
+    margin-bottom: 8px;
+}
+
+.column-search-wrap {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.column-search-input {
+    width: 100%;
+    height: 34px;
+    padding-left: 30px;
+    border: 1px solid #d3dfec;
+    border-radius: 8px;
+}
+
+.column-panel-actions-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.column-link-btn {
+    border: none;
+    background: transparent;
+    color: #1f4b7a;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 0;
+    cursor: pointer;
+}
+
+.column-link-btn:hover {
+    text-decoration: underline;
+}
+
+.column-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #33465b;
+    padding: 6px 2px;
+    cursor: pointer;
+}
+
+.column-panel-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #e6edf5;
+    margin-top: 8px;
+    padding-top: 8px;
+}
+
+.column-footer-btn {
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.column-cancel {
+    background: #fff;
+    border: 1px solid #ccd8e6;
+    color: #405063;
+}
+
+.column-default {
+    background: #eef3f8;
+    border: 1px solid #d2ddea;
+    color: #2d435a;
+}
+
+.column-apply {
+    background: #1a5fad;
+    border: 1px solid #1a5fad;
+    color: #fff;
+}
+
+.table-section.table-panel {
+    border: 1px solid #dbe3ec;
+    border-radius: 10px;
+    background: #fff;
+    overflow: visible;
+}
+
+.table-section.table-panel ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    background: #f3f6fa;
+    color: #33465b;
+    font-weight: 700;
+    border-bottom: 1px solid #dbe3ec;
+}
+
+.table-section.table-panel ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    border-bottom: 1px solid #edf1f5;
+    color: #2a3643;
+}
+
+.table-section.table-panel ::ng-deep .p-datatable .p-datatable-tbody > tr:hover > td {
+    background: #f9fbfe;
+}
+
+.table-section .paging-bot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 12px;
+    padding: 8px 12px;
+    border-top: 1px solid #dbe3ec;
+    background: linear-gradient(180deg, #fbfdff 0%, #f3f7fb 100%);
+    overflow: visible;
+}
+
+.table-section .paging-bot .org-paginator {
+    margin-left: auto;
+    min-width: 0;
+}
+
+:host ::ng-deep .object-filter-actions .p-dropdown,
+:host ::ng-deep .object-filter-actions .p-treeselect {
+    min-height: 40px;
+    border-radius: 8px;
+    border: 1px solid #cfdceb;
+}
+
+:host ::ng-deep .object-filter-actions .p-dropdown .p-dropdown-label,
+:host ::ng-deep .object-filter-actions .p-treeselect .p-treeselect-label {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+:host ::ng-deep .object-filter-actions .p-dropdown .p-dropdown-trigger,
+:host ::ng-deep .object-filter-actions .p-treeselect .p-treeselect-trigger {
+    width: 2.4rem;
+}
+
+:host ::ng-deep .org-paginator .p-paginator {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+:host ::ng-deep .org-paginator .p-paginator-pages,
+:host ::ng-deep .org-paginator .p-paginator-rpp-options {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown {
+    min-width: 76px;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown-panel {
+    z-index: 1300 !important;
+    min-width: 76px;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown-items {
+    padding: 4px 0;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown-item {
+    padding: 8px 12px;
+}
+
+.table-section .paging-info {
+    color: #4d5e71;
+    font-size: 13px;
+    font-weight: 600;
+    background: #eaf1f8;
+    border: 1px solid #d1dcea;
+    border-radius: 999px;
+    padding: 5px 12px;
+}
+
+@media (max-width: 1024px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions {
+        justify-content: flex-end;
+    }
+
+    .object-filter-row {
+        align-items: stretch;
+    }
+
+    .object-filter-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .table-section .paging-bot {
+        flex-wrap: wrap;
+    }
+
+    .table-section .paging-bot .org-paginator {
+        margin-left: 0;
+    }
 }
