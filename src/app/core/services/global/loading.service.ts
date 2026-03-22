@@ -5,14 +5,23 @@ import { BehaviorSubject } from 'rxjs';
     providedIn: 'root',
 })
 export class LoadingService {
+    private activeRequests = 0;
     private _loading = new BehaviorSubject<boolean>(false);
     public readonly loading$ = this._loading.asObservable();
 
     show() {
-        this._loading.next(true);
+        this.activeRequests++;
+        if (!this._loading.value) {
+            console.log("Start loading");
+            this._loading.next(true);
+        }
     }
 
     hide() {
-        this._loading.next(false);
+        this.activeRequests = Math.max(0, this.activeRequests - 1);
+        if (this.activeRequests === 0 && this._loading.value) {
+            console.log("End loading");
+            this._loading.next(false);
+        }
     }
 }
