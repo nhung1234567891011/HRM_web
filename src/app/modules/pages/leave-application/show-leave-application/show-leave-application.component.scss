@@ -72,13 +72,13 @@
 :host {
     --la-surface: #ffffff;
     --la-row-odd: #ffffff;
-    --la-row-even: #e2ecff;
+    --la-row-even: #edf3ff;
     --la-border: #d6deea;
     --la-text: #1f2937;
     --la-text-soft: #4b5563;
-    --la-header-bg: #d7e7ff;
+    --la-header-bg: #e6efff;
     --la-header-text: #0f2742;
-    --la-row-hover: #cfe1ff;
+    --la-row-hover: #e1ecff;
     --la-shadow-soft: 0 8px 22px rgba(15, 39, 66, 0.08);
 }
 
@@ -134,7 +134,7 @@
     background: var(--la-header-bg);
     color: var(--la-header-text);
     border: 0;
-    border-bottom: 1px solid #b9cae2;
+    border-bottom: 1px solid #c8d6ea;
     font-weight: 700;
     padding: 0.85rem 0.75rem;
 }

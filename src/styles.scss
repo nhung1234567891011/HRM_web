@@ -169,6 +169,62 @@ li {}
     vertical-align: middle;
 }
 
+/* Global table contrast: apply zebra rows + clearer hover for all table-based views */
+:root {
+    --table-row-odd: #ffffff;
+    --table-row-even: #edf3ff;
+    --table-row-hover: #e1ecff;
+    --table-head-bg: #e6efff;
+    --table-head-text: #143452;
+    --table-cell-border: #d7e2f0;
+    --table-head-border: #c8d6ea;
+}
+
+.main .p-datatable .p-datatable-thead>tr>th {
+    background: var(--table-head-bg) !important;
+    color: var(--table-head-text) !important;
+    border-bottom: 1px solid var(--table-head-border) !important;
+}
+
+.main .p-datatable .p-datatable-tbody>tr>td {
+    border-bottom: 1px solid var(--table-cell-border) !important;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.main .p-datatable .p-datatable-tbody>tr:nth-child(odd)>td {
+    background: var(--table-row-odd) !important;
+}
+
+.main .p-datatable .p-datatable-tbody>tr:nth-child(even)>td {
+    background: var(--table-row-even) !important;
+}
+
+.main .p-datatable .p-datatable-tbody>tr:hover>td {
+    background: var(--table-row-hover) !important;
+}
+
+.main .p-datatable .p-datatable-tbody>tr:hover {
+    transform: scale(1.0015);
+}
+
+.main table thead th {
+    background: var(--table-head-bg);
+    color: var(--table-head-text);
+    border-bottom: 1px solid var(--table-head-border);
+}
+
+.main table tbody tr:nth-child(odd)>td {
+    background: var(--table-row-odd);
+}
+
+.main table tbody tr:nth-child(even)>td {
+    background: var(--table-row-even);
+}
+
+.main table tbody tr:hover>td {
+    background: var(--table-row-hover);
+}
+
 .main .work-status-span {
     display: inline-flex;
     align-items: center;
