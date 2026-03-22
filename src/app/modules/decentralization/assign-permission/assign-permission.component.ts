@@ -36,6 +36,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { AccountStatusEmployee } from 'src/app/core/enums/account-status-employee.enum';
 import { AccountStatus } from 'src/app/core/enums/status-account.enum';
 import { Workingstatus } from 'src/app/core/enums/working-status.enum';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
     selector: 'app-show-permission',
@@ -59,6 +60,7 @@ import { Workingstatus } from 'src/app/core/enums/working-status.enum';
         CalendarModule,
         InputTextareaModule,
         MultiSelectModule,
+        TableColumnToggleDirective,
     ],
     providers: [DatePipe],
     templateUrl: './assign-permission.component.html',

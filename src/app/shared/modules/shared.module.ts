@@ -28,10 +28,10 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcrumb.module';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @NgModule({
-    declarations: [ 
-    ],
+    declarations: [],
     imports: [
         CommonModule,
         FormsModule,
@@ -61,7 +61,8 @@ import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcr
         BreadcrumbModule,
         SharedBreadcrumbModule,
         TreeSelectModule,
-        CheckboxModule
+        CheckboxModule,
+        TableColumnToggleDirective,
     ],
     exports: [
         CommonModule,
@@ -92,7 +93,8 @@ import { SharedBreadcrumbModule } from 'src/app/layout/breadcrumb/shared-breadcr
         BreadcrumbModule,
         TreeSelectModule,
         CheckboxModule,
-        SharedBreadcrumbModule
+        SharedBreadcrumbModule,
+        TableColumnToggleDirective,
     ],
     providers: [
         MessageService, // Cung cấp MessageService

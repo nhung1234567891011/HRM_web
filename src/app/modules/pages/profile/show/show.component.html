@@ -15,6 +15,8 @@
                     icon="pi pi-plus"
                     label="Thêm hồ sơ"
                     (click)="staffPositionVisible = true"
+                    [attr.data-tooltip]="'Thêm hồ sơ'"
+                    [title]="'Thêm hồ sơ'"
                 ></button>
             </ng-template>
         </p-toolbar>
@@ -74,58 +76,15 @@
                             >
                             </p-treeSelect>
                         </div>
-
-                        <div class="filter-action-col">
-                            <button
+                        <div class="flex flex-column">
+                            <p-button
                                 type="button"
-                                pButton
-                                pRipple
-                                label="Tìm kiếm"
                                 icon="pi pi-search"
                                 class="buttonfilter"
                                 (click)="handleSearchProfile()"
-                            ></button>
-                        </div>
-
-                        <div class="filter-action-col column-toggle-wrap">
-                            <button
-                                pButton
-                                pRipple
-                                type="button"
-                                label="Ẩn/hiện cột"
-                                icon="pi pi-sliders-h"
-                                class="buttonfilter button-outline"
-                                (click)="toggleColumnPanel()"
-                            ></button>
-                            <div class="column-panel" *ngIf="showColumnPanel">
-                                <div class="column-panel-title">Hiển thị cột</div>
-
-                                <span class="p-input-icon-left column-search-wrap">
-                                    <i class="pi pi-search"></i>
-                                    <input
-                                        type="text"
-                                        pInputText
-                                        class="column-search-input"
-                                        placeholder="Tìm kiếm cột"
-                                        [(ngModel)]="columnSearch"
-                                    />
-                                </span>
-
-                                <div class="column-panel-actions-top">
-                                    <button type="button" class="column-link-btn" (click)="selectAllColumns()">Chọn tất cả</button>
-                                    <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
-                                </div>
-
-                                <label class="column-item" *ngFor="let col of filteredColumnOptions">
-                                    <input type="checkbox" [checked]="isTempColumnVisible(col.key)" (change)="onTempColumnToggle(col.key)" />
-                                    <span>{{ col.label }}</span>
-                                </label>
-
-                                <div class="column-panel-footer">
-                                    <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>
-                                    <button type="button" class="column-footer-btn column-apply" (click)="applyColumnChanges()">Áp dụng</button>
-                                </div>
-                            </div>
+                                [attr.data-tooltip]="'Tìm kiếm'"
+                                [title]="'Tìm kiếm'"
+                            ></p-button>
                         </div>
 
                         <div class="filter-action-col">
@@ -136,9 +95,9 @@
                                 icon="pi pi-cloud-download"
                                 class="buttonfilter button-outline"
                                 (click)="exportToExcel()"
-                                pTooltip="Xuất Excel"
-                                tooltipPosition="top"
-                            ></button>
+                                [attr.data-tooltip]="'Xuất Excel'"
+                                [title]="'Xuất Excel'"
+                            ></p-button>
                         </div>
                     </div>
                 </ng-template>
@@ -168,6 +127,8 @@
                             <span
                                 class="code"
                                 [routerLink]="['/show-record', item.id]"
+                                [attr.data-tooltip]="'Xem chi tiết hồ sơ'"
+                                [title]="'Xem chi tiết hồ sơ'"
                                 >{{ item?.employeeCode }}</span
                             >
                         </td>
@@ -214,6 +175,8 @@
                                 <span
                                     class="mr-2 icon-tool"
                                     (click)="handleWarn(item)"
+                                    [attr.data-tooltip]="'Cảnh báo'"
+                                    [title]="'Cảnh báo'"
                                 >
                                     <svg
                                         style="display: block"
@@ -233,6 +196,8 @@
                                 <span
                                     class="mr-2 icon-tool"
                                     [routerLink]="['/contract/create']"
+                                    [attr.data-tooltip]="'Thêm hợp đồng'"
+                                    [title]="'Thêm hợp đồng'"
                                     ><i
                                         style="display: block"
                                         class="pi pi-plus"
@@ -254,6 +219,8 @@
                                         ]
                                     )
                                 "
+                                    [attr.data-tooltip]="'Sửa hồ sơ'"
+                                    [title]="'Sửa hồ sơ'"
                                     ><i
                                         style="display: block"
                                         class="pi pi-file-edit"

@@ -27,6 +27,7 @@ import { AuthService } from 'src/app/core/services/identity/auth.service';
 import { OrganiStructTypeService } from 'src/app/core/services/organi-struct-type.service';
 import { ProjectService } from 'src/app/core/services/project.service';
 import { environment } from 'src/environments/environment';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 @Component({
 	selector: 'app-update-project',
 	standalone: true,
@@ -47,7 +48,8 @@ import { environment } from 'src/environments/environment';
 		InputTextModule,
 		InputTextareaModule,
 		PaginatorModule,
-		RadioButtonModule
+		RadioButtonModule,
+		TableColumnToggleDirective,
 	],
 	templateUrl: './update-project.component.html',
 	styleUrl: './update-project.component.scss'

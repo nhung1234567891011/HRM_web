@@ -25,6 +25,7 @@ import { MessageService } from 'primeng/api';
 import { markAllAsTouched } from 'src/app/core/helpers/validatorHelper';
 import { UtilityModule } from 'src/app/core/modules/utility/utility.module';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 @Component({
 	selector: 'app-create-project',
 	standalone: true,
@@ -44,7 +45,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 		CalendarModule,
 		ReactiveFormsModule,
 		UtilityModule,
-		InputTextareaModule
+		InputTextareaModule,
+		TableColumnToggleDirective,
 	],
 	templateUrl: './create-project.component.html',
 	styleUrl: './create-project.component.scss'

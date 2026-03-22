@@ -31,6 +31,7 @@ import { TimeSheetService } from 'src/app/core/services/time-sheet.service';
 import { SummaryTimesheetNameEmployeeConfirmService } from 'src/app/core/services/summary-timesheet-name-employee-confirm.service';
 import { SummaryTimesheetNameEmployeeConfirmStatus, TimekeepingMethod } from 'src/app/core/enums/summary-timesheet-name-employee-confirm-status.enum';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @Component({
@@ -53,6 +54,8 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 		AutoCompleteModule,
 		UtilityModule,
 		CalendarModule,
+		InputTextareaModule,
+		TableColumnToggleDirective
 		InputTextareaModule,
 		OverlayPanelModule
 	],

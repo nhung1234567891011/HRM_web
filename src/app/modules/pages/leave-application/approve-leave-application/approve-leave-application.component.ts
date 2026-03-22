@@ -35,6 +35,7 @@ import { ShiftWorkService } from 'src/app/core/services/shift-work.service';
 import { CheckinCheckoutService } from 'src/app/core/services/checkin-checkout.service';
 import { CalendarModule } from 'primeng/calendar';
 import { MessagesModule } from 'primeng/messages';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
 	selector: 'app-approve-leave-application',
@@ -56,7 +57,8 @@ import { MessagesModule } from 'primeng/messages';
 		AutoCompleteModule,
 		UtilityModule,
 		CalendarModule,
-		MessagesModule
+		MessagesModule,
+		TableColumnToggleDirective,
 	],
 	providers: [DatePipe],
 	templateUrl: './approve-leave-application.component.html',
