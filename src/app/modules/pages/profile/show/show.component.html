@@ -29,23 +29,22 @@
                 dataKey="id"
             >
                 <ng-template pTemplate="caption">
-                    <div
-                        class="flex justify-content-end gap-3 align-items-end md:flex-row filter-bar"
-                    >
-                        <div class="flex flex-column">
-                            <span class="search-input-wrapper block mt-2 md:mt-0 p-input-icon-left">
+                    <div class="filter-row">
+                        <div class="search-col">
+                            <span class="p-input-icon-left search-input-wrap">
                                 <i class="pi pi-search"></i>
                                 <input
                                     pInputText
                                     type="text"
-                                    class="search-input"
+                                    class="form-control"
                                     [(ngModel)]="queryParameters.keyWord"
                                     (keydown.enter)="$event.preventDefault(); handleSearchProfile()"
                                     placeholder="Tìm theo tên, SĐT..."
                                 />
                             </span>
                         </div>
-                        <div class="flex flex-column">
+
+                        <div class="filter-action-col">
                             <p-dropdown
                                 [options]="
                                     constant.profileConstant.workingStatus
@@ -60,7 +59,8 @@
                                 placeholder="Chọn trạng thái"
                             />
                         </div>
-                        <div class="flex flex-column">
+
+                        <div class="filter-action-col">
                             <p-treeSelect
                                 class="w-full custom-tree-select"
                                 [(ngModel)]="queryParameters.organizationObject"
@@ -74,17 +74,20 @@
                             >
                             </p-treeSelect>
                         </div>
-                        <div class="flex flex-column">
+
+                        <div class="filter-action-col">
                             <button
                                 type="button"
                                 pButton
                                 pRipple
                                 label="Tìm kiếm"
                                 icon="pi pi-search"
+                                class="buttonfilter"
                                 (click)="handleSearchProfile()"
                             ></button>
                         </div>
-                        <div class="flex flex-column column-toggle-wrap">
+
+                        <div class="filter-action-col column-toggle-wrap">
                             <button
                                 pButton
                                 pRipple
@@ -124,186 +127,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-column">
-                            <p-button
-                                label=""
-                                [outlined]="true"
-                                severity="secondary"
+
+                        <div class="filter-action-col">
+                            <button
+                                pButton
+                                pRipple
+                                type="button"
                                 icon="pi pi-cloud-download"
+                                class="buttonfilter button-outline"
                                 (click)="exportToExcel()"
-                                [title]="'Xuất Excel'"
-                            ></p-button>
+                                pTooltip="Xuất Excel"
+                                tooltipPosition="top"
+                            ></button>
                         </div>
-                        <!-- <div class="flex flex-column">
-                            <p-overlayPanel #op>
-                                <ng-template pTemplate="content">
-                                    <div class="setting-list">
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Sửa</span>
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Gửi Email</span>
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Thêm hợp đồng</span>
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span
-                                                >Ngừng kích hoạt tài khoản</span
-                                            >
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Gửi Email</span>
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Xóa tài khoản</span>
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Tạo thủ tục</span>
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Xuất file</span>
-                                        </div>
-                                        <div class="setting-item">
-                                            <span>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="currentColor"
-                                                    class="bi bi-pencil"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <span>Xóa</span>
-                                        </div>
-                                    </div>
-                                </ng-template>
-                            </p-overlayPanel>
-                            <p-button
-                                (click)="op.toggle($event)"
-                                label=""
-                                icon="pi pi-spin pi-cog"
-                                [outlined]="true"
-                                severity="secondary"
-                            ></p-button>
-                        </div> -->
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">

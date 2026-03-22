@@ -31,6 +31,10 @@
             <button pButton pRipple icon="pi pi-sync" class="buttonfilter button-outline" (click)="onRefreshSearch()"></button>
         </div>
 
+        <div class="filter-action-col">
+            <button pButton pRipple icon="pi pi-plus-circle" label="Thêm" class="buttonfilter" (click)="openCreateDialog()"></button>
+        </div>
+
         <div class="filter-action-col column-toggle-wrap">
             <button pButton pRipple type="button" label="Ẩn/hiện cột" icon="pi pi-sliders-h" class="buttonfilter button-outline" (click)="toggleColumnPanel()"></button>
             <div class="column-panel" *ngIf="showColumnPanel">
@@ -62,10 +66,6 @@
                     <button type="button" class="column-footer-btn column-apply" (click)="applyColumnChanges()">Áp dụng</button>
                 </div>
             </div>
-        </div>
-
-        <div class="filter-action-col">
-            <button pButton pRipple icon="pi pi-plus-circle" label="Thêm" class="buttonfilter" (click)="openCreateDialog()"></button>
         </div>
     </div>
 </div>

@@ -1,17 +1,7 @@
 <div class="grid">
     <div class="col-12">
         <p-toolbar styleClass="mb-2">
-            <div class="">
-                <strong
-                    class="font-size-16 flex gap-3 flex align-items-center d-block"
-                    *ngIf="payrollDetailEmployees?.length"
-                    ><i class="pi pi-arrow-left"></i>
-                    {{
-                        payrollDetailEmployees[0]?.payroll?.payrollName
-                    }}</strong
-                >
-            </div>
-            <ng-template pTemplate="right"> </ng-template>
+            <app-shared-breadcrumb></app-shared-breadcrumb>
         </p-toolbar>
         <div class="">
             <div class="grid">
