@@ -7,23 +7,61 @@
     </p-toolbar>
 </div>
 
-<div class="flex justify-content-between mb-2 card-custom">
-    <div class="flex">
-        <input
-            class="ml-3"
-            [(ngModel)]="queryParameters.keyWord"
-            id="employeeName"
-            placeholder="Tìm theo vị trí công việc / chức vụ / SĐT"
-            pInputText
-            (keydown.enter)="onSearch()"
-        />
-        <div class="flex justify-content-center">
-            <p-button class="ml-4" (click)="onSearch()" label="Lọc" />
-            <p-button
-                class="ml-2"
-                (click)="onRefreshSearch()"
-                icon="pi pi-sync"
-            />
+<div class="card-custom">
+    <div class="filter-row">
+        <div class="search-col">
+            <span class="p-input-icon-left search-input-wrap">
+                <i class="pi pi-search"></i>
+                <input
+                    [(ngModel)]="queryParameters.keyWord"
+                    id="employeeName"
+                    placeholder="Tìm theo vị trí công việc / chức vụ / SĐT"
+                    pInputText
+                    class="form-control"
+                    (keydown.enter)="onSearch()"
+                />
+            </span>
+        </div>
+
+        <div class="filter-action-col">
+            <button pButton pRipple label="Lọc" class="buttonfilter" (click)="onSearch()"></button>
+        </div>
+
+        <div class="filter-action-col">
+            <button pButton pRipple icon="pi pi-sync" class="buttonfilter button-outline" (click)="onRefreshSearch()"></button>
+        </div>
+
+        <div class="filter-action-col column-toggle-wrap">
+            <button pButton pRipple type="button" label="Ẩn/hiện cột" icon="pi pi-sliders-h" class="buttonfilter button-outline" (click)="toggleColumnPanel()"></button>
+            <div class="column-panel" *ngIf="showColumnPanel">
+                <div class="column-panel-title">Hiển thị cột</div>
+
+                <span class="p-input-icon-left column-search-wrap">
+                    <i class="pi pi-search"></i>
+                    <input
+                        type="text"
+                        pInputText
+                        class="column-search-input"
+                        placeholder="Tìm kiếm cột"
+                        [(ngModel)]="columnSearch"
+                    />
+                </span>
+
+                <div class="column-panel-actions-top">
+                    <button type="button" class="column-link-btn" (click)="selectAllColumns()">Chọn tất cả</button>
+                    <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
+                </div>
+
+                <label class="column-item" *ngFor="let col of filteredColumnOptions">
+                    <input type="checkbox" [checked]="isTempColumnVisible(col.field)" (change)="onTempColumnToggle(col.field)" />
+                    <span>{{ col.header }}</span>
+                </label>
+
+                <div class="column-panel-footer">
+                    <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>
+                    <button type="button" class="column-footer-btn column-apply" (click)="applyColumnChanges()">Áp dụng</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -47,7 +85,7 @@
             <th class="text-center">
                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <th *ngFor="let col of columns" [hidden]="!col.selected">
+            <th *ngFor="let col of columns" [hidden]="!isColumnVisible(col.field)">
                 {{ col.header }}
             </th>
         </tr>
@@ -57,7 +95,7 @@
             <td class="text-center">
                 <p-tableCheckbox [value]="employee"></p-tableCheckbox>
             </td>
-            <td *ngFor="let col of columns">
+            <td *ngFor="let col of columns" [hidden]="!isColumnVisible(col.field)">
                 <span *ngIf="col.field.includes('name')">
                     {{ employee.lastName + " " + employee.firstName }}
                 </span>
@@ -107,32 +145,18 @@
         </tr>
     </ng-template>
 </p-table>
-<div
-    class="flex align-items-center mt-3"
-    style="justify-content: space-between"
->
-    <p>
-        <span style="font-weight: 500">{{
-            1 + (paging.pageIndex - 1) * paging.pageSize
-        }}</span>
-        -
-        <span style="font-weight: 500">{{
-            1 + (paging.pageIndex - 1) * paging.pageSize + (paging.pageSize - 1)
-        }}</span>
-        trong
-        <span style="font-weight: 500">{{ paging.totalRecords }}</span>
-        bản ghi
-    </p>
-    <div *ngIf="employees?.length > 0">
-        <p-paginator
-            class="custum-paging"
-            (onPageChange)="onPageChange($event)"
-            [first]="(paging.pageIndex - 1) * paging.pageSize"
-            [rows]="paging.pageSize"
-            [totalRecords]="paging.totalRecords"
-            [rowsPerPageOptions]="config.pageSizeOptions"
-        />
+<div class="paging-bot dg-fix">
+    <div class="paging-info">
+        <div [innerHTML]="currentPageReport"></div>
     </div>
+    <p-paginator
+        class="org-paginator"
+        [rows]="this.pageSize"
+        (onPageChange)="onPageChange($event)"
+        [totalRecords]="totalRecords > 0 ? totalRecords : 1"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [first]="(this.pageIndex - 1) * this.pageSize"
+    ></p-paginator>
 </div>
 
 <p-dialog

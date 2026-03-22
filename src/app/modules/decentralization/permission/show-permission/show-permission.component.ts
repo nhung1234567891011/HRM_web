@@ -60,6 +60,10 @@ export class ShowPermissionComponent implements OnInit {
 	permissions: any[] = [];
 	permissionsTree: any[] = [];
 	selectedPermissions: any[] = [];
+	currentPageReport: string = '';
+	columnSearch: string = '';
+	showColumnPanel: boolean = false;
+	tempColumnVisibility: Record<string, boolean> = {};
 	parentPermissionOptions: Array<{ label: string; value: number }> = [];
 
 	// dialog CRUD
@@ -99,6 +103,18 @@ export class ShowPermissionComponent implements OnInit {
 		sortBy: null,
 		orderBy: null,
 	};
+
+	get pageSize(): number {
+		return this.paging?.pageSize || DEFAULT_PAGE_SIZE;
+	}
+
+	get pageIndex(): number {
+		return this.paging?.pageIndex || DEFAULT_PAGE_INDEX;
+	}
+
+	get totalRecords(): number {
+		return this.paging?.totalRecords || 0;
+	}
 	constructor(private router: Router, private datePipe: DatePipe,
 		private organiStructTypeService: OrganiStructTypeService,
 		private route: ActivatedRoute,
@@ -151,6 +167,11 @@ export class ShowPermissionComponent implements OnInit {
 
 			this.getPermissions(request);
 		});
+
+		this.tempColumnVisibility = this.columns.reduce((acc, col) => {
+			acc[col.field] = col.selected !== false;
+			return acc;
+		}, {} as Record<string, boolean>);
 	}
 
 	private flattenPermissions(nodes: any[], level: number = 0): any[] {
@@ -194,6 +215,7 @@ export class ShowPermissionComponent implements OnInit {
 
 				const { items, ...paging } = res.data;
 				this.paging = paging;
+				this.updateCurrentPageReport();
 
 				this.selectedPermissions = [];
 				this.rebuildParentOptions();
@@ -225,6 +247,7 @@ export class ShowPermissionComponent implements OnInit {
 	onPageChange(event: any) {
 		this.paging.pageIndex = event.page + 1;
 		this.paging.pageSize = event.rows;
+		this.updateCurrentPageReport();
 		const params = this.route.snapshot.queryParams;
 		const request = {
 			...params,
@@ -393,6 +416,84 @@ export class ShowPermissionComponent implements OnInit {
 		{ field: 'description', header: 'Mô tả', selected: true },
 		{ field: 'action', header: 'Hành động', selected: true }
 	];
+
+	get filteredColumnOptions() {
+		const keyword = this.columnSearch.trim().toLowerCase();
+		if (!keyword) {
+			return this.columns;
+		}
+
+		return this.columns.filter((col) =>
+			col.header.toLowerCase().includes(keyword)
+		);
+	}
+
+	toggleColumnPanel(): void {
+		if (this.showColumnPanel) {
+			this.closeColumnPanel();
+			return;
+		}
+
+		this.tempColumnVisibility = this.columns.reduce((acc, col) => {
+			acc[col.field] = col.selected !== false;
+			return acc;
+		}, {} as Record<string, boolean>);
+		this.columnSearch = '';
+		this.showColumnPanel = true;
+	}
+
+	closeColumnPanel(): void {
+		this.showColumnPanel = false;
+		this.columnSearch = '';
+	}
+
+	onTempColumnToggle(field: string): void {
+		this.tempColumnVisibility[field] = !this.tempColumnVisibility[field];
+	}
+
+	isTempColumnVisible(field: string): boolean {
+		return this.tempColumnVisibility[field] !== false;
+	}
+
+	selectAllColumns(): void {
+		this.columns.forEach((col) => {
+			this.tempColumnVisibility[col.field] = true;
+		});
+	}
+
+	clearAllColumns(): void {
+		this.columns.forEach((col) => {
+			this.tempColumnVisibility[col.field] = false;
+		});
+	}
+
+	applyColumnChanges(): void {
+		this.columns = this.columns.map((col) => ({
+			...col,
+			selected: this.tempColumnVisibility[col.field] !== false,
+		}));
+		this.showColumnPanel = false;
+	}
+
+	isColumnVisible(field: string): boolean {
+		return this.columns.find((col) => col.field === field)?.selected !== false;
+	}
+
+	updateCurrentPageReport(): void {
+		const totalRecords = Number(this.paging?.totalRecords || 0);
+		const pageIndex = Number(this.paging?.pageIndex || 1);
+		const pageSize = Number(this.paging?.pageSize || 10);
+
+		if (totalRecords <= 0) {
+			this.currentPageReport =
+				'<strong>0</strong> - <strong>0</strong> trong <strong>0</strong> bản ghi';
+			return;
+		}
+
+		const startRecord = (pageIndex - 1) * pageSize + 1;
+		const endRecord = Math.min(pageIndex * pageSize, totalRecords);
+		this.currentPageReport = `<strong>${startRecord}</strong> - <strong>${endRecord}</strong> trong <strong>${totalRecords}</strong> bản ghi`;
+	}
 
 }
 

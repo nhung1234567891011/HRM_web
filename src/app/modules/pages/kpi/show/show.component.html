@@ -16,22 +16,7 @@
             </div>
             <ng-template pTemplate="right">
                 <div class="flex gap-2">
-                    <!-- <button
-                        [routerLink]="['/staff-position/create']"
-                        pButton
-                        pRipple
-                        icon="pi pi-plus"
-                        label="Thêm vị trí"
-                        (click)="show()"
-                    ></button> -->
-                    <!-- <p-button
-                        label="Xóa"
-                        [disabled]="
-                            this.selectedStaffPosition.length > 0 ? false : true
-                        "
-                        (click)="handleOnDeleteMultiple($event)"
-                        severity="danger"
-                    ></p-button> -->
+                    
                 </div>
             </ng-template>
         </p-toolbar>
@@ -46,7 +31,7 @@
                         [field]="'displayName'"
                         [forceSelection]="false"
                         [showClear]="true"
-                        placeholder="Tìm kiếm tên bảng KPI"
+                        placeholder="Tìm kiếm tên bảng doanh thu hoa hồng"
                         (onSelect)="loadKpiData()"
                         (onClear)="loadKpiData()"
                     >
@@ -107,7 +92,7 @@
                             <!-- <th>
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th> -->
-                            <th style="width: 20%">Tên bảng tổng hợp KPI</th>
+                            <th style="width: 20%">Tên bảng tổng hợp doanh thu hoa hồng</th>
                             <th style="width: 20%">Đơn vị áp dụng</th>
                             <th style="width: 30%">Vị trí áp dụng</th>
                             <th style="width: 20%">Thời gian</th>

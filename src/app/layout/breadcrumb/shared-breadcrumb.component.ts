@@ -66,7 +66,7 @@ export class SharedBreadcrumbComponent implements OnInit, OnDestroy {
         'time-sheet': 'Bảng chấm công',
         'apply-checkin-checkout': 'Đơn Checkin/Checkout',
         'salary-composition': 'Thành phần lương',
-        'revenue-commission': 'Hoa hồng doanh thu',
+        'revenue-commission': 'Cấu hình hoa hồng doanh thu',
         'statistical-report': 'Thống kê',
     };
 
@@ -353,15 +353,15 @@ export class SharedBreadcrumbComponent implements OnInit, OnDestroy {
             pattern: /^\/(payroll\/kpi|kpi)$/,
             nodes: [
                 { label: 'Tính lương' },
-                { label: 'Dữ liệu KPI', routerLink: '/payroll/kpi' },
+                { label: 'Doanh thu hoa hồng', routerLink: '/payroll/kpi' },
             ],
         },
         {
             pattern: /^\/(payroll\/kpi\/[^/]+|detail-kpi\/[^/]+)$/,
             nodes: [
                 { label: 'Tính lương' },
-                { label: 'Dữ liệu KPI', routerLink: '/payroll/kpi' },
-                { label: 'Chi tiết KPI' },
+                { label: 'Doanh thu hoa hồng', routerLink: '/payroll/kpi' },
+                { label: 'Chi tiết doanh thu hoa hồng' },
             ],
         },
         {

@@ -514,7 +514,7 @@ export class AppMenuComponent implements OnInit {
                                       ])
                                           ? [
                                                 {
-                                                    label: 'Dữ liệu KPI',
+                                                    label: 'Doanh thu hoa hồng',
                                                     icon: 'pi pi-calendar-minus',
                                                     routerLink: ['/payroll/kpi'],
                                                 },
@@ -533,7 +533,7 @@ export class AppMenuComponent implements OnInit {
                                                     ],
                                                 },
                                                 {
-                                                    label: 'Hoa hồng doanh thu',
+                                                    label: 'Cấu hình hoa hồng doanh thu',
                                                     icon: 'pi pi-calendar-minus',
                                                     routerLink: [
                                                         '/payroll/revenue-commission',

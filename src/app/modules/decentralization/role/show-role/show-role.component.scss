@@ -6,27 +6,233 @@
     border-radius: 4px;
     padding: 1rem;
 }
-.text-right {
+
+.filter-row {
     display: flex;
-    justify-content: flex-end;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-col {
+    width: min(390px, 100%);
+}
+
+.search-input-wrap {
+    width: 100%;
+}
+
+.search-input-wrap .form-control {
+    padding-left: 30px;
+    height: 37px;
+    width: 100%;
+}
+
+.filter-action-col {
+    display: flex;
     align-items: center;
 }
 
+.buttonfilter {
+    height: 37px;
+    border-radius: 8px;
+}
 
-//view and unview
+.button-outline {
+    background: #fff !important;
+    color: #1a3557 !important;
+    border: 1px solid #cfdced !important;
+}
+
+.column-toggle-wrap {
+    position: relative;
+}
+
+.column-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 20;
+    width: 280px;
+    background: #fff;
+    border: 1px solid #d9e3ef;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(19, 41, 68, 0.14);
+    padding: 10px;
+}
+
+.column-panel-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: #2e3f52;
+    margin-bottom: 8px;
+}
+
+.column-search-wrap {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.column-search-input {
+    width: 100%;
+    height: 34px;
+    padding-left: 30px;
+    border: 1px solid #d3dfec;
+    border-radius: 8px;
+}
+
+.column-panel-actions-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.column-link-btn {
+    border: none;
+    background: transparent;
+    color: #1f4b7a;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 0;
+    cursor: pointer;
+}
+
+.column-link-btn:hover {
+    text-decoration: underline;
+}
+
+.column-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #33465b;
+    padding: 5px 2px;
+    cursor: pointer;
+}
+
+.column-panel-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #e6edf5;
+    margin-top: 8px;
+    padding-top: 8px;
+}
+
+.column-footer-btn {
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.column-cancel {
+    background: #fff;
+    border: 1px solid #ccd8e6;
+    color: #405063;
+}
+
+.column-apply {
+    background: #1a5fad;
+    border: 1px solid #1a5fad;
+    color: #fff;
+}
+
+.paging-bot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border-top: 1px solid #dbe3ec;
+    background: linear-gradient(180deg, #fbfdff 0%, #f3f7fb 100%);
+    border-radius: 0 0 10px 10px;
+}
+
+.paging-info {
+    color: #4d5e71;
+    font-size: 13px;
+    font-weight: 600;
+    background: #eaf1f8;
+    border: 1px solid #d1dcea;
+    border-radius: 999px;
+    padding: 5px 12px;
+}
+
+.paging-info strong {
+    color: #1f344a;
+}
+
+:host ::ng-deep .org-paginator .p-paginator {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    background: transparent;
+    border: none;
+    padding: 0;
+    gap: 4px;
+}
+
+:host ::ng-deep .org-paginator .p-paginator-pages .p-paginator-page,
+:host ::ng-deep .org-paginator .p-paginator-first,
+:host ::ng-deep .org-paginator .p-paginator-prev,
+:host ::ng-deep .org-paginator .p-paginator-next,
+:host ::ng-deep .org-paginator .p-paginator-last {
+    min-width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    border: 1px solid #cdd9e6;
+    background: #ffffff;
+    color: #4a5f75;
+}
+
+:host ::ng-deep .org-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    background: #1a3557;
+    border-color: #1a3557;
+    color: #ffffff;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown {
+    height: 2rem;
+    border-radius: 8px;
+    border-color: #cdd9e6;
+}
+
+// view and unview
 .read-more-button {
-    font-weight: bold;       
-    color: #2a2986;             
-    padding: 5px 10px;       
-    border-radius: 4px;       
-    cursor: pointer;         
-    transition: background-color 0.2s ease-in-out; 
-    font-size: .8rem;
+    font-weight: bold;
+    color: #2a2986;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    font-size: 0.8rem;
 }
 
 .read-more-button:hover {
-    background-color: #e2e6ea; 
+    background-color: #e2e6ea;
 }
-.max-width-500{
+
+.max-width-500 {
     max-width: 300px;
+}
+
+@media (max-width: 768px) {
+    .paging-bot {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .paging-info {
+        width: fit-content;
+    }
+
+    .column-panel {
+        right: auto;
+        left: 0;
+        width: min(280px, 88vw);
+    }
 }
