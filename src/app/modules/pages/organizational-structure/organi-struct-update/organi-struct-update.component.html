@@ -1,4 +1,4 @@
-<div class="grid">
+<div class="grid org-form-page">
     <div class="col-12">
         <p-toolbar styleClass="mb-2">
             <div class="">
@@ -9,10 +9,10 @@
                
             </ng-template>
         </p-toolbar>
-        <div class="card">
+                <div class="card form-card">
             <form [formGroup]="unitForm" (ngSubmit)="onSubmit()" novalidate>
-                <div class="grid p-fluid p-3">
-                  <div class="col-6">
+                                <div class="grid p-fluid p-3 unit-form-main">
+                                    <div class="col-6 form-column">
                     <!-- Mã đơn vị -->
                     <div class="row my-3">
                       <div class="field mb-0">
@@ -263,7 +263,7 @@
                         </div>
                     
                   </div>
-                  <div class="col-6">
+                  <div class="col-6 form-column">
                     <!-- Trưởng đơn vị -->
                        <div class="row my-3">
                          
@@ -406,9 +406,9 @@
                        </div>
                    </div>
                 </div>
-                <div class="p-mt-3" style="display: flex; justify-content: end;padding: 10px;">
-                    <button  [routerLink]="['/organizational-structure/show']" pButton type="button" label="Hủy" class="p-button-secondary mr-3 cursor-pointer" style="background-color: #ccc ; border: none;"></button>
-                    <button pButton type="submit" label="Cập nhật"  class="btn btn-primary cursor-pointer" style="background-color: #2a2986;"></button>
+                <div class="p-mt-3 form-actions" style="display: flex; justify-content: end;padding: 10px;">
+                    <button  [routerLink]="['/organizational-structure/show']" pButton type="button" label="Hủy" class="p-button-secondary mr-3 cursor-pointer btn-cancel" style="background-color: #ccc ; border: none;"></button>
+                    <button pButton type="submit" label="Cập nhật"  class="btn btn-primary cursor-pointer btn-submit" style="background-color: #2a2986;"></button>
                 </div>
               </form>
         </div>

@@ -372,3 +372,122 @@ td > .p-organizationchart .p-organizationchart-node-content {
     text-align: center;
   }
 
+.table-tree-view {
+    .tree-list-panel {
+        border: none;
+        border-radius: 12px;
+        box-shadow: none;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .org-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .org-table thead th {
+        background: #eef2f7;
+        border: 1px solid #d8e2ec;
+        color: #24374d;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px 12px;
+        text-align: left;
+    }
+
+    .org-table tbody td {
+        border: 1px solid #e3e9f0;
+        color: #25364a;
+        font-size: 14px;
+        padding: 10px 12px;
+        vertical-align: middle;
+    }
+
+    .org-row:hover td {
+        background: #f8fbff;
+    }
+
+    .org-tree-cell {
+        --tree-indent: 0px;
+        position: relative;
+        padding-left: calc(var(--tree-indent) + 12px) !important;
+    }
+
+    .org-tree-cell.has-parent::before {
+        content: '';
+        position: absolute;
+        left: calc(var(--tree-indent) + 4px);
+        top: 50%;
+        width: 10px;
+        border-top: 1px solid #c7d2de;
+    }
+
+    .tree-node {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 24px;
+    }
+
+    .tree-spacer {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+    }
+
+    .tree-folder {
+        color: #61788f;
+        font-size: 14px;
+    }
+
+    .tree-label {
+        color: #1e2f42;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .tree-label.root-label {
+        font-weight: 700;
+    }
+
+    .bt-plus {
+        width: 18px;
+        height: 18px;
+        border: 1px solid #b8c7d6;
+        border-radius: 4px;
+        color: #3f5368;
+        font-size: 12px;
+        line-height: 1;
+    }
+
+    .bt-plus:hover {
+        background: #eef4fa;
+    }
+
+    .work-status-span {
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 11px;
+    }
+
+    .paging-bot {
+        margin-top: 0;
+        border-top: 1px solid #dfe7ef;
+        background: #f8fbff;
+    }
+}
+
+@media (max-width: 992px) {
+    .table-tree-view {
+        .tree-list-panel {
+            overflow-x: auto;
+        }
+
+        .org-table {
+            min-width: 980px;
+        }
+    }
+}
+

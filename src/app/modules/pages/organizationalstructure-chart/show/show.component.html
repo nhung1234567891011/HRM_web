@@ -361,13 +361,13 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="selectedIcon === 'bars'">
+                    <div *ngIf="selectedIcon === 'bars'" class="table-tree-view">
                         <section class="section k-list-table">
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="card-body">
-                                        <div class="card mt-3">
-                                            <table>
+                                        <div class="card mt-3 tree-list-panel">
+                                            <table class="org-table">
                                                 <thead>
                                                     <tr>
                                                         <th style="width: 23%">
@@ -402,16 +402,9 @@
                                                             let unit of organizationUnits
                                                         "
                                                     >
-                                                        <tr>
-                                                            <td
-                                                                [ngStyle]="{
-                                                                    'padding-left':
-                                                                        (unit.level -
-                                                                            1) *
-                                                                            10 +
-                                                                        'px'
-                                                                }"
-                                                            >
+                                                        <tr class="org-row">
+                                                            <td class="org-tree-cell" [style.--tree-indent.px]="(unit.level - 1) * 20" [class.has-parent]="unit.level > 1">
+                                                                <div class="tree-node">
                                                                 <button
                                                                     class="bt-plus"
                                                                     *ngIf="
@@ -433,14 +426,10 @@
                                                                             : "+"
                                                                     }}
                                                                 </button>
-                                                                <span
-                                                                    style="
-                                                                        padding-left: 10px;
-                                                                    "
-                                                                    >{{
-                                                                        unit.organizationName
-                                                                    }}</span
-                                                                >
+                                                                <span class="tree-spacer" *ngIf="!unit.children || unit.children.length === 0"></span>
+                                                                <i class="tree-folder" [ngClass]="unit.level === 1 ? 'pi pi-building' : 'pi pi-folder'"></i>
+                                                                <span class="tree-label" [class.root-label]="unit.level === 1">{{ unit.organizationName }}</span>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 {{
@@ -524,16 +513,9 @@
                                                         #recursiveNode
                                                         let-node
                                                     >
-                                                        <tr>
-                                                            <td
-                                                                [ngStyle]="{
-                                                                    'padding-left':
-                                                                        (node.level -
-                                                                            1) *
-                                                                            20 +
-                                                                        'px'
-                                                                }"
-                                                            >
+                                                        <tr class="org-row">
+                                                            <td class="org-tree-cell" [style.--tree-indent.px]="(node.level - 1) * 20" [class.has-parent]="node.level > 1">
+                                                                <div class="tree-node">
                                                                 <button
                                                                     class="bt-plus"
                                                                     *ngIf="
@@ -555,9 +537,10 @@
                                                                             : "+"
                                                                     }}
                                                                 </button>
-                                                                {{
-                                                                    node.organizationName
-                                                                }}
+                                                                <span class="tree-spacer" *ngIf="!node.children || node.children.length === 0"></span>
+                                                                <i class="pi pi-folder tree-folder"></i>
+                                                                <span class="tree-label">{{ node.organizationName }}</span>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 {{
@@ -636,16 +619,6 @@
                                                     </ng-template>
                                                 </tbody>
                                             </table>
-
-                                            <div class="paging-bot dg-fix">
-                                                <div class="paging-info">
-                                                    <div
-                                                        [innerHTML]="
-                                                            currentPageReport
-                                                        "
-                                                    ></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
