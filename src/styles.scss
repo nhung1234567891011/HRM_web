@@ -180,48 +180,56 @@ li {}
     --table-head-border: #c8d6ea;
 }
 
-.main .p-datatable .p-datatable-thead>tr>th {
+.p-datatable .p-datatable-thead>tr>th {
     background: var(--table-head-bg) !important;
     color: var(--table-head-text) !important;
     border-bottom: 1px solid var(--table-head-border) !important;
 }
 
-.main .p-datatable .p-datatable-tbody>tr>td {
+.p-datatable .p-datatable-tbody>tr>td {
     border-bottom: 1px solid var(--table-cell-border) !important;
     transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.main .p-datatable .p-datatable-tbody>tr:nth-child(odd)>td {
+.p-datatable .p-datatable-tbody>tr:nth-child(odd)>td {
     background: var(--table-row-odd) !important;
 }
 
-.main .p-datatable .p-datatable-tbody>tr:nth-child(even)>td {
+.p-datatable .p-datatable-tbody>tr:nth-child(even)>td {
     background: var(--table-row-even) !important;
 }
 
-.main .p-datatable .p-datatable-tbody>tr:hover>td {
+.p-datatable .p-datatable-tbody>tr:hover>td {
     background: var(--table-row-hover) !important;
 }
 
-.main .p-datatable .p-datatable-tbody>tr:hover {
+.p-datatable .p-datatable-tbody>tr:hover {
     transform: scale(1.0015);
 }
 
-.main table thead th {
+.main table thead th,
+.grid table thead th,
+.card table thead th {
     background: var(--table-head-bg);
     color: var(--table-head-text);
     border-bottom: 1px solid var(--table-head-border);
 }
 
-.main table tbody tr:nth-child(odd)>td {
+.main table tbody tr:nth-child(odd)>td,
+.grid table tbody tr:nth-child(odd)>td,
+.card table tbody tr:nth-child(odd)>td {
     background: var(--table-row-odd);
 }
 
-.main table tbody tr:nth-child(even)>td {
+.main table tbody tr:nth-child(even)>td,
+.grid table tbody tr:nth-child(even)>td,
+.card table tbody tr:nth-child(even)>td {
     background: var(--table-row-even);
 }
 
-.main table tbody tr:hover>td {
+.main table tbody tr:hover>td,
+.grid table tbody tr:hover>td,
+.card table tbody tr:hover>td {
     background: var(--table-row-hover);
 }
 
