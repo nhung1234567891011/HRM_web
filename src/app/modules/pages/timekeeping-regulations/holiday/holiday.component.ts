@@ -47,6 +47,14 @@ export class HolidayComponent {
     ];
     idoraganization: number;
     idHolidayUpdate: number;
+    allColumns = [
+        { field: 'name', header: 'Tên ngày nghỉ' },
+        { field: 'timeRange', header: 'Thời gian' },
+        { field: 'applyObject', header: 'Đối tượng áp dụng' },
+        { field: 'note', header: 'Ghi chú' },
+        { field: 'action', header: 'Hành động' },
+    ];
+    selectedColumns: any[] = [...this.allColumns];
     constructor(
         private formBuilder: FormBuilder,
         private employeeObject: ObjectService,
@@ -252,53 +260,79 @@ export class HolidayComponent {
         const toDate = this.convertToVietnamTimezone(
             this.updateForm.get('toDateUpdate').value
         );
-        this.holidayService.checkRepeatName(this.updateForm.get('nameUpdate').value).subscribe((res)=>{
-            
-            
-            if(res.items?.[0]?.id!= undefined && Number(res.items?.[0]?.id) != this.idHolidayUpdate){
-                this.messageService.add({
-                    severity: 'warn',
-                    summary: 'Thông báo',
-                    detail: 'Tên ngày nghỉ lễ đã tồn tại'
-                })
-            }
-
-            else{
-                nameHoliday = this.updateForm.get('nameUpdate').value;
-                const res = {
-                    name: nameHoliday,
-                    isACompensatoryDayOff: this.updateForm.get(
-                        'isACompensatoryDayOffUpdate'
-                    ).value,
-                    fromDate: fromDate,
-                    toDate: toDate,
-                    applyObject: this.updateForm.get('applyObjectUpdate').value,
-                    note: this.updateForm.get('noteUpdate').value,
-                };
-                this.holidayService
-                    .updateHoliday(this.idHolidayUpdate,res)
-                    .subscribe((res) => {
-                        if (res) {
-                            this.updateForm.reset();
-                            this.getAllLocation(this.pageIndex, this.pageSize);
-                            this.updateHoliday = false;
-                            this.messageService.add({
-                                severity: 'success',
-                                summary: 'Thông báo',
-                                detail: 'Cập nhật ngày nghỉ lễ thành công',
-                            });
-                        } else {
-                            this.messageService.add({
-                                severity: 'error',
-                                summary: 'Thông báo',
-                                detail: 'Cập nhật ngày nghỉ lễ thất bại',
-                            });
-                        }
+        this.holidayService
+            .checkRepeatName(this.updateForm.get('nameUpdate').value)
+            .subscribe((res) => {
+                if (
+                    res.items?.[0]?.id != undefined &&
+                    Number(res.items?.[0]?.id) != this.idHolidayUpdate
+                ) {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Thông báo',
+                        detail: 'Tên ngày nghỉ lễ đã tồn tại',
                     });
-            }
-        })
+                } else {
+                    nameHoliday = this.updateForm.get('nameUpdate').value;
+                    const request = {
+                        name: nameHoliday,
+                        isACompensatoryDayOff: this.updateForm.get(
+                            'isACompensatoryDayOffUpdate'
+                        ).value,
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        applyObject: this.updateForm.get('applyObjectUpdate')
+                            .value,
+                        note: this.updateForm.get('noteUpdate').value,
+                    };
+                    this.holidayService
+                        .updateHoliday(this.idHolidayUpdate, request)
+                        .subscribe((updateRes) => {
+                            if (updateRes) {
+                                this.updateForm.reset();
+                                this.getAllLocation(
+                                    this.pageIndex,
+                                    this.pageSize
+                                );
+                                this.updateHoliday = false;
+                                this.messageService.add({
+                                    severity: 'success',
+                                    summary: 'Thông báo',
+                                    detail: 'Cập nhật ngày nghỉ lễ thành công',
+                                });
+                            } else {
+                                this.messageService.add({
+                                    severity: 'error',
+                                    summary: 'Thông báo',
+                                    detail: 'Cập nhật ngày nghỉ lễ thất bại',
+                                });
+                            }
+                        });
+                }
+            });
     }
-    convertToVietnamTimezone(date: string | Date): string {
+
+    isColVisible(field: string): boolean {
+        return this.selectedColumns.some((c) => c.field === field);
+    }
+
+    onColumnToggle(event: any, col: any): void {
+        if (event.checked) {
+            if (!this.selectedColumns.some((c) => c.field === col.field)) {
+                this.selectedColumns = this.allColumns.filter(
+                    (c) =>
+                        this.selectedColumns.some((s) => s.field === c.field) ||
+                        c.field === col.field
+                );
+            }
+        } else {
+            this.selectedColumns = this.selectedColumns.filter(
+                (c) => c.field !== col.field
+            );
+        }
+    }
+
+    convertToVietnamTimezone(date: string | Date): string | null {
         if (!date) return null;
 
         const vietnamOffset = 7 * 60;
@@ -317,6 +351,7 @@ export class HolidayComponent {
 
         return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000Z`;
     }
+
     noWhitespaceValidator(
         control: AbstractControl
     ): { [key: string]: boolean } | null {

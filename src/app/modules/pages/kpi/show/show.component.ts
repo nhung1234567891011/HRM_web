@@ -48,6 +48,14 @@ export class ShowComponent implements OnInit {
     showErrorNameKpiTable: boolean = false;
     showErrorCreateTime: boolean = false;
     permissionConstant = PermissionConstant;
+    allColumns = [
+        { field: 'nameKpiTable', header: 'Tên bảng tổng hợp doanh thu hoa hồng' },
+        { field: 'organizationName', header: 'Đơn vị áp dụng' },
+        { field: 'positionNames', header: 'Vị trí áp dụng' },
+        { field: 'timeRange', header: 'Thời gian' },
+        { field: 'action', header: 'Hành động' },
+    ];
+    selectedColumns: any[] = [...this.allColumns];
 
     constructor(
         private employeesService: EmployeeService,
@@ -592,6 +600,26 @@ export class ShowComponent implements OnInit {
                 console.error('Lỗi khi cập nhật:', error);
             },
         });
+    }
+
+    isColVisible(field: string): boolean {
+        return this.selectedColumns.some((c) => c.field === field);
+    }
+
+    onColumnToggle(event: any, col: any): void {
+        if (event.checked) {
+            if (!this.selectedColumns.some((c) => c.field === col.field)) {
+                this.selectedColumns = this.allColumns.filter(
+                    (c) =>
+                        this.selectedColumns.some((s) => s.field === c.field) ||
+                        c.field === col.field
+                );
+            }
+        } else {
+            this.selectedColumns = this.selectedColumns.filter(
+                (c) => c.field !== col.field
+            );
+        }
     }
 
 }

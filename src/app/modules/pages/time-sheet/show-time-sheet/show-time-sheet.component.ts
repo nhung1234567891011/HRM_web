@@ -31,6 +31,7 @@ import { TimeSheetService } from 'src/app/core/services/time-sheet.service';
 import { SummaryTimesheetNameEmployeeConfirmService } from 'src/app/core/services/summary-timesheet-name-employee-confirm.service';
 import { SummaryTimesheetNameEmployeeConfirmStatus, TimekeepingMethod } from 'src/app/core/enums/summary-timesheet-name-employee-confirm-status.enum';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @Component({
 	selector: 'app-show-time-sheet',
@@ -52,7 +53,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 		AutoCompleteModule,
 		UtilityModule,
 		CalendarModule,
-		InputTextareaModule
+		InputTextareaModule,
+		OverlayPanelModule
 	],
 	providers: [DatePipe],
 	templateUrl: './show-time-sheet.component.html',

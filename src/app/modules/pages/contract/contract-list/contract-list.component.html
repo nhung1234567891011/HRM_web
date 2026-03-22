@@ -79,16 +79,58 @@
                                 (click)="getPagingContract()"
                             ></button>
                         </div>
-                        <div class="col-lg-2 mt-3 d-flex align-items-center justify-content-end export-col">
-                            <p-button
-                                style="margin-left: 0"
-                                label=""
-                                [outlined]="true"
-                                severity="secondary"
-                                icon="pi pi-file-export"
-                                class="single-action-btn"
-                                (click)="exportContract()"
-                            ></p-button>
+                        <div class="col-lg-1 mt-3">
+                            <div style="display: flex; align-items: center; justify-content: flex-end;">
+                                <!-- <p-button
+                                    label=""
+                                    [outlined]="true"
+                                    severity="secondary"
+                                    icon="pi pi-filter"
+                                ></p-button> -->
+
+                                <p-button
+                                    style="margin-left: 0"
+                                    label=""
+                                    [outlined]="true"
+                                    severity="secondary"
+                                    icon="pi pi-file-export"
+                                    class="single-action-btn"
+                                    (click)="exportContract()"
+                                ></p-button>
+
+                                <p-button
+                                    style="margin-left: 10px"
+                                    pTooltip="Ẩn/hiện cột"
+                                    label=""
+                                    [outlined]="true"
+                                    severity="secondary"
+                                    icon="pi pi-table"
+                                    (onClick)="colPanelRef.toggle($event)"
+                                ></p-button>
+
+                                <p-overlayPanel #colPanelRef>
+                                    <div style="padding: 8px; min-width: 220px;">
+                                        <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
+                                        <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
+                                            <p-checkbox
+                                                [binary]="true"
+                                                [label]="col.header"
+                                                [ngModel]="isColVisible(col.field)"
+                                                (onChange)="onColumnToggle($event, col)"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </p-checkbox>
+                                        </div>
+                                    </div>
+                                </p-overlayPanel>
+<!-- 
+                                <p-button
+                                    style="margin-left: 10px"
+                                    label=""
+                                    [outlined]="true"
+                                    severity="secondary"
+                                    icon="pi pi-spin pi-cog"
+                                ></p-button> -->
+                            </div>
                         </div>
                     </div>
                     <div class="card mt-3">
@@ -109,16 +151,16 @@
                                             inputId="binary"
                                         ></p-checkbox>
                                     </th>
-                                    <th style="width: 2%">Ngày ký HĐ</th>
-                                    <th style="width: 1%">Số hợp đồng</th>
-                                    <th style="width: 6%">Họ và Tên NLĐ</th>
-                                    <th style="width: 5%">Vị trí công việc</th>
-                                    <th style="width: 6%">Đơn vị</th>
-                                    <th style="width: 5%">Loại hợp đồng</th>
-                                    <th style="width: 4%">Thời hạn HĐ</th>
-                                    <th style="width: 4%">Ngày có hiệu lực</th>
-                                    <th style="width: 2%">Ngày hết</th>
-                                    <th style="width: 2%">Thao tác</th>
+                                    <th *ngIf="isColVisible('signingDate')" style="width: 2%">Ngày ký HĐ</th>
+                                    <th *ngIf="isColVisible('code')" style="width: 1%">Số hợp đồng</th>
+                                    <th *ngIf="isColVisible('nameEmployee')" style="width: 6%">Họ và Tên NLĐ</th>
+                                    <th *ngIf="isColVisible('position')" style="width: 5%">Vị trí công việc</th>
+                                    <th *ngIf="isColVisible('unit')" style="width: 6%">Đơn vị</th>
+                                    <th *ngIf="isColVisible('contractType')" style="width: 5%">Loại hợp đồng</th>
+                                    <th *ngIf="isColVisible('contractDuration')" style="width: 4%">Thời hạn HĐ</th>
+                                    <th *ngIf="isColVisible('effectiveDate')" style="width: 4%">Ngày có hiệu lực</th>
+                                    <th *ngIf="isColVisible('expiryDate')" style="width: 2%">Ngày hết</th>
+                                    <th *ngIf="isColVisible('action')" style="width: 2%">Thao tác</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-contract>
@@ -129,37 +171,37 @@
                                             inputId="binary"
                                         ></p-checkbox>
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('signingDate')">
                                         {{
                                             contract.signingDate
                                                 | date : "dd/MM/yyyy"
                                         }}
                                     </td>
-                                    <td>{{ contract.code ?? "N/A" }}</td>
-                                    <td>{{ contract.nameEmployee }}</td>
-                                    <td>{{ contract.position }}</td>
-                                    <td>
+                                    <td *ngIf="isColVisible('code')">{{ contract.code ?? "N/A" }}</td>
+                                    <td *ngIf="isColVisible('nameEmployee')">{{ contract.nameEmployee }}</td>
+                                    <td *ngIf="isColVisible('position')">{{ contract.position }}</td>
+                                    <td *ngIf="isColVisible('unit')">
                                         {{ contract.unit?.organizationName }}
                                     </td>
-                                    <td>{{ contract.contractType?.name }}</td>
-                                    <td>
+                                    <td *ngIf="isColVisible('contractType')">{{ contract.contractType?.name }}</td>
+                                    <td *ngIf="isColVisible('contractDuration')">
                                         {{
                                             contract.contractDuration?.duration
                                         }}
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('effectiveDate')">
                                         {{
                                             contract.effectiveDate
                                                 | date : "dd/MM/yyyy"
                                         }}
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('expiryDate')">
                                         {{
                                             contract.expiryDate
                                                 | date : "dd/MM/yyyy"
                                         }}
                                     </td>
-                                    <td style="text-align: center">
+                                    <td *ngIf="isColVisible('action')" style="text-align: center">
                                         <i
                                             class="pi pi-ellipsis-v"
                                             (click)="menu.toggle($event)"

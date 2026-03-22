@@ -46,6 +46,37 @@
                         (click)="loadKpiData(true)"
                     ></button>
                 </div>
+                <div class="flex flex-column">
+                    <p-button
+                        pTooltip="Ẩn/hiện cột"
+                        label=""
+                        [outlined]="true"
+                        severity="secondary"
+                        icon="pi pi-table"
+                        (onClick)="colPanelRef.toggle($event)"
+                    ></p-button>
+
+                    <p-overlayPanel #colPanelRef>
+                        <div style="padding: 8px; min-width: 240px">
+                            <p style="font-weight: 600; margin-bottom: 8px">
+                                Chọn cột hiển thị
+                            </p>
+                            <div
+                                *ngFor="let col of allColumns"
+                                style="margin-bottom: 6px"
+                            >
+                                <p-checkbox
+                                    [binary]="true"
+                                    [label]="col.header"
+                                    [ngModel]="isColVisible(col.field)"
+                                    (onChange)="onColumnToggle($event, col)"
+                                    [ngModelOptions]="{ standalone: true }"
+                                >
+                                </p-checkbox>
+                            </div>
+                        </div>
+                    </p-overlayPanel>
+                </div>
                 <div class="flex gap-3">
                     <div class="flex flex-column">
                         <p-treeSelect
@@ -92,18 +123,21 @@
                             <!-- <th>
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th> -->
-                            <th style="width: 20%">Tên bảng tổng hợp doanh thu hoa hồng</th>
-                            <th style="width: 20%">Đơn vị áp dụng</th>
-                            <th style="width: 30%">Vị trí áp dụng</th>
-                            <th style="width: 20%">Thời gian</th>
+                            <th *ngIf="isColVisible('nameKpiTable')" style="width: 20%">Tên bảng tổng hợp doanh thu hoa hồng</th>
+                            <th *ngIf="isColVisible('organizationName')" style="width: 20%">Đơn vị áp dụng</th>
+                            <th *ngIf="isColVisible('positionNames')" style="width: 30%">Vị trí áp dụng</th>
+                            <th *ngIf="isColVisible('timeRange')" style="width: 20%">Thời gian</th>
                             <th
                                 *ngIf="
-                                    this.permisionHelper.hasPermissions([
-                                        permissionConstant.ManageKPIEdit
-                                    ]) ||
-                                    this.permisionHelper.hasPermissions([
-                                        permissionConstant.ManageKPIDelete
-                                    ])
+                                    isColVisible('action') &&
+                                    (
+                                        this.permisionHelper.hasPermissions([
+                                            permissionConstant.ManageKPIEdit
+                                        ]) ||
+                                        this.permisionHelper.hasPermissions([
+                                            permissionConstant.ManageKPIDelete
+                                        ])
+                                    )
                                 "
                                 style="width: 20%"
                             >
@@ -118,11 +152,11 @@
                                     [value]="rowData"
                                 ></p-tableCheckbox>
                             </td> -->
-                            <td [routerLink]="['/detail-kpi', rowData.id]">
+                            <td *ngIf="isColVisible('nameKpiTable')" [routerLink]="['/detail-kpi', rowData.id]">
                                 {{ rowData.nameKpiTable }}
                             </td>
-                            <td [routerLink]="['/detail-kpi', rowData.id]">{{ rowData.organizationName }}</td>
-                            <td [routerLink]="['/detail-kpi', rowData.id]">
+                            <td *ngIf="isColVisible('organizationName')" [routerLink]="['/detail-kpi', rowData.id]">{{ rowData.organizationName }}</td>
+                            <td *ngIf="isColVisible('positionNames')" [routerLink]="['/detail-kpi', rowData.id]">
                                 <span
                                     *ngIf="
                                         isAllPositionsMatch(
@@ -183,11 +217,24 @@
                                     </span>
                                 </span>
                             </td>
-                            <td [routerLink]="['/detail-kpi', rowData.id]">
+                            <td *ngIf="isColVisible('timeRange')" [routerLink]="['/detail-kpi', rowData.id]">
                                 {{ rowData.fromDate | date : "dd/MM/yyyy" }} -
                                 {{ rowData.toDate | date : "dd/MM/yyyy" }}
                             </td>
-                            <td class="text-center">
+                            <td
+                                *ngIf="
+                                    isColVisible('action') &&
+                                    (
+                                        this.permisionHelper.hasPermissions([
+                                            permissionConstant.ManageKPIEdit
+                                        ]) ||
+                                        this.permisionHelper.hasPermissions([
+                                            permissionConstant.ManageKPIDelete
+                                        ])
+                                    )
+                                "
+                                class="text-center"
+                            >
                                 <div class="flex gap-1 justify-content-center">
                                     <span
                                         class="mr-2 icon-tool"

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LocationRoutingModule } from './location-routing.module';
 import { LocationComponent } from './location.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
     CommonModule,
     LocationRoutingModule,
     SharedModule,
+    OverlayPanelModule,
   ]
 })
 export class LocationModule { }

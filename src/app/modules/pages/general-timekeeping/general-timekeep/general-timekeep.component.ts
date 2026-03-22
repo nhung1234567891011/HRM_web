@@ -77,6 +77,16 @@ export class GeneralTimekeepComponent implements OnInit {
     ];
     showError: boolean = false;
     permissionConstant = PermissionConstant;
+    allColumns = [
+        { field: 'timekeepingSheetName', header: 'Tên bảng chấm công' },
+        { field: 'timeRange', header: 'Thời gian' },
+        { field: 'timekeepingMethod', header: 'Chấm công' },
+        { field: 'organizationName', header: 'Đơn vị áp dụng' },
+        { field: 'positionNames', header: 'Vị trí' },
+        { field: 'status', header: 'Trạng thái' },
+        { field: 'action', header: 'Thao tác' },
+    ];
+    selectedColumns: any[] = [...this.allColumns];
 
     showErrorOrganizationId: boolean = false;
     showErrorTimekeepingSheetName: boolean = false;
@@ -448,6 +458,22 @@ export class GeneralTimekeepComponent implements OnInit {
         }
         if (this.totalRecords > 0) {
             this.currentPageReport = `<strong>${startRecord}</strong> - <strong>${endRecord}</strong> trong <strong>${this.totalRecords}</strong> bản ghi`;
+        }
+    }
+
+    isColVisible(field: string): boolean {
+        return this.selectedColumns.some(c => c.field === field);
+    }
+
+    onColumnToggle(event: any, col: any): void {
+        if (event.checked) {
+            if (!this.selectedColumns.some(c => c.field === col.field)) {
+                this.selectedColumns = this.allColumns.filter(c =>
+                    this.selectedColumns.some(s => s.field === c.field) || c.field === col.field
+                );
+            }
+        } else {
+            this.selectedColumns = this.selectedColumns.filter(c => c.field !== col.field);
         }
     }
 

@@ -43,6 +43,16 @@ export class DetailedAttendanceComponent implements OnInit {
     { label: 'Theo ngày', value: 1 }
   ];
   expandedRows: { [key: number]: boolean } = {};
+  allColumns = [
+    { field: 'timekeepingSheetName', header: 'Tên bảng chấm công' },
+    { field: 'timeRange', header: 'Thời gian' },
+    { field: 'timekeepingMethod', header: 'Chấm công' },
+    { field: 'organizationName', header: 'Đơn vị áp dụng' },
+    { field: 'positionNames', header: 'Vị trí' },
+    { field: 'status', header: 'Trạng thái' },
+    { field: 'action', header: 'Thao tác' },
+  ];
+  selectedColumns: any[] = [...this.allColumns];
 
   showErrorOrganizationId: boolean = false;
   showErrorTimekeepingSheetName: boolean = false;
@@ -255,6 +265,22 @@ export class DetailedAttendanceComponent implements OnInit {
 
   showDialogAdd() {
     this.displayDialog = true;
+  }
+
+  isColVisible(field: string): boolean {
+    return this.selectedColumns.some(c => c.field === field);
+  }
+
+  onColumnToggle(event: any, col: any): void {
+    if (event.checked) {
+      if (!this.selectedColumns.some(c => c.field === col.field)) {
+        this.selectedColumns = this.allColumns.filter(c =>
+          this.selectedColumns.some(s => s.field === c.field) || c.field === col.field
+        );
+      }
+    } else {
+      this.selectedColumns = this.selectedColumns.filter(c => c.field !== col.field);
+    }
   }
 
   closeDialogAdd() {

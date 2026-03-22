@@ -4,6 +4,7 @@ import { ShowComponent } from './show.component';
 import { ShowRoutingModule } from './show-routing.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
     imports: [
@@ -11,6 +12,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
         ShowRoutingModule,
         SharedModule,
         ConfirmPopupModule,
+        OverlayPanelModule,
     ],
     declarations: [ShowComponent],
 })

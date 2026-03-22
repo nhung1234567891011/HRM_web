@@ -85,6 +85,32 @@
                                 (click)="getPagingSummaryTimesheet()"
                             ></button>
                         </div>
+                        <div class="col-lg-1 mt-3" style="display: flex; justify-content: flex-end;">
+                            <p-button
+                                pTooltip="Ẩn/hiện cột"
+                                label=""
+                                [outlined]="true"
+                                severity="secondary"
+                                icon="pi pi-table"
+                                (onClick)="colPanelRef.toggle($event)"
+                            ></p-button>
+
+                            <p-overlayPanel #colPanelRef>
+                                <div style="padding: 8px; min-width: 220px;">
+                                    <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
+                                    <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
+                                        <p-checkbox
+                                            [binary]="true"
+                                            [label]="col.header"
+                                            [ngModel]="isColVisible(col.field)"
+                                            (onChange)="onColumnToggle($event, col)"
+                                            [ngModelOptions]="{ standalone: true }"
+                                        >
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                            </p-overlayPanel>
+                        </div>
                     </div>
                     <div class="card mt-3">
                         <p-table
@@ -104,17 +130,18 @@
                                             inputId="binary"
                                         ></p-checkbox>
                                     </th>
-                                    <th style="width: 12%">
+                                    <th *ngIf="isColVisible('timekeepingSheetName')" style="width: 12%">
                                         Tên bảng châm công
                                     </th>
-                                    <th style="width: 9%">Thời gian</th>
-                                    <th style="width: 5%">Chấm công</th>
-                                    <th style="width: 10%">Đơn vị áp dụng</th>
-                                    <th style="width: 12%">Vị trí</th>
-                                    <th style="width: 7%">Trạng thái</th>
+                                    <th *ngIf="isColVisible('timeRange')" style="width: 9%">Thời gian</th>
+                                    <th *ngIf="isColVisible('timekeepingMethod')" style="width: 5%">Chấm công</th>
+                                    <th *ngIf="isColVisible('organizationName')" style="width: 10%">Đơn vị áp dụng</th>
+                                    <th *ngIf="isColVisible('positionNames')" style="width: 12%">Vị trí</th>
+                                    <th *ngIf="isColVisible('status')" style="width: 7%">Trạng thái</th>
                                     <th
                                         style="width: 4%"
                                         *ngIf="
+                                            isColVisible('action') && (
                                             this.permisionHelper.hasPermissions(
                                                 [
                                                     permissionConstant.ManageGeneralTimekeepingEdit
@@ -124,6 +151,7 @@
                                                 [
                                                     permissionConstant.ManageGeneralTimekeepingEdit
                                                 ]
+                                            )
                                             )
                                         "
                                     >
@@ -139,8 +167,8 @@
                                             inputId="binary"
                                         ></p-checkbox>
                                     </td>
-                                    <td>{{ detail.timekeepingSheetName }}</td>
-                                    <td>
+                                    <td *ngIf="isColVisible('timekeepingSheetName')">{{ detail.timekeepingSheetName }}</td>
+                                    <td *ngIf="isColVisible('timeRange')">
                                         {{
                                             getMinMaxDates(
                                                 detail.summaryTimesheetNameDetailTimesheetNames
@@ -153,20 +181,20 @@
                                             )?.maxDate | date : "dd/MM/yyyy"
                                         }}
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('timekeepingMethod')">
                                         {{
                                             detail.timekeepingMethod === 0
                                                 ? "Theo giờ"
                                                 : "Theo ngày"
                                         }}
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('organizationName')">
                                         {{
                                             detail.organization
                                                 ?.organizationName
                                         }}
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('positionNames')">
                                         <span
                                             *ngIf="
                                                 isAllPositionsMatch(
@@ -237,7 +265,7 @@
                                             </span>
                                         </span>
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('status')">
                                         <span
                                             class="status-span"
                                             [ngStyle]="{
@@ -257,7 +285,7 @@
                                             }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td *ngIf="isColVisible('action')">
                                         <i
                                             *ngIf="
                                                 this.permisionHelper.hasPermissions(

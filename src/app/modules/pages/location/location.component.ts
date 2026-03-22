@@ -31,6 +31,14 @@ export class LocationComponent {
     iddeleteLocation: number;
     statusDeleteLocation: boolean;
     nameLocation: string;
+    allColumns = [
+        { field: 'name', header: 'Tên địa điểm' },
+        { field: 'latitude', header: 'Vĩ độ' },
+        { field: 'longitude', header: 'Kinh độ' },
+        { field: 'allowableRadius', header: 'Bán kính cho phép(m)' },
+        { field: 'action', header: 'Hành động' },
+    ];
+    selectedColumns: any[] = [...this.allColumns];
     constructor(
         private formBuilder: FormBuilder,
         private employeeObject: ObjectService,
@@ -176,6 +184,26 @@ export class LocationComponent {
                   this.messageService.add({'severity':'warning','summary':'Xóa ','detail':'Xóa địa điểm thất bại'});
               }
             })
+        }
+    }
+
+    isColVisible(field: string): boolean {
+        return this.selectedColumns.some((c) => c.field === field);
+    }
+
+    onColumnToggle(event: any, col: any): void {
+        if (event.checked) {
+            if (!this.selectedColumns.some((c) => c.field === col.field)) {
+                this.selectedColumns = this.allColumns.filter(
+                    (c) =>
+                        this.selectedColumns.some((s) => s.field === c.field) ||
+                        c.field === col.field
+                );
+            }
+        } else {
+            this.selectedColumns = this.selectedColumns.filter(
+                (c) => c.field !== col.field
+            );
         }
     }
   

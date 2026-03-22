@@ -60,6 +60,32 @@
                         Lọc
                     </button>
                 </div>
+                <div class="flex flex-column">
+                    <p-button
+                        pTooltip="Ẩn/hiện cột"
+                        label=""
+                        [outlined]="true"
+                        severity="secondary"
+                        icon="pi pi-table"
+                        (onClick)="colPanelRef.toggle($event)"
+                    ></p-button>
+
+                    <p-overlayPanel #colPanelRef>
+                        <div style="padding: 8px; min-width: 220px;">
+                            <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
+                            <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
+                                <p-checkbox
+                                    [binary]="true"
+                                    [label]="col.header"
+                                    [ngModel]="isColVisible(col.field)"
+                                    (onChange)="onColumnToggle($event, col)"
+                                    [ngModelOptions]="{ standalone: true }"
+                                >
+                                </p-checkbox>
+                            </div>
+                        </div>
+                    </p-overlayPanel>
+                </div>
             </div>
 
             <div class="table-section" style="margin-top: 20px">
@@ -77,13 +103,13 @@
                             <th>
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
-                            <th>Tên bảng phân ca</th>
-                            <th>Thời gian áp dụng</th>
-                            <th>Ca làm việc</th>
-                            <th>Đơn vị áp dụng</th>
-                            <th>Đối tượng áp dụng</th>
-                            <th>Tổng số công chuẩn</th>
-                            <th>Hành động</th>
+                            <th *ngIf="isColVisible('shiftTableName')">Tên bảng phân ca</th>
+                            <th *ngIf="isColVisible('timeRange')">Thời gian áp dụng</th>
+                            <th *ngIf="isColVisible('shiftCatalog')">Ca làm việc</th>
+                            <th *ngIf="isColVisible('organizationName')">Đơn vị áp dụng</th>
+                            <th *ngIf="isColVisible('applyObject')">Đối tượng áp dụng</th>
+                            <th *ngIf="isColVisible('totalWork')">Tổng số công chuẩn</th>
+                            <th *ngIf="isColVisible('action')">Hành động</th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-rowData let-i="rowIndex">
@@ -93,30 +119,30 @@
                                     [value]="rowData"
                                 ></p-tableCheckbox>
                             </td>
-                            <td>
+                            <td *ngIf="isColVisible('shiftTableName')">
                                 {{ rowData.shiftTableName }}
                             </td>
-                            <td>
+                            <td *ngIf="isColVisible('timeRange')">
                                 {{ rowData.startDate | date : "dd/MM/yyyy" }} -
                                 {{ rowData.endDate | date : "dd/MM/yyyy" }}
                             </td>
-                            <td>
+                            <td *ngIf="isColVisible('shiftCatalog')">
                                 {{ rowData.shiftCatalog?.name }}
                             </td>
-                            <td>
+                            <td *ngIf="isColVisible('organizationName')">
                                 {{ rowData.organization?.organizationName }}
                             </td>
-                            <td>
+                            <td *ngIf="isColVisible('applyObject')">
                                 {{
                                     rowData.applyObject == 0
                                         ? "Cơ cấu tổ chức"
                                         : "Danh sách nhân viên"
                                 }}
                             </td>
-                            <td class="text-center">
+                            <td *ngIf="isColVisible('totalWork')" class="text-center">
                                 {{ rowData.totalWork }}
                             </td>
-                            <td class="text-center">
+                            <td *ngIf="isColVisible('action')" class="text-center">
                                 <div class="flex gap-1 justify-content-center">
                                     <span
                                         class="mr-2 icon-tool"

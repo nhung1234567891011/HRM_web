@@ -13,6 +13,15 @@
         </div>
 
         <div class="btn-add-wrapper">
+            <p-button
+                style="margin-right: 10px"
+                pTooltip="Ẩn/hiện cột"
+                label=""
+                [outlined]="true"
+                severity="secondary"
+                icon="pi pi-table"
+                (onClick)="colPanelRef.toggle($event)"
+            ></p-button>
             <button
             *ngIf="this.permisionHelper.hasPermissions([permissionConstant.ManageLeaveRegulationsCreate])"
                 (click)="showDialogCreate()"
@@ -22,6 +31,22 @@
                 style="height: 40px; width: 130px; border-radius: 10px"
             ></button>
         </div>
+
+        <p-overlayPanel #colPanelRef>
+            <div style="padding: 8px; min-width: 220px;">
+                <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
+                <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
+                    <p-checkbox
+                        [binary]="true"
+                        [label]="col.header"
+                        [ngModel]="isColVisible(col.field)"
+                        (onChange)="onColumnToggle($event, col)"
+                        [ngModelOptions]="{ standalone: true }"
+                    >
+                    </p-checkbox>
+                </div>
+            </div>
+        </p-overlayPanel>
     </div>
     <div class="toast-container"></div>
     <!-- End Page Title -->
@@ -54,24 +79,28 @@
                                             />
                                         </th>
                                         <th
+                                            *ngIf="isColVisible('name')"
                                             class="text-center"
                                             [style]="{ minWidth: '200px' }"
                                         >
                                             Tên ngày nghỉ
                                         </th>
                                         <th
+                                            *ngIf="isColVisible('timeRange')"
                                             class="text-center"
                                             [style]="{ minWidth: '200px' }"
                                         >
                                             Thời gian
                                         </th>
                                         <th
+                                            *ngIf="isColVisible('applyObject')"
                                             class="text-center"
                                             [style]="{ minWidth: '200px' }"
                                         >
                                             Đối tượng áp dụng
                                         </th>
                                         <th
+                                            *ngIf="isColVisible('note')"
                                             class="text-center"
                                             [style]="{ minWidth: '200px' }"
                                         >
@@ -79,6 +108,7 @@
                                         </th>
 
                                         <th
+                                            *ngIf="isColVisible('action')"
                                             class="text-center"
                                             [style]="{ minWidth: '200px' }"
                                         >
@@ -101,12 +131,14 @@
                                             />
                                         </td>
                                         <td
+                                            *ngIf="isColVisible('name')"
                                             [style]="{ textAlign: 'center' }"
                                             class="min-w-200"
                                         >
                                             {{ rowData?.name }}
                                         </td>
                                         <td
+                                            *ngIf="isColVisible('timeRange')"
                                             [style]="{ textAlign: 'center' }"
                                             class="min-w-200"
                                         >
@@ -121,6 +153,7 @@
                                             }}
                                         </td>
                                         <td
+                                            *ngIf="isColVisible('applyObject')"
                                             [style]="{ textAlign: 'center' }"
                                             class="min-w-200"
                                         >
@@ -131,6 +164,7 @@
                                             }}
                                         </td>
                                         <td
+                                            *ngIf="isColVisible('note')"
                                             [style]="{ textAlign: 'center' }"
                                             class="min-w-200"
                                         >
@@ -138,6 +172,7 @@
                                         </td>
 
                                         <td
+                                            *ngIf="isColVisible('action')"
                                             [style]="{ textAlign: 'center' }"
                                             class="text-center"
                                             class="cursor-pointer"
