@@ -8,12 +8,7 @@
 </div>
 <div class="p-grid p-fluid card-custom">
     <div class="p-col-2 text-right">
-        <p-button
-            class="ml-2"
-            (click)="onAdd()"
-            icon="pi pi-plus-circle"
-            label="Thêm"
-        />
+        <p-button class="ml-2" (click)="onAdd()" icon="pi pi-plus-circle" label="Thêm" />
     </div>
 </div>
 
@@ -53,92 +48,51 @@
                 [(ngModel)]="queryParameters.organization" [options]="organizations" placeholder="Chọn đơn vị"
                 [showClear]="true" (onChange)="onChangeOrganization($event)" />
         </div> -->
-        <p-dropdown
-            [options]="statuses"
-            placeholder="Trạng thái"
-            [(ngModel)]="queryParameters.status"
-        ></p-dropdown>
-        <div
-            (click)="handleOpenDialogSelectedColumns()"
-            class="p-10 rounded border icon-settings cursor-pointer ml-2 me-2"
-            style="position: relative"
-        >
+        <p-dropdown [options]="statuses" placeholder="Trạng thái" [(ngModel)]="queryParameters.status"></p-dropdown>
+        <div (click)="handleOpenDialogSelectedColumns()"
+            class="p-10 rounded border icon-settings cursor-pointer ml-2 me-2" style="position: relative">
             <i class="pi pi-spin pi-cog" style="font-size: 1rem"></i>
         </div>
         <div>
-            <p-dialog
-                header="Tùy chỉnh cột hiển thị"
-                [(visible)]="displayColumnsCustom"
-                [style]="{ width: '300px' }"
-                [position]="'right'"
-            >
+            <p-dialog header="Tùy chỉnh cột hiển thị" [(visible)]="displayColumnsCustom" [style]="{ width: '300px' }"
+                [position]="'right'">
                 <div>
                     <span class="p-input-icon-left">
                         <i class="pi pi-search"></i>
-                        <input
-                            pInputText
-                            type="text"
-                            (input)="onSearchColumn($event)"
-                            placeholder="Tìm kiếm cột..."
-                        />
+                        <input pInputText type="text" (input)="onSearchColumn($event)" placeholder="Tìm kiếm cột..." />
                     </span>
                     <ul class="custom-checkbox-list p-mt-2">
                         <li *ngFor="let col of filteredColumns">
-                            <p-checkbox
-                                name="selectedColumns"
-                                [value]="col.field"
-                                [(ngModel)]="col.selected"
-                                binary="true"
-                                label="{{ col.header }}"
-                            ></p-checkbox>
+                            <p-checkbox name="selectedColumns" [value]="col.field" [(ngModel)]="col.selected"
+                                binary="true" label="{{ col.header }}"></p-checkbox>
                         </li>
                     </ul>
 
-                    <button
-                        pButton
-                        type="button"
-                        label="Áp dụng"
-                        class="button-right"
-                        (click)="handleApplyChangeSelectedColumns()"
-                    ></button>
+                    <button pButton type="button" label="Áp dụng" class="button-right"
+                        (click)="handleApplyChangeSelectedColumns()"></button>
                 </div>
             </p-dialog>
         </div>
         <div class="flex justify-content-center">
             <p-button class="ml-2" (click)="onSearch()" label="Lọc" />
-            <p-button
-                class="ml-2"
-                (click)="onRefreshSearch()"
-                icon="pi pi-sync"
-            />
+            <p-button class="ml-2" (click)="onRefreshSearch()" icon="pi pi-sync" />
         </div>
     </div>
 </div>
 
-<p-table
-    [value]="leaveApplications"
-    [(selection)]="selectedLeaveApplications"
-    [paginator]="false"
-    [rows]="10"
-    responsiveLayout="scroll"
-    styleClass="p-datatable-striped custom-scrollbar"
-    [rowHover]="true"
+<p-table [value]="leaveApplications" [(selection)]="selectedLeaveApplications" [paginator]="false" [rows]="10"
+    responsiveLayout="scroll" styleClass="p-datatable-striped custom-scrollbar leave-app-table" [rowHover]="true"
     [ngStyle]="{
         width: 'auto',
         'overflow-x': 'auto',
         'table-layout': 'auto'
-    }"
->
+    }">
     <ng-template pTemplate="header">
         <tr>
             <th class="text-center">
                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <th
-                *ngFor="let col of columns"
-                [hidden]="!col.selected"
-                class="text-center"
-            >
+            <th *ngFor="let col of columns" [hidden]="!col.selected" class="text-center">
                 {{ col.header }}
             </th>
         </tr>
@@ -148,54 +102,42 @@
             <td class="text-center">
                 <p-tableCheckbox [value]="leaveApp"></p-tableCheckbox>
             </td>
-            <td
-                *ngFor="let col of columns"
-                [hidden]="!col.selected"
-                class="text-center"
-                [style]="{ minWidth: '150px' }"
-            >
+            <td *ngFor="let col of columns" [hidden]="!col.selected" class="text-center"
+                [style]="{ minWidth: '150px' }">
                 {{
-                    col.field.includes("employeeName")
-                        ? leaveApp.employee.lastName +
-                          " " +
-                          leaveApp.employee.firstName
-                        : ""
+                col.field.includes("employeeName")
+                ? leaveApp.employee.lastName +
+                " " +
+                leaveApp.employee.firstName
+                : ""
                 }}
                 <span *ngIf="col.field.includes('position')">
-                    <span
-                        *ngFor="
+                    <span *ngFor="
                             let position of leaveApp.employee.staffPositions
-                        "
-                    >
+                        ">
                         {{ position.positionName }}
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('approver')">
-                    <span
-                        *ngFor="
+                    <span *ngFor="
                             let approver of leaveApp.leaveApplicationApprovers
-                        "
-                    >
+                        ">
                         | {{ approver.approver.lastName }}
                         {{ approver.approver.firstName }} |
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('substitute')">
-                    <span
-                        *ngFor="
+                    <span *ngFor="
                             let replacement of leaveApp.leaveApplicationReplacements
-                        "
-                    >
+                        ">
                         | {{ replacement.replacement.lastName }}
                         {{ replacement.replacement.firstName }} |
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('relatedPerson')">
-                    <span
-                        *ngFor="
+                    <span *ngFor="
                             let relatedPerson of leaveApp.leaveApplicationRelatedPeople
-                        "
-                    >
+                        ">
                         | {{ relatedPerson.relatedPerson.lastName }}
                         {{ relatedPerson.relatedPerson.firstName }} |
                     </span>
@@ -208,33 +150,27 @@
                 <span *ngIf="col.field.includes('affiliatedDocument')">
                     <span>
                         {{
-                            leaveApp.employee!?.organization!?.organizationName
+                        leaveApp.employee!?.organization!?.organizationName
                         }}
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('status')">
-                    <span
-                        class="status-span"
-                        [ngStyle]="{
+                    <span class="status-span" [ngStyle]="{
                             color: getLeaveApplicationStatus(leaveApp.status)
                                 .color,
                             'background-color': getLeaveApplicationStatus(
                                 leaveApp.status
                             ).bgColor
-                        }"
-                    >
+                        }">
                         {{ getLeaveApplicationStatus(leaveApp.status).text }}
                     </span>
                 </span>
                 <span *ngIf="col.field.includes('action')">
-                    <div
-                        class=""
-                        style="
+                    <div class="table-actions" style="
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                        "
-                    >
+                        ">
                         <!-- <div *ngIf="
                                 leaveApp.status ==
                                 leaveApplicationStatus.Pending
@@ -257,104 +193,68 @@
                             " class="font-size-16 ml-2" style="padding: 3px; border-radius: 50%">
                             <i class="pi pi-thumbs-down-fill"></i>
                         </div> -->
-                        <div
-                            class="font-size-16 ml-2"
-                            style="padding: 3px; border-radius: 50%"
+                        <div class="font-size-16 ml-2 action-icon action-view" style="padding: 3px; border-radius: 50%"
                             [routerLink]="[
                                 '/leave-application/detail',
                                 leaveApp.id
-                            ]"
-                        >
+                            ]">
                             <i class="pi pi-eye"></i>
                         </div>
-                        <div
-                            *ngIf="leaveApp.status === 0"
-                            class="font-size-16 ml-2"
-                            style="padding: 3px; border-radius: 50%"
-                            [routerLink]="[
+                        <div *ngIf="leaveApp.status === 0" class="font-size-16 ml-2 action-icon action-edit"
+                            style="padding: 3px; border-radius: 50%" [routerLink]="[
                                 '/leave-application/edit',
                                 leaveApp.id
-                            ]"
-                        >
+                            ]">
                             <i class="pi pi-file-edit"></i>
                         </div>
-                        <div *ngIf="leaveApp.status === 0"
-                            (click)="confirmDelete(leaveApp.id)"
-                            class="font-size-16 ml-2"
-                            style="padding: 3px; border-radius: 50%"
-                        >
+                        <div *ngIf="leaveApp.status === 0" (click)="confirmDelete(leaveApp.id)"
+                            class="font-size-16 ml-2 action-icon action-delete"
+                            style="padding: 3px; border-radius: 50%">
                             <i class="pi pi-trash"></i>
                         </div>
                     </div>
                 </span>
-                <span
-                    *ngIf="
+                <span *ngIf="
                         !col.field.includes('status') &&
                         !col.field.includes('typeOfLeave') &&
                         !col.field.includes('affiliatedDocument')
-                    "
-                >
+                    ">
                     {{ leaveApp[col.field] }}
                 </span>
             </td>
         </tr>
     </ng-template>
 </p-table>
-<div
-    class="flex align-items-center mt-3"
-    style="justify-content: space-between"
->
+<div class="flex align-items-center mt-3" style="justify-content: space-between">
     <p>
         <span style="font-weight: 500">{{
             1 + (paging.pageIndex - 1) * paging.pageSize
-        }}</span>
+            }}</span>
         -
         <span style="font-weight: 500">{{
             1 + (paging.pageIndex - 1) * paging.pageSize + (paging.pageSize - 1)
-        }}</span>
+            }}</span>
         trong
         <span style="font-weight: 500">{{ paging.totalRecords }}</span>
         bản ghi
     </p>
     <div *ngIf="leaveApplications?.length > 0">
-        <p-paginator
-            class="custum-paging"
-            (onPageChange)="onPageChange($event)"
-            [first]="(paging.pageIndex - 1) * paging.pageSize"
-            [rows]="paging.pageSize"
-            [totalRecords]="paging.totalRecords"
-            [rowsPerPageOptions]="config.pageSizeOptions"
-        />
+        <p-paginator class="custum-paging" (onPageChange)="onPageChange($event)"
+            [first]="(paging.pageIndex - 1) * paging.pageSize" [rows]="paging.pageSize"
+            [totalRecords]="paging.totalRecords" [rowsPerPageOptions]="config.pageSizeOptions" />
     </div>
 </div>
-<p-dialog
-  [(visible)]="displayDeleteDialog"
-  [modal]="true"
-  [header]="'Xóa đơn xin nghỉ'"
-  [style]="{ width: '450px' }"
-  [closable]="false"
->
-  <div *ngIf="selectedLeaveId">
-    <p>
-      Bạn có chắc muốn xóa đơn xin nghỉ này không? Lưu ý: Sau khi xóa bạn không thể hoàn tác hay khôi phục.
-    </p>
-    <!-- <strong class="name-delete">{{ selectedLeaveId }}</strong> -->
-  </div>
-  <div class="d-flex justify-content-end mt-4">
-    <button
-      pButton
-      pRipple
-      label="Hủy"
-      class="p-button-secondary me-2"
-      (click)="cancelDelete()"
-    ></button>
-    <button
-      pButton
-      pRipple
-      label="Đồng ý"
-      class="p-button-danger"
-      (click)="deleteLeave()"
-    ></button>
-  </div>
+<p-dialog [(visible)]="displayDeleteDialog" [modal]="true" [header]="'Xóa đơn xin nghỉ'" [style]="{ width: '450px' }"
+    [closable]="false">
+    <div *ngIf="selectedLeaveId">
+        <p>
+            Bạn có chắc muốn xóa đơn xin nghỉ này không? Lưu ý: Sau khi xóa bạn không thể hoàn tác hay khôi phục.
+        </p>
+        <!-- <strong class="name-delete">{{ selectedLeaveId }}</strong> -->
+    </div>
+    <div class="d-flex justify-content-end mt-4">
+        <button pButton pRipple label="Hủy" class="p-button-secondary me-2" (click)="cancelDelete()"></button>
+        <button pButton pRipple label="Đồng ý" class="p-button-danger" (click)="deleteLeave()"></button>
+    </div>
 </p-dialog>
 <app-confirm-dialog [message]="dialogMessage"></app-confirm-dialog>
