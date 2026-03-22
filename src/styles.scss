@@ -368,6 +368,7 @@ li {}
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .app-table-column-toggle-button:disabled {
@@ -376,7 +377,11 @@ li {}
 }
 
 .app-table-column-toggle-button:hover:not(:disabled) {
-    background: #f4f8ff;
+    background: #eaf3ff;
+    color: #0f4fb6;
+    border-color: #9dc0ef;
+    box-shadow: 0 6px 14px rgba(25, 77, 158, 0.2);
+    transform: translateY(-1px);
 }
 
 .app-table-column-toggle-panel {
@@ -434,7 +439,14 @@ li {}
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    padding: 0;
+    padding: 2px 4px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-table-column-toggle-actions-top button:hover {
+    background: #edf4ff;
+    color: #0e4fb6;
 }
 
 .app-table-column-toggle-list {
@@ -452,6 +464,12 @@ li {}
     font-size: 13px;
     color: #1f3552;
     padding: 6px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.app-table-column-toggle-item:hover {
+    background: #f5f9ff;
 }
 
 .app-table-column-toggle-footer {
@@ -471,10 +489,59 @@ li {}
     font-weight: 600;
     padding: 0 10px;
     cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.app-table-column-toggle-footer button:hover {
+    background: #edf4ff;
+    color: #0e4fb6;
+    border-color: #a8c8ef;
+    transform: translateY(-1px);
 }
 
 .app-table-column-toggle-footer button.primary {
     background: #1a67e0;
     color: #fff;
     border-color: #1a67e0;
+}
+
+.app-table-column-toggle-footer button.primary:hover {
+    background: #1457c2;
+    border-color: #1457c2;
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(20, 87, 194, 0.25);
+}
+
+.app-table-column-toggle-button[data-tooltip],
+.app-table-column-toggle-panel [data-tooltip] {
+    position: relative;
+}
+
+.app-table-column-toggle-button[data-tooltip]::after,
+.app-table-column-toggle-panel [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%) translateY(4px);
+    background: rgba(22, 35, 54, 0.94);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    padding: 6px 8px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    z-index: 2000;
+}
+
+.app-table-column-toggle-button[data-tooltip]:hover::after,
+.app-table-column-toggle-panel [data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }

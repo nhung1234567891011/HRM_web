@@ -78,6 +78,8 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         this.buttonEl = this.renderer.createElement('button');
         this.buttonEl.type = 'button';
         this.renderer.addClass(this.buttonEl, 'app-table-column-toggle-button');
+        this.buttonEl.title = 'Ẩn hoặc hiện các cột trong bảng';
+        this.buttonEl.setAttribute('data-tooltip', 'Ẩn/hiện cột');
         this.buttonEl.innerHTML = '<i class="pi pi-sliders-h"></i><span>Ẩn/hiện cột</span>';
 
         this.buttonEl.addEventListener('click', (event) => {
@@ -94,17 +96,17 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
             <div class="app-table-column-toggle-title">Hiển thị cột</div>
             <div class="app-table-column-toggle-search-wrap">
                 <i class="pi pi-search"></i>
-                <input type="text" class="app-table-column-toggle-search" placeholder="Tìm kiếm cột" />
+                <input type="text" class="app-table-column-toggle-search" placeholder="Tìm kiếm cột" title="Tìm cột theo tên" />
             </div>
             <div class="app-table-column-toggle-actions-top">
-                <button type="button" data-action="all">Chọn tất cả</button>
-                <button type="button" data-action="none">Bỏ tất cả</button>
+                <button type="button" data-action="all" title="Hiển thị tất cả cột" data-tooltip="Hiển thị tất cả cột">Chọn tất cả</button>
+                <button type="button" data-action="none" title="Ẩn tất cả cột" data-tooltip="Ẩn tất cả cột">Bỏ tất cả</button>
             </div>
             <div class="app-table-column-toggle-list"></div>
             <div class="app-table-column-toggle-footer">
-                <button type="button" data-action="close">Đóng</button>
-                <button type="button" data-action="default">Mặc định</button>
-                <button type="button" class="primary" data-action="apply">Áp dụng</button>
+                <button type="button" data-action="close" title="Đóng bảng tùy chỉnh" data-tooltip="Đóng">Đóng</button>
+                <button type="button" data-action="default" title="Đặt lại cấu hình cột mặc định" data-tooltip="Khôi phục mặc định">Mặc định</button>
+                <button type="button" class="primary" data-action="apply" title="Áp dụng cấu hình cột" data-tooltip="Áp dụng">Áp dụng</button>
             </div>
         `;
 
@@ -300,10 +302,12 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         columnsToRender.forEach((column) => {
             const row = document.createElement('label');
             row.className = 'app-table-column-toggle-item';
+            row.title = column.label;
 
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.checked = this.pendingVisibleIndexes.has(column.index);
+            checkbox.title = `Ẩn/hiện cột ${column.label}`;
             checkbox.addEventListener('change', () => {
                 if (checkbox.checked) {
                     this.pendingVisibleIndexes.add(column.index);
@@ -314,6 +318,7 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
 
             const text = document.createElement('span');
             text.textContent = column.label;
+            text.title = column.label;
 
             row.appendChild(checkbox);
             row.appendChild(text);
