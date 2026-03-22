@@ -1,9 +1,6 @@
-<!-- <div *ngIf="isLoading$ | async" class="loading-overlay">
-  <div class="spinner"></div>
-</div> -->
 <p-toast></p-toast>
-<div class="loading-overlay">
-    <div class="spinner"></div>
+<div *ngIf="isLoading$ | async" class="loading-overlay">
+  <div class="global-loading-spinner"></div>
 </div>
 
 <router-outlet></router-outlet>

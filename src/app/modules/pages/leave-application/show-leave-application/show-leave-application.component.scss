@@ -68,3 +68,106 @@
     background-color: #AA0000;
     border-color: #AA0000;
 }
+
+:host {
+    --la-surface: #ffffff;
+    --la-row-odd: #ffffff;
+    --la-row-even: #edf3ff;
+    --la-border: #d6deea;
+    --la-text: #1f2937;
+    --la-text-soft: #4b5563;
+    --la-header-bg: #e6efff;
+    --la-header-text: #0f2742;
+    --la-row-hover: #e1ecff;
+    --la-shadow-soft: 0 8px 22px rgba(15, 39, 66, 0.08);
+}
+
+.card-custom {
+    border-radius: 10px;
+    border: 1px solid var(--la-border);
+    box-shadow: var(--la-shadow-soft);
+}
+
+.icon-settings {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.icon-settings:hover {
+    transform: translateY(-1px) scale(1.03);
+    border-color: #90a8c6;
+    box-shadow: 0 6px 14px rgba(15, 39, 66, 0.14);
+}
+
+.table-actions {
+    gap: 0.25rem;
+}
+
+.action-icon {
+    color: var(--la-text-soft);
+    cursor: pointer;
+    transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.action-icon:hover {
+    transform: scale(1.08);
+    background-color: #eef4ff;
+    color: #0b5bd3;
+}
+
+.action-delete:hover {
+    background-color: #feecec;
+    color: #b42318;
+}
+
+:host ::ng-deep .leave-app-table {
+    border: 1px solid var(--la-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
+}
+
+:host ::ng-deep .leave-app-table .p-datatable-wrapper {
+    background: var(--la-surface);
+}
+
+:host ::ng-deep .leave-app-table .p-datatable-thead>tr>th {
+    background: var(--la-header-bg);
+    color: var(--la-header-text);
+    border: 0;
+    border-bottom: 1px solid #c8d6ea;
+    font-weight: 700;
+    padding: 0.85rem 0.75rem;
+}
+
+:host ::ng-deep .leave-app-table .p-datatable-tbody>tr>td {
+    color: var(--la-text);
+    border: 0;
+    border-bottom: 1px solid #d7e2f0;
+    padding: 0.8rem 0.75rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+:host ::ng-deep .leave-app-table .p-datatable-tbody>tr:nth-child(odd)>td {
+    background-color: var(--la-row-odd) !important;
+}
+
+:host ::ng-deep .leave-app-table .p-datatable-tbody>tr:nth-child(even)>td {
+    background-color: var(--la-row-even) !important;
+}
+
+:host ::ng-deep .leave-app-table .p-datatable-tbody>tr:hover>td {
+    background-color: var(--la-row-hover) !important;
+}
+
+:host ::ng-deep .leave-app-table .p-datatable-tbody>tr:hover {
+    transform: scale(1.0025);
+}
+
+:host ::ng-deep .leave-app-table .p-checkbox .p-checkbox-box {
+    border-color: #9db1ca;
+}
+
+.status-span {
+    font-weight: 600;
+    border: 1px solid rgba(15, 39, 66, 0.08);
+}

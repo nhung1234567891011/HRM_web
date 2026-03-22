@@ -14,24 +14,21 @@ $gutter: 1rem; //for primeflex grid system
 @import "assets/demo/styles/code.scss";
 
 
-ul{
-  
-}
+ul {}
 
-li{
-  
-}
+li {}
 
 //tny
-.danger-notice{
+.danger-notice {
     color: red;
     font-size: 12px !important;
 }
 
-.danger-notice > div{
+.danger-notice>div {
     margin-top: 6px;
 }
-.font-size-16{
+
+.font-size-16 {
     font-size: 1.5rem;
 }
 
@@ -105,7 +102,7 @@ li{
     margin-bottom: 10px;
 }
 
-.main .pagetitle > div:first-child,
+.main .pagetitle>div:first-child,
 .main .page-title-block {
     display: flex;
     flex-direction: column;
@@ -170,6 +167,70 @@ li{
     border-bottom: 1px solid #edf1f5;
     color: #2a3643;
     vertical-align: middle;
+}
+
+/* Global table contrast: apply zebra rows + clearer hover for all table-based views */
+:root {
+    --table-row-odd: #ffffff;
+    --table-row-even: #edf3ff;
+    --table-row-hover: #e1ecff;
+    --table-head-bg: #e6efff;
+    --table-head-text: #143452;
+    --table-cell-border: #d7e2f0;
+    --table-head-border: #c8d6ea;
+}
+
+.p-datatable .p-datatable-thead>tr>th {
+    background: var(--table-head-bg) !important;
+    color: var(--table-head-text) !important;
+    border-bottom: 1px solid var(--table-head-border) !important;
+}
+
+.p-datatable .p-datatable-tbody>tr>td {
+    border-bottom: 1px solid var(--table-cell-border) !important;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.p-datatable .p-datatable-tbody>tr:nth-child(odd)>td {
+    background: var(--table-row-odd) !important;
+}
+
+.p-datatable .p-datatable-tbody>tr:nth-child(even)>td {
+    background: var(--table-row-even) !important;
+}
+
+.p-datatable .p-datatable-tbody>tr:hover>td {
+    background: var(--table-row-hover) !important;
+}
+
+.p-datatable .p-datatable-tbody>tr:hover {
+    transform: scale(1.0015);
+}
+
+.main table thead th,
+.grid table thead th,
+.card table thead th {
+    background: var(--table-head-bg);
+    color: var(--table-head-text);
+    border-bottom: 1px solid var(--table-head-border);
+}
+
+.main table tbody tr:nth-child(odd)>td,
+.grid table tbody tr:nth-child(odd)>td,
+.card table tbody tr:nth-child(odd)>td {
+    background: var(--table-row-odd);
+}
+
+.main table tbody tr:nth-child(even)>td,
+.grid table tbody tr:nth-child(even)>td,
+.card table tbody tr:nth-child(even)>td {
+    background: var(--table-row-even);
+}
+
+.main table tbody tr:hover>td,
+.grid table tbody tr:hover>td,
+.card table tbody tr:hover>td {
+    background: var(--table-row-hover);
 }
 
 .main .work-status-span {
@@ -239,6 +300,7 @@ li{
 }
 
 @media (max-width: 1024px) {
+
     .main .pagetitle,
     .main .page-header {
         flex-direction: column;
@@ -252,5 +314,36 @@ li{
 
     .main .table-panel {
         overflow-x: auto;
+    }
+}
+
+/* Global API loading overlay (mounted in app.component.html) */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(1.5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+}
+
+.loading-overlay .global-loading-spinner {
+    width: 52px;
+    height: 52px;
+    border: 5px solid #d8e1eb;
+    border-top-color: #1a3557;
+    border-radius: 50%;
+    animation: global-loading-spin 0.85s linear infinite;
+}
+
+@keyframes global-loading-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
     }
 }

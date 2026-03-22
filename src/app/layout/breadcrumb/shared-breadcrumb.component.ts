@@ -72,6 +72,10 @@ export class SharedBreadcrumbComponent implements OnInit, OnDestroy {
 
     private readonly menuMatchers: BreadcrumbMatcher[] = [
         {
+            pattern: /^(\/|\/dashboard)$/,
+            nodes: [{ label: 'Trang chủ', routerLink: '/dashboard' }],
+        },
+        {
             pattern: /^\/company-informations$/,
             nodes: [
                 { label: 'Hệ thống' },
@@ -482,7 +486,7 @@ export class SharedBreadcrumbComponent implements OnInit, OnDestroy {
         },
     ];
 
-    constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
+    constructor(private router: Router, private activatedRoute: ActivatedRoute) { }
 
     ngOnInit(): void {
         this.buildItems();

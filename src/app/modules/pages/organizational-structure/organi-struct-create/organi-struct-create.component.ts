@@ -67,8 +67,8 @@ export class OrganiStructCreateComponent implements OnInit {
         private organitype: OrganiStructTypeService,
         private router: Router,
         private authService: AuthService,
-          private messageService: MessageService
-    ) {}
+        private messageService: MessageService
+    ) { }
     ngOnInit() {
         this.items = [
             { label: 'Hệ thống' },
@@ -305,7 +305,7 @@ export class OrganiStructCreateComponent implements OnInit {
         this.organitype.createOrganiStruct(requestBody).subscribe(
             (res) => {
                 setTimeout(() => {
-                    this.messageService.add({'severity':'success','summary':'Thành công','detail':'Thêm cơ cấu tổ chức thành công'});
+                    this.messageService.add({ 'severity': 'success', 'summary': 'Thành công', 'detail': 'Thêm cơ cấu tổ chức thành công' });
                     this.toastService.showSuccess('Thành công', res.message);
                 }, 2000);
                 this.unitForm.reset();
@@ -321,7 +321,7 @@ export class OrganiStructCreateComponent implements OnInit {
                 this.router.navigate(['/organizational-structure/show']);
             },
             (error) => {
-                this.messageService.add({'severity':'warn','summary':'Thành công','detail':'Thêm cơ cấu tổ chức thành công'});
+                this.messageService.add({ 'severity': 'warn', 'summary': 'Thành công', 'detail': 'Thêm cơ cấu tổ chức thành công' });
             }
         );
     }
@@ -412,7 +412,7 @@ export class OrganiStructCreateComponent implements OnInit {
         const organizationTypeName = this.organizationTypeControl.value?.trim();
 
         if (!organizationTypeName) {
-            this.messageService.add({'severity':'warn','summary':'Thông báo','detail':'Tên cấp tổ chức không được để trống'});
+            this.messageService.add({ 'severity': 'warn', 'summary': 'Thông báo', 'detail': 'Tên cấp tổ chức không được để trống' });
             return;
         }
 
@@ -425,10 +425,10 @@ export class OrganiStructCreateComponent implements OnInit {
             (res) => {
                 this.organizationTypeControl.setValue(''); // Reset form control
                 this.listOrganitype();
-                this.messageService.add({'severity':'success','summary':'Thông báo','detail':'Thêm thành công'});
+                this.messageService.add({ 'severity': 'success', 'summary': 'Thông báo', 'detail': 'Thêm thành công' });
             },
             (error) => {
-                this.messageService.add({'severity':'error','summary':'Thông báo','detail': 'Thêm thất bại lỗi :'+ error.message});
+                this.messageService.add({ 'severity': 'error', 'summary': 'Thông báo', 'detail': 'Thêm thất bại lỗi :' + error.message });
             }
         );
     }
