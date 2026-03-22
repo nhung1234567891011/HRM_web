@@ -20,6 +20,7 @@ import pagingConfig, { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, DEFAULT_PAGE_SIZE_
 import systemConfig from 'src/app/core/configs/system.config';
 import { AuthService } from 'src/app/core/services/identity/auth.service';
 import { ProjectService } from 'src/app/core/services/project.service';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
 	selector: 'app-list-project-by-employee',
@@ -40,7 +41,8 @@ import { ProjectService } from 'src/app/core/services/project.service';
 		InputTextModule,
 		TabViewModule,
 		CalendarModule,
-		InputTextareaModule
+		InputTextareaModule,
+		TableColumnToggleDirective,
 	],
 	templateUrl: './list-project-by-employee.component.html',
 	styleUrls: ['./list-project-by-employee.component.css']

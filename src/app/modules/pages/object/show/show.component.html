@@ -835,49 +835,6 @@
                         [style]="{ width: '250px' }"
                     ></p-dropdown>
 
-                    <div class="filter-action-col column-toggle-wrap">
-                        <button
-                            pButton
-                            pRipple
-                            type="button"
-                            label="Ẩn/hiện cột"
-                            icon="pi pi-sliders-h"
-                            class="buttonfilter button-outline filter-btn"
-                            (click)="openDialog('right')"
-                        ></button>
-
-                        <div class="column-panel" *ngIf="visible1">
-                            <div class="column-panel-title">Hiển thị cột</div>
-
-                            <span class="p-input-icon-left column-search-wrap">
-                                <i class="pi pi-search"></i>
-                                <input
-                                    type="text"
-                                    pInputText
-                                    class="column-search-input"
-                                    placeholder="Tìm kiếm cột"
-                                    [(ngModel)]="searchText"
-                                    (input)="onSearch()"
-                                />
-                            </span>
-
-                            <div class="column-panel-actions-top">
-                                <button type="button" class="column-link-btn" (click)="selectAllColumns()">Chọn tất cả</button>
-                                <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
-                            </div>
-
-                            <label class="column-item" *ngFor="let pr of filteredListheaderTable">
-                                <input type="checkbox" [(ngModel)]="pr.status" />
-                                <span>{{ pr.name }}</span>
-                            </label>
-
-                            <div class="column-panel-footer">
-                                <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>
-                                <button type="button" class="column-footer-btn column-default" (click)="resetDefaults()">Mặc định</button>
-                                <button type="button" class="column-footer-btn column-apply" (click)="applyChanges()">Áp dụng</button>
-                            </div>
-                        </div>
-                    </div>
                     <div class="flex justify-content-center">
                         <button pButton pRipple type="button" class="ml-2 buttonfilter filter-btn" (click)="search()" label="Lọc"></button>
                     </div>

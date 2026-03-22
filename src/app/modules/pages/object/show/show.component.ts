@@ -319,7 +319,7 @@ export class ShowComponent implements OnInit {
             };
         });
 
-        this.visible1 = true;
+        this.visible1 = !this.visible1;
         this.searchText = '';
     }
 

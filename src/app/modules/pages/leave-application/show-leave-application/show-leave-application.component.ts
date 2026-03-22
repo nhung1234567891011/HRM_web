@@ -31,6 +31,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { an } from '@fullcalendar/core/internal-common';
 import { UtilityModule } from 'src/app/core/modules/utility/utility.module';
 import { ConfirmDialogComponent } from 'src/app/core/modules/confirm-dialog/confirm-dialog.component';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
     selector: 'app-show-leave-application',
@@ -51,6 +52,7 @@ import { ConfirmDialogComponent } from 'src/app/core/modules/confirm-dialog/conf
         FormsModule,
         AutoCompleteModule,
         UtilityModule,
+        TableColumnToggleDirective,
     ],
     providers: [DatePipe],
     templateUrl: './show-leave-application.component.html',

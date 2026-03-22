@@ -26,6 +26,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { PermissionService } from 'src/app/core/services/decentralization/permission.service';
 import { Section, SectionLabel } from 'src/app/core/enums/section.enum';
+import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
 	selector: 'app-show-permission',
@@ -47,7 +48,8 @@ import { Section, SectionLabel } from 'src/app/core/enums/section.enum';
 		AutoCompleteModule,
 		UtilityModule,
 		CalendarModule,
-		InputTextareaModule
+		InputTextareaModule,
+		TableColumnToggleDirective,
 	],
 	providers: [DatePipe],
 	templateUrl: './show-permission.component.html',
