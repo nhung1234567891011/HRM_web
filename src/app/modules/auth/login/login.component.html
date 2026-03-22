@@ -35,7 +35,9 @@
                 </label>
             </div>
 
-            <button class="btn-login" type="submit">Đăng nhập</button>
+            <p-button class="btn-login-wrapper" styleClass="btn-login" type="submit" label="Đăng nhập"
+                [loading]="isSubmitting" [disabled]="isSubmitting">
+            </p-button>
 
             <div class="forgot-password">
                 <a routerLink="/auth/recover-password">Quên mật khẩu?</a>
@@ -47,4 +49,4 @@
         </div>
     </div>
 </div>
-<p-toast/>
+<p-toast />

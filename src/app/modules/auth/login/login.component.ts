@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
 
 	//Core
 	Page = Page;
+	isSubmitting: boolean = false;
 
 	//State
 	loginForm: FormGroup;
@@ -41,8 +42,10 @@ export class LoginComponent implements OnInit {
 
 	public handleOnSubmitLogin() {
 		const request: any = this.loginForm.value;
+		this.isSubmitting = true;
 		this.authService.login(request).subscribe(
 			(res) => {
+				this.isSubmitting = false;
 				if (res.status) {
 					this.messageService.add({
 						severity: 'sucess',
@@ -51,11 +54,11 @@ export class LoginComponent implements OnInit {
 					});
 					this.authService.setAuthTokenLocalStorage(res.data);
 					this.authService.fetchUserCurrent().subscribe((data) => {
-                        this.authService.setUserCurrent(data.data);
-                    });
+						this.authService.setUserCurrent(data.data);
+					});
 					this.router.navigate([Page.Dashboard]);
 				}
-				else{
+				else {
 					this.messageService.add({
 						severity: 'warning',
 						summary: 'Thất bại',
@@ -64,6 +67,8 @@ export class LoginComponent implements OnInit {
 				}
 			},
 			(exception) => {
+				this.isSubmitting = false;
+
 				this.messageService.add({
 					severity: 'error',
 					summary: 'Lỗi',
