@@ -9,12 +9,16 @@ import { TreeNode } from 'primeng/api';
     styleUrls: ['./report-monthly-income.component.scss'],
 })
 export class ReportMonthlyIncomeComponent implements OnInit {
-    chartTypeOptions = [
+    monthlyChartTypeOptions = [
         { label: 'Biểu đồ cột', value: 'bar' },
         { label: 'Biểu đồ đường', value: 'line' },
         { label: 'Biểu đồ cột ngang', value: 'horizontalBar' },
-        { label: 'Biểu đồ tròn', value: 'pie' },
-        { label: 'Biểu đồ donut', value: 'doughnut' },
+    ];
+
+    deptChartTypeOptions = [
+        { label: 'Biểu đồ cột', value: 'bar' },
+        { label: 'Biểu đồ đường', value: 'line' },
+        { label: 'Biểu đồ cột ngang', value: 'horizontalBar' },
     ];
 
     // Monthly trend chart
@@ -31,6 +35,10 @@ export class ReportMonthlyIncomeComponent implements OnInit {
     yearOptions: any[] = [];
     selectedOrganization: any = null;
     selectedOrganizationId: number | null = null;
+    chartVisible: Record<'monthly' | 'dept', boolean> = {
+        monthly: true,
+        dept: true,
+    };
     treeData: TreeNode[] = [];
     items: any[] = [];
 
@@ -196,16 +204,70 @@ export class ReportMonthlyIncomeComponent implements OnInit {
         const isHorizontal = type === 'horizontalBar';
         const actualType = isHorizontal ? 'bar' : type;
 
+        const supportedTypes: Record<string, string[]> = {
+            monthly: ['bar', 'line'],
+            dept: ['bar', 'line'],
+        };
+
+        if (!supportedTypes[chart]?.includes(actualType)) {
+            return;
+        }
+
         switch (chart) {
             case 'monthly':
                 this.monthlyChartType = actualType;
                 this.monthlyChartOptions = this.getComboChartOptions('Xu hướng thu nhập theo tháng', isHorizontal);
+                this.rebuildChart('monthly');
                 break;
             case 'dept':
                 this.deptChartType = actualType;
                 this.deptChartOptions = this.getChartOptions('Chi phí nhân sự theo vị trí', isHorizontal);
+                this.rebuildChart('dept');
                 break;
         }
+    }
+
+    private rebuildChart(chart: 'monthly' | 'dept'): void {
+        this.chartVisible[chart] = false;
+        setTimeout(() => {
+            this.chartVisible[chart] = true;
+        });
+    }
+
+    canRenderChart(chart: 'monthly' | 'dept'): boolean {
+        const chartTypeMap: Record<string, string> = {
+            monthly: this.monthlyChartType,
+            dept: this.deptChartType,
+        };
+
+        const chartDataMap: Record<string, any> = {
+            monthly: this.monthlyChartData,
+            dept: this.deptChartData,
+        };
+
+        const allowedTypes: Record<string, string[]> = {
+            monthly: ['bar', 'line'],
+            dept: ['bar', 'line'],
+        };
+
+        const type = chartTypeMap[chart];
+        const data = chartDataMap[chart];
+
+        return allowedTypes[chart].includes(type) && this.hasValidChartData(data);
+    }
+
+    private hasValidChartData(data: any): boolean {
+        if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) {
+            return false;
+        }
+
+        if (data.labels.length === 0 || data.datasets.length === 0) {
+            return false;
+        }
+
+        return data.datasets.some((dataset: any) =>
+            Array.isArray(dataset?.data) && dataset.data.some((value: any) => Number.isFinite(Number(value)))
+        );
     }
 
     private getComboChartOptions(title: string, horizontal: boolean = false): any {

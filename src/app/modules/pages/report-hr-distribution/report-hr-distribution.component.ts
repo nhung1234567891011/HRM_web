@@ -34,6 +34,11 @@ export class ReportHrDistributionComponent implements OnInit {
     totalEmployees: number = 0;
     selectedOrganization: any = null;
     selectedOrganizationId: number | null = null;
+    chartVisible: Record<'dept' | 'pos' | 'status', boolean> = {
+        dept: true,
+        pos: true,
+        status: true,
+    };
     treeData: TreeNode[] = [];
     items: any[] = [];
 
@@ -102,7 +107,7 @@ export class ReportHrDistributionComponent implements OnInit {
                         backgroundColor: this.generateColors(deptLabels.length),
                     }],
                 };
-                this.deptChartOptions = this.getChartOptions('Phân bổ theo phòng ban');
+                this.deptChartOptions = this.getChartOptions('Phân bổ theo phòng ban', false, this.deptChartType);
 
                 // Position distribution chart
                 const posLabels = data.positionDistributions?.map((p: any) => p.positionName) || [];
@@ -115,7 +120,7 @@ export class ReportHrDistributionComponent implements OnInit {
                         backgroundColor: this.generateColors(posLabels.length),
                     }],
                 };
-                this.posChartOptions = this.getChartOptions('Phân bổ theo vị trí');
+                this.posChartOptions = this.getChartOptions('Phân bổ theo vị trí', false, this.posChartType);
 
                 // Status distribution chart
                 const statusLabels = data.statusDistributions?.map((s: any) => s.status) || [];
@@ -128,7 +133,7 @@ export class ReportHrDistributionComponent implements OnInit {
                         backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)'],
                     }],
                 };
-                this.statusChartOptions = this.getChartOptions('Phân bổ theo trạng thái');
+                this.statusChartOptions = this.getChartOptions('Phân bổ theo trạng thái', false, this.statusChartType);
             }
         });
     }
@@ -138,27 +143,80 @@ export class ReportHrDistributionComponent implements OnInit {
         const isHorizontal = type === 'horizontalBar';
         const actualType = isHorizontal ? 'bar' : type;
 
+        if (!['bar', 'pie', 'doughnut'].includes(actualType)) {
+            return;
+        }
+
         switch (chart) {
             case 'dept':
                 this.deptChartType = actualType;
-                this.deptChartOptions = this.getChartOptions('Phân bổ theo phòng ban', isHorizontal);
+                this.deptChartOptions = this.getChartOptions('Phân bổ theo phòng ban', isHorizontal, actualType);
+                this.rebuildChart('dept');
                 break;
             case 'pos':
                 this.posChartType = actualType;
-                this.posChartOptions = this.getChartOptions('Phân bổ theo vị trí', isHorizontal);
+                this.posChartOptions = this.getChartOptions('Phân bổ theo vị trí', isHorizontal, actualType);
+                this.rebuildChart('pos');
                 break;
             case 'status':
                 this.statusChartType = actualType;
-                this.statusChartOptions = this.getChartOptions('Phân bổ theo trạng thái', isHorizontal);
+                this.statusChartOptions = this.getChartOptions('Phân bổ theo trạng thái', isHorizontal, actualType);
+                this.rebuildChart('status');
                 break;
         }
     }
 
-    private getChartOptions(title: string, horizontal: boolean = false): any {
-        return {
+    private rebuildChart(chart: 'dept' | 'pos' | 'status'): void {
+        this.chartVisible[chart] = false;
+        setTimeout(() => {
+            this.chartVisible[chart] = true;
+        });
+    }
+
+    canRenderChart(chart: 'dept' | 'pos' | 'status'): boolean {
+        const chartTypeMap: Record<string, string> = {
+            dept: this.deptChartType,
+            pos: this.posChartType,
+            status: this.statusChartType,
+        };
+
+        const chartDataMap: Record<string, any> = {
+            dept: this.deptChartData,
+            pos: this.posChartData,
+            status: this.statusChartData,
+        };
+
+        const allowedTypes: Record<string, string[]> = {
+            dept: ['bar', 'pie', 'doughnut'],
+            pos: ['bar', 'pie', 'doughnut'],
+            status: ['bar', 'pie', 'doughnut'],
+        };
+
+        const type = chartTypeMap[chart];
+        const data = chartDataMap[chart];
+
+        return allowedTypes[chart].includes(type) && this.hasValidChartData(data);
+    }
+
+    private hasValidChartData(data: any): boolean {
+        if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) {
+            return false;
+        }
+
+        if (data.labels.length === 0 || data.datasets.length === 0) {
+            return false;
+        }
+
+        return data.datasets.some((dataset: any) =>
+            Array.isArray(dataset?.data) && dataset.data.some((value: any) => Number.isFinite(Number(value)))
+        );
+    }
+
+    private getChartOptions(title: string, horizontal: boolean = false, chartType: string = 'bar'): any {
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+        const options: any = {
             responsive: true,
             maintainAspectRatio: false,
-            indexAxis: horizontal ? 'y' : 'x',
             plugins: {
                 legend: {
                     display: true,
@@ -185,7 +243,11 @@ export class ReportHrDistributionComponent implements OnInit {
                     bodyFont: { size: 12 },
                 },
             },
-            scales: {
+        };
+
+        if (!isCircular) {
+            options.indexAxis = horizontal ? 'y' : 'x';
+            options.scales = {
                 x: {
                     beginAtZero: true,
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
@@ -196,8 +258,10 @@ export class ReportHrDistributionComponent implements OnInit {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
                     ticks: { font: { size: 11 } },
                 },
-            },
-        };
+            };
+        }
+
+        return options;
     }
 
     private generateColors(count: number): string[] {

@@ -6,7 +6,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Phân bổ nhân sự</h4>
                 <div class="flex align-items-center gap-2">
-                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="hrChartType" optionLabel="label"
+                    <p-dropdown [options]="hrChartTypeOptions" [(ngModel)]="hrChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('hr', $event)"></p-dropdown>
                     <a routerLink="/report-hr-distribution" 
@@ -28,7 +28,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Thu nhập theo tháng</h4>
                 <div class="flex align-items-center gap-2">
-                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="incomeChartType" optionLabel="label"
+                    <p-dropdown [options]="incomeChartTypeOptions" [(ngModel)]="incomeChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('income', $event)"></p-dropdown>
                     <a routerLink="/report-monthly-income" 
@@ -50,7 +50,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Hiệu suất</h4>
                 <div class="flex align-items-center gap-2">
-                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="perfChartType" optionLabel="label"
+                    <p-dropdown [options]="perfChartTypeOptions" [(ngModel)]="perfChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('performance', $event)"></p-dropdown>
                     <a routerLink="/report-performance" 
@@ -72,7 +72,7 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Chuyên cần</h4>
                 <div class="flex align-items-center gap-2">
-                    <p-dropdown [options]="chartTypeOptions" [(ngModel)]="attendanceChartType" optionLabel="label"
+                    <p-dropdown [options]="attendanceChartTypeOptions" [(ngModel)]="attendanceChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('attendance', $event)"></p-dropdown>
                     <a routerLink="/report-attendance" 

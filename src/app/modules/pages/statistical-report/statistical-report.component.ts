@@ -13,8 +13,20 @@ import { ReportService } from 'src/app/core/services/report.service';
     styleUrls: ['./statistical-report.component.scss'],
 })
 export class StatisticalReportComponent implements OnInit {
-    // Chart type options
-    chartTypeOptions = [
+    hrChartTypeOptions = [
+        { label: 'Biểu đồ tròn', value: 'pie' },
+        { label: 'Biểu đồ donut', value: 'doughnut' },
+        { label: 'Biểu đồ cột', value: 'bar' },
+        { label: 'Biểu đồ cột ngang', value: 'horizontalBar' },
+    ];
+
+    incomeChartTypeOptions = [
+        { label: 'Biểu đồ cột', value: 'bar' },
+        { label: 'Biểu đồ đường', value: 'line' },
+        { label: 'Biểu đồ cột ngang', value: 'horizontalBar' },
+    ];
+
+    perfChartTypeOptions = [
         { label: 'Biểu đồ tròn', value: 'pie' },
         { label: 'Biểu đồ donut', value: 'doughnut' },
         { label: 'Biểu đồ cột', value: 'bar' },
@@ -23,8 +35,14 @@ export class StatisticalReportComponent implements OnInit {
         { label: 'Biểu đồ cột ngang', value: 'horizontalBar' },
     ];
 
+    attendanceChartTypeOptions = [
+        { label: 'Biểu đồ cột', value: 'bar' },
+        { label: 'Biểu đồ đường', value: 'line' },
+        { label: 'Biểu đồ cột ngang', value: 'horizontalBar' },
+    ];
+
     // HR Distribution
-    hrChartType: string = 'doughnut';
+    hrChartType: string = 'bar';
     hrChartData: any;
     hrChartOptions: any;
 
@@ -74,7 +92,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo phòng ban');
+                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo phòng ban', false, this.hrChartType);
             }
         });
     }
@@ -200,7 +218,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí');
+                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', false, this.perfChartType);
             }
         });
     }
@@ -308,31 +326,45 @@ export class StatisticalReportComponent implements OnInit {
 
     onChartTypeChange(report: string, event: any): void {
         const type = event.value;
+        const isHorizontal = type === 'horizontalBar';
+        const actualType = isHorizontal ? 'bar' : type;
+
+        const supportedTypes: Record<string, string[]> = {
+            hr: ['bar', 'pie', 'doughnut'],
+            income: ['bar', 'line'],
+            performance: ['bar', 'line', 'radar', 'pie', 'doughnut'],
+            attendance: ['bar', 'line'],
+        };
+
+        if (!supportedTypes[report]?.includes(actualType)) {
+            return;
+        }
+
         switch (report) {
             case 'hr':
-                this.hrChartType = type === 'horizontalBar' ? 'bar' : type;
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo phòng ban', type === 'horizontalBar');
+                this.hrChartType = actualType;
+                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo phòng ban', isHorizontal, actualType);
                 break;
             case 'income':
-                this.incomeChartType = type === 'horizontalBar' ? 'bar' : type;
-                this.incomeChartOptions = this.getChartOptions('Thu nhập theo tháng', type === 'horizontalBar');
+                this.incomeChartType = actualType;
+                this.incomeChartOptions = this.getChartOptions('Thu nhập theo tháng', isHorizontal, actualType);
                 break;
             case 'performance':
-                this.perfChartType = type === 'horizontalBar' ? 'bar' : type;
-                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', type === 'horizontalBar');
+                this.perfChartType = actualType;
+                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', isHorizontal, actualType);
                 break;
             case 'attendance':
-                this.attendanceChartType = type === 'horizontalBar' ? 'bar' : type;
-                this.attendanceChartOptions = this.getChartOptions('Chuyên cần theo tháng', type === 'horizontalBar');
+                this.attendanceChartType = actualType;
+                this.attendanceChartOptions = this.getChartOptions('Chuyên cần theo tháng', isHorizontal, actualType);
                 break;
         }
     }
 
-    private getChartOptions(title: string, horizontal: boolean = false): any {
-        return {
+    private getChartOptions(title: string, horizontal: boolean = false, chartType: string = 'bar'): any {
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+        const options: any = {
             responsive: true,
             maintainAspectRatio: false,
-            indexAxis: horizontal ? 'y' : 'x',
             plugins: {
                 legend: {
                     display: true,
@@ -359,7 +391,11 @@ export class StatisticalReportComponent implements OnInit {
                     bodyFont: { size: 12 },
                 },
             },
-            scales: {
+        };
+
+        if (!isCircular) {
+            options.indexAxis = horizontal ? 'y' : 'x';
+            options.scales = {
                 x: {
                     beginAtZero: true,
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
@@ -370,8 +406,10 @@ export class StatisticalReportComponent implements OnInit {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
                     ticks: { font: { size: 11 } },
                 },
-            },
-        };
+            };
+        }
+
+        return options;
     }
 
     private generateColors(count: number): string[] {

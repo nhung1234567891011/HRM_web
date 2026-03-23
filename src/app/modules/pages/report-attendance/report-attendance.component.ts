@@ -56,6 +56,13 @@ export class ReportAttendanceComponent implements OnInit {
     ];
     selectedOrganization: any = null;
     selectedOrganizationId: number | null = null;
+    chartVisible: Record<'monthly' | 'leave' | 'employee' | 'deptOt' | 'otTrend', boolean> = {
+        monthly: true,
+        leave: true,
+        employee: true,
+        deptOt: true,
+        otTrend: true,
+    };
     treeData: TreeNode[] = [];
     items: any[] = [];
 
@@ -363,7 +370,7 @@ export class ReportAttendanceComponent implements OnInit {
                         backgroundColor: this.generateColors(leaveLabels.length),
                     }],
                 };
-                this.leaveChartOptions = this.getChartOptions('Phân bổ loại nghỉ');
+                this.leaveChartOptions = this.getChartOptions('Phân bổ loại nghỉ', false, this.leaveChartType);
 
                 // Employee attendance (top 20)
                 const topEmployees = (data.employeeAttendances || []).slice(0, 20);
@@ -407,34 +414,103 @@ export class ReportAttendanceComponent implements OnInit {
         const isHorizontal = type === 'horizontalBar';
         const actualType = isHorizontal ? 'bar' : type;
 
+        const supportedTypes: Record<string, string[]> = {
+            monthly: ['bar', 'line'],
+            leave: ['bar', 'line', 'pie', 'doughnut'],
+            employee: ['bar', 'line'],
+            deptOt: ['bar', 'line'],
+            otTrend: ['bar', 'line'],
+        };
+
+        if (!supportedTypes[chart]?.includes(actualType)) {
+            return;
+        }
+
         switch (chart) {
             case 'monthly':
                 this.monthlyChartType = actualType;
-                this.monthlyChartOptions = this.getChartOptions('Chuyên cần theo tháng', isHorizontal);
+                this.monthlyChartOptions = this.getChartOptions('Chuyên cần theo tháng', isHorizontal, actualType);
+                this.rebuildChart('monthly');
                 break;
             case 'leave':
                 this.leaveChartType = actualType;
-                this.leaveChartOptions = this.getChartOptions('Phân bổ loại nghỉ', isHorizontal);
+                this.leaveChartOptions = this.getChartOptions('Phân bổ loại nghỉ', isHorizontal, actualType);
+                this.rebuildChart('leave');
                 break;
             case 'employee':
                 this.empChartType = actualType;
-                this.empChartOptions = this.getChartOptions('Chuyên cần theo nhân viên', isHorizontal);
+                this.empChartOptions = this.getChartOptions('Chuyên cần theo nhân viên', isHorizontal, actualType);
+                this.rebuildChart('employee');
                 break;
             case 'deptOt':
                 this.deptOtChartType = actualType;
-                this.deptOtChartOptions = this.getChartOptions('Chuyên cần & Tăng ca theo vị trí', isHorizontal);
+                this.deptOtChartOptions = this.getChartOptions('Chuyên cần & Tăng ca theo vị trí', isHorizontal, actualType);
+                this.rebuildChart('deptOt');
                 break;
             case 'otTrend':
                 this.otTrendChartType = actualType;
+                this.rebuildChart('otTrend');
                 break;
         }
     }
 
-    private getChartOptions(title: string, horizontal: boolean = false): any {
-        return {
+    private rebuildChart(chart: 'monthly' | 'leave' | 'employee' | 'deptOt' | 'otTrend'): void {
+        this.chartVisible[chart] = false;
+        setTimeout(() => {
+            this.chartVisible[chart] = true;
+        });
+    }
+
+    canRenderChart(chart: 'monthly' | 'leave' | 'employee' | 'deptOt' | 'otTrend'): boolean {
+        const chartTypeMap: Record<string, string> = {
+            monthly: this.monthlyChartType,
+            leave: this.leaveChartType,
+            employee: this.empChartType,
+            deptOt: this.deptOtChartType,
+            otTrend: this.otTrendChartType,
+        };
+
+        const chartDataMap: Record<string, any> = {
+            monthly: this.monthlyChartData,
+            leave: this.leaveChartData,
+            employee: this.empChartData,
+            deptOt: this.deptOtChartData,
+            otTrend: this.otTrendChartData,
+        };
+
+        const allowedTypes: Record<string, string[]> = {
+            monthly: ['bar', 'line'],
+            leave: ['bar', 'line', 'pie', 'doughnut'],
+            employee: ['bar', 'line'],
+            deptOt: ['bar', 'line'],
+            otTrend: ['bar', 'line'],
+        };
+
+        const type = chartTypeMap[chart];
+        const data = chartDataMap[chart];
+
+        return allowedTypes[chart].includes(type) && this.hasValidChartData(data);
+    }
+
+    private hasValidChartData(data: any): boolean {
+        if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) {
+            return false;
+        }
+
+        if (data.labels.length === 0 || data.datasets.length === 0) {
+            return false;
+        }
+
+        return data.datasets.some((dataset: any) =>
+            Array.isArray(dataset?.data) && dataset.data.some((value: any) => Number.isFinite(Number(value)))
+        );
+    }
+
+    private getChartOptions(title: string, horizontal: boolean = false, chartType: string = 'bar'): any {
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+        const options: any = {
             responsive: true,
             maintainAspectRatio: false,
-            indexAxis: horizontal ? 'y' : 'x',
             plugins: {
                 legend: {
                     display: true,
@@ -461,7 +537,11 @@ export class ReportAttendanceComponent implements OnInit {
                     bodyFont: { size: 12 },
                 },
             },
-            scales: {
+        };
+
+        if (!isCircular) {
+            options.indexAxis = horizontal ? 'y' : 'x';
+            options.scales = {
                 x: {
                     beginAtZero: true,
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
@@ -472,8 +552,10 @@ export class ReportAttendanceComponent implements OnInit {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
                     ticks: { font: { size: 11 } },
                 },
-            },
-        };
+            };
+        }
+
+        return options;
     }
 
     private generateColors(count: number): string[] {

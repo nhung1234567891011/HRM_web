@@ -52,6 +52,12 @@ export class ReportPerformanceComponent implements OnInit {
     ];
     selectedOrganization: any = null;
     selectedOrganizationId: number | null = null;
+    chartVisible: Record<'deptKpi' | 'histogram' | 'empKpi' | 'efficiency', boolean> = {
+        deptKpi: true,
+        histogram: true,
+        empKpi: true,
+        efficiency: true,
+    };
     treeData: TreeNode[] = [];
     items: any[] = [];
 
@@ -212,31 +218,95 @@ export class ReportPerformanceComponent implements OnInit {
         const isHorizontal = type === 'horizontalBar';
         const actualType = isHorizontal ? 'bar' : type;
 
+        const supportedTypes: Record<string, string[]> = {
+            deptKpi: ['bar', 'line', 'radar'],
+            histogram: ['bar', 'line'],
+            empKpi: ['bar', 'line', 'radar', 'pie', 'doughnut'],
+            efficiency: ['bar', 'line', 'radar', 'pie', 'doughnut'],
+        };
+
+        if (!supportedTypes[chart]?.includes(actualType)) {
+            return;
+        }
+
         switch (chart) {
             case 'deptKpi':
                 this.deptKpiChartType = actualType;
-                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo vị trí', isHorizontal);
+                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo vị trí', isHorizontal, actualType);
+                this.rebuildChart('deptKpi');
                 break;
             case 'histogram':
                 this.histogramChartType = actualType;
-                this.histogramChartOptions = this.getChartOptions('Phân phối KPI nhân viên', isHorizontal);
+                this.histogramChartOptions = this.getChartOptions('Phân phối KPI nhân viên', isHorizontal, actualType);
+                this.rebuildChart('histogram');
                 break;
             case 'empKpi':
                 this.empKpiChartType = actualType;
-                this.empKpiChartOptions = this.getChartOptions('Top nhân viên theo KPI', isHorizontal);
+                this.empKpiChartOptions = this.getChartOptions('Top nhân viên theo KPI', isHorizontal, actualType);
+                this.rebuildChart('empKpi');
                 break;
             case 'efficiency':
                 this.efficiencyChartType = actualType;
-                this.efficiencyChartOptions = this.getChartOptions('Hiệu suất làm việc (%)', isHorizontal);
+                this.efficiencyChartOptions = this.getChartOptions('Hiệu suất làm việc (%)', isHorizontal, actualType);
+                this.rebuildChart('efficiency');
                 break;
         }
     }
 
-    private getChartOptions(title: string, horizontal: boolean = false): any {
-        return {
+    private rebuildChart(chart: 'deptKpi' | 'histogram' | 'empKpi' | 'efficiency'): void {
+        this.chartVisible[chart] = false;
+        setTimeout(() => {
+            this.chartVisible[chart] = true;
+        });
+    }
+
+    canRenderChart(chart: 'deptKpi' | 'histogram' | 'empKpi' | 'efficiency'): boolean {
+        const chartTypeMap: Record<string, string> = {
+            deptKpi: this.deptKpiChartType,
+            histogram: this.histogramChartType,
+            empKpi: this.empKpiChartType,
+            efficiency: this.efficiencyChartType,
+        };
+
+        const chartDataMap: Record<string, any> = {
+            deptKpi: this.deptKpiChartData,
+            histogram: this.histogramChartData,
+            empKpi: this.empKpiChartData,
+            efficiency: this.efficiencyChartData,
+        };
+
+        const allowedTypes: Record<string, string[]> = {
+            deptKpi: ['bar', 'line', 'radar'],
+            histogram: ['bar', 'line'],
+            empKpi: ['bar', 'line', 'radar', 'pie', 'doughnut'],
+            efficiency: ['bar', 'line', 'radar', 'pie', 'doughnut'],
+        };
+
+        const type = chartTypeMap[chart];
+        const data = chartDataMap[chart];
+
+        return allowedTypes[chart].includes(type) && this.hasValidChartData(data);
+    }
+
+    private hasValidChartData(data: any): boolean {
+        if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) {
+            return false;
+        }
+
+        if (data.labels.length === 0 || data.datasets.length === 0) {
+            return false;
+        }
+
+        return data.datasets.some((dataset: any) =>
+            Array.isArray(dataset?.data) && dataset.data.some((value: any) => Number.isFinite(Number(value)))
+        );
+    }
+
+    private getChartOptions(title: string, horizontal: boolean = false, chartType: string = 'bar'): any {
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+        const options: any = {
             responsive: true,
             maintainAspectRatio: false,
-            indexAxis: horizontal ? 'y' : 'x',
             plugins: {
                 legend: {
                     display: true,
@@ -263,7 +333,11 @@ export class ReportPerformanceComponent implements OnInit {
                     bodyFont: { size: 12 },
                 },
             },
-            scales: {
+        };
+
+        if (!isCircular) {
+            options.indexAxis = horizontal ? 'y' : 'x';
+            options.scales = {
                 x: {
                     beginAtZero: true,
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
@@ -274,8 +348,10 @@ export class ReportPerformanceComponent implements OnInit {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
                     ticks: { font: { size: 11 } },
                 },
-            },
-        };
+            };
+        }
+
+        return options;
     }
 
     private generateColors(count: number): string[] {
