@@ -42,26 +42,101 @@
             <div class="permission-container">
                 <div class="section" *ngFor="let sectionL of sectionLabel.data">
                     <h3 class="section-label">{{ sectionL.label }}</h3>
-                    <div class="permission-item" *ngFor="let permission of permissions">
-                        <span *ngIf="sectionL.key == permission.section" class="permission-group">
-                            <label hidden *ngIf="permission.parentPermissionId == null" class="label-per check-box-custom">{{
-                                permission.displayName }}</label>
-                            <p-checkbox hidden class="check-box-custom mb-check" *ngIf="permission.parentPermissionId == null"
-                                [(ngModel)]="permission.selected" (ngModelChange)="onPermissionChange(permission)"
-                                binary="true"></p-checkbox>
-                            <div hidden class="child-permissions" *ngIf="permission.childrens?.length">
-                                <p-checkbox class="check-box-custom" *ngFor="let child of permission.childrens"
-                                    label="{{ child.displayName }}" [(ngModel)]="child.selected"
-                                    (ngModelChange)="onPermissionChange(child)" binary="true"></p-checkbox>
-                            </div>
-                            <div class="selected-permissions flex" *ngIf="getSelectedChildren(permission).length > 0">
-                                <span class="selected-per-view"
-                                    *ngFor="let selected of getSelectedChildren(permission)">
-                                    {{ selected.displayName }}
-                                </span>
-                            </div>
-                        </span>
-                    </div>
+                    <p-table
+                        [value]="getTopLevelPermissionsBySection(sectionL.key)"
+                        [paginator]="false"
+                        responsiveLayout="scroll"
+                        styleClass="p-datatable-striped custom-scrollbar permission-section-table permission-matrix-table"
+                    >
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="matrix-module-col">Mô-đun</th>
+                                <th class="matrix-action-col">Xem</th>
+                                <th class="matrix-action-col">Tạo</th>
+                                <th class="matrix-action-col">Sửa</th>
+                                <th class="matrix-action-col">Xóa</th>
+                                <th class="matrix-bonus-col">Quyền bổ sung</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-permission>
+                            <tr>
+                                <td>
+                                    <div class="matrix-module-cell">
+                                        <p-checkbox
+                                            class="check-box-custom mb-check"
+                                            [(ngModel)]="permission.selected"
+                                            (ngModelChange)="onPermissionChange(permission)"
+                                            binary="true"
+                                            [disabled]="true"
+                                        ></p-checkbox>
+                                        <span class="matrix-module-name">{{ permission.displayName }}</span>
+                                    </div>
+                                </td>
+
+                                <td class="matrix-action-cell">
+                                    <p-checkbox
+                                        *ngIf="getActionChild(permission, 'view') as viewChild"
+                                        class="matrix-action-checkbox"
+                                        [(ngModel)]="viewChild.selected"
+                                        (ngModelChange)="onPermissionChange(viewChild)"
+                                        binary="true"
+                                        [disabled]="true"
+                                    ></p-checkbox>
+                                </td>
+
+                                <td class="matrix-action-cell">
+                                    <p-checkbox
+                                        *ngIf="getActionChild(permission, 'create') as createChild"
+                                        class="matrix-action-checkbox"
+                                        [(ngModel)]="createChild.selected"
+                                        (ngModelChange)="onPermissionChange(createChild)"
+                                        binary="true"
+                                        [disabled]="true"
+                                    ></p-checkbox>
+                                </td>
+
+                                <td class="matrix-action-cell">
+                                    <p-checkbox
+                                        *ngIf="getActionChild(permission, 'edit') as editChild"
+                                        class="matrix-action-checkbox"
+                                        [(ngModel)]="editChild.selected"
+                                        (ngModelChange)="onPermissionChange(editChild)"
+                                        binary="true"
+                                        [disabled]="true"
+                                    ></p-checkbox>
+                                </td>
+
+                                <td class="matrix-action-cell">
+                                    <p-checkbox
+                                        *ngIf="getActionChild(permission, 'delete') as deleteChild"
+                                        class="matrix-action-checkbox"
+                                        [(ngModel)]="deleteChild.selected"
+                                        (ngModelChange)="onPermissionChange(deleteChild)"
+                                        binary="true"
+                                        [disabled]="true"
+                                    ></p-checkbox>
+                                </td>
+
+                                <td class="matrix-bonus-cell">
+                                    <div
+                                        class="bonus-wrap"
+                                        *ngIf="getBonusChildren(permission) as bonusChildren"
+                                    >
+                                        <p-checkbox
+                                            *ngFor="let bonus of bonusChildren"
+                                            class="bonus-checkbox"
+                                            label="{{ bonus.displayName }}"
+                                            [(ngModel)]="bonus.selected"
+                                            (ngModelChange)="onPermissionChange(bonus)"
+                                            binary="true"
+                                            [disabled]="true"
+                                        ></p-checkbox>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
                 </div>
             </div>
         </div>

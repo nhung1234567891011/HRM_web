@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { asyncScheduler } from 'rxjs';
+import { distinctUntilChanged, observeOn } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
@@ -7,7 +9,12 @@ import { BehaviorSubject } from 'rxjs';
 export class LoadingService {
     private activeRequests = 0;
     private _loading = new BehaviorSubject<boolean>(false);
-    public readonly loading$ = this._loading.asObservable();
+    // Tránh ExpressionChangedAfterItHasBeenCheckedError khi BehaviorSubject emit đồng bộ
+    // trong quá trình Angular đang check view (AppComponent bind bằng async pipe).
+    public readonly loading$ = this._loading.asObservable().pipe(
+        observeOn(asyncScheduler),
+        distinctUntilChanged()
+    );
 
     show() {
         this.activeRequests++;
