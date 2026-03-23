@@ -368,7 +368,10 @@ export class CreateComponent implements OnInit {
       wardId: [null],
       ward: [null],
       address: [null, [Validators.maxLength(255)]],
-      phoneNumber: [null, [Validators.required, Validators.pattern(/^(\d{10})$/)]],
+      phoneNumber: this.formBuilder.control(null, {
+        validators: [Validators.required, Validators.pattern(/^(\d{10})$/)],
+        updateOn: 'blur'
+      }),
       personalEmail: [null, [Validators.required, Validators.email]],
       sex: [0],
       staffPositionId: [null, Validators.required],
@@ -378,7 +381,10 @@ export class CreateComponent implements OnInit {
       workingStatus: [null, Validators.required],
       probationDate: [null],
       officialDate: [null],
-      workPhoneNumber: [null, [Validators.pattern(/^(\d{10})$/)]],
+      workPhoneNumber: this.formBuilder.control(null, {
+        validators: [Validators.pattern(/^(\d{10})$/)],
+        updateOn: 'blur'
+      }),
       companyEmail: [null, [Validators.email]],
       accountEmail: [null, [Validators.required, Validators.email]],
       companyId: [null, Validators.required],

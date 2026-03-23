@@ -60,7 +60,8 @@
               <!-- họ và đệm -->
               <div class="p-field">
                 <label for="lastName">Họ và đệm <span class="required">*</span></label>
-                <input id="lastName" pInputText formControlName="lastName" required />
+                <input id="lastName" pInputText formControlName="lastName" required
+                  [class.red-border]="employeeForm.get('lastName').invalid && (employeeForm.get('lastName').touched || employeeForm.get('lastName').dirty)" />
                 <div
                   *ngIf="employeeForm.get('lastName').invalid && (employeeForm.get('lastName').touched || employeeForm.get('lastName').dirty)"
                   class="error-message">
@@ -76,7 +77,8 @@
               <!-- tên -->
               <div class="p-field">
                 <label for="firstName">Tên <span class="required">*</span></label>
-                <input id="firstName" pInputText formControlName="firstName" required />
+                <input id="firstName" pInputText formControlName="firstName" required
+                  [class.red-border]="employeeForm.get('firstName').invalid && (employeeForm.get('firstName').touched || employeeForm.get('firstName').dirty)" />
                 <div
                   *ngIf="employeeForm.get('firstName').invalid && (employeeForm.get('firstName').touched || employeeForm.get('firstName').dirty)"
                   class="error-message">
@@ -158,7 +160,9 @@
               <!-- Trường Điện thoại di động -->
               <div class="p-field">
                 <label for="phoneNumber">Điện thoại di động <span class="required">*</span></label>
-                <input id="phoneNumber" pInputText formControlName="phoneNumber" />
+                <input id="phoneNumber" pInputText formControlName="phoneNumber"
+                  maxlength="10"
+                  [class.red-border]="employeeForm.get('phoneNumber').invalid && (employeeForm.get('phoneNumber').touched || employeeForm.get('phoneNumber').dirty)" />
                 <div
                   *ngIf="employeeForm.get('phoneNumber').invalid && (employeeForm.get('phoneNumber').touched || employeeForm.get('phoneNumber').dirty)"
                   class="error-message">
@@ -170,7 +174,8 @@
               <!-- Trường Email cá nhân -->
               <div class="p-field">
                 <label for="personalEmail">Email cá nhân <span class="required">*</span></label>
-                <input id="personalEmail" pInputText formControlName="personalEmail" placeholder="Nhập email cá nhân" />
+                <input id="personalEmail" pInputText formControlName="personalEmail" placeholder="Nhập email cá nhân"
+                  [class.red-border]="employeeForm.get('personalEmail').invalid && (employeeForm.get('personalEmail').touched || employeeForm.get('personalEmail').dirty)" />
                 <div
                   *ngIf="employeeForm.get('personalEmail').invalid && (employeeForm.get('personalEmail').touched || employeeForm.get('personalEmail').dirty)"
                   class="error-message">
@@ -195,7 +200,8 @@
                   <p-treeSelect class="w-full custom-tree-select" formControlName="organizationId"
                     [options]="organizations" [metaKeySelection]="false" placeholder="Chọn đơn vị" [showClear]="true"
                     (onClear)="validateParentUnit()" (onChange)="onParentUnitChange($event)"
-                    [style]="{ maxHeight: '300px', overflow: 'auto' }">
+                    [style]="{ maxHeight: '300px', overflow: 'auto' }"
+                    [class.red-border]="employeeForm.get('organizationId').invalid && (employeeForm.get('organizationId').touched || employeeForm.get('organizationId').dirty)">
                   </p-treeSelect>
                   <div
                     *ngIf="employeeForm.get('organizationId').invalid && (employeeForm.get('organizationId').touched || employeeForm.get('organizationId').dirty)"
@@ -210,7 +216,8 @@
               <div class="p-field">
                 <label>Vị trí công việc <span class="required">*</span></label>
                 <p-dropdown formControlName="staffPositionId" [options]="positionName" optionLabel="label"
-                  optionValue="value" placeholder="Vị trí công việc" class="custom-calendar">
+                  optionValue="value" placeholder="Vị trí công việc" class="custom-calendar"
+                  [class.red-border]="employeeForm.get('staffPositionId').invalid && (employeeForm.get('staffPositionId').touched || employeeForm.get('staffPositionId').dirty)">
                 </p-dropdown>
                 <div
                   *ngIf="employeeForm.get('staffPositionId').invalid && (employeeForm.get('staffPositionId').touched || employeeForm.get('staffPositionId').dirty)"
@@ -223,7 +230,8 @@
               <div class="p-field">
                 <label>Quản lý trực tiếp <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" formControlName="managerDirectId" [options]="employeeDetails"
-                  optionLabel="label" optionValue="value" placeholder="Chọn quản lý trực tiếp"></p-dropdown>
+                  optionLabel="label" optionValue="value" placeholder="Chọn quản lý trực tiếp"
+                  [class.red-border]="employeeForm.get('managerDirectId').invalid && (employeeForm.get('managerDirectId').touched || employeeForm.get('managerDirectId').dirty)"></p-dropdown>
                 <div
                   *ngIf="employeeForm.get('managerDirectId').invalid && (employeeForm.get('managerDirectId').touched || employeeForm.get('managerDirectId').dirty)"
                   class="error-message">
@@ -237,7 +245,8 @@
               <div class="p-field">
                 <label>Công ty trực thuộc <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" formControlName="companyId" [options]="fullName" optionLabel="label"
-                  optionValue="value" placeholder="Chọn công ty trực thuộc"></p-dropdown>
+                  optionValue="value" placeholder="Chọn công ty trực thuộc"
+                  [class.red-border]="employeeForm.get('companyId').invalid && (employeeForm.get('companyId').touched || employeeForm.get('companyId').dirty)"></p-dropdown>
                 <div
                   *ngIf="employeeForm.get('companyId').invalid && (employeeForm.get('companyId').touched || employeeForm.get('companyId').dirty)"
                   class="error-message">
@@ -249,7 +258,8 @@
               <div class="p-field">
                 <label>Chức danh <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" formControlName="staffTitleId" [options]="staffTitles"
-                  optionValue="id" optionLabel="staffTitleName" placeholder="Chọn chức danh"></p-dropdown>
+                  optionValue="id" optionLabel="staffTitleName" placeholder="Chọn chức danh"
+                  [class.red-border]="employeeForm.get('staffTitleId').invalid && (employeeForm.get('staffTitleId').touched || employeeForm.get('staffTitleId').dirty)"></p-dropdown>
                 <div
                   *ngIf="employeeForm.get('staffTitleId').invalid && (employeeForm.get('staffTitleId').touched || employeeForm.get('staffTitleId').dirty)"
                   class="error-message">
@@ -262,7 +272,8 @@
               <div class="p-field">
                 <label>Trạng thái lao động <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" [options]="workingStatusOptions" optionLabel="label"
-                  optionValue="value" formControlName="workingStatus" placeholder="Chọn trạng thái">
+                  optionValue="value" formControlName="workingStatus" placeholder="Chọn trạng thái"
+                  [class.red-border]="employeeForm.get('workingStatus').invalid && (employeeForm.get('workingStatus').touched || employeeForm.get('workingStatus').dirty)">
                 </p-dropdown>
                 <div
                   *ngIf="employeeForm.get('workingStatus').invalid && (employeeForm.get('workingStatus').touched || employeeForm.get('workingStatus').dirty)"
@@ -288,7 +299,8 @@
               <!-- Điện thoại cơ quan -->
               <div class="p-field">
                 <label>Điện thoại cơ quan</label>
-                <input pInputText formControlName="workPhoneNumber" placeholder="Nhập điện thoại cơ quan" />
+                <input pInputText formControlName="workPhoneNumber" placeholder="Nhập điện thoại cơ quan"
+                  [class.red-border]="employeeForm.get('workPhoneNumber').invalid && (employeeForm.get('workPhoneNumber').touched || employeeForm.get('workPhoneNumber').dirty)" />
                 <div
                   *ngIf="employeeForm.get('workPhoneNumber').invalid && (employeeForm.get('workPhoneNumber').touched || employeeForm.get('workPhoneNumber').dirty)"
                   class="error-message">
@@ -299,7 +311,8 @@
               <!-- Email công ty -->
               <div class="p-field">
                 <label>Email công ty</label>
-                <input pInputText formControlName="companyEmail" placeholder="Nhập email công ty" />
+                <input pInputText formControlName="companyEmail" placeholder="Nhập email công ty"
+                  [class.red-border]="employeeForm.get('companyEmail').invalid && (employeeForm.get('companyEmail').touched || employeeForm.get('companyEmail').dirty)" />
                 <div
                   *ngIf="employeeForm.get('companyEmail').invalid && (employeeForm.get('companyEmail').touched || employeeForm.get('companyEmail').dirty)"
                   class="error-message">
@@ -313,7 +326,8 @@
                 <div class="p-fluid" style="margin-top: 20px;">
                   <div class="p-field">
                     <label>Email tài khoản <span class="required">*</span></label>
-                    <input pInputText formControlName="accountEmail" placeholder="Nhập email" />
+                    <input pInputText formControlName="accountEmail" placeholder="Nhập email"
+                      [class.red-border]="employeeForm.get('accountEmail').invalid && (employeeForm.get('accountEmail').touched || employeeForm.get('accountEmail').dirty)" />
                     <div
                       *ngIf="employeeForm.get('accountEmail').invalid && (employeeForm.get('accountEmail').touched || employeeForm.get('accountEmail').dirty)"
                       class="error-message">
