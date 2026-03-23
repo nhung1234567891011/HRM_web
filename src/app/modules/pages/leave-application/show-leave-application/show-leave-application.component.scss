@@ -128,7 +128,7 @@
 :host ::ng-deep .leave-app-table {
     border: 1px solid var(--la-border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
 }
 
@@ -166,7 +166,7 @@
 }
 
 :host ::ng-deep .leave-app-table .p-datatable-tbody>tr:hover {
-    transform: scale(1.0025);
+    transform: none;
 }
 
 :host ::ng-deep .leave-app-table .p-checkbox .p-checkbox-box {
@@ -231,14 +231,14 @@
 :host ::ng-deep .leave-app-table {
     border: 1px solid var(--la-border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
 }
 
 .table-shell {
     border: 1px solid var(--la-border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
     background: #fff;
 }
@@ -283,7 +283,7 @@
 }
 
 :host ::ng-deep .leave-app-table .p-datatable-tbody>tr:hover {
-    transform: scale(1.0025);
+    transform: none;
 }
 
 :host ::ng-deep .leave-app-table .p-checkbox .p-checkbox-box {
