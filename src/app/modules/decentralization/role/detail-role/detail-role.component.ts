@@ -132,23 +132,39 @@ export class DetailRoleComponent implements OnInit {
         this.role.name=res.data.name;
         this.role.description=res.data.description;
         this.selectedPermissions = this.flattenPermissions(res.data.permissions);
+        this.applySelectedPermissionsToTree();
       }
     });
+  }
+
+  private applySelectedPermissionsToTree(): void {
+    if (!this.permissions?.length) return;
+    const selectedIds = new Set<number>((this.selectedPermissions ?? []).map((p: any) => p.id));
+
+    this.permissions = this.permissions.map((permission: any) => ({
+      ...permission,
+      selected: selectedIds.has(permission.id),
+      childrens: permission.childrens?.map((child: any) => ({
+        ...child,
+        selected: selectedIds.has(child.id),
+      })),
+    }));
   }
 
 
 
   //handle data
   onPermissionChange(permission: any): void {
-    if (permission.childrens.length > 0 && permission.childrens != null) {
-      permission.childrens.forEach((child: any) => {
+    const childrens = permission.childrens ?? [];
+    if (childrens?.length > 0) {
+      // Khi tick vào nhóm quyền cha => đồng bộ toàn bộ quyền con
+      childrens.forEach((child: any) => {
         child.selected = permission.selected;
       });
     } else {
+      // Khi tick vào quyền con => cập nhật trạng thái tick của quyền cha
       const parent = this.permissions.find((p: any) => p.id == permission.parentPermissionId);
-      if (parent) {
-        // const allChildrenSelected = parent.childrens.every((child: any) => child.selected);
-        // parent.selected = allChildrenSelected;
+      if (parent?.childrens?.length) {
         parent.selected = parent.childrens.some((child: any) => child.selected);
       }
     }
@@ -161,21 +177,73 @@ export class DetailRoleComponent implements OnInit {
     return permission.childrens.filter((child: any) => child.selected);
   }
 
-  updateSelectedPermissions(): void {
-    this.selectedPermissions = [];
-    this.permissions.forEach((permission: any) => {
-      if (permission.selected) {
-        this.selectedPermissions.push(permission);
-      }
+  getTopLevelPermissionsBySection(sectionKey: any): any[] {
+    return (this.permissions ?? []).filter(
+      (p: any) => p.section == sectionKey && p.parentPermissionId == null
+    );
+  }
 
-      if (permission.childrens) {
-        permission.childrens.forEach((child: any) => {
-          if (child.selected) {
-            this.selectedPermissions.push(child);
-          }
-        });
+  private normalizeText(value: any): string {
+    return (value ?? '')
+      .toString()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
+  // Map child permission -> action columns (view/create/edit/delete)
+  getActionChild(permission: any, action: 'view' | 'create' | 'edit' | 'delete'): any | null {
+    const children = permission?.childrens ?? [];
+    const actionKeywords: Record<string, string[]> = {
+      view: ['xem', 'read'],
+      create: ['tao', 'create', 'them', 'add'],
+      edit: ['sua', 'edit', 'update', 'capnhat', 'chinh sua', 'chinhsua'],
+      delete: ['xoa', 'delete', 'remove'],
+    };
+
+    const keywords = actionKeywords[action] ?? [];
+    for (const child of children) {
+      const haystack = this.normalizeText(child?.displayName ?? child?.name);
+      if (!haystack) continue;
+      if (keywords.some((k) => haystack.includes(k))) {
+        return child;
       }
+    }
+    return null;
+  }
+
+  getBonusChildren(permission: any): any[] {
+    const children = permission?.childrens ?? [];
+    const usedIds = new Set<number>();
+
+    const viewChild = this.getActionChild(permission, 'view');
+    const createChild = this.getActionChild(permission, 'create');
+    const editChild = this.getActionChild(permission, 'edit');
+    const deleteChild = this.getActionChild(permission, 'delete');
+
+    if (viewChild?.id != null) usedIds.add(viewChild.id);
+    if (createChild?.id != null) usedIds.add(createChild.id);
+    if (editChild?.id != null) usedIds.add(editChild.id);
+    if (deleteChild?.id != null) usedIds.add(deleteChild.id);
+
+    return children.filter((child: any) => child && child.id != null && !usedIds.has(child.id));
+  }
+
+  updateSelectedPermissions(): void {
+    const selectedMap = new Map<number, any>();
+
+    this.permissions.forEach((permission: any) => {
+      if (permission?.selected) {
+        selectedMap.set(permission.id, permission);
+      }
+      permission.childrens?.forEach((child: any) => {
+        if (child?.selected) {
+          selectedMap.set(child.id, child);
+        }
+      });
     });
+
+    this.selectedPermissions = Array.from(selectedMap.values());
   }
 
   flattenPermissions(permissions: any[]): any[] {
