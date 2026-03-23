@@ -38,7 +38,7 @@ export class ShowComponent implements OnInit {
         private staffPositionService: StaffPositionService,
         private messageService: MessageService,
         private authService: AuthService,
-        public hasPermissionHelper: HasPermissionHelper
+        public hasPermissionHelper: HasPermissionHelper,
     ) {}
     public config: any = {
         paging: pagingConfig.default,
@@ -91,12 +91,15 @@ export class ShowComponent implements OnInit {
     };
     tempVisibleColumns: Record<string, boolean> = { ...this.visibleColumns };
 
+    // Delete dialog variables
+    showDiaLogDelete: boolean = false;
+    itemToDelete: any = null;
+    isMultipleDelete: boolean = false;
+    itemsToDelete: any[] = [];
+
     ngOnInit() {
         this.loadVisibleColumns();
-        this.items = [
-            { label: 'Hệ thống' },
-            { label: 'Vị trí' },
-        ];
+        this.items = [{ label: 'Hệ thống' }, { label: 'Vị trí' }];
         this.route.queryParams.subscribe((params) => {
             const request = {
                 ...params,
@@ -124,7 +127,7 @@ export class ShowComponent implements OnInit {
         }
 
         return this.columnOptions.filter((column) =>
-            column.label.toLowerCase().includes(query)
+            column.label.toLowerCase().includes(query),
         );
     }
 
@@ -150,7 +153,7 @@ export class ShowComponent implements OnInit {
     saveVisibleColumns() {
         localStorage.setItem(
             this.columnStorageKey,
-            JSON.stringify(this.visibleColumns)
+            JSON.stringify(this.visibleColumns),
         );
     }
 
@@ -230,9 +233,9 @@ export class ShowComponent implements OnInit {
                                 this.constant.staffPosition.status.find(
                                     (status: any) =>
                                         status.value?.toString() ==
-                                        staffPosition.staffPositionStatus?.toString()
+                                        staffPosition.staffPositionStatus?.toString(),
                                 )?.label ?? '',
-                        })
+                        }),
                     );
 
                     // console.log(this.staffPositiones);
@@ -271,7 +274,7 @@ export class ShowComponent implements OnInit {
     public selectAllStaffPositions(event: any): void {
         if (event.target.checked) {
             this.selectedStaffPosition = this.staffPositiones.map(
-                (teacher: any) => teacher.id
+                (teacher: any) => teacher.id,
             );
         } else {
             this.selectedStaffPosition = [];
@@ -311,7 +314,7 @@ export class ShowComponent implements OnInit {
     public handleSelectItem(id: number): void {
         if (this.isSelected(id)) {
             this.selectedStaffPosition = this.selectedStaffPosition.filter(
-                (id: any) => id !== id
+                (id: any) => id !== id,
             );
         } else {
             this.selectedStaffPosition.push(id);
@@ -343,145 +346,102 @@ export class ShowComponent implements OnInit {
     }
 
     public handleDeleteItem(event: any, data: any) {
-        this.confirmationService.confirm({
-            target: event.target as EventTarget,
-            message: `Bạn có chắc chắn muốn xóa "${data.positionName}" ?`,
-            icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Có',
-            rejectLabel: 'Không',
-            accept: () => {
-                this.staffPositionService
-                    .deleteSoft({ id: data.id })
-                    .subscribe((item) => {
-                        this.route.queryParams.subscribe((params) => {
-                            const request = {
-                                ...params,
-                                pageIndex: params['pageIndex']
-                                    ? params['pageIndex']
-                                    : this.config.paging.pageIndex,
-                                pageSize: params['pageSize']
-                                    ? params['pageSize']
-                                    : this.config.paging.pageSize,
-                            };
-                            this.getStaffPositions(request);
-                        });
-
-                        this.messageService.add({
-                            severity: 'success',
-                            summary: 'Thông báo',
-                            detail: 'Xóa vị trí thành công!',
-                        });
-                    });
-            },
-            reject: () => {},
-        });
-
-        // const swalWithBootstrapButtons = Swal.mixin({
-        //     customClass: {
-        //         cancelButton: 'btn btn-danger ml-2',
-        //         confirmButton: 'btn btn-success',
-        //     },
-        //     buttonsStyling: false,
-        // });
-        // swalWithBootstrapButtons
-        //     .fire({
-        //         title: `Bạn có chắc muốn xoá banner có Id ${id}?`,
-        //         text: 'Sau khi xoá bản sẽ không thể khôi phục dữ liệu!',
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonText: 'Xác nhận',
-        //         cancelButtonText: 'Bỏ qua',
-        //         reverseButtons: false,
-        //     })
-        //     .then((result) => {
-        //         if (result.isConfirmed) {
-        //             const request = {
-        //                 id: id,
-        //             };
-        //         }
-        //     });
+        this.itemToDelete = data;
+        this.showDiaLogDelete = true;
     }
 
     navigateToEdit(id: number): void {
         this.router.navigate(['/staff-position/edit/', id]);
     }
+
+    public closeDiaLogDelete(): void {
+        this.showDiaLogDelete = false;
+        this.itemToDelete = null;
+        this.itemsToDelete = [];
+        this.isMultipleDelete = false;
+    }
+
+    public confirmDeleteItem(): void {
+        if (this.isMultipleDelete) {
+            // Handle multiple delete
+            const selectedIds = this.itemsToDelete.map((item) => item.id);
+            if (selectedIds.length > 0) {
+                this.staffPositionService
+                    .deleteRange({ ids: selectedIds })
+                    .subscribe((result) => {
+                        if (result) {
+                            this.route.queryParams.subscribe((params) => {
+                                const request = {
+                                    ...params,
+                                    pageIndex: params['pageIndex']
+                                        ? params['pageIndex']
+                                        : this.config.paging.pageIndex,
+                                    pageSize: params['pageSize']
+                                        ? params['pageSize']
+                                        : this.config.paging.pageSize,
+                                };
+                                this.getStaffPositions(request);
+                            });
+
+                            this.selectedStaffPosition = [];
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: 'Thông báo',
+                                detail: 'Xóa vị trí thành công!',
+                            });
+                            this.closeDiaLogDelete();
+                        } else {
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: 'Thông báo',
+                                detail: `${result.message}`,
+                            });
+                        }
+                    });
+            }
+        } else {
+            // Handle single delete
+            if (!this.itemToDelete) return;
+
+            this.staffPositionService
+                .deleteSoft({ id: this.itemToDelete.id })
+                .subscribe((item) => {
+                    this.route.queryParams.subscribe((params) => {
+                        const request = {
+                            ...params,
+                            pageIndex: params['pageIndex']
+                                ? params['pageIndex']
+                                : this.config.paging.pageIndex,
+                            pageSize: params['pageSize']
+                                ? params['pageSize']
+                                : this.config.paging.pageSize,
+                        };
+                        this.getStaffPositions(request);
+                    });
+
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Thông báo',
+                        detail: 'Xóa vị trí thành công!',
+                    });
+                    this.closeDiaLogDelete();
+                });
+        }
+    }
     public handleOnDeleteMultiple(event: any) {
         const selectedIds = this.selectedStaffPosition.map((item) => item.id);
         if (selectedIds.length > 0) {
-            this.confirmationService.confirm({
-                target: event.target as EventTarget,
-                message: `Bạn có chắc chắn muốn xóa "${selectedIds}" ?`,
-                icon: 'pi pi-exclamation-triangle',
-                acceptLabel: 'Có',
-                rejectLabel: 'Không',
-                accept: () => {
-                    this.staffPositionService
-                        .deleteRange({ ids: selectedIds })
-                        .subscribe((result) => {
-                            if (result) {
-                                this.route.queryParams.subscribe((params) => {
-                                    const request = {
-                                        ...params,
-                                        pageIndex: params['pageIndex']
-                                            ? params['pageIndex']
-                                            : this.config.paging.pageIndex,
-                                        pageSize: params['pageSize']
-                                            ? params['pageSize']
-                                            : this.config.paging.pageSize,
-                                    };
-                                    this.getStaffPositions(request);
-                                });
-
-                                this.messageService.add({
-                                    severity: 'success',
-                                    summary: 'Thông báo',
-                                    detail: 'Xóa vị trí thành công!',
-                                });
-                            } else {
-                                this.messageService.add({
-                                    severity: 'error',
-                                    summary: 'Thông báo',
-                                    detail: `${result.message}`,
-                                });
-                            }
-                        });
-                },
-                reject: () => {},
-            });
+            this.isMultipleDelete = true;
+            this.itemsToDelete = this.selectedStaffPosition;
+            this.showDiaLogDelete = true;
         } else {
             this.toastService.showWarning(
                 'Chú ý',
-                'Vui lòng chọn vị trí muốn xóa'
+                'Vui lòng chọn vị trí muốn xóa',
             );
         }
-
-        // const swalWithBootstrapButtons = Swal.mixin({
-        //     customClass: {
-        //         cancelButton: 'btn btn-danger ml-2',
-        //         confirmButton: 'btn btn-success',
-        //     },
-        //     buttonsStyling: false,
-        // });
-        // swalWithBootstrapButtons
-        //     .fire({
-        //         title: `Bạn có muốn xoá các bản ghi có Id: ${this.selectedBanners.join(
-        //             ', '
-        //         )} không?`,
-        //         text: 'Sau khi xoá bản sẽ không thể khôi phục dữ liệu!',
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonText: 'Xác nhận',
-        //         cancelButtonText: 'Bỏ qua',
-        //         reverseButtons: false,
-        //     })
-        //     .then((result) => {
-        //         if (result.isConfirmed) {
-        //             const request = {
-        //                 ids: this.selectedBanners,
-        //             };
-        //         }
-        //     });
     }
+
     onPageChange(event: any) {
         this.paging.pageIndex = event.page + 1;
         this.paging.pageSize = event.rows;
@@ -513,7 +473,7 @@ export class ShowComponent implements OnInit {
         this.staffPositionService
             .updateBodyAndQueryParamsStatus(
                 { id: rowData.id },
-                { staffPositionStatus: rowData.staffPositionStatus }
+                { staffPositionStatus: rowData.staffPositionStatus },
             )
             .subscribe(
                 (response) => {
@@ -521,7 +481,7 @@ export class ShowComponent implements OnInit {
                 },
                 (error) => {
                     console.error('Cập nhật trạng thái thất bại', error);
-                }
+                },
             );
     }
 
@@ -540,7 +500,7 @@ export class ShowComponent implements OnInit {
 
         return Math.min(
             this.startRecord + this.paging.pageSize - 1,
-            this.paging.totalRecords
+            this.paging.totalRecords,
         );
     }
 }

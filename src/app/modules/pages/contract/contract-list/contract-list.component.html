@@ -1,28 +1,10 @@
-<main id="main" class="main">
+<main id="main" class="main contract-list-page">
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Danh sách hợp đồng</strong>
-            <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
-        </div>
-
-        <div
-            class="btn-add-wrapper"
-            *ngIf="
-                this.permisionHelper.hasPermissions([
-                    permissionConstant.ManageContractCreate
-                ])
-            "
-        >
-            <button
-                pButton
-                pRipple
-                label="Thêm mới"
-                icon="pi pi-plus"
-                style="height: 40px; width: 130px; border-radius: 10px"
-                [routerLink]="['/contract/create']"
-                [attr.data-tooltip]="'Thêm hợp đồng mới'"
-                [title]="'Thêm hợp đồng mới'"
-            ></button>
+            <app-shared-breadcrumb
+                [model]="$any(this).items || []"
+            ></app-shared-breadcrumb>
         </div>
     </div>
     <div class="toast-container">
@@ -37,93 +19,136 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 mt-3">
-                            <input
-                                pInputText
-                                type="text"
-                                [(ngModel)]="employeeSearchName"
-                                placeholder="Tìm kiếm nhân viên"
-                                (keyup.enter)="onSearchEmployee()"
-                                [style]="{ height: '43px', width: '100%' }"
-                            />
-                        </div>
-
-                        <div class="col-lg-3 mt-3">
-                            <p-dropdown
-                                [(ngModel)]="selectedContractStatus"
-                                [options]="contractOption"
-                                optionLabel="name"
-                                [filter]="true"
-                                filterBy="name"
-                                filterPlaceholder="Tìm trạng thái"
-                                [showClear]="true"
-                                placeholder="Tất cả hợp đồng"
-                                (onChange)="onContractStatusChange($event)"
-                                [style]="{ height: '43px', width: '100%' }"
-                            ></p-dropdown>
-                        </div>
-                        <div class="col-lg-3 mt-3">
-                            <p-treeSelect
-                                [options]="treeData"
-                                [(ngModel)]="selectedNode"
-                                [placeholder]="'Tất cả đơn vị'"
-                                [style]="{ width: '100%' }"
-                            ></p-treeSelect>
-                        </div>
-                        <div class="col-lg-1 mt-3">
-                            <button
-                                style="height: 43px"
-                                pButton
-                                pRipple
-                                label="Lọc"
-                                class="buttonfilter"
-                                (click)="getPagingContract()"
-                                [attr.data-tooltip]="'Lọc danh sách hợp đồng'"
-                                [title]="'Lọc danh sách hợp đồng'"
-                            ></button>
-                        </div>
-                        <div class="col-lg-1 mt-3">
-                            <div style="display: flex; align-items: center; justify-content: flex-end;">
-                                <!-- <p-button
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-filter"
-                                ></p-button> -->
-
-                                <p-button
-                                    style="margin-left: 0"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-file-export"
-                                    class="single-action-btn"
-                                    (click)="exportContract()"
-                                    [attr.data-tooltip]="'Xuất danh sách hợp đồng'"
-                                    [title]="'Xuất danh sách hợp đồng'"
-                                ></p-button>
-<!-- 
-                                <p-button
-                                    style="margin-left: 10px"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-spin pi-cog"
-                                ></p-button> -->
-                            </div>
-                        </div>
-                    </div>
                     <div class="card mt-3">
                         <p-table
                             [value]="contracts"
-                            [paginator]="true"
-                            [rows]="pageSize"
-                            [totalRecords]="totalRecords"
-                            [paginator]="false"
-                            (onPage)="onPageChange($event)"
+                            responsiveLayout="scroll"
                             styleClass="p-datatable-striped"
                         >
+                            <ng-template pTemplate="caption">
+                                <div class="filter-row">
+                                    <div class="filter-left">
+                                        <div class="filter-col search-col">
+                                            <span
+                                                class="p-input-icon-left search-input-wrap"
+                                            >
+                                                <i class="pi pi-search"></i>
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    [(ngModel)]="
+                                                        employeeSearchName
+                                                    "
+                                                    placeholder="Tìm kiếm nhân viên"
+                                                    (keyup.enter)="
+                                                        onSearchEmployee()
+                                                    "
+                                                />
+                                            </span>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <p-dropdown
+                                                [(ngModel)]="
+                                                    selectedContractStatus
+                                                "
+                                                [options]="contractOption"
+                                                optionLabel="name"
+                                                [filter]="true"
+                                                filterBy="name"
+                                                filterPlaceholder="Tìm trạng thái"
+                                                [showClear]="true"
+                                                placeholder="Tất cả hợp đồng"
+                                                (onChange)="
+                                                    onContractStatusChange(
+                                                        $event
+                                                    )
+                                                "
+                                            ></p-dropdown>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <p-treeSelect
+                                                [options]="treeData"
+                                                [(ngModel)]="selectedNode"
+                                                [placeholder]="'Tất cả đơn vị'"
+                                            ></p-treeSelect>
+                                        </div>
+                                    </div>
+
+                                    <div class="filter-right">
+                                        <div class="filter-col">
+                                            <button
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                label="Lọc"
+                                                class="buttonfilter"
+                                                (click)="getPagingContract()"
+                                                [attr.data-tooltip]="
+                                                    'Lọc danh sách hợp đồng'
+                                                "
+                                                [title]="
+                                                    'Lọc danh sách hợp đồng'
+                                                "
+                                            ></button>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <p-button
+                                                type="button"
+                                                label=""
+                                                [outlined]="true"
+                                                severity="secondary"
+                                                icon="pi pi-file-export"
+                                                class="single-action-btn"
+                                                (click)="exportContract()"
+                                                [attr.data-tooltip]="
+                                                    'Xuất danh sách hợp đồng'
+                                                "
+                                                [title]="
+                                                    'Xuất danh sách hợp đồng'
+                                                "
+                                            ></p-button>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <div
+                                                class="column-toggle-placeholder"
+                                                data-column-toggle-placeholder
+                                                aria-hidden="true"
+                                            ></div>
+                                        </div>
+
+                                        <div
+                                            class="filter-col"
+                                            *ngIf="
+                                                this.permisionHelper.hasPermissions(
+                                                    [
+                                                        permissionConstant.ManageContractCreate,
+                                                    ]
+                                                )
+                                            "
+                                        >
+                                            <button
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                label="Thêm mới"
+                                                icon="pi pi-plus"
+                                                class="btn-add-contract"
+                                                [routerLink]="[
+                                                    '/contract/create',
+                                                ]"
+                                                [attr.data-tooltip]="
+                                                    'Thêm hợp đồng mới'
+                                                "
+                                                [title]="'Thêm hợp đồng mới'"
+                                            ></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="width: 1%">
@@ -132,16 +157,66 @@
                                             inputId="binary"
                                         ></p-checkbox>
                                     </th>
-                                    <th *ngIf="isColVisible('signingDate')" style="width: 2%">Ngày ký HĐ</th>
-                                    <th *ngIf="isColVisible('code')" style="width: 1%">Số hợp đồng</th>
-                                    <th *ngIf="isColVisible('nameEmployee')" style="width: 6%">Họ và Tên NLĐ</th>
-                                    <th *ngIf="isColVisible('position')" style="width: 5%">Vị trí công việc</th>
-                                    <th *ngIf="isColVisible('unit')" style="width: 6%">Đơn vị</th>
-                                    <th *ngIf="isColVisible('contractType')" style="width: 5%">Loại hợp đồng</th>
-                                    <th *ngIf="isColVisible('contractDuration')" style="width: 4%">Thời hạn HĐ</th>
-                                    <th *ngIf="isColVisible('effectiveDate')" style="width: 4%">Ngày có hiệu lực</th>
-                                    <th *ngIf="isColVisible('expiryDate')" style="width: 2%">Ngày hết</th>
-                                    <th *ngIf="isColVisible('action')" style="width: 2%">Thao tác</th>
+                                    <th
+                                        *ngIf="isColVisible('signingDate')"
+                                        style="width: 2%"
+                                    >
+                                        Ngày ký HĐ
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('code')"
+                                        style="width: 1%"
+                                    >
+                                        Số hợp đồng
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('nameEmployee')"
+                                        style="width: 6%"
+                                    >
+                                        Họ và Tên NLĐ
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('position')"
+                                        style="width: 5%"
+                                    >
+                                        Vị trí công việc
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('unit')"
+                                        style="width: 6%"
+                                    >
+                                        Đơn vị
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('contractType')"
+                                        style="width: 5%"
+                                    >
+                                        Loại hợp đồng
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('contractDuration')"
+                                        style="width: 4%"
+                                    >
+                                        Thời hạn HĐ
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('effectiveDate')"
+                                        style="width: 4%"
+                                    >
+                                        Ngày có hiệu lực
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('expiryDate')"
+                                        style="width: 2%"
+                                    >
+                                        Ngày hết
+                                    </th>
+                                    <th
+                                        *ngIf="isColVisible('action')"
+                                        style="width: 2%"
+                                    >
+                                        Thao tác
+                                    </th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-contract>
@@ -155,17 +230,27 @@
                                     <td *ngIf="isColVisible('signingDate')">
                                         {{
                                             contract.signingDate
-                                                | date : "dd/MM/yyyy"
+                                                | date: "dd/MM/yyyy"
                                         }}
                                     </td>
-                                    <td *ngIf="isColVisible('code')">{{ contract.code ?? "N/A" }}</td>
-                                    <td *ngIf="isColVisible('nameEmployee')">{{ contract.nameEmployee }}</td>
-                                    <td *ngIf="isColVisible('position')">{{ contract.position }}</td>
+                                    <td *ngIf="isColVisible('code')">
+                                        {{ contract.code ?? "N/A" }}
+                                    </td>
+                                    <td *ngIf="isColVisible('nameEmployee')">
+                                        {{ contract.nameEmployee }}
+                                    </td>
+                                    <td *ngIf="isColVisible('position')">
+                                        {{ contract.position }}
+                                    </td>
                                     <td *ngIf="isColVisible('unit')">
                                         {{ contract.unit?.organizationName }}
                                     </td>
-                                    <td *ngIf="isColVisible('contractType')">{{ contract.contractType?.name }}</td>
-                                    <td *ngIf="isColVisible('contractDuration')">
+                                    <td *ngIf="isColVisible('contractType')">
+                                        {{ contract.contractType?.name }}
+                                    </td>
+                                    <td
+                                        *ngIf="isColVisible('contractDuration')"
+                                    >
                                         {{
                                             contract.contractDuration?.duration
                                         }}
@@ -173,20 +258,25 @@
                                     <td *ngIf="isColVisible('effectiveDate')">
                                         {{
                                             contract.effectiveDate
-                                                | date : "dd/MM/yyyy"
+                                                | date: "dd/MM/yyyy"
                                         }}
                                     </td>
                                     <td *ngIf="isColVisible('expiryDate')">
                                         {{
                                             contract.expiryDate
-                                                | date : "dd/MM/yyyy"
+                                                | date: "dd/MM/yyyy"
                                         }}
                                     </td>
-                                    <td *ngIf="isColVisible('action')" style="text-align: center">
+                                    <td
+                                        *ngIf="isColVisible('action')"
+                                        style="text-align: center"
+                                    >
                                         <i
                                             class="pi pi-ellipsis-v"
                                             (click)="menu.toggle($event)"
-                                            [attr.data-tooltip]="'Mở menu thao tác'"
+                                            [attr.data-tooltip]="
+                                                'Mở menu thao tác'
+                                            "
                                             [title]="'Mở menu thao tác'"
                                         ></i>
                                         <p-overlayPanel #menu>
@@ -195,14 +285,14 @@
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractEdit
+                                                                permissionConstant.ManageContractEdit,
                                                             ]
                                                         )
                                                     "
                                                     class="menu-btn"
                                                     [routerLink]="[
                                                         '/contract/update',
-                                                        contract.id
+                                                        contract.id,
                                                     ]"
                                                 >
                                                     <i class="pi pi-pencil"></i>
@@ -213,7 +303,7 @@
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractTerminate
+                                                                permissionConstant.ManageContractTerminate,
                                                             ]
                                                         )
                                                     "
@@ -231,7 +321,7 @@
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractExport
+                                                                permissionConstant.ManageContractExport,
                                                             ]
                                                         )
                                                     "
@@ -240,20 +330,27 @@
                                                     "
                                                     class="menu-btn"
                                                 >
-                                                    <i class="pi pi-file-pdf"></i>
+                                                    <i
+                                                        class="pi pi-file-pdf"
+                                                    ></i>
                                                     Xuất file Pdf hợp đồng
                                                 </button>
                                                 <button
                                                     class="menu-btn"
-                                                    (click)="generateViewPDF(contract)"
+                                                    (click)="
+                                                        generateViewPDF(
+                                                            contract
+                                                        )
+                                                    "
                                                 >
-                                                    <i class="pi pi-print"></i> Xem và in hợp đồng
+                                                    <i class="pi pi-print"></i>
+                                                    Xem và in hợp đồng
                                                 </button>
                                                 <button
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractDelete
+                                                                permissionConstant.ManageContractDelete,
                                                             ]
                                                         )
                                                     "
@@ -271,7 +368,6 @@
                                         </p-overlayPanel>
                                     </td>
                                 </tr>
-
                             </ng-template>
                         </p-table>
 
@@ -297,7 +393,7 @@
                                 >
                                     <span>Ngày có hiệu lực: </span>
                                     <span>{{
-                                        effectiveDate | date : "dd/MM/yyyy"
+                                        effectiveDate | date: "dd/MM/yyyy"
                                     }}</span>
                                 </div>
 
@@ -330,7 +426,7 @@
                                                 "
                                                 [style]="{
                                                     height: '40px',
-                                                    width: '100%'
+                                                    width: '100%',
                                                 }"
                                                 inputId="icondisplay"
                                                 [class.disabled-calendar]="
@@ -362,7 +458,9 @@
                                     label="Hủy"
                                     (click)="onCancelTerminate()"
                                     class="p-button-outlined"
-                                    [attr.data-tooltip]="'Hủy thao tác chấm dứt'"
+                                    [attr.data-tooltip]="
+                                        'Hủy thao tác chấm dứt'
+                                    "
                                     [title]="'Hủy thao tác chấm dứt'"
                                 ></button>
                                 <button
@@ -371,7 +469,9 @@
                                     label="Chấm dứt"
                                     (click)="onConfirmTerminate()"
                                     class="p-button-danger"
-                                    [attr.data-tooltip]="'Xác nhận chấm dứt hợp đồng'"
+                                    [attr.data-tooltip]="
+                                        'Xác nhận chấm dứt hợp đồng'
+                                    "
                                     [title]="'Xác nhận chấm dứt hợp đồng'"
                                 ></button>
                             </p-footer>
@@ -409,8 +509,14 @@
 </main>
 <!-- End #main -->
 
-<div id="contract-content" class="contract" style="display: none; text-align: justify;">
-    <div style="display: flex; justify-content: space-around; margin-top:-40px">
+<div
+    id="contract-content"
+    class="contract"
+    style="display: none; text-align: justify"
+>
+    <div
+        style="display: flex; justify-content: space-around; margin-top: -40px"
+    >
         <div class="image-contract">
             <img
                 style="margin: 0 30px"
@@ -465,7 +571,7 @@
         <table class="tab-worker">
             <tr>
                 <td>Ông/bà:</td>
-                <td  class="lastFirtName"></td>
+                <td class="lastFirtName"></td>
                 <td class="small-cell" colspan="2">Quốc tịch: Việt Nam</td>
             </tr>
             <tr>
@@ -475,19 +581,19 @@
             </tr>
             <tr>
                 <td>Nghề nghiệp:</td>
-                <td class="profession "></td>
+                <td class="profession"></td>
                 <td class="small-cell gender" colspan="2">Giới tính:</td>
             </tr>
             <tr>
-                <td >Địa chỉ thường trú:</td>
+                <td>Địa chỉ thường trú:</td>
                 <td colspan="3" class="residenceAddress"></td>
             </tr>
             <tr>
-                <td >Địa chỉ cư trú:</td>
+                <td>Địa chỉ cư trú:</td>
                 <td colspan="3" class="currentAddresss"></td>
             </tr>
             <tr>
-                <td >Số CMND/CCCD:</td>
+                <td>Số CMND/CCCD:</td>
                 <td class="paperNumber"></td>
                 <td class="paperProvideDate">Cấp ngày:</td>
                 <td class="small-cell paperProvideLocation">Tại:</td>
@@ -518,9 +624,8 @@
         <p class="section1 avoid">
             - Địa điểm làm việc: Công ty cổ phần Công nghệ và Truyền thông SMO –
             SMO MEDIA JSC<br />
-            <span class="section1 positionName"
-                >
-            - Bộ phận công tác: ……………………………………………………………………………………
+            <span class="section1 positionName">
+                - Bộ phận công tác: ……………………………………………………………………………………
             </span>
             <br />
             <span class="section1 organizationName"
@@ -641,7 +746,8 @@
             <b><i>1. Nghĩa vụ:</i></b> <br />
             - Thực hiện đầy đủ những điều kiện cần thiết đã cam kết trong HĐLĐ
             để Người lao động đạt hiệu <br />
-            quả công việc cao. Bảo đảm việc làm cho Người lao động theo HĐLĐ đã ký. <br /><br />
+            quả công việc cao. Bảo đảm việc làm cho Người lao động theo HĐLĐ đã
+            ký. <br /><br />
             - Thanh toán đầy đủ, đúng hạn các chế độ và quyền lợi cho người lao
             động theo hợp đồng lao động, thỏa ước lao động tập thể (nếu có);
             <br />
@@ -738,7 +844,7 @@
             <div class="worker-employee">
                 <p style="font-weight: bold">NGƯỜI LAO ĐỘNG</p>
                 <p>(Ký, ghi rõ họ tên)</p>
-                <p class="employe" style="margin-top: 68px;"></p>
+                <p class="employe" style="margin-top: 68px"></p>
             </div>
             <div class="worker-employer">
                 <p style="font-weight: bold">NGƯỜI SỬ DỤNG LAO ĐỘNG</p>
@@ -748,7 +854,6 @@
         </h3>
     </div>
 </div>
-
 
 <p-dialog
     [(visible)]="showDiaLogDelete"

@@ -21,15 +21,32 @@
 }
 
 .filter-row {
-    display: grid;
-    grid-template-columns: minmax(220px, 1fr) repeat(4, auto);
-    gap: 0.5rem;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
     padding: 0.25rem 0;
+    flex-wrap: nowrap;
+}
+
+.filter-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.filter-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
 }
 
 .search-col {
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 .search-input-wrap,
@@ -41,7 +58,7 @@
     position: relative;
 }
 
-::ng-deep .profile-show-page .search-input-wrap > i {
+::ng-deep .profile-show-page .search-input-wrap>i {
     left: 0.75rem;
     color: #64748b;
     z-index: 1;
@@ -101,6 +118,58 @@
 
 .column-toggle-wrap {
     position: relative;
+}
+
+.column-toggle-placeholder {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+:host ::ng-deep .profile-show-page .app-table-column-toggle-toolbar {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 0 !important;
+}
+
+:host ::ng-deep .profile-show-page .app-table-column-toggle-button {
+    height: 40px;
+    min-height: 40px;
+    border-radius: 6px;
+    font-weight: 500;
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    line-height: 1;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+:host ::ng-deep .profile-show-page .app-table-column-toggle-button:hover {
+    background: #f8fafc;
+    transform: none !important;
+}
+
+:host ::ng-deep .profile-show-page .app-table-column-toggle-button i {
+    font-size: 14px;
+}
+
+:host ::ng-deep .profile-show-page .app-table-column-toggle-button span {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.column-list {
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .column-panel {
@@ -248,7 +317,7 @@
     padding: 0.8rem 0.9rem 0.4rem;
 }
 
-::ng-deep .profile-show-page .p-datatable .p-datatable-thead > tr > th {
+::ng-deep .profile-show-page .p-datatable .p-datatable-thead>tr>th {
     background: #f8fafc;
     color: #334155;
     font-weight: 600;
@@ -258,13 +327,13 @@
     padding: 0.7rem 0.75rem;
 }
 
-::ng-deep .profile-show-page .p-datatable .p-datatable-tbody > tr > td {
+::ng-deep .profile-show-page .p-datatable .p-datatable-tbody>tr>td {
     padding: 0.65rem 0.75rem;
     border-bottom: 1px solid #eef2f7;
     color: #1f2937;
 }
 
-::ng-deep .profile-show-page .p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+::ng-deep .profile-show-page .p-datatable.p-datatable-striped .p-datatable-tbody>tr:nth-child(even) {
     background: #fbfdff;
 }
 
@@ -363,6 +432,15 @@
     z-index: 1102 !important;
 }
 
+/* Rows-per-page dropdown: remove extra item padding (only when the paginator RPP dropdown is open) */
+:host ::ng-deep body:has(.profile-show-page .p-paginator-rpp-options.p-inputwrapper-focus) .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding: 0 !important;
+}
+
+:host ::ng-deep .p-dropdown-items {
+    padding-left: 0 !important;
+}
+
 :host ::ng-deep .org-paginator .p-paginator-rpp-options {
     margin: 0;
     align-self: center;
@@ -418,22 +496,53 @@
 :host ::ng-deep .custom-tree-select .p-treeselect {
     width: 100%;
     min-width: 320px;
-    height: 44px;
+    height: 40px;
+    min-height: 40px;
+}
+
+:host ::ng-deep .profile-show-page .custom-tree-select .p-treeselect .p-treeselect-label,
+:host ::ng-deep .profile-show-page .custom-tree-select .p-treeselect .p-treeselect-trigger {
+    height: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
 }
 
 @media (max-width: 1200px) {
     .filter-row {
-        grid-template-columns: 1fr 1fr 1fr;
+        flex-wrap: wrap;
+        row-gap: 0.5rem;
     }
 
-    .search-col {
-        grid-column: 1 / -1;
+    .filter-left {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+    }
+
+    .filter-right {
+        margin-left: auto;
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
 }
 
 @media (max-width: 768px) {
     .filter-row {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-left,
+    .filter-right {
+        width: 100%;
+    }
+
+    .filter-left {
+        flex-wrap: wrap;
+    }
+
+    .filter-right {
+        justify-content: stretch;
     }
 
     .filter-action-col,

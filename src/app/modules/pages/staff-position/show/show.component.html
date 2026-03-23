@@ -7,15 +7,65 @@
                 <strong class="font-size-16">Danh sách vị trí</strong>
                 <app-shared-breadcrumb></app-shared-breadcrumb>
             </div>
-            <ng-template pTemplate="right">
-                <div class="flex gap-2 toolbar-actions">
+        </p-toolbar>
+        <div class="card staff-position-card">
+            <div class="filter-row">
+                <div class="filter-left">
+                    <div class="flex flex-column search-col">
+                        <span
+                            class="block mt-2 md:mt-0 p-input-icon-left search-input-wrap"
+                        >
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                placeholder="Tìm theo Mã/tên vị trí"
+                                [(ngModel)]="queryParameters.keyWord"
+                                class="filter-input"
+                            />
+                        </span>
+                    </div>
+                    <div class="flex flex-column filter-control-wrap">
+                        <p-dropdown
+                            class="filter-control"
+                            [options]="constant.staffPosition.status"
+                            optionLabel="label"
+                            optionValue="value"
+                            [(ngModel)]="queryParameters.status"
+                            [filter]="true"
+                            filterBy="label"
+                            filterPlaceholder="Tìm trạng thái"
+                            [showClear]="true"
+                            panelStyleClass="staff-position-status-panel"
+                            placeholder="Chọn trạng thái"
+                        >
+                        </p-dropdown>
+                    </div>
+                    <div
+                        class="flex flex-column filter-action-col filter-end-btn"
+                    >
+                        <button
+                            pButton
+                            type="button"
+                            class="buttonfilter filter-btn"
+                            (click)="handleSearchStaffPostion()"
+                        >
+                            Lọc
+                        </button>
+                    </div>
+                    <div
+                        class="column-toggle-placeholder"
+                        aria-hidden="true"
+                    ></div>
+                </div>
+                <div class="flex gap-2 toolbar-actions filter-toolbar-actions">
                     <button
                         pButton
                         pRipple
                         [routerLink]="['/staff-position/create']"
                         *ngIf="
                             hasPermissionHelper.hasPermissions([
-                                permissionConstant.ManagePositionCreate
+                                permissionConstant.ManagePositionCreate,
                             ])
                         "
                         icon="pi pi-plus"
@@ -26,7 +76,7 @@
                         label="Xóa"
                         *ngIf="
                             hasPermissionHelper.hasPermissions([
-                                permissionConstant.ManagePositionDelete
+                                permissionConstant.ManagePositionDelete,
                             ])
                         "
                         [disabled]="
@@ -35,47 +85,6 @@
                         (click)="handleOnDeleteMultiple($event)"
                         severity="danger"
                     ></p-button>
-                </div>
-            </ng-template>
-        </p-toolbar>
-        <div class="card staff-position-card">
-            <div class="filter-row">
-                <div class="flex flex-column search-col">
-                    <span class="block mt-2 md:mt-0 p-input-icon-left search-input-wrap">
-                        <i class="pi pi-search"></i>
-                        <input
-                            pInputText
-                            type="text"
-                            placeholder="Tìm theo Mã/tên vị trí"
-                            [(ngModel)]="queryParameters.keyWord"
-                            class="filter-input"
-                        />
-                    </span>
-                </div>
-                <div class="flex flex-column filter-control-wrap">
-                    <p-dropdown
-                        class="filter-control"
-                        [options]="constant.staffPosition.status"
-                        optionLabel="label"
-                        optionValue="value"
-                        [(ngModel)]="queryParameters.status"
-                        [filter]="true"
-                        filterBy="label"
-                        filterPlaceholder="Tìm trạng thái"
-                        [showClear]="true"
-                        placeholder="Chọn trạng thái"
-                    >
-                    </p-dropdown>
-                </div>
-                <div class="flex flex-column filter-action-col filter-end-btn">
-                    <button
-                        pButton
-                        type="button"
-                        class="buttonfilter filter-btn"
-                        (click)="handleSearchStaffPostion()"
-                    >
-                        Lọc
-                    </button>
                 </div>
             </div>
 
@@ -94,11 +103,24 @@
                             <th>
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
-                            <th *ngIf="isColumnVisible('positionCode')">Mã vị trí</th>
-                            <th *ngIf="isColumnVisible('positionName')">Tên vị trí</th>
-                            <th *ngIf="isColumnVisible('groupPosition')">Đơn vị</th>
-                            <th *ngIf="isColumnVisible('staffTitle')">Chức danh</th>
-                            <th *ngIf="isColumnVisible('status')" class="text-center">Trạng thái theo dõi</th>
+                            <th *ngIf="isColumnVisible('positionCode')">
+                                Mã vị trí
+                            </th>
+                            <th *ngIf="isColumnVisible('positionName')">
+                                Tên vị trí
+                            </th>
+                            <th *ngIf="isColumnVisible('groupPosition')">
+                                Đơn vị
+                            </th>
+                            <th *ngIf="isColumnVisible('staffTitle')">
+                                Chức danh
+                            </th>
+                            <th
+                                *ngIf="isColumnVisible('status')"
+                                class="text-center"
+                            >
+                                Trạng thái theo dõi
+                            </th>
                             <th class="text-center">Hành động</th>
                         </tr>
                     </ng-template>
@@ -112,18 +134,25 @@
                             <td *ngIf="isColumnVisible('positionCode')">
                                 {{ rowData.positionCode }}
                             </td>
-                            <td *ngIf="isColumnVisible('positionName')">{{ rowData.positionName }}</td>
+                            <td *ngIf="isColumnVisible('positionName')">
+                                {{ rowData.positionName }}
+                            </td>
                             <td *ngIf="isColumnVisible('groupPosition')">
                                 {{ rowData.groupPosition?.groupPositionName }}
                             </td>
-                            <td *ngIf="isColumnVisible('staffTitle')">{{ rowData.staffTitle?.staffTitleName }}</td>
-                            <td *ngIf="isColumnVisible('status')" class="text-center">
+                            <td *ngIf="isColumnVisible('staffTitle')">
+                                {{ rowData.staffTitle?.staffTitleName }}
+                            </td>
+                            <td
+                                *ngIf="isColumnVisible('status')"
+                                class="text-center"
+                            >
                                 <p-inputSwitch
                                     [(ngModel)]="rowData.staffPositionStatus"
                                     (onChange)="onStatusChange(rowData)"
                                     [disabled]="
                                         !hasPermissionHelper.hasPermissions([
-                                            permissionConstant.ManagePositionEdit
+                                            permissionConstant.ManagePositionEdit,
                                         ])
                                     "
                                 ></p-inputSwitch>
@@ -149,7 +178,7 @@
                                         (click)="navigateToEdit(rowData?.id)"
                                         *ngIf="
                                             hasPermissionHelper.hasPermissions([
-                                                permissionConstant.ManagePositionEdit
+                                                permissionConstant.ManagePositionEdit,
                                             ])
                                         "
                                         ><i
@@ -161,7 +190,7 @@
                                         class="icon-tool"
                                         *ngIf="
                                             hasPermissionHelper.hasPermissions([
-                                                permissionConstant.ManagePositionDelete
+                                                permissionConstant.ManagePositionDelete,
                                             ])
                                         "
                                         (click)="
@@ -204,3 +233,56 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog
+    [(visible)]="showDiaLogDelete"
+    [modal]="true"
+    [header]="isMultipleDelete ? 'Xóa nhiều vị trí' : 'Xóa vị trí'"
+    [style]="{ width: '450px' }"
+    [closable]="false"
+>
+    <div class="delete-dialog-content">
+        <p *ngIf="!isMultipleDelete; else multipleDeleteMsg">
+            Bạn có chắc muốn xóa vị trí này? Lưu ý: Sau khi xóa bạn không thể
+            hoàn tác hay khôi phục.
+        </p>
+        <ng-template #multipleDeleteMsg>
+            <p>
+                Bạn có chắc muốn xóa {{ itemsToDelete.length }} vị trí? Lưu ý:
+                Sau khi xóa bạn không thể hoàn tác hay khôi phục.
+            </p>
+        </ng-template>
+
+        <strong class="name-delete" *ngIf="!isMultipleDelete && itemToDelete">{{
+            itemToDelete.positionCode
+        }}</strong>
+        <div *ngIf="isMultipleDelete && itemsToDelete.length > 0" class="mt-3">
+            <div
+                *ngFor="let item of itemsToDelete"
+                class="name-delete"
+                style="margin-bottom: 8px"
+            >
+                {{ item.positionCode }}
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <div class="d-flex justify-content-end gap-2">
+            <button
+                pButton
+                pRipple
+                label="Hủy"
+                class="p-button-secondary"
+                (click)="closeDiaLogDelete()"
+            ></button>
+            <button
+                pButton
+                pRipple
+                label="Đồng ý"
+                class="p-button-danger"
+                (click)="confirmDeleteItem()"
+            ></button>
+        </div>
+    </ng-template>
+</p-dialog>

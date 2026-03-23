@@ -7,18 +7,6 @@
                 <strong class="font-size-16">Danh sách hồ sơ</strong>
                 <app-shared-breadcrumb></app-shared-breadcrumb>
             </div>
-            <ng-template pTemplate="right">
-                <button
-                    pButton
-                    pRipple
-                    [routerLink]="['/personnel-record']"
-                    icon="pi pi-plus"
-                    label="Thêm hồ sơ"
-                    (click)="staffPositionVisible = true"
-                    [attr.data-tooltip]="'Thêm hồ sơ'"
-                    [title]="'Thêm hồ sơ'"
-                ></button>
-            </ng-template>
         </p-toolbar>
         <div class="card profile-card">
             <p-table
@@ -32,72 +20,105 @@
             >
                 <ng-template pTemplate="caption">
                     <div class="filter-row">
-                        <div class="search-col">
-                            <span class="p-input-icon-left search-input-wrap">
-                                <i class="pi pi-search"></i>
-                                <input
-                                    pInputText
-                                    type="text"
-                                    class="form-control"
-                                    [(ngModel)]="queryParameters.keyWord"
-                                    (keydown.enter)="$event.preventDefault(); handleSearchProfile()"
-                                    placeholder="Tìm theo tên, SĐT..."
+                        <div class="filter-left">
+                            <div class="search-col">
+                                <span
+                                    class="p-input-icon-left search-input-wrap"
+                                >
+                                    <i class="pi pi-search"></i>
+                                    <input
+                                        pInputText
+                                        type="text"
+                                        class="form-control"
+                                        [(ngModel)]="queryParameters.keyWord"
+                                        (keydown.enter)="
+                                            $event.preventDefault();
+                                            handleSearchProfile()
+                                        "
+                                        placeholder="Tìm theo tên, SĐT..."
+                                    />
+                                </span>
+                            </div>
+
+                            <div class="filter-action-col">
+                                <p-dropdown
+                                    [options]="
+                                        constant.profileConstant.workingStatus
+                                    "
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    [(ngModel)]="queryParameters.workingStatus"
+                                    [showClear]="true"
+                                    [filter]="true"
+                                    filterBy="label"
+                                    filterPlaceholder="Tìm trạng thái"
+                                    placeholder="Chọn trạng thái"
                                 />
-                            </span>
+                            </div>
+
+                            <div class="filter-action-col">
+                                <p-treeSelect
+                                    class="w-full custom-tree-select"
+                                    [(ngModel)]="
+                                        queryParameters.organizationObject
+                                    "
+                                    [options]="organizations"
+                                    optionValue="data"
+                                    placeholder="Chọn đơn vị"
+                                    [showClear]="true"
+                                    [filter]="true"
+                                    filterBy="label"
+                                    filterPlaceholder="Tìm đơn vị"
+                                >
+                                </p-treeSelect>
+                            </div>
                         </div>
 
-                        <div class="filter-action-col">
-                            <p-dropdown
-                                [options]="
-                                    constant.profileConstant.workingStatus
-                                "
-                                optionLabel="label"
-                                optionValue="value"
-                                [(ngModel)]="queryParameters.workingStatus"
-                                [showClear]="true"
-                                [filter]="true"
-                                filterBy="label"
-                                filterPlaceholder="Tìm trạng thái"
-                                placeholder="Chọn trạng thái"
-                            />
-                        </div>
+                        <div class="filter-right">
+                            <div class="filter-action-col">
+                                <p-button
+                                    type="button"
+                                    icon="pi pi-search"
+                                    class="buttonfilter"
+                                    (click)="handleSearchProfile()"
+                                    [attr.data-tooltip]="'Tìm kiếm'"
+                                    [title]="'Tìm kiếm'"
+                                ></p-button>
+                            </div>
 
-                        <div class="filter-action-col">
-                            <p-treeSelect
-                                class="w-full custom-tree-select"
-                                [(ngModel)]="queryParameters.organizationObject"
-                                [options]="organizations"
-                                optionValue="data"
-                                placeholder="Chọn đơn vị"
-                                [showClear]="true"
-                                [filter]="true"
-                                filterBy="label"
-                                filterPlaceholder="Tìm đơn vị"
-                            >
-                            </p-treeSelect>
-                        </div>
-                        <div class="flex flex-column">
-                            <p-button
-                                type="button"
-                                icon="pi pi-search"
-                                class="buttonfilter"
-                                (click)="handleSearchProfile()"
-                                [attr.data-tooltip]="'Tìm kiếm'"
-                                [title]="'Tìm kiếm'"
-                            ></p-button>
-                        </div>
+                            <div class="filter-action-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    icon="pi pi-cloud-download"
+                                    class="buttonfilter button-outline"
+                                    (click)="exportToExcel()"
+                                    [attr.data-tooltip]="'Xuất Excel'"
+                                    [title]="'Xuất Excel'"
+                                ></button>
+                            </div>
 
-                        <div class="filter-action-col">
-                            <button
-                                pButton
-                                pRipple
-                                type="button"
-                                icon="pi pi-cloud-download"
-                                class="buttonfilter button-outline"
-                                (click)="exportToExcel()"
-                                [attr.data-tooltip]="'Xuất Excel'"
-                                [title]="'Xuất Excel'"
-                            ></button>
+                            <div class="filter-action-col">
+                                <div
+                                    class="column-toggle-placeholder"
+                                    data-column-toggle-placeholder
+                                    aria-hidden="true"
+                                ></div>
+                            </div>
+
+                            <div class="filter-action-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    [routerLink]="['/personnel-record']"
+                                    icon="pi pi-plus"
+                                    label="Thêm hồ sơ"
+                                    (click)="staffPositionVisible = true"
+                                    [attr.data-tooltip]="'Thêm hồ sơ'"
+                                    [title]="'Thêm hồ sơ'"
+                                ></button>
+                            </div>
                         </div>
                     </div>
                 </ng-template>
@@ -108,13 +129,48 @@
                         </th>
                         <th style="white-space: nowrap">Mã nhân viên</th>
                         <th style="white-space: nowrap">Họ và tên</th>
-                        <th *ngIf="isColumnVisible('sex')" style="white-space: nowrap">Giới tính</th>
-                        <th *ngIf="isColumnVisible('dateOfBirth')" style="white-space: nowrap">Ngày sinh</th>
-                        <th *ngIf="isColumnVisible('phoneNumber')" style="white-space: nowrap">Số điện thoại</th>
-                        <th *ngIf="isColumnVisible('companyEmail')" style="white-space: nowrap">Email công việc</th>
-                        <th *ngIf="isColumnVisible('staffTitle')" style="white-space: nowrap">Chức vụ</th>
-                        <th *ngIf="isColumnVisible('staffPosition')" style="white-space: nowrap">Vị trí công việc</th>
-                        <th *ngIf="isColumnVisible('organization')" style="white-space: nowrap">Đơn vị</th>
+                        <th
+                            *ngIf="isColumnVisible('sex')"
+                            style="white-space: nowrap"
+                        >
+                            Giới tính
+                        </th>
+                        <th
+                            *ngIf="isColumnVisible('dateOfBirth')"
+                            style="white-space: nowrap"
+                        >
+                            Ngày sinh
+                        </th>
+                        <th
+                            *ngIf="isColumnVisible('phoneNumber')"
+                            style="white-space: nowrap"
+                        >
+                            Số điện thoại
+                        </th>
+                        <th
+                            *ngIf="isColumnVisible('companyEmail')"
+                            style="white-space: nowrap"
+                        >
+                            Email công việc
+                        </th>
+                        <th
+                            *ngIf="isColumnVisible('staffTitle')"
+                            style="white-space: nowrap"
+                        >
+                            Chức vụ
+                        </th>
+                        <th
+                            *ngIf="isColumnVisible('staffPosition')"
+                            style="white-space: nowrap"
+                        >
+                            Vị trí công việc
+                        </th>
+                        <th
+                            *ngIf="isColumnVisible('organization')"
+                            style="white-space: nowrap"
+                        >
+                            Đơn vị
+                        </th>
                         <th style="white-space: nowrap">Hành động</th>
                     </tr>
                 </ng-template>
@@ -147,11 +203,21 @@
                             </div>
                         </td>
                         <td *ngIf="isColumnVisible('sex')">{{ item?.sex }}</td>
-                        <td *ngIf="isColumnVisible('dateOfBirth')">{{ item?.dateOfBirth | date : "dd/MM/yyyy" }}</td>
-                        <td *ngIf="isColumnVisible('phoneNumber')">{{ item?.phoneNumber }}</td>
-                        <td *ngIf="isColumnVisible('companyEmail')">{{ item?.companyEmail }}</td>
-                        <td *ngIf="isColumnVisible('staffTitle')">{{ item?.staffTitle?.staffTitleName }}</td>
-                        <td *ngIf="isColumnVisible('staffPosition')">{{ item?.staffPosition?.positionName }}</td>
+                        <td *ngIf="isColumnVisible('dateOfBirth')">
+                            {{ item?.dateOfBirth | date: "dd/MM/yyyy" }}
+                        </td>
+                        <td *ngIf="isColumnVisible('phoneNumber')">
+                            {{ item?.phoneNumber }}
+                        </td>
+                        <td *ngIf="isColumnVisible('companyEmail')">
+                            {{ item?.companyEmail }}
+                        </td>
+                        <td *ngIf="isColumnVisible('staffTitle')">
+                            {{ item?.staffTitle?.staffTitleName }}
+                        </td>
+                        <td *ngIf="isColumnVisible('staffPosition')">
+                            {{ item?.staffPosition?.positionName }}
+                        </td>
                         <td *ngIf="isColumnVisible('organization')">
                             {{ item?.organization?.organizationName }}
                         </td>
@@ -204,21 +270,16 @@
                                     ></i
                                 ></span>
                                 <span
-
                                     class="mr-2 icon-tool"
                                     [routerLink]="[
                                         '/update-personal-record',
-                                        item.id
+                                        item.id,
                                     ]"
                                     *ngIf="
-                                    this.permisionHelper.hasPermissions(
-                                        [
-
-                                                permissionConstant?.ManageProfileEdit
-
-                                        ]
-                                    )
-                                "
+                                        this.permisionHelper.hasPermissions([
+                                            permissionConstant?.ManageProfileEdit,
+                                        ])
+                                    "
                                     [attr.data-tooltip]="'Sửa hồ sơ'"
                                     [title]="'Sửa hồ sơ'"
                                     ><i

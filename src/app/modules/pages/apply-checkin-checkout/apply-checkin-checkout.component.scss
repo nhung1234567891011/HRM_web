@@ -259,3 +259,179 @@ textarea {
     cursor: default;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* List page layout (align with other list screens) */
+.checkin-checkout-page {
+    .table-shell {
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: var(--card-shadow);
+        padding: 1rem;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 4px 0;
+    }
+
+    .filter-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .filter-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 0 0 auto;
+        margin-left: auto;
+        justify-content: flex-end;
+    }
+
+    .filter-col {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .search-col {
+        width: 280px;
+        max-width: 100%;
+        flex: 0 1 280px;
+    }
+
+    .search-input-wrap {
+        width: 100%;
+        display: block;
+    }
+
+    .paging-bot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+}
+
+:host ::ng-deep .checkin-checkout-page .search-input-wrap .p-inputtext,
+:host ::ng-deep .checkin-checkout-page .p-button,
+:host ::ng-deep .checkin-checkout-page .p-button button,
+:host ::ng-deep .checkin-checkout-page button.p-button {
+    height: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .checkin-checkout-page .filter-btn-icon .p-button {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+}
+
+:host ::ng-deep .checkin-checkout-page .filter-btn-column .p-button {
+    width: auto;
+    min-width: 132px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+:host ::ng-deep .checkin-checkout-page .btn-add.p-button,
+:host ::ng-deep .checkin-checkout-page .btn-add button.p-button,
+:host ::ng-deep .checkin-checkout-page button.btn-add.p-button {
+    height: 40px;
+    min-height: 40px;
+}
+
+.checkin-checkout-page {
+    .column-panel {
+        padding: 8px;
+        min-width: 200px;
+    }
+
+    .column-panel-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .column-panel-item {
+        margin-bottom: 6px;
+    }
+}
+
+:host ::ng-deep .column-toggle-overlay.p-overlaypanel {
+    border: 1px solid #d7e2f0;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(21, 43, 67, 0.18);
+}
+
+:host ::ng-deep .column-toggle-overlay .p-overlaypanel-content {
+    padding: 12px;
+}
+
+:host ::ng-deep .column-toggle-overlay .column-panel {
+    min-width: 240px;
+    padding: 0;
+}
+
+:host ::ng-deep .column-toggle-overlay .column-panel-title {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f3552;
+}
+
+:host ::ng-deep .column-toggle-overlay .column-panel-item {
+    margin: 0;
+    padding: 4px 0;
+}
+
+:host ::ng-deep .column-toggle-overlay .column-panel-item .p-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+:host ::ng-deep .column-toggle-overlay .column-panel-item .p-checkbox-label {
+    margin-left: 0 !important;
+    line-height: 1.25;
+}
+
+:host ::ng-deep .checkin-checkout-page .aligned-paging .p-paginator {
+    padding: 0;
+}
+
+:host ::ng-deep .checkin-checkout-page .aligned-paging .p-paginator-rpp-options {
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .checkin-checkout-page .app-table-column-toggle-toolbar {
+    margin-bottom: 0 !important;
+}
+
+/* Rows-per-page dropdown panel is appended to body; scope from body to apply */
+body:has(.checkin-checkout-page .aligned-paging .p-paginator-rpp-options:is(.p-inputwrapper-focus, .p-dropdown-open, .p-focus)) .p-dropdown-panel .p-dropdown-items {
+    padding-left: 0 !important;
+    padding-inline-start: 0 !important;
+}
+
+body:has(.checkin-checkout-page .aligned-paging .p-paginator-rpp-options:is(.p-inputwrapper-focus, .p-dropdown-open, .p-focus)) .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding-left: 0 !important;
+}
+
+:host ::ng-deep .p-dropdown-items {
+    padding-left: 0 !important;
+}

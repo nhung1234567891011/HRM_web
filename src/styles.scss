@@ -204,7 +204,7 @@ li {}
 }
 
 .p-datatable .p-datatable-tbody>tr:hover {
-    transform: scale(1.0015);
+    transform: none;
 }
 
 .main table thead th,
@@ -363,7 +363,8 @@ li {}
     background: #fff;
     color: #24405f;
     border-radius: 8px;
-    height: 36px;
+    height: 40px;
+    min-height: 40px;
     padding: 0 12px;
     font-size: 13px;
     font-weight: 600;
@@ -512,13 +513,11 @@ li {}
     box-shadow: 0 6px 14px rgba(20, 87, 194, 0.25);
 }
 
-[data-tooltip],
-[title] {
+[data-tooltip] {
     position: relative;
 }
 
-[data-tooltip]::after,
-[title]::after {
+[data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
     left: 50%;
@@ -539,24 +538,15 @@ li {}
     z-index: 2000;
 }
 
-// [title]::after {
-//     content: attr(title);
-// }
-
 /* PrimeNG buttons often clip pseudo-elements, so tooltips need visible overflow. */
 button[data-tooltip],
-button[title],
 [pButton][data-tooltip],
-[pButton][title],
-.p-button[data-tooltip],
-.p-button[title] {
+.p-button[data-tooltip] {
     overflow: visible !important;
 }
 
 [data-tooltip]:hover::after,
-[data-tooltip]:focus-visible::after,
-[title]:hover::after,
-[title]:focus-visible::after {
+[data-tooltip]:focus-visible::after {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0);

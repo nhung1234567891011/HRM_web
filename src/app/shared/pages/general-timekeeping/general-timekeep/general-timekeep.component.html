@@ -1,26 +1,8 @@
-<main id="main" class="main">
+<main id="main" class="main general-timekeep-page">
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Bảng chấm công tổng hợp</strong>
-<app-shared-breadcrumb></app-shared-breadcrumb>
-        </div>
-
-        <div
-            class="btn-add-wrapper"
-            *ngIf="
-                this.permisionHelper.hasPermissions([
-                    permissionConstant.ManageGeneralTimekeepingCreate
-                ])
-            "
-        >
-            <button
-                pButton
-                pRipple
-                label="Thêm mới"
-                icon="pi pi-plus"
-                style="height: 40px; width: 130px; border-radius: 10px"
-                (click)="showDialogAdd()"
-            ></button>
+            <app-shared-breadcrumb></app-shared-breadcrumb>
         </div>
     </div>
     <div class="toast-container">
@@ -32,287 +14,274 @@
     </div>
     <!-- End Page Title -->
     <section class="section k-list-table">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 mt-3">
-                            <p-autoComplete
-                                [style]="{ height: '43px', width: '100%' }"
-                                [(ngModel)]="selectedEmployee"
-                                [suggestions]="filteredName"
-                                (completeMethod)="searchName($event)"
-                                [field]="'displayName'"
-                                [showClear]="true"
-                                placeholder="Tìm kiếm tên bảng chấm công"
-                            >
-                            </p-autoComplete>
-                        </div>
-                        <div class="col-lg-3 mt-3">
-                            <div class="filter-container">
-                                <button (click)="prevMonth()">
-                                    <i class="pi pi-arrow-left"></i>
-                                </button>
-                                <span>{{
-                                    currentMonthYear.toLocaleDateString(
-                                        "vi-VN",
-                                        { month: "long", year: "numeric" }
-                                    )
-                                }}</span>
-                                <button (click)="nextMonth()">
-                                    <i class="pi pi-arrow-right"></i>
-                                </button>
+        <div class="table-shell">
+            <p-table
+                [value]="summaryTimesheet"
+                [rows]="pageSize"
+                [totalRecords]="totalRecords"
+                [paginator]="false"
+                styleClass="p-datatable-striped"
+            >
+                <ng-template pTemplate="caption">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <div class="filter-col search-col">
+                                <p-autoComplete
+                                    class="search-input"
+                                    [(ngModel)]="selectedEmployee"
+                                    [suggestions]="filteredName"
+                                    (completeMethod)="searchName($event)"
+                                    [field]="'displayName'"
+                                    [showClear]="true"
+                                    placeholder="Tìm kiếm tên bảng chấm công"
+                                >
+                                </p-autoComplete>
+                            </div>
+
+                            <div class="filter-col month-col">
+                                <div class="month-nav">
+                                    <button
+                                        pButton
+                                        pRipple
+                                        type="button"
+                                        class="p-button-outlined p-button-secondary month-nav-btn"
+                                        icon="pi pi-arrow-left"
+                                        (click)="prevMonth()"
+                                    ></button>
+                                    <span class="month-nav-label">
+                                        {{
+                                            currentMonthYear.toLocaleDateString(
+                                                "vi-VN",
+                                                {
+                                                    month: "long",
+                                                    year: "numeric",
+                                                }
+                                            )
+                                        }}
+                                    </span>
+                                    <button
+                                        pButton
+                                        pRipple
+                                        type="button"
+                                        class="p-button-outlined p-button-secondary month-nav-btn"
+                                        icon="pi pi-arrow-right"
+                                        (click)="nextMonth()"
+                                    ></button>
+                                </div>
+                            </div>
+
+                            <div class="filter-col org-col">
+                                <p-treeSelect
+                                    [options]="treeData"
+                                    [(ngModel)]="selectedNode"
+                                    [placeholder]="'Tất cả đơn vị'"
+                                    [showClear]="true"
+                                ></p-treeSelect>
+                            </div>
+
+                            <div class="filter-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    label="Lọc"
+                                    class="buttonfilter"
+                                    (click)="getPagingSummaryTimesheet()"
+                                ></button>
                             </div>
                         </div>
 
-                        <div class="col-lg-3 mt-3">
-                            <p-treeSelect
-                                [options]="treeData"
-                                [(ngModel)]="selectedNode"
-                                [placeholder]="'Tất cả đơn vị'"
-                                [showClear]="true"
-                                [style]="{ width: '100%' }"
-                            ></p-treeSelect>
-                        </div>
+                        <div class="filter-right">
+                            <div
+                                class="col-toggle-slot column-toggle-placeholder"
+                                data-column-toggle-placeholder
+                            ></div>
 
-                        <div class="col-lg-1 mt-3">
                             <button
-                                style="height: 43px"
+                                *ngIf="
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageGeneralTimekeepingCreate,
+                                    ])
+                                "
                                 pButton
                                 pRipple
-                                label="Lọc"
-                                class="buttonfilter"
-                                (click)="getPagingSummaryTimesheet()"
+                                type="button"
+                                label="Thêm mới"
+                                icon="pi pi-plus"
+                                class="btn-add"
+                                (click)="showDialogAdd()"
                             ></button>
                         </div>
                     </div>
-                    <div class="card mt-3">
-                        <p-table
-                            [value]="summaryTimesheet"
-                            [paginator]="true"
-                            [rows]="pageSize"
-                            [totalRecords]="totalRecords"
-                            [paginator]="false"
-                            (onPage)="onPageChange($event)"
-                            styleClass="p-datatable-striped"
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 1%">
+                            <p-checkbox
+                                [binary]="true"
+                                inputId="binary"
+                            ></p-checkbox>
+                        </th>
+                        <th style="width: 12%">Tên bảng châm công</th>
+                        <th style="width: 9%">Thời gian</th>
+                        <th style="width: 5%">Chấm công</th>
+                        <th style="width: 10%">Đơn vị áp dụng</th>
+                        <th style="width: 12%">Vị trí</th>
+                        <th style="width: 7%">Trạng thái</th>
+                        <th
+                            style="width: 4%"
+                            *ngIf="
+                                this.permisionHelper.hasPermissions([
+                                    permissionConstant.ManageGeneralTimekeepingEdit,
+                                ]) ||
+                                this.permisionHelper.hasPermissions([
+                                    permissionConstant.ManageGeneralTimekeepingEdit,
+                                ])
+                            "
                         >
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th style="width: 1%">
-                                        <p-checkbox
-                                            [binary]="true"
-                                            inputId="binary"
-                                        ></p-checkbox>
-                                    </th>
-                                    <th style="width: 12%">
-                                        Tên bảng châm công
-                                    </th>
-                                    <th style="width: 9%">Thời gian</th>
-                                    <th style="width: 5%">Chấm công</th>
-                                    <th style="width: 10%">Đơn vị áp dụng</th>
-                                    <th style="width: 12%">Vị trí</th>
-                                    <th style="width: 7%">Trạng thái</th>
-                                    <th
-                                        style="width: 4%"
-                                        *ngIf="
-                                            this.permisionHelper.hasPermissions(
-                                                [
-                                                    permissionConstant.ManageGeneralTimekeepingEdit
-                                                ]
-                                            ) ||
-                                            this.permisionHelper.hasPermissions(
-                                                [
-                                                    permissionConstant.ManageGeneralTimekeepingEdit
-                                                ]
-                                            )
-                                        "
-                                    >
-                                        Thao tác
-                                    </th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-detail>
-                                <tr>
-                                    <td>
-                                        <p-checkbox
-                                            [binary]="true"
-                                            inputId="binary"
-                                        ></p-checkbox>
-                                    </td>
-                                    <td>{{ detail.timekeepingSheetName }}</td>
-                                    <td>
-                                        {{
-                                            getMinMaxDates(
-                                                detail.summaryTimesheetNameDetailTimesheetNames
-                                            )?.minDate | date : "dd/MM/yyyy"
-                                        }}
-                                        -
-                                        {{
-                                            getMinMaxDates(
-                                                detail.summaryTimesheetNameDetailTimesheetNames
-                                            )?.maxDate | date : "dd/MM/yyyy"
-                                        }}
-                                    </td>
-                                    <td>
-                                        {{
-                                            detail.timekeepingMethod === 0
-                                                ? "Theo giờ"
-                                                : "Theo ngày"
-                                        }}
-                                    </td>
-                                    <td>
-                                        {{
-                                            detail.organization
-                                                ?.organizationName
-                                        }}
-                                    </td>
-                                    <td>
-                                        <span
-                                            *ngIf="
-                                                isAllPositionsMatch(
-                                                    detail.positionNames
-                                                )
-                                            "
-                                        >
-                                            Tất cả vị trí
-                                        </span>
-                                        <span
-                                            *ngIf="
-                                                !isAllPositionsMatch(
-                                                    detail.positionNames
-                                                )
-                                            "
-                                        >
-                                            <span
-                                                *ngIf="
-                                                    detail.positionNames
-                                                        .length <= 100
-                                                "
-                                            >
-                                                {{ detail.positionNames }}
-                                            </span>
-                                            <span
-                                                *ngIf="
-                                                    detail.positionNames
-                                                        .length > 100
-                                                "
-                                            >
-                                                <span
-                                                    *ngIf="
-                                                        !expandedRows[detail.id]
-                                                    "
-                                                >
-                                                    {{
-                                                        detail.positionNames
-                                                            | slice : 0 : 100
-                                                    }}...
-                                                    <a
-                                                        href="#"
-                                                        (click)="
-                                                            toggleRow(
-                                                                detail.id,
-                                                                $event
-                                                            )
-                                                        "
-                                                        >Xem thêm</a
-                                                    >
-                                                </span>
-                                                <span
-                                                    *ngIf="
-                                                        expandedRows[detail.id]
-                                                    "
-                                                >
-                                                    {{ detail.positionNames }}
-                                                    <a
-                                                        href="#"
-                                                        (click)="
-                                                            toggleRow(
-                                                                detail.id,
-                                                                $event
-                                                            )
-                                                        "
-                                                        >Ẩn bớt</a
-                                                    >
-                                                </span>
-                                            </span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="status-span"
-                                            [ngStyle]="{
-                                                color: getsummaryTimesheetNameStatus(
-                                                    detail.status
-                                                ).color,
-                                                'background-color':
-                                                    getsummaryTimesheetNameStatus(
-                                                        detail.status
-                                                    ).bgColor
-                                            }"
-                                        >
-                                            {{
-                                                getsummaryTimesheetNameStatus(
-                                                    detail.status
-                                                ).text
-                                            }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <i
-                                            *ngIf="
-                                                this.permisionHelper.hasPermissions(
-                                                    [
-                                                        permissionConstant.ManageGeneralTimekeepingEdit
-                                                    ]
-                                                )
-                                            "
-                                            class="pi pi-eye"
-                                            [routerLink]="[
-                                                '/summary-timesheet',
-                                                detail.id
-                                            ]"
-                                        ></i>
-                                        <i
-                                            *ngIf="
-                                                this.permisionHelper.hasPermissions(
-                                                    [
-                                                        permissionConstant.ManageGeneralTimekeepingEdit
-                                                    ]
-                                                )
-                                            "
-                                            style="padding-left: 15px"
-                                            class="pi pi-trash"
-                                        ></i>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-
-                        <div
-                            *ngIf="totalRecords === 0"
-                            style="text-align: center; margin-top: 20px"
-                        >
-                            <strong style="text-align: center; width: 100%"
-                                >Không tìm thấy kết quả phù hợp</strong
-                            >
-                        </div>
-
-                        <div class="paging-bot dg-fix">
-                            <div class="paging-info">
-                                <div [innerHTML]="currentPageReport"></div>
-                            </div>
-                            <p-paginator
-                                [rows]="this.pageSize"
-                                (onPageChange)="onPageChange($event)"
-                                [totalRecords]="
-                                    totalRecords > 0 ? totalRecords : 1
+                            Thao tác
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-detail>
+                    <tr>
+                        <td>
+                            <p-checkbox
+                                [binary]="true"
+                                inputId="binary"
+                            ></p-checkbox>
+                        </td>
+                        <td>{{ detail.timekeepingSheetName }}</td>
+                        <td>
+                            {{
+                                getMinMaxDates(
+                                    detail.summaryTimesheetNameDetailTimesheetNames
+                                )?.minDate | date: "dd/MM/yyyy"
+                            }}
+                            -
+                            {{
+                                getMinMaxDates(
+                                    detail.summaryTimesheetNameDetailTimesheetNames
+                                )?.maxDate | date: "dd/MM/yyyy"
+                            }}
+                        </td>
+                        <td>
+                            {{
+                                detail.timekeepingMethod === 0
+                                    ? "Theo giờ"
+                                    : "Theo ngày"
+                            }}
+                        </td>
+                        <td>
+                            {{ detail.organization?.organizationName }}
+                        </td>
+                        <td>
+                            <span
+                                *ngIf="
+                                    isAllPositionsMatch(detail.positionNames)
                                 "
-                                [rowsPerPageOptions]="[10, 20, 30]"
-                                [first]="(this.pageIndex - 1) * this.pageSize"
-                            ></p-paginator>
-                        </div>
-                    </div>
+                            >
+                                Tất cả vị trí
+                            </span>
+                            <span
+                                *ngIf="
+                                    !isAllPositionsMatch(detail.positionNames)
+                                "
+                            >
+                                <span
+                                    *ngIf="detail.positionNames.length <= 100"
+                                >
+                                    {{ detail.positionNames }}
+                                </span>
+                                <span *ngIf="detail.positionNames.length > 100">
+                                    <span *ngIf="!expandedRows[detail.id]">
+                                        {{
+                                            detail.positionNames
+                                                | slice: 0 : 100
+                                        }}...
+                                        <a
+                                            href="#"
+                                            (click)="
+                                                toggleRow(detail.id, $event)
+                                            "
+                                            >Xem thêm</a
+                                        >
+                                    </span>
+                                    <span *ngIf="expandedRows[detail.id]">
+                                        {{ detail.positionNames }}
+                                        <a
+                                            href="#"
+                                            (click)="
+                                                toggleRow(detail.id, $event)
+                                            "
+                                            >Ẩn bớt</a
+                                        >
+                                    </span>
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <span
+                                class="status-span"
+                                [ngStyle]="{
+                                    color: getsummaryTimesheetNameStatus(
+                                        detail.status
+                                    ).color,
+                                    'background-color':
+                                        getsummaryTimesheetNameStatus(
+                                            detail.status
+                                        ).bgColor,
+                                }"
+                            >
+                                {{
+                                    getsummaryTimesheetNameStatus(detail.status)
+                                        .text
+                                }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <i
+                                    *ngIf="
+                                        this.permisionHelper.hasPermissions([
+                                            permissionConstant.ManageGeneralTimekeepingEdit,
+                                        ])
+                                    "
+                                    class="pi pi-eye"
+                                    [routerLink]="[
+                                        '/summary-timesheet',
+                                        detail.id,
+                                    ]"
+                                ></i>
+                                <i
+                                    *ngIf="
+                                        this.permisionHelper.hasPermissions([
+                                            permissionConstant.ManageGeneralTimekeepingEdit,
+                                        ])
+                                    "
+                                    class="pi pi-trash"
+                                ></i>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <div *ngIf="totalRecords === 0" class="empty-state">
+                <strong>Không tìm thấy kết quả phù hợp</strong>
+            </div>
+
+            <div class="paging-bot aligned-paging">
+                <div class="paging-info">
+                    <div [innerHTML]="currentPageReport"></div>
                 </div>
+                <p-paginator
+                    [rows]="this.pageSize"
+                    (onPageChange)="onPageChange($event)"
+                    [totalRecords]="totalRecords > 0 ? totalRecords : 1"
+                    [rowsPerPageOptions]="[10, 20, 30]"
+                    [first]="(this.pageIndex - 1) * this.pageSize"
+                ></p-paginator>
             </div>
         </div>
         <!---->
@@ -325,6 +294,7 @@
     [modal]="true"
     [style]="{ width: '800px' }"
     [closable]="true"
+    styleClass="general-timekeep-dialog"
     (onHide)="closeDialogAdd()"
 >
     <form [formGroup]="detailForm">
@@ -352,7 +322,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('organizationId')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('organizationId')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Đơn vị không được bỏ trống
@@ -390,7 +364,10 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('summaryTimesheetNameStaffPositions')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('summaryTimesheetNameStaffPositions')
+                                ?.errors?.['required']
+                        "
                         class="error-message"
                     >
                         Vị trí không được bỏ trống
@@ -419,7 +396,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('timekeepingSheetName')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('timekeepingSheetName')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Tên không được bỏ trống
@@ -478,8 +459,8 @@
                             </td>
                             <td>{{ item.timekeepingSheetName }}</td>
                             <td>
-                                {{ item.startDate | date : "dd/MM/yyyy" }} -
-                                {{ item.endDate | date : "dd/MM/yyyy" }}
+                                {{ item.startDate | date: "dd/MM/yyyy" }} -
+                                {{ item.endDate | date: "dd/MM/yyyy" }}
                             </td>
                             <!-- <td>{{ item.timekeepingMethod === 0 ? 'Theo giờ' : 'Theo ngày' }}</td> -->
                             <td>
@@ -489,7 +470,7 @@
                                 <span *ngIf="item.positionNames.length > 100">
                                     <span *ngIf="!expandedRows[rowIndex]">
                                         {{
-                                            item.positionNames | slice : 0 : 100
+                                            item.positionNames | slice: 0 : 100
                                         }}
                                         ...
                                         <a
@@ -520,19 +501,22 @@
     </form>
 
     <p-footer>
-        <button
-            pButton
-            label="Hủy"
-            class="p-button-secondary"
-            (click)="closeDialogAdd()"
-        ></button>
+        <div class="dialog-footer-actions">
+            <button
+                pButton
+                type="button"
+                label="Hủy"
+                class="p-button-secondary"
+                (click)="closeDialogAdd()"
+            ></button>
 
-        <button
-            style="margin-left: 10px"
-            pButton
-            label="Lưu"
-            class="p-button-primary"
-            (click)="onSubmit()"
-        ></button>
+            <button
+                pButton
+                type="button"
+                label="Lưu"
+                class="p-button-primary"
+                (click)="onSubmit()"
+            ></button>
+        </div>
     </p-footer>
 </p-dialog>

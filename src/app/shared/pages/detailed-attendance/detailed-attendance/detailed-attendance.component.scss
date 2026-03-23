@@ -1,135 +1,190 @@
-/* Tùy chỉnh cho phần lọc */
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+/* List page layout (align with other list screens) */
+.detailed-attendance-page {
+    .table-shell {
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: var(--card-shadow);
+        padding: 1rem;
+    }
 
-.filter-container button {
-  background-color: #2A2A86;
-  /* Màu nền nút */
-  color: #fff;
-  /* Màu chữ */
-  border: none;
-  padding: 10px 14px;
-  /* Kích thước nút */
-  border-radius: 4px;
-  /* Bo góc */
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-}
+    .filter-row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 4px 0;
+    }
 
-.filter-container button:hover {
-  background-color: #2A2A86;
-  /* Màu nền khi hover */
-}
+    .filter-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
 
-.filter-container span {
-  display: inline-block;
-  padding: 10px 12px;
-  /* Tương tự input */
-  border: 1px solid #ccc;
-  /* Viền giống input */
-  border-radius: 4px;
-  /* Bo góc */
-  background-color: #f9f9f9;
-  /* Màu nền */
-  font-size: 14px;
-  text-align: center;
-  min-width: 150px;
-  /* Đảm bảo chiều rộng tối thiểu */
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-  /* Đổ bóng nhẹ bên trong */
+    .filter-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 0 0 auto;
+        margin-left: auto;
+        justify-content: flex-end;
+    }
+
+    .filter-col {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .search-col {
+        width: 280px;
+        max-width: 100%;
+        flex: 0 1 280px;
+    }
+
+    .org-col {
+        width: 280px;
+        max-width: 100%;
+        flex: 0 1 280px;
+    }
+
+    .search-input-wrap {
+        width: 100%;
+        display: block;
+    }
+
+    .month-nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .month-nav-label {
+        height: 40px;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 12px;
+        border: 1px solid var(--surface-border);
+        border-radius: 4px;
+        background: var(--surface-a);
+        white-space: nowrap;
+    }
+
+    .col-toggle-slot {
+        display: flex;
+        align-items: center;
+    }
+
+    .paging-bot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
 }
 
 ::ng-deep .p-treeselect {
-  width: 100%;
+    width: 100%;
 }
 
 .card {
-  border-radius: 5px;
-  border: none !important;
-  padding: 0 !important;
+    border-radius: 5px;
+    border: none !important;
+    padding: 0 !important;
 }
 
 .custom-multiselect {
-  width: 100%;
-  height: 45px; /* Tăng chiều cao */
-  font-size: 16px; /* Tăng kích thước font */
+    width: 100%;
+    height: 45px;
+    /* Tăng chiều cao */
+    font-size: 16px;
+    /* Tăng kích thước font */
 }
 
 .work-status-span {
-  width: 100px;
-  display: inline-block;
-  padding: 3px 20px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 400;
-  text-align: center;
+    width: 100px;
+    display: inline-block;
+    padding: 3px 20px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center;
 }
+
+:host ::ng-deep .detailed-attendance-page .search-input-wrap .p-inputtext,
+:host ::ng-deep .detailed-attendance-page .p-autocomplete,
+:host ::ng-deep .detailed-attendance-page .p-autocomplete .p-inputtext,
+:host ::ng-deep .detailed-attendance-page .p-treeselect,
+:host ::ng-deep .detailed-attendance-page .p-treeselect .p-treeselect-label,
+:host ::ng-deep .detailed-attendance-page .p-button,
+:host ::ng-deep .detailed-attendance-page .p-button button,
+:host ::ng-deep .detailed-attendance-page button.p-button {
+    height: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .detailed-attendance-page .btn-add.p-button,
+:host ::ng-deep .detailed-attendance-page .btn-add button.p-button,
+:host ::ng-deep .detailed-attendance-page button.btn-add.p-button {
+    height: 40px;
+    min-height: 40px;
+}
+
+:host ::ng-deep .detailed-attendance-page .aligned-paging .p-paginator {
+    padding: 0;
+}
+
+:host ::ng-deep .detailed-attendance-page .aligned-paging .p-paginator-rpp-options {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Rows-per-page dropdown panel is appended to body; padding fixes live in global stylecustom.css */
 
 /* Popup xác nhận xóa bảng chấm công */
 ::ng-deep .confirm-delete-timesheet-dialog {
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  max-width: 420px;
+    width: 420px;
+    max-width: calc(100vw - 2rem);
 
-  .p-dialog-header {
-    padding: 1rem 1.25rem;
-    background: #fff3cd;
-    border-bottom: 1px solid #ffc107;
-    font-weight: 600;
-    color: #856404;
-  }
-
-  .p-dialog-content {
-    padding: 1.25rem 1.25rem 0.5rem;
-    font-size: 15px;
-    line-height: 1.5;
-    color: #333;
-  }
-
-  .p-confirm-dialog-icon {
-    font-size: 1.75rem;
-    color: #dc3545;
-    margin-right: 0.75rem;
-  }
-
-  .p-dialog-footer {
-    padding: 1rem 1.25rem 1.25rem;
-    gap: 1.25rem;
-    border-top: 1px solid #eee;
-
-    .p-button + .p-button {
-      margin-left: 1.25rem;
+    .p-dialog-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--surface-border);
+        font-weight: 600;
     }
 
-    .p-button {
-      min-width: 88px;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: all 0.2s;
+    .p-dialog-content {
+        padding: 1rem 1.25rem;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--text-color);
     }
 
-    .p-button.p-button-danger {
-      background: #dc3545;
-      border-color: #dc3545;
-      &:hover {
-        background: #c82333;
-        border-color: #bd2130;
-      }
+    .p-confirm-dialog-icon {
+        font-size: 2rem;
+        color: var(--red-500);
+        margin-right: 0.75rem;
     }
 
-    .p-button.p-button-secondary {
-      background: #6c757d;
-      border-color: #6c757d;
-      &:hover {
-        background: #5a6268;
-        border-color: #545b62;
-      }
+    .p-dialog-footer {
+        padding: 0.75rem 1.25rem 1rem;
+        border-top: 1px solid var(--surface-border);
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.75rem;
+
+        .p-button {
+            min-width: 88px;
+            height: 40px;
+            min-height: 40px;
+        }
     }
-  }
 }
