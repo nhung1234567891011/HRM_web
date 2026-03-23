@@ -515,4 +515,8 @@
   .custom-calendar .p-datepicker-trigger {
     height: 100%;
   }
+
+:host ::ng-deep p-treeSelect {
+    border-color: red;
+}
   

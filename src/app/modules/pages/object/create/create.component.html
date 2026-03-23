@@ -134,7 +134,7 @@
               <!-- Trường Địa chỉ -->
               <div class="p-field">
                 <label for="address">Địa chỉ chi tiết</label>
-                <input id="address" pInputText formControlName="address" />
+                <input id="address" pInputText formControlName="address" placeholder="Nhập địa chỉ" />
                 <!-- <div
                     *ngIf="employeeForm.get('address').invalid && (employeeForm.get('address').touched || employeeForm.get('address').dirty)"
                     class="error-message">
@@ -162,6 +162,7 @@
                 <label for="phoneNumber">Điện thoại di động <span class="required">*</span></label>
                 <input id="phoneNumber" pInputText formControlName="phoneNumber"
                   maxlength="10"
+                  placeholder="Nhập số điện thoại"
                   [class.red-border]="employeeForm.get('phoneNumber').invalid && (employeeForm.get('phoneNumber').touched || employeeForm.get('phoneNumber').dirty)" />
                 <div
                   *ngIf="employeeForm.get('phoneNumber').invalid && (employeeForm.get('phoneNumber').touched || employeeForm.get('phoneNumber').dirty)"
@@ -201,7 +202,7 @@
                     [options]="organizations" [metaKeySelection]="false" placeholder="Chọn đơn vị" [showClear]="true"
                     (onClear)="validateParentUnit()" (onChange)="onParentUnitChange($event)"
                     [style]="{ maxHeight: '300px', overflow: 'auto' }"
-                    [class.red-border]="employeeForm.get('organizationId').invalid && (employeeForm.get('organizationId').touched || employeeForm.get('organizationId').dirty)">
+                    >
                   </p-treeSelect>
                   <div
                     *ngIf="employeeForm.get('organizationId').invalid && (employeeForm.get('organizationId').touched || employeeForm.get('organizationId').dirty)"
@@ -217,7 +218,7 @@
                 <label>Vị trí công việc <span class="required">*</span></label>
                 <p-dropdown formControlName="staffPositionId" [options]="positionName" optionLabel="label"
                   optionValue="value" placeholder="Vị trí công việc" class="custom-calendar"
-                  [class.red-border]="employeeForm.get('staffPositionId').invalid && (employeeForm.get('staffPositionId').touched || employeeForm.get('staffPositionId').dirty)">
+                  >
                 </p-dropdown>
                 <div
                   *ngIf="employeeForm.get('staffPositionId').invalid && (employeeForm.get('staffPositionId').touched || employeeForm.get('staffPositionId').dirty)"
@@ -231,7 +232,7 @@
                 <label>Quản lý trực tiếp <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" formControlName="managerDirectId" [options]="employeeDetails"
                   optionLabel="label" optionValue="value" placeholder="Chọn quản lý trực tiếp"
-                  [class.red-border]="employeeForm.get('managerDirectId').invalid && (employeeForm.get('managerDirectId').touched || employeeForm.get('managerDirectId').dirty)"></p-dropdown>
+                  ></p-dropdown>
                 <div
                   *ngIf="employeeForm.get('managerDirectId').invalid && (employeeForm.get('managerDirectId').touched || employeeForm.get('managerDirectId').dirty)"
                   class="error-message">
@@ -246,7 +247,7 @@
                 <label>Công ty trực thuộc <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" formControlName="companyId" [options]="fullName" optionLabel="label"
                   optionValue="value" placeholder="Chọn công ty trực thuộc"
-                  [class.red-border]="employeeForm.get('companyId').invalid && (employeeForm.get('companyId').touched || employeeForm.get('companyId').dirty)"></p-dropdown>
+                  ></p-dropdown>
                 <div
                   *ngIf="employeeForm.get('companyId').invalid && (employeeForm.get('companyId').touched || employeeForm.get('companyId').dirty)"
                   class="error-message">
@@ -259,7 +260,7 @@
                 <label>Chức danh <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" formControlName="staffTitleId" [options]="staffTitles"
                   optionValue="id" optionLabel="staffTitleName" placeholder="Chọn chức danh"
-                  [class.red-border]="employeeForm.get('staffTitleId').invalid && (employeeForm.get('staffTitleId').touched || employeeForm.get('staffTitleId').dirty)"></p-dropdown>
+                  ></p-dropdown>
                 <div
                   *ngIf="employeeForm.get('staffTitleId').invalid && (employeeForm.get('staffTitleId').touched || employeeForm.get('staffTitleId').dirty)"
                   class="error-message">
@@ -273,7 +274,7 @@
                 <label>Trạng thái lao động <span class="required">*</span></label>
                 <p-dropdown class="custom-calendar" [options]="workingStatusOptions" optionLabel="label"
                   optionValue="value" formControlName="workingStatus" placeholder="Chọn trạng thái"
-                  [class.red-border]="employeeForm.get('workingStatus').invalid && (employeeForm.get('workingStatus').touched || employeeForm.get('workingStatus').dirty)">
+                  >
                 </p-dropdown>
                 <div
                   *ngIf="employeeForm.get('workingStatus').invalid && (employeeForm.get('workingStatus').touched || employeeForm.get('workingStatus').dirty)"
