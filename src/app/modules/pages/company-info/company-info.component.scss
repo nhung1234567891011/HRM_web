@@ -562,6 +562,11 @@
     height: 40px;
 }
 
+::ng-deep input[pinputtext].invalid-input,
+.form-control.invalid-input {
+    border: 1px solid var(--danger) !important;
+}
+
 .upload-container {
     width: 140px;
 }

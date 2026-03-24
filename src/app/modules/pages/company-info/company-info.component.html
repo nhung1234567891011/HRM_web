@@ -412,11 +412,16 @@
                                 *ngIf="isEditing"
                                 type="text"
                                 class="form-control"
+                                [ngClass]="{ 'invalid-input': companyForm.get('address')?.invalid && (companyForm.get('address')?.touched || companyForm.get('address')?.dirty) }"
                                 pInputText
                                 formControlName="address"
                                 placeholder="Nhập thông tin"
                                 maxlength="100"
                             />
+                        </div>
+                        <div class="field-error" *ngIf="isEditing && companyForm.get('address')?.touched && companyForm.get('address')?.invalid">
+                            <span class="red-asterisk" *ngIf="companyForm.get('address')?.hasError('required')">Không được để trống</span>
+                            <span class="red-asterisk" *ngIf="companyForm.get('address')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
                         </div>
 
                         <div class="field-row">
@@ -424,13 +429,17 @@
                             <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-phone"></i>{{ companyForm.get('phoneNumber')?.value === 'string' ? '' : companyForm.get('phoneNumber')?.value }}</div>
                             <input
                                 *ngIf="isEditing"
-                                type="text"
+                                type="number"
                                 class="form-control"
+                                [ngClass]="{ 'invalid-input': companyForm.get('phoneNumber')?.invalid && (companyForm.get('phoneNumber')?.touched || companyForm.get('phoneNumber')?.dirty) }"
                                 pInputText
                                 formControlName="phoneNumber"
-                                placeholder="Nhập thông tin"
-                                maxlength="100"
+                                placeholder="Nhập số điện thoại"
                             />
+                        </div>
+                        <div class="field-error" *ngIf="isEditing && companyForm.get('phoneNumber')?.touched && companyForm.get('phoneNumber')?.invalid">
+                            <span class="red-asterisk" *ngIf="companyForm.get('phoneNumber')?.hasError('required')">Không được để trống</span>
+                            <span class="red-asterisk" *ngIf="companyForm.get('phoneNumber')?.hasError('pattern')">Số điện thoại phải gồm đúng 10 chữ số</span>
                         </div>
 
                         <div class="field-row">
@@ -438,13 +447,18 @@
                             <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-phone"></i>{{ companyForm.get('fax')?.value === 'string' ? '' : companyForm.get('fax')?.value }}</div>
                             <input
                                 *ngIf="isEditing"
-                                type="text"
+                                type="number"
                                 class="form-control"
+                                [ngClass]="{ 'invalid-input': companyForm.get('fax')?.invalid && (companyForm.get('fax')?.touched || companyForm.get('fax')?.dirty) }"
                                 pInputText
                                 formControlName="fax"
-                                placeholder="Nhập thông tin"
-                                maxlength="100"
+                                placeholder="Nhập số fax"
+                                maxlength="20"
                             />
+                        </div>
+                        <div class="field-error" *ngIf="isEditing && companyForm.get('fax')?.touched && companyForm.get('fax')?.invalid">
+                            <span class="red-asterisk" *ngIf="companyForm.get('fax')?.hasError('required')">Không được để trống</span>
+                            <span class="red-asterisk" *ngIf="companyForm.get('fax')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
                         </div>
 
                         <div class="field-row">
@@ -452,13 +466,17 @@
                             <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-envelope"></i>{{ companyForm.get('email')?.value === 'string' ? '' : companyForm.get('email')?.value }}</div>
                             <input
                                 *ngIf="isEditing"
-                                type="text"
+                                type="email"
                                 class="form-control"
+                                [ngClass]="{ 'invalid-input': companyForm.get('email')?.invalid && (companyForm.get('email')?.touched || companyForm.get('email')?.dirty) }"
                                 pInputText
                                 formControlName="email"
-                                placeholder="Nhập thông tin"
-                                maxlength="100"
+                                placeholder="Nhập email"
+                                maxlength="30"
                             />
+                        </div>
+                        <div class="field-error" *ngIf="isEditing && companyForm.get('email')?.touched && companyForm.get('email')?.hasError('pattern')">
+                            <span class="red-asterisk">Email phải chứa ký tự &#64;</span>
                         </div>
 
                         <div class="field-row">

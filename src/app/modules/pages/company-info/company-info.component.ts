@@ -86,10 +86,10 @@ export class CompanyInfoComponent implements OnInit {
             address: [null, [Validators.required, this.whitespaceValidator()]],
             phoneNumber: [
                 null,
-                [Validators.required, this.whitespaceValidator()],
+                [Validators.required, Validators.pattern(/^\d{10}$/)]
             ],
             fax: [null, [Validators.required, this.whitespaceValidator()]],
-            email: [''],
+            email: ['', [Validators.pattern(/@/)]],
             website: [''],
         });
         this.originalFormValue = this.companyForm.value;
