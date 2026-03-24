@@ -379,3 +379,174 @@ textarea {
     font-weight: 600;
     border: 1px solid rgba(15, 39, 66, 0.08);
 }
+
+/* Refactor: align approve page with show page layout */
+.leave-application-page {
+    .table-shell {
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: var(--card-shadow);
+        padding: 1rem;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 4px 0;
+    }
+
+    .filter-left,
+    .filter-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .filter-left {
+        flex: 0 1 auto;
+        flex-wrap: wrap;
+    }
+
+    .filter-right {
+        flex: 0 0 auto;
+        margin-left: auto;
+        justify-content: flex-end;
+    }
+
+    .filter-col {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .search-col {
+        width: 280px;
+        max-width: 100%;
+        flex: 0 1 280px;
+    }
+
+    .organization-col {
+        width: 280px;
+        max-width: 100%;
+        flex: 0 0 280px;
+    }
+
+    /* Không dùng flex cho ô "Chọn đơn vị" */
+    .filter-col.organization-col {
+        display: block;
+    }
+
+    .search-input-wrap {
+        width: 100%;
+        display: block;
+    }
+
+    .paging-bot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+    .paging-info {
+        min-width: 240px;
+    }
+}
+
+.filter-col .search-col {}
+
+:host ::ng-deep .leave-application-page .p-autocomplete {
+    width: 100%;
+}
+
+:host ::ng-deep .leave-application-page .p-treeselect {
+    width: 100%;
+}
+
+/* Không dùng flex/inline-flex cho riêng TreeSelect "Chọn đơn vị" */
+:host ::ng-deep .leave-application-page .organization-col .p-treeselect {
+    display: block;
+}
+
+:host ::ng-deep .leave-application-page .organization-col .p-treeselect .p-treeselect-label {
+    display: block;
+}
+
+:host ::ng-deep .leave-application-page .p-autocomplete .p-inputtext,
+:host ::ng-deep .leave-application-page .p-treeselect,
+:host ::ng-deep .leave-application-page .p-treeselect .p-treeselect-label,
+:host ::ng-deep .leave-application-page .p-dropdown,
+:host ::ng-deep .leave-application-page .p-dropdown .p-dropdown-label,
+:host ::ng-deep .leave-application-page .p-button {
+    height: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .leave-application-page .p-dropdown .p-dropdown-trigger,
+:host ::ng-deep .leave-application-page .p-treeselect .p-treeselect-trigger {
+    height: 40px;
+}
+
+:host ::ng-deep .leave-application-page .filter-btn-icon .p-button {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+}
+
+:host ::ng-deep .leave-application-page .app-table-column-toggle-toolbar {
+    margin: 0;
+}
+
+:host ::ng-deep .leave-application-page .app-table-column-toggle-button {
+    transform: none !important;
+}
+
+:host ::ng-deep .leave-application-page .aligned-paging .p-paginator {
+    padding: 0;
+}
+
+:host ::ng-deep .leave-application-page .aligned-paging .p-paginator-rpp-options {
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .p-dropdown-items {
+    padding-left: 0 !important;
+}
+
+:host ::ng-deep .p-dropdown-items-wrapper ul.p-dropdown-items {
+    padding-left: 0 !important;
+}
+
+/* Rows-per-page dropdown panel is appended to body; scope from body to apply */
+body:has(.leave-application-page .aligned-paging .p-paginator-rpp-options:is(.p-inputwrapper-focus, .p-dropdown-open, .p-focus)) .p-dropdown-panel .p-dropdown-items {
+    padding-left: 0 !important;
+    padding-inline-start: 0 !important;
+}
+
+body:has(.leave-application-page .aligned-paging .p-paginator-rpp-options:is(.p-inputwrapper-focus, .p-dropdown-open, .p-focus)) .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding-left: 0 !important;
+}
+
+/* Force reset for the status filter dropdown overlay (appended to body) */
+:host ::ng-deep .leave-status-dropdown-panel ul.p-dropdown-items,
+:host ::ng-deep .leave-status-dropdown-panel .p-dropdown-items {
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-start: 0 !important;
+    list-style: none !important;
+}
+
+:host ::ng-deep .leave-status-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding-left: 0 !important;
+}

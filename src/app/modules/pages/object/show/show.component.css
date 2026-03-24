@@ -1,8 +1,8 @@
-.icon-settings{
+.icon-settings {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin: auto 0px  auto 5px;
+    margin: auto 0px auto 5px;
 }
 
 .object-switch-card {
@@ -18,24 +18,39 @@
 }
 
 .object-filter-row {
+    display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
+    flex-wrap: nowrap;
+    position: relative;
+    padding-right: 0;
 }
 
 .object-search-col {
     min-width: 300px;
+    flex: 1 1 320px;
 }
 
 .object-filter-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: nowrap;
+    flex: 0 0 auto;
+}
+
+.column-toggle-placeholder {
+    flex: 0 0 190px;
+    width: 190px;
 }
 
 .filter-control-wrap {
     min-width: 240px;
+}
+
+.search-input-wrap {
+    width: 100%;
 }
 
 .filter-input {
@@ -52,27 +67,52 @@
 
 .table-section.table-panel {
     margin-top: 8px !important;
+    position: relative;
 }
 
 .table-section .paging-bot {
     margin-top: 4px;
 }
-.img-item{
+
+:host ::ng-deep .table-section .app-table-column-toggle-toolbar {
+    position: absolute;
+    top: -52px;
+    right: 0;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0;
+    z-index: 2;
+}
+
+:host ::ng-deep .table-section .app-table-column-toggle-button {
+    height: 40px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+:host ::ng-deep .table-section .app-table-column-toggle-button span {
+    line-height: 1;
+}
+
+.img-item {
     width: 20px;
     height: 20px;
     border-radius: 50%;
 }
 
-.item-object{
+.item-object {
     padding: 0px 5px 10px 5px;
     margin-right: 20px;
     text-align: center;
     font-weight: 600;
     cursor: pointer;
 }
+
 .item-object.active {
-    color:  #3d75de;
-    border-bottom: 4px solid #3d75de ;
+    color: #3d75de;
+    border-bottom: 4px solid #3d75de;
 }
 
 
@@ -202,7 +242,8 @@
 .dialog-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 10px; /* Khoảng cách giữa các nút */
+    gap: 10px;
+    /* Khoảng cách giữa các nút */
     padding: 15px;
 }
 
@@ -212,7 +253,7 @@
     border: none;
 }
 
-.dialog-footer button{
+.dialog-footer button {
     border-radius: 40px;
 }
 
@@ -225,7 +266,8 @@
 
 .ui-dialog-footer button {
     text-align: right;
-    margin-right: 10px; /* Tăng khoảng cách giữa các nút */
+    margin-right: 10px;
+    /* Tăng khoảng cách giữa các nút */
 }
 
 .select-tree {
@@ -234,48 +276,51 @@
 }
 
 .select-tree .custom-tree-select {
-    flex: 1 1 auto; 
-    width: 100%;    
+    flex: 1 1 auto;
+    width: 100%;
 }
-.btn-delete{
+
+.btn-delete {
     background-color: red !important;
     border-color: red !important;
     border-radius: 5px;
 }
-.btn-cancel{
+
+.btn-cancel {
     border-radius: 5px;
 }
+
 .custom-dialog {
     display: flex;
     flex-direction: column;
     /* Chiều cao tối đa của dialog */
-  }
-  
-  .custom-dialog .p-dialog-content {
+}
+
+.custom-dialog .p-dialog-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-  }
-  
-  .custom-dialog .p-input-icon-left {
+}
+
+.custom-dialog .p-input-icon-left {
     position: sticky;
     top: 0;
     z-index: 1;
     background: white;
     padding: 4px 0;
     border-bottom: 1px solid #ddd;
-  }
-  
-  .custom-dialog .content-scroll {
+}
+
+.custom-dialog .content-scroll {
     flex: 1;
     overflow-y: auto;
-    max-height: 400px; 
+    max-height: 400px;
     height: 400px;
     padding: 8px 0;
-  }
-  
-  .custom-dialog .p-dialog-footer {
+}
+
+.custom-dialog .p-dialog-footer {
     position: sticky;
     bottom: 0;
     z-index: 1;
@@ -283,12 +328,12 @@
     border-top: 1px solid #ddd;
     padding: 10px;
     text-align: right;
-  }
- 
-  
+}
 
-  /* tny add */
-  .status-span {
+
+
+/* tny add */
+.status-span {
     display: inline-block;
     padding: 3px 10px;
     border-radius: 10px;
@@ -296,6 +341,7 @@
     font-weight: 400;
     text-align: center;
 }
+
 .work-status-span {
     display: inline-block;
     padding: 3px 10px;
@@ -384,20 +430,25 @@
     padding: 20px;
     background-color: #ffffff;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
-    max-height: 300px; /* Giới hạn chiều cao tối đa */
-    overflow-y: auto; /* Cho phép cuộn theo chiều dọc */
+    max-height: 300px;
+    /* Giới hạn chiều cao tối đa */
+    overflow-y: auto;
+    /* Cho phép cuộn theo chiều dọc */
 }
 
 /* Ẩn thanh cuộn */
 .custom-dialog .tab-content::-webkit-scrollbar {
-    display: none; /* Ẩn thanh cuộn cho Webkit browsers */
+    display: none;
+    /* Ẩn thanh cuộn cho Webkit browsers */
 }
 
 .custom-dialog .tab-content {
-    -ms-overflow-style: none; /* Ẩn thanh cuộn cho IE and Edge */
-    scrollbar-width: none; /* Ẩn thanh cuộn cho Firefox */
+    -ms-overflow-style: none;
+    /* Ẩn thanh cuộn cho IE and Edge */
+    scrollbar-width: none;
+    /* Ẩn thanh cuộn cho Firefox */
 }
 
 /* Định dạng cho từng mục thông tin */
@@ -413,13 +464,15 @@
 }
 
 .custom-dialog .info-item strong {
-    min-width: 140px; /* Đảm bảo các label có độ rộng tối thiểu */
+    min-width: 140px;
+    /* Đảm bảo các label có độ rộng tối thiểu */
     font-size: 14px;
     color: #333;
     flex-shrink: 0;
 }
 
-.custom-dialog .info-item span, .custom-dialog .info-item a {
+.custom-dialog .info-item span,
+.custom-dialog .info-item a {
     font-size: 14px;
     color: #666;
     overflow: hidden;
@@ -479,15 +532,15 @@
 .custom-dialog .user-details h3 {
     margin: 0;
     color: #333;
-    font-size: 18px; 
-    font-weight: 600; 
+    font-size: 18px;
+    font-weight: 600;
 }
 
 .custom-dialog .user-details p {
-    margin-top: 8px; 
+    margin-top: 8px;
     font-size: 14px;
-    color: #666; 
-    line-height: 1.4; 
+    color: #666;
+    line-height: 1.4;
 }
 
 .custom-dialog .status-badge {
@@ -504,46 +557,48 @@ p-footer {
 }
 
 p-footer button:first-child {
-    background: none; 
-    border: none;     
-    color: inherit;  
+    background: none;
+    border: none;
+    color: inherit;
 }
 
 p-footer button:last-child {
-    background-color: #007BFF; 
-    color: white;            
-    border: none;            
-    padding: 0.5em 1em;      
-    border-radius: 4px;       
-    cursor: pointer;         
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 p-footer button:last-child:hover {
-    background-color: #0056b3; 
+    background-color: #0056b3;
 }
 
 .p-button-danger {
-    background-color: #DC3545 !important; 
+    background-color: #DC3545 !important;
     border: none !important;
     color: #fff !important;
 }
 
 .p-button-danger:hover {
-    background-color: #C82333 !important; 
+    background-color: #C82333 !important;
 }
 
 .sticky-col {
     position: sticky;
     left: 0;
-    z-index: 1; 
+    z-index: 1;
     background: #fff;
-    border-right: 1px solid #ddd; 
+    border-right: 1px solid #ddd;
 }
+
 .sticky-col:nth-child(2) {
-    left: 38px; 
+    left: 38px;
 }
+
 .sticky-col:nth-child(3) {
-    left: 238px; 
+    left: 238px;
 }
 
 .page-header {
@@ -718,19 +773,19 @@ p-footer button:last-child:hover {
     overflow: visible;
 }
 
-.table-section.table-panel ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+.table-section.table-panel ::ng-deep .p-datatable .p-datatable-thead>tr>th {
     background: #f3f6fa;
     color: #33465b;
     font-weight: 700;
     border-bottom: 1px solid #dbe3ec;
 }
 
-.table-section.table-panel ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+.table-section.table-panel ::ng-deep .p-datatable .p-datatable-tbody>tr>td {
     border-bottom: 1px solid #edf1f5;
     color: #2a3643;
 }
 
-.table-section.table-panel ::ng-deep .p-datatable .p-datatable-tbody > tr:hover > td {
+.table-section.table-panel ::ng-deep .p-datatable .p-datatable-tbody>tr:hover>td {
     background: #f9fbfe;
 }
 
@@ -825,11 +880,21 @@ p-footer button:last-child:hover {
 
     .object-filter-row {
         align-items: stretch;
+        flex-wrap: wrap;
     }
 
     .object-filter-actions {
         width: 100%;
         flex-wrap: wrap;
+    }
+
+    :host ::ng-deep .table-section .app-table-column-toggle-toolbar {
+        position: static;
+        margin-bottom: 8px;
+    }
+
+    .column-toggle-placeholder {
+        display: none;
     }
 
     .table-section .paging-bot {

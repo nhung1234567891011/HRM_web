@@ -35,7 +35,10 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
     private tableObserver?: MutationObserver;
     private syncTimer?: ReturnType<typeof setTimeout>;
 
-    constructor(private host: ElementRef<HTMLElement>, private renderer: Renderer2) {}
+    constructor(
+        private host: ElementRef<HTMLElement>,
+        private renderer: Renderer2,
+    ) {}
 
     ngAfterViewInit(): void {
         setTimeout(() => {
@@ -72,15 +75,21 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
             return;
         }
 
+        const placeholder = this.host.nativeElement.querySelector(
+            '[data-column-toggle-placeholder]',
+        ) as HTMLElement | null;
+
         this.toolbarEl = this.renderer.createElement('div');
-        this.renderer.addClass(this.toolbarEl, 'app-table-column-toggle-toolbar');
+        this.renderer.addClass(
+            this.toolbarEl,
+            'app-table-column-toggle-toolbar',
+        );
 
         this.buttonEl = this.renderer.createElement('button');
         this.buttonEl.type = 'button';
         this.renderer.addClass(this.buttonEl, 'app-table-column-toggle-button');
-        this.buttonEl.title = 'Ẩn hoặc hiện các cột trong bảng';
-        this.buttonEl.setAttribute('data-tooltip', 'Ẩn/hiện cột');
-        this.buttonEl.innerHTML = '<i class="pi pi-sliders-h"></i><span>Ẩn/hiện cột</span>';
+        this.buttonEl.innerHTML =
+            '<i class="pi pi-sliders-h"></i><span>Ẩn/hiện cột</span>';
 
         this.buttonEl.addEventListener('click', (event) => {
             event.stopPropagation();
@@ -88,7 +97,15 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         });
 
         this.renderer.appendChild(this.toolbarEl, this.buttonEl);
-        this.renderer.insertBefore(parent, this.toolbarEl, this.host.nativeElement);
+        if (placeholder) {
+            this.renderer.appendChild(placeholder, this.toolbarEl);
+        } else {
+            this.renderer.insertBefore(
+                parent,
+                this.toolbarEl,
+                this.host.nativeElement,
+            );
+        }
 
         this.panelEl = this.renderer.createElement('div');
         this.renderer.addClass(this.panelEl, 'app-table-column-toggle-panel');
@@ -113,13 +130,15 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         document.body.appendChild(this.panelEl);
 
         this.searchInputEl = this.panelEl.querySelector(
-            '.app-table-column-toggle-search'
+            '.app-table-column-toggle-search',
         ) as HTMLInputElement;
         this.columnListEl = this.panelEl.querySelector(
-            '.app-table-column-toggle-list'
+            '.app-table-column-toggle-list',
         ) as HTMLElement;
 
-        this.searchInputEl?.addEventListener('input', () => this.renderColumnList());
+        this.searchInputEl?.addEventListener('input', () =>
+            this.renderColumnList(),
+        );
 
         this.panelEl
             .querySelector('[data-action="all"]')
@@ -146,12 +165,15 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
                 }
 
                 const target = event.target as Node;
-                if (this.panelEl.contains(target) || this.buttonEl.contains(target)) {
+                if (
+                    this.panelEl.contains(target) ||
+                    this.buttonEl.contains(target)
+                ) {
                     return;
                 }
 
                 this.closePanel();
-            }
+            },
         );
 
         this.destroyDocumentKeydown = this.renderer.listen(
@@ -161,7 +183,7 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
                 if (event.key === 'Escape') {
                     this.closePanel();
                 }
-            }
+            },
         );
     }
 
@@ -217,7 +239,7 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         }
 
         const headerCells = Array.from(headerRow.children).filter(
-            (cell) => cell instanceof HTMLTableCellElement
+            (cell) => cell instanceof HTMLTableCellElement,
         ) as HTMLTableCellElement[];
 
         const nextColumns: ToggleColumnItem[] = [];
@@ -237,7 +259,9 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
 
         this.columns = nextColumns;
 
-        const validIndexes = new Set(this.columns.map((column) => column.index));
+        const validIndexes = new Set(
+            this.columns.map((column) => column.index),
+        );
         Array.from(this.hiddenColumnIndexes).forEach((index) => {
             if (!validIndexes.has(index)) {
                 this.hiddenColumnIndexes.delete(index);
@@ -251,8 +275,8 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         const host = this.host.nativeElement;
         const rows = Array.from(
             host.querySelectorAll(
-                '.p-datatable-thead > tr, .p-datatable-scrollable-header-box table thead > tr, thead > tr'
-            )
+                '.p-datatable-thead > tr, .p-datatable-scrollable-header-box table thead > tr, thead > tr',
+            ),
         ) as HTMLTableRowElement[];
 
         if (!rows.length) {
@@ -264,7 +288,9 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
                 return current;
             }
 
-            return current.children.length > best.children.length ? current : best;
+            return current.children.length > best.children.length
+                ? current
+                : best;
         }, rows[0]);
     }
 
@@ -296,7 +322,7 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         this.columnListEl.innerHTML = '';
 
         const columnsToRender = this.columns.filter((column) =>
-            column.label.toLowerCase().includes(keyword)
+            column.label.toLowerCase().includes(keyword),
         );
 
         columnsToRender.forEach((column) => {
@@ -330,7 +356,9 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         this.pendingVisibleIndexes.clear();
 
         if (visible) {
-            this.columns.forEach((column) => this.pendingVisibleIndexes.add(column.index));
+            this.columns.forEach((column) =>
+                this.pendingVisibleIndexes.add(column.index),
+            );
         }
 
         this.renderColumnList();
@@ -366,13 +394,13 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
 
         const allRows = Array.from(
             host.querySelectorAll(
-                '.p-datatable-thead > tr, .p-datatable-tbody > tr, .p-datatable-tfoot > tr, .p-datatable-scrollable-header-box table thead > tr, .p-datatable-scrollable-body table tbody > tr, thead > tr, tbody > tr, tfoot > tr'
-            )
+                '.p-datatable-thead > tr, .p-datatable-tbody > tr, .p-datatable-tfoot > tr, .p-datatable-scrollable-header-box table thead > tr, .p-datatable-scrollable-body table tbody > tr, thead > tr, tbody > tr, tfoot > tr',
+            ),
         ) as HTMLTableRowElement[];
 
         allRows.forEach((row) => {
             const cells = Array.from(row.children).filter(
-                (cell) => cell instanceof HTMLTableCellElement
+                (cell) => cell instanceof HTMLTableCellElement,
             ) as HTMLTableCellElement[];
 
             cells.forEach((cell, index) => {

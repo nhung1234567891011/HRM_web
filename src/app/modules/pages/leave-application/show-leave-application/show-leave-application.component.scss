@@ -24,34 +24,40 @@
     width: 100%;
 }
 
-.text-right {
+/* Layout: align with other list pages */
+.filter-row {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    flex-wrap: nowrap;
+}
+
+.filter-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.filter-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+}
+
+.filter-col {
+    display: flex;
     align-items: center;
 }
 
-.p-grid {
-    margin-bottom: 20px;
-}
-
-.icon-settings {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin: auto 0px auto 5px;
-}
-
-.custom-checkbox-list li {
-    list-style-type: none;
-    padding: 8px 0;
-}
-
-.custom-checkbox-list .p-checkbox {
-    margin: 0;
-}
-
-.button-right {
-    margin-left: 100px;
+.column-toggle-placeholder {
+    display: flex;
+    align-items: center;
+    height: 40px;
 }
 
 .card-custom {
@@ -122,7 +128,7 @@
 :host ::ng-deep .leave-app-table {
     border: 1px solid var(--la-border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
 }
 
@@ -160,7 +166,7 @@
 }
 
 :host ::ng-deep .leave-app-table .p-datatable-tbody>tr:hover {
-    transform: scale(1.0025);
+    transform: none;
 }
 
 :host ::ng-deep .leave-app-table .p-checkbox .p-checkbox-box {
@@ -225,14 +231,14 @@
 :host ::ng-deep .leave-app-table {
     border: 1px solid var(--la-border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
 }
 
 .table-shell {
     border: 1px solid var(--la-border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 10px 24px rgba(15, 39, 66, 0.08);
     background: #fff;
 }
@@ -277,7 +283,7 @@
 }
 
 :host ::ng-deep .leave-app-table .p-datatable-tbody>tr:hover {
-    transform: scale(1.0025);
+    transform: none;
 }
 
 :host ::ng-deep .leave-app-table .p-checkbox .p-checkbox-box {
@@ -289,42 +295,40 @@
     border: 1px solid rgba(15, 39, 66, 0.08);
 }
 
-.filter-toolbar {
-    padding-top: 0.85rem;
-    padding-bottom: 0.85rem;
+:host ::ng-deep .leave-application-page .filter-row .p-dropdown,
+:host ::ng-deep .leave-application-page .filter-row .p-dropdown .p-dropdown-label,
+:host ::ng-deep .leave-application-page .filter-row .p-dropdown .p-dropdown-trigger,
+:host ::ng-deep .leave-application-page .filter-row .p-button {
+    height: 40px;
+    min-height: 40px;
 }
 
-.filter-tools {
-    gap: 0.5rem;
-}
-
-.filter-control {
-    height: 44px;
-    min-height: 44px;
+:host ::ng-deep .leave-application-page .filter-row .p-dropdown .p-dropdown-label,
+:host ::ng-deep .leave-application-page .filter-row .p-dropdown .p-dropdown-trigger {
     display: inline-flex;
     align-items: center;
 }
 
-:host ::ng-deep .filter-control.p-dropdown,
-:host ::ng-deep .filter-control .p-dropdown,
-:host ::ng-deep .filter-btn .p-button,
-:host ::ng-deep .filter-btn-icon .p-button {
-    height: 44px;
-    min-height: 44px;
+:host ::ng-deep .leave-application-page .filter-btn-icon .p-button {
+    width: 40px;
 }
 
-:host ::ng-deep .filter-control .p-dropdown-label,
-:host ::ng-deep .filter-control .p-dropdown-trigger {
-    display: inline-flex;
+:host ::ng-deep .leave-application-page .app-table-column-toggle-toolbar {
+    display: flex;
     align-items: center;
+    height: 40px;
+    margin-bottom: 0 !important;
 }
 
-:host ::ng-deep .filter-btn-icon .p-button {
-    width: 44px;
+:host ::ng-deep .leave-application-page .app-table-column-toggle-button:hover {
+    transform: none !important;
 }
 
 .paging-bot {
     margin-top: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
     padding: 10px 12px;
     border-top: 1px solid #d7e2f0;
@@ -353,6 +357,12 @@
     justify-content: center;
 }
 
+/* PrimeNG dropdown panel is appended to body, so avoid :host scoping.
+   Only set the left padding of the rows-per-page list container to 0. */
+::ng-deep body:has(.leave-application-page .aligned-paging .p-paginator-rpp-options.p-inputwrapper-focus) .p-dropdown-panel .p-dropdown-items {
+    padding-left: 0 !important;
+}
+
 :host ::ng-deep .aligned-paging .p-paginator-rpp-options {
     margin: 0;
     align-self: center;
@@ -371,6 +381,7 @@
 }
 
 @media (max-width: 991.98px) {
+
     .filter-toolbar,
     .filter-tools,
     .filter-actions {

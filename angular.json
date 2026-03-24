@@ -30,7 +30,8 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.scss"
+                            "src/styles.scss",
+                            "src/assets/css/stylecustom.css"
                         ],
                         "scripts": []
                     },
@@ -94,7 +95,8 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.scss"
+                            "src/styles.scss",
+                            "src/assets/css/stylecustom.css"
                         ],
                         "scripts": []
                     }

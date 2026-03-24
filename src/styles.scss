@@ -204,7 +204,7 @@ li {}
 }
 
 .p-datatable .p-datatable-tbody>tr:hover {
-    transform: scale(1.0015);
+    transform: none;
 }
 
 .main table thead th,
@@ -363,7 +363,8 @@ li {}
     background: #fff;
     color: #24405f;
     border-radius: 8px;
-    height: 36px;
+    height: 40px;
+    min-height: 40px;
     padding: 0 12px;
     font-size: 13px;
     font-weight: 600;

@@ -1,20 +1,10 @@
-<main id="main" class="main">
+<main id="main" class="main checkin-checkout-page">
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Danh sách đơn</strong>
-            <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
-        </div>
-
-        <div
-            class="btn-add-wrapper">
-            <button
-                pButton
-                pRipple
-                label="Gửi đơn"
-                icon="pi pi-plus"
-                style="height: 40px; width: 130px; border-radius: 10px"
-                (click)="showDialog()"
-            ></button>
+            <app-shared-breadcrumb
+                [model]="$any(this).items || []"
+            ></app-shared-breadcrumb>
         </div>
     </div>
     <div class="toast-container">
@@ -26,32 +16,46 @@
     </div>
     <!-- End Page Title -->
     <section class="section k-list-table">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 mt-3">
-                            <input
-                                pInputText
-                                [style]="{ height: '43px', width: '100%' }"
-                                [(ngModel)]="keyWord"
-                                placeholder="Tìm kiếm nhân viên"
-                                (keyup.enter)="getPaging()" />
-                        </div>
+        <div class="table-shell">
+            <p-table
+                [value]="checkInCheckOuts"
+                [(selection)]="selectedCheckInCheckOuts"
+                dataKey="id"
+                [paginator]="false"
+                [rows]="pageSize"
+                responsiveLayout="scroll"
+                styleClass="p-datatable-striped custom-scrollbar"
+            >
+                <ng-template pTemplate="caption">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <div class="filter-col search-col">
+                                <span
+                                    class="p-input-icon-left search-input-wrap"
+                                >
+                                    <i class="pi pi-search"></i>
+                                    <input
+                                        pInputText
+                                        [(ngModel)]="keyWord"
+                                        placeholder="Tìm kiếm nhân viên"
+                                        (keyup.enter)="getPaging()"
+                                    />
+                                </span>
+                            </div>
 
-                        <div class="col-lg-1 mt-3">
-                            <button
-                                style="height: 43px"
-                                pButton
-                                pRipple
-                                label="Lọc"
-                                class="buttonfilter"
-                                (click)="getPaging()"
-                            ></button>
-                        </div>
-                        <div class="col-lg-2 mt-3">
-                            <div style="display: flex; position: relative;">
+                            <div class="filter-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    label="Lọc"
+                                    class="filter-btn"
+                                    (click)="getPaging()"
+                                ></button>
+                            </div>
+
+                            <div class="filter-col">
                                 <p-button
+                                    class="filter-btn-icon"
                                     pTooltip="Xuất Excel"
                                     label=""
                                     [outlined]="true"
@@ -59,183 +63,271 @@
                                     icon="pi pi-file-export"
                                     (onClick)="exportExcel()"
                                 ></p-button>
+                            </div>
 
-                                <p-button
-                                    style="margin-left: 10px"
-                                    pTooltip="Ẩn/hiện cột"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-table"
-                                    (onClick)="colPanelRef.toggle($event)"
-                                ></p-button>
+                            <div class="filter-col">
+                                <div
+                                    class="column-toggle-placeholder"
+                                    data-column-toggle-placeholder
+                                    aria-hidden="true"
+                                ></div>
+                            </div>
+                        </div>
 
-                                <p-overlayPanel #colPanelRef>
-                                    <div style="padding: 8px; min-width: 200px;">
-                                        <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
-                                        <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
-                                            <p-checkbox
-                                                [binary]="true"
-                                                [label]="col.header"
-                                                [ngModel]="isColVisible(col.field)"
-                                                (onChange)="onColumnToggle($event, col)"
-                                                [ngModelOptions]="{standalone: true}">
-                                            </p-checkbox>
-                                        </div>
-                                    </div>
-                                </p-overlayPanel>
+                        <div class="filter-right">
+                            <div class="filter-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    label="Gửi đơn"
+                                    icon="pi pi-plus"
+                                    class="btn-add"
+                                    (click)="showDialog()"
+                                ></button>
                             </div>
                         </div>
                     </div>
-                    <div class="card mt-3">
-                        <p-table
-                            [value]="checkInCheckOuts"
-                            [(selection)]="selectedCheckInCheckOuts"
-                            dataKey="id"
-                            [paginator]="true"
-                            [rows]="pageSize"
-                            [totalRecords]="totalRecords"
-                            [paginator]="false"
-                            (onPage)="onPageChange($event)"
-                            styleClass="p-datatable-striped"
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 1%">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th
+                            *ngIf="isColVisible('employeeCode')"
+                            style="width: 6%"
                         >
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th style="width: 1%">
-                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                    </th>
-                                    <th *ngIf="isColVisible('employeeCode')" style="width: 6%">Mã nhân viên</th>
-                                    <th *ngIf="isColVisible('fullName')" style="width: 6%">Họ và Tên NLĐ</th>
-                                    <th *ngIf="isColVisible('timeCheckIn')" style="width: 5%">Thời gian xin chấm vào</th>
-                                    <th *ngIf="isColVisible('timeCheckOut')" style="width: 6%">Thời gian xin chấm ra</th>
-                                    <th *ngIf="isColVisible('reason')" style="width: 5%">Lý do</th>
-                                    <th *ngIf="isColVisible('date')" style="width: 4%">Ngày gửi</th>
-                                    <th *ngIf="isColVisible('approver')" style="width: 4%">Người duyệt</th>
-                                    <th *ngIf="isColVisible('status')" style="width: 4%">Trạng thái</th>
-                                    <th style="width: 2%">Thao tác</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-contract>
-                                <tr>
-                                    <td>
-                                        <p-tableCheckbox [value]="contract"></p-tableCheckbox>
-                                    </td>
-                                    <td *ngIf="isColVisible('employeeCode')">{{ contract.employee.employeeCode }}</td>
-                                    <td *ngIf="isColVisible('fullName')">{{ contract.employee.lastName }} {{ contract.employee.firstName }}</td>
-                                    <td *ngIf="isColVisible('timeCheckIn')">{{ contract.timeCheckIn }}</td>
-                                    <td *ngIf="isColVisible('timeCheckOut')">{{ contract.timeCheckOut }}</td>
-                                    <td *ngIf="isColVisible('reason')">{{ contract.reason }}</td>
-                                    <td *ngIf="isColVisible('date')">{{ contract.date | date : "dd/MM/yyyy" }}</td>
-                                    <td *ngIf="isColVisible('approver')">{{ contract.approver.lastName }} {{ contract.approver.firstName }}</td>
-                                    <td *ngIf="isColVisible('status')">
-                                        <div style="margin: 4px 0" [ngSwitch]="contract.checkInCheckOutStatus">
-                                            <span *ngSwitchCase="0" class="status-pending">Chờ duyệt</span>
-                                            <span *ngSwitchCase="1" class="status-approved">Đã duyệt</span>
-                                            <span *ngSwitchCase="2" class="status-rejected">Từ chối</span>
-                                            <span *ngSwitchDefault>Không xác định</span>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <i class="pi pi-ellipsis-v" (click)="menu.toggle($event)"></i>
-                                        <p-overlayPanel #menu>
-                                            <div class="menu-items">
-                                                <button *ngIf="user.id == contract.employee?.id" class="menu-btn" (click)="showDialogEdit(contract.id)">
-                                                    <i class="pi pi-pencil"> Sửa</i>
-                                                </button>
-                                                <button *ngIf="user.id !== contract.employee?.id" class="menu-btn" (click)="showDialogEdit(contract.id)">
-                                                    <i class="pi pi-eye"> Xem</i>
-                                                </button>
-                                                <button class="menu-btn" (click)="updateStatus(contract, 1)" *ngIf="contract.checkInCheckOutStatus === 0">
-                                                    <i class="pi pi-check"></i> Xác nhận
-                                                </button>
-                                                <button class="menu-btn" (click)="updateStatus(contract, 2)" *ngIf="contract.checkInCheckOutStatus === 0">
-                                                    <i class="pi pi-times"></i> Từ chối
-                                                </button>
-                                            </div>
-                                        </p-overlayPanel>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-
-                        <div
-                            *ngIf="totalRecords === 0"
-                            style="text-align: center; margin-top: 20px"
+                            Mã nhân viên
+                        </th>
+                        <th *ngIf="isColVisible('fullName')" style="width: 6%">
+                            Họ và Tên NLĐ
+                        </th>
+                        <th
+                            *ngIf="isColVisible('timeCheckIn')"
+                            style="width: 5%"
                         >
-                            <strong style="text-align: center; width: 100%"
-                                >Không tìm thấy kết quả phù hợp</strong
+                            Thời gian xin chấm vào
+                        </th>
+                        <th
+                            *ngIf="isColVisible('timeCheckOut')"
+                            style="width: 6%"
+                        >
+                            Thời gian xin chấm ra
+                        </th>
+                        <th *ngIf="isColVisible('reason')" style="width: 5%">
+                            Lý do
+                        </th>
+                        <th *ngIf="isColVisible('date')" style="width: 4%">
+                            Ngày gửi
+                        </th>
+                        <th *ngIf="isColVisible('approver')" style="width: 4%">
+                            Người duyệt
+                        </th>
+                        <th *ngIf="isColVisible('status')" style="width: 4%">
+                            Trạng thái
+                        </th>
+                        <th style="width: 2%">Thao tác</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-contract>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox
+                                [value]="contract"
+                            ></p-tableCheckbox>
+                        </td>
+                        <td *ngIf="isColVisible('employeeCode')">
+                            {{ contract.employee.employeeCode }}
+                        </td>
+                        <td *ngIf="isColVisible('fullName')">
+                            {{ contract.employee.lastName }}
+                            {{ contract.employee.firstName }}
+                        </td>
+                        <td *ngIf="isColVisible('timeCheckIn')">
+                            {{ contract.timeCheckIn }}
+                        </td>
+                        <td *ngIf="isColVisible('timeCheckOut')">
+                            {{ contract.timeCheckOut }}
+                        </td>
+                        <td *ngIf="isColVisible('reason')">
+                            {{ contract.reason }}
+                        </td>
+                        <td *ngIf="isColVisible('date')">
+                            {{ contract.date | date: "dd/MM/yyyy" }}
+                        </td>
+                        <td *ngIf="isColVisible('approver')">
+                            {{ contract.approver.lastName }}
+                            {{ contract.approver.firstName }}
+                        </td>
+                        <td *ngIf="isColVisible('status')">
+                            <div
+                                style="margin: 4px 0"
+                                [ngSwitch]="contract.checkInCheckOutStatus"
                             >
-                        </div>
-
-                        <div class="paging-bot dg-fix">
-                            <div class="paging-info">
-                                <div [innerHTML]="currentPageReport"></div>
+                                <span *ngSwitchCase="0" class="status-pending"
+                                    >Chờ duyệt</span
+                                >
+                                <span *ngSwitchCase="1" class="status-approved"
+                                    >Đã duyệt</span
+                                >
+                                <span *ngSwitchCase="2" class="status-rejected"
+                                    >Từ chối</span
+                                >
+                                <span *ngSwitchDefault>Không xác định</span>
                             </div>
-                            <p-paginator
-                                [rows]="this.pageSize"
-                                (onPageChange)="onPageChange($event)"
-                                [totalRecords]="
-                                    totalRecords > 0 ? totalRecords : 1
-                                "
-                                [rowsPerPageOptions]="[10, 20, 30]"
-                                [first]="(this.pageIndex - 1) * this.pageSize"
-                            ></p-paginator>
-                        </div>
-                    </div>
+                        </td>
+                        <td style="text-align: center">
+                            <i
+                                class="pi pi-ellipsis-v"
+                                (click)="menu.toggle($event)"
+                            ></i>
+                            <p-overlayPanel #menu>
+                                <div class="menu-items">
+                                    <button
+                                        *ngIf="user.id == contract.employee?.id"
+                                        class="menu-btn"
+                                        (click)="showDialogEdit(contract.id)"
+                                    >
+                                        <i class="pi pi-pencil"> Sửa</i>
+                                    </button>
+                                    <button
+                                        *ngIf="
+                                            user.id !== contract.employee?.id
+                                        "
+                                        class="menu-btn"
+                                        (click)="showDialogEdit(contract.id)"
+                                    >
+                                        <i class="pi pi-eye"> Xem</i>
+                                    </button>
+                                    <button
+                                        class="menu-btn"
+                                        (click)="updateStatus(contract, 1)"
+                                        *ngIf="
+                                            contract.checkInCheckOutStatus === 0
+                                        "
+                                    >
+                                        <i class="pi pi-check"></i> Xác nhận
+                                    </button>
+                                    <button
+                                        class="menu-btn"
+                                        (click)="updateStatus(contract, 2)"
+                                        *ngIf="
+                                            contract.checkInCheckOutStatus === 0
+                                        "
+                                    >
+                                        <i class="pi pi-times"></i> Từ chối
+                                    </button>
+                                </div>
+                            </p-overlayPanel>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <div
+                *ngIf="totalRecords === 0"
+                style="text-align: center; margin-top: 20px"
+            >
+                <strong style="text-align: center; width: 100%"
+                    >Không tìm thấy kết quả phù hợp</strong
+                >
+            </div>
+
+            <div class="paging-bot aligned-paging dg-fix">
+                <div class="paging-info">
+                    <div [innerHTML]="currentPageReport"></div>
                 </div>
+                <p-paginator
+                    [rows]="this.pageSize"
+                    (onPageChange)="onPageChange($event)"
+                    [totalRecords]="totalRecords > 0 ? totalRecords : 1"
+                    [rowsPerPageOptions]="[10, 20, 30]"
+                    [first]="(this.pageIndex - 1) * this.pageSize"
+                ></p-paginator>
             </div>
         </div>
 
-        <p-dialog header="Đơn checkin/checkout" [(visible)]="displayDialog" [modal]="true" [style]="{width: '50vw'}" (onHide)="resetForm()">
+        <p-dialog
+            header="Đơn checkin/checkout"
+            [(visible)]="displayDialog"
+            [modal]="true"
+            [style]="{ width: '50vw' }"
+            (onHide)="resetForm()"
+        >
             <form [formGroup]="checkInForm">
                 <div class="form-container">
                     <div class="checkbox-group">
-                        <p-checkbox name="checkInOut" value="checkIn"
+                        <p-checkbox
+                            name="checkInOut"
+                            value="checkIn"
                             [binary]="true"
-                            [ngModel]="checkInForm.value.checkType?.includes('checkIn')"
+                            [ngModel]="
+                                checkInForm.value.checkType?.includes('checkIn')
+                            "
                             (onChange)="onCheckTypeChange($event, 'checkIn')"
                             label="Chấm vào"
-                            [ngModelOptions]="{standalone: true}">
+                            [ngModelOptions]="{ standalone: true }"
+                        >
                         </p-checkbox>
 
-                        <p-checkbox name="checkInOut" value="checkOut"
+                        <p-checkbox
+                            name="checkInOut"
+                            value="checkOut"
                             [binary]="true"
-                            [ngModel]="checkInForm.value.checkType?.includes('checkOut')"
+                            [ngModel]="
+                                checkInForm.value.checkType?.includes(
+                                    'checkOut'
+                                )
+                            "
                             (onChange)="onCheckTypeChange($event, 'checkOut')"
                             label="Chấm ra"
-                            [ngModelOptions]="{standalone: true}">
+                            [ngModelOptions]="{ standalone: true }"
+                        >
                         </p-checkbox>
                     </div>
 
                     <!-- Ngày - Giờ chấm vào -->
                     <div class="field-group">
                         <div class="field">
-                            <label>Ngày <span class="red-asterisk">*</span></label>
+                            <label
+                                >Ngày <span class="red-asterisk">*</span></label
+                            >
                             <p-calendar
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 [showIcon]="true"
                                 dateFormat="dd/mm/yy"
                                 formControlName="date"
-                                placeholder="Chọn ngày">
+                                placeholder="Chọn ngày"
+                            >
                             </p-calendar>
                         </div>
                         <div class="field" *ngIf="showCheckIn">
-                            <label>Giờ chấm vào <span class="red-asterisk">*</span></label>
+                            <label
+                                >Giờ chấm vào
+                                <span class="red-asterisk">*</span></label
+                            >
                             <p-calendar
                                 formControlName="timeCheckIn"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 [iconDisplay]="'input'"
                                 [showIcon]="true"
                                 [timeOnly]="true"
-                                inputId="time">
-                                <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-                                    <i class="pi pi-clock pointer-events-none pointer-events-none"  (click)="clickCallBack($event)"></i>
+                                inputId="time"
+                            >
+                                <ng-template
+                                    pTemplate="inputicon"
+                                    let-clickCallBack="clickCallBack"
+                                >
+                                    <i
+                                        class="pi pi-clock pointer-events-none pointer-events-none"
+                                        (click)="clickCallBack($event)"
+                                    ></i>
                                 </ng-template>
                             </p-calendar>
                         </div>
@@ -245,14 +337,21 @@
                                 formControlName="timeCheckOut"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 [iconDisplay]="'input'"
                                 [showIcon]="true"
                                 [timeOnly]="true"
-                                inputId="time">
-                                <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-                                    <i class="pi pi-clock pointer-events-none pointer-events-none"  (click)="clickCallBack($event)"></i>
+                                inputId="time"
+                            >
+                                <ng-template
+                                    pTemplate="inputicon"
+                                    let-clickCallBack="clickCallBack"
+                                >
+                                    <i
+                                        class="pi pi-clock pointer-events-none pointer-events-none"
+                                        (click)="clickCallBack($event)"
+                                    ></i>
                                 </ng-template>
                             </p-calendar>
                         </div>
@@ -260,20 +359,20 @@
 
                     <!-- Ca - Lý do -->
                     <div class="field-group">
-
                         <div class="field">
                             <label>Ca</label>
                             <p-dropdown
                                 [options]="shiftWorks"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 optionLabel="name"
                                 [showClear]="true"
                                 optionValue="id"
                                 formControlName="shiftCatalogId"
-                                placeholder="Chọn thông tin">
+                                placeholder="Chọn thông tin"
+                            >
                             </p-dropdown>
                         </div>
                         <div class="field">
@@ -283,7 +382,7 @@
                                 [options]="employeess"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 optionValue="id"
                                 optionLabel="name"
@@ -299,7 +398,10 @@
                         <!-- Người duyệt -->
                         <div class="field">
                             <label>Lý do</label>
-                            <textarea pInputTextarea formControlName="reason"></textarea>
+                            <textarea
+                                pInputTextarea
+                                formControlName="reason"
+                            ></textarea>
                         </div>
 
                         <!-- Mô tả -->
@@ -315,11 +417,22 @@
 
                                     <!-- Emoji Button -->
                                     <div class="emoji-container">
-                                        <button (click)="toggleEmojiPicker()" pTooltip="Emoji">😀</button>
+                                        <button
+                                            (click)="toggleEmojiPicker()"
+                                            pTooltip="Emoji"
+                                        >
+                                            😀
+                                        </button>
 
                                         <!-- Danh sách Emoji -->
-                                        <div class="emoji-picker" *ngIf="showEmojiPicker">
-                                            <span *ngFor="let emoji of emojiList" (click)="insertEmoji(emoji)">
+                                        <div
+                                            class="emoji-picker"
+                                            *ngIf="showEmojiPicker"
+                                        >
+                                            <span
+                                                *ngFor="let emoji of emojiList"
+                                                (click)="insertEmoji(emoji)"
+                                            >
                                                 {{ emoji }}
                                             </span>
                                         </div>
@@ -327,71 +440,122 @@
                                 </div>
 
                                 <!-- Ô nhập mô tả -->
-                                <textarea formControlName="description" id="descriptionBox" placeholder="Nhập mô tả"></textarea>
+                                <textarea
+                                    formControlName="description"
+                                    id="descriptionBox"
+                                    placeholder="Nhập mô tả"
+                                ></textarea>
                             </div>
                         </div>
                     </div>
 
                     <!-- Button -->
                     <div class="button-container">
-                        <button pButton label="Hủy" class="cancel-button" (click)="displayDialog = false"></button>
-                        <button type="submit" pButton label="Gửi" class="submit-button" (click)="submitForm()"></button>
+                        <button
+                            pButton
+                            label="Hủy"
+                            class="cancel-button"
+                            (click)="displayDialog = false"
+                        ></button>
+                        <button
+                            type="submit"
+                            pButton
+                            label="Gửi"
+                            class="submit-button"
+                            (click)="submitForm()"
+                        ></button>
                     </div>
-
                 </div>
             </form>
         </p-dialog>
 
-        <p-dialog header="Sửa đơn checkin/checkout" [(visible)]="displayDialogEdit" [modal]="true" [style]="{width: '50vw'}" (onHide)="resetFormEdit()">
+        <p-dialog
+            header="Sửa đơn checkin/checkout"
+            [(visible)]="displayDialogEdit"
+            [modal]="true"
+            [style]="{ width: '50vw' }"
+            (onHide)="resetFormEdit()"
+        >
             <form [formGroup]="checkInUpdateForm">
                 <div class="form-container">
                     <div class="checkbox-group">
-                        <p-checkbox name="checkInOut" value="checkIn"
+                        <p-checkbox
+                            name="checkInOut"
+                            value="checkIn"
                             [binary]="true"
-                            [ngModel]="checkInUpdateForm.value.checkType?.includes('checkIn')"
-                            (onChange)="onCheckTypeChangeUpdate($event, 'checkIn')"
+                            [ngModel]="
+                                checkInUpdateForm.value.checkType?.includes(
+                                    'checkIn'
+                                )
+                            "
+                            (onChange)="
+                                onCheckTypeChangeUpdate($event, 'checkIn')
+                            "
                             label="Chấm vào"
-                            [ngModelOptions]="{standalone: true}">
+                            [ngModelOptions]="{ standalone: true }"
+                        >
                         </p-checkbox>
 
-                        <p-checkbox name="checkInOut" value="checkOut"
+                        <p-checkbox
+                            name="checkInOut"
+                            value="checkOut"
                             [binary]="true"
-                            [ngModel]="checkInUpdateForm.value.checkType?.includes('checkOut')"
-                            (onChange)="onCheckTypeChangeUpdate($event, 'checkOut')"
+                            [ngModel]="
+                                checkInUpdateForm.value.checkType?.includes(
+                                    'checkOut'
+                                )
+                            "
+                            (onChange)="
+                                onCheckTypeChangeUpdate($event, 'checkOut')
+                            "
                             label="Chấm ra"
-                            [ngModelOptions]="{standalone: true}">
+                            [ngModelOptions]="{ standalone: true }"
+                        >
                         </p-checkbox>
                     </div>
 
                     <!-- Ngày - Giờ chấm vào -->
                     <div class="field-group">
                         <div class="field">
-                            <label>Ngày <span class="red-asterisk">*</span></label>
+                            <label
+                                >Ngày <span class="red-asterisk">*</span></label
+                            >
                             <p-calendar
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 [showIcon]="true"
                                 dateFormat="dd/mm/yy"
                                 formControlName="date"
-                                placeholder="Chọn ngày">
+                                placeholder="Chọn ngày"
+                            >
                             </p-calendar>
                         </div>
                         <div class="field" *ngIf="showCheckIn">
-                            <label>Giờ chấm vào <span class="red-asterisk">*</span></label>
+                            <label
+                                >Giờ chấm vào
+                                <span class="red-asterisk">*</span></label
+                            >
                             <p-calendar
                                 formControlName="timeCheckIn"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 [iconDisplay]="'input'"
                                 [showIcon]="true"
                                 [timeOnly]="true"
-                                inputId="time">
-                                <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-                                    <i class="pi pi-clock pointer-events-none pointer-events-none"  (click)="clickCallBack($event)"></i>
+                                inputId="time"
+                            >
+                                <ng-template
+                                    pTemplate="inputicon"
+                                    let-clickCallBack="clickCallBack"
+                                >
+                                    <i
+                                        class="pi pi-clock pointer-events-none pointer-events-none"
+                                        (click)="clickCallBack($event)"
+                                    ></i>
                                 </ng-template>
                             </p-calendar>
                         </div>
@@ -401,14 +565,21 @@
                                 formControlName="timeCheckOut"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 [iconDisplay]="'input'"
                                 [showIcon]="true"
                                 [timeOnly]="true"
-                                inputId="time">
-                                <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-                                    <i class="pi pi-clock pointer-events-none pointer-events-none"  (click)="clickCallBack($event)"></i>
+                                inputId="time"
+                            >
+                                <ng-template
+                                    pTemplate="inputicon"
+                                    let-clickCallBack="clickCallBack"
+                                >
+                                    <i
+                                        class="pi pi-clock pointer-events-none pointer-events-none"
+                                        (click)="clickCallBack($event)"
+                                    ></i>
                                 </ng-template>
                             </p-calendar>
                         </div>
@@ -416,20 +587,20 @@
 
                     <!-- Ca - Lý do -->
                     <div class="field-group">
-
                         <div class="field">
                             <label>Ca</label>
                             <p-dropdown
                                 [options]="shiftWorks"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 optionLabel="name"
                                 [showClear]="true"
                                 optionValue="id"
                                 formControlName="shiftCatalogId"
-                                placeholder="Chọn thông tin">
+                                placeholder="Chọn thông tin"
+                            >
                             </p-dropdown>
                         </div>
                         <div class="field">
@@ -439,7 +610,7 @@
                                 [options]="employeess"
                                 [style]="{
                                     height: '50px',
-                                    width: '100%'
+                                    width: '100%',
                                 }"
                                 optionValue="id"
                                 optionLabel="name"
@@ -455,7 +626,10 @@
                         <!-- Người duyệt -->
                         <div class="field">
                             <label>Lý do</label>
-                            <textarea pInputTextarea formControlName="reason"></textarea>
+                            <textarea
+                                pInputTextarea
+                                formControlName="reason"
+                            ></textarea>
                         </div>
 
                         <!-- Mô tả -->
@@ -471,11 +645,22 @@
 
                                     <!-- Emoji Button -->
                                     <div class="emoji-container">
-                                        <button (click)="toggleEmojiPicker()" pTooltip="Emoji">😀</button>
+                                        <button
+                                            (click)="toggleEmojiPicker()"
+                                            pTooltip="Emoji"
+                                        >
+                                            😀
+                                        </button>
 
                                         <!-- Danh sách Emoji -->
-                                        <div class="emoji-picker" *ngIf="showEmojiPicker">
-                                            <span *ngFor="let emoji of emojiList" (click)="insertEmoji(emoji)">
+                                        <div
+                                            class="emoji-picker"
+                                            *ngIf="showEmojiPicker"
+                                        >
+                                            <span
+                                                *ngFor="let emoji of emojiList"
+                                                (click)="insertEmoji(emoji)"
+                                            >
                                                 {{ emoji }}
                                             </span>
                                         </div>
@@ -483,17 +668,34 @@
                                 </div>
 
                                 <!-- Ô nhập mô tả -->
-                                <textarea formControlName="description" id="descriptionBox" placeholder="Nhập mô tả"></textarea>
+                                <textarea
+                                    formControlName="description"
+                                    id="descriptionBox"
+                                    placeholder="Nhập mô tả"
+                                ></textarea>
                             </div>
                         </div>
                     </div>
 
                     <!-- Button -->
-                    <div class="button-container" *ngIf="user.id === selected?.employeeId">
-                        <button pButton label="Hủy" class="cancel-button" (click)="displayDialog = false"></button>
-                        <button type="submit" pButton label="Lưu" class="submit-button" (click)="submitUpdateForm()"></button>
+                    <div
+                        class="button-container"
+                        *ngIf="user.id === selected?.employeeId"
+                    >
+                        <button
+                            pButton
+                            label="Hủy"
+                            class="cancel-button"
+                            (click)="displayDialog = false"
+                        ></button>
+                        <button
+                            type="submit"
+                            pButton
+                            label="Lưu"
+                            class="submit-button"
+                            (click)="submitUpdateForm()"
+                        ></button>
                     </div>
-
                 </div>
             </form>
         </p-dialog>
@@ -501,6 +703,3 @@
     </section>
 </main>
 <!-- End #main -->
-
-
-

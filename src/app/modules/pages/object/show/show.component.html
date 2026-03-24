@@ -14,7 +14,7 @@
                         class="header-actions"
                         *ngIf="
                             this.permisionHelper.hasPermissions([
-                                permissionConstant.ManageObjectCreate
+                                permissionConstant.ManageObjectCreate,
                             ])
                         "
                     >
@@ -27,30 +27,30 @@
                         ></button>
                     </div>
                 </div>
-        <div class="card object-switch-card">
-            <div class="d-flex">
-                <!-- <span
+                <div class="card object-switch-card">
+                    <div class="d-flex">
+                        <!-- <span
                     class="item-object"
                     (click)="onClickObject1()"
                     [ngClass]="{ active: !isShowObject1 }"
                 >
                     Người dùng
                 </span> -->
-                <span
-                    class="item-object"
-                    (click)="onClickObject2()"
-                    [ngClass]="{ active: !isShowObject2 }"
-                >
-                    Nhân viên
-                </span>
-            </div>
-        </div>
-        <!--  danh sách người dùng -->
+                        <span
+                            class="item-object"
+                            (click)="onClickObject2()"
+                            [ngClass]="{ active: !isShowObject2 }"
+                        >
+                            Nhân viên
+                        </span>
+                    </div>
+                </div>
+                <!--  danh sách người dùng -->
 
-        <!--  danh sách nhân viên -->
+                <!--  danh sách nhân viên -->
 
-        <!-- popup thông tin chi tiết chung và nhân viên -->
-        <!-- <p-dialog header="Thông tin chi tiết" [(visible)]="isDialogVisible" [modal]="true" [style]="{ width: '60vw' }"
+                <!-- popup thông tin chi tiết chung và nhân viên -->
+                <!-- <p-dialog header="Thông tin chi tiết" [(visible)]="isDialogVisible" [modal]="true" [style]="{ width: '60vw' }"
             [closable]="true">
             <div class="dialog-container">
                 <div class="header-section">
@@ -223,1002 +223,1119 @@
             </div>
         </p-dialog> -->
 
-        <p-dialog
-            header="Thông tin chi tiết"
-            [(visible)]="isDialogVisible"
-            [modal]="true"
-            [style]="{ width: '60vw' }"
-            [closable]="true"
-            class="custom-dialog"
-        >
-            <div class="dialog-container">
-                <!-- header -->
-                <div class="header-section">
-                    <img
-                        [src]="baseImageUrl + selectedObject?.avatarUrl"
-                        class="avatar-img"
-                    />
-                    <div class="user-details">
-                        <h3>
-                            {{ selectedObject?.firstName }}
-                            {{ selectedObject?.lastName }}
-                            <!-- svg icon -->
-                        </h3>
-                        <p>
-                            {{ selectedObject?.firstName }}
-                            {{ selectedObject?.lastName }} •
-                            {{ selectedObject?.accountEmail }}
-                        </p>
-                        <div class="status">
-                            <span class="status-badge working"
-                                >Nhân viên:
-                                {{
-                                    selectedObject?.workingStatus == 0
-                                        ? "Đang làm việc"
-                                        : "Đang nghỉ việc"
-                                }}</span
-                            >
-                            <span class="status-badge active"
-                                >Tài khoản:
-                                {{
-                                    selectedObject?.accountStatus == 2
-                                        ? "Đang hoạt động"
-                                        : "Ngừng hoạt động"
-                                }}</span
-                            >
-                            <!-- <span class="status-badge working">Nhân viên: {{selectedObject?.workingStatus == 0 ? 'Đang làm việc' : 'Đã nghỉ việc'}}</span>
+                <p-dialog
+                    header="Thông tin chi tiết"
+                    [(visible)]="isDialogVisible"
+                    [modal]="true"
+                    [style]="{ width: '60vw' }"
+                    [closable]="true"
+                    class="custom-dialog"
+                >
+                    <div class="dialog-container">
+                        <!-- header -->
+                        <div class="header-section">
+                            <img
+                                [src]="baseImageUrl + selectedObject?.avatarUrl"
+                                class="avatar-img"
+                            />
+                            <div class="user-details">
+                                <h3>
+                                    {{ selectedObject?.firstName }}
+                                    {{ selectedObject?.lastName }}
+                                    <!-- svg icon -->
+                                </h3>
+                                <p>
+                                    {{ selectedObject?.firstName }}
+                                    {{ selectedObject?.lastName }} •
+                                    {{ selectedObject?.accountEmail }}
+                                </p>
+                                <div class="status">
+                                    <span class="status-badge working"
+                                        >Nhân viên:
+                                        {{
+                                            selectedObject?.workingStatus == 0
+                                                ? "Đang làm việc"
+                                                : "Đang nghỉ việc"
+                                        }}</span
+                                    >
+                                    <span class="status-badge active"
+                                        >Tài khoản:
+                                        {{
+                                            selectedObject?.accountStatus == 2
+                                                ? "Đang hoạt động"
+                                                : "Ngừng hoạt động"
+                                        }}</span
+                                    >
+                                    <!-- <span class="status-badge working">Nhân viên: {{selectedObject?.workingStatus == 0 ? 'Đang làm việc' : 'Đã nghỉ việc'}}</span>
                             <span class="status-badge active">Tài khoản:  {{selectedObject?.accountStatus == 2 ? 'Đang hoạt động' : 'Ngừng hoạt động'}}</span> -->
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Tab section -->
-                <div class="tab-section">
-                    <ul class="tab-menu">
-                        <li
-                            [class.active]="activeTab === 'general'"
-                            (click)="setActiveTab('general')"
+                        <!-- Tab section -->
+                        <div class="tab-section">
+                            <ul class="tab-menu">
+                                <li
+                                    [class.active]="activeTab === 'general'"
+                                    (click)="setActiveTab('general')"
+                                >
+                                    Thông tin chung
+                                </li>
+                                <li
+                                    [class.active]="activeTab === 'employee'"
+                                    (click)="setActiveTab('employee')"
+                                >
+                                    Thông tin nhân viên
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-content">
+                            <div
+                                *ngIf="activeTab === 'general'"
+                                class="user-info"
+                            >
+                                <div class="info-item">
+                                    <strong>Họ và tên:</strong>
+                                    <span
+                                        >{{ selectedObject?.firstName }}
+                                        {{ selectedObject?.lastName }}</span
+                                    >
+                                </div>
+                                <div class="info-item">
+                                    <strong>Số điện thoại:</strong>
+                                    <span>{{
+                                        selectedObject?.phoneNumber
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Email liên hệ:</strong>
+                                    <a style="text-decoration: underline">{{
+                                        selectedObject?.accountEmail
+                                    }}</a>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Email tài khoản:</strong>
+                                    <a
+                                        style="
+                                            text-decoration: underline;
+                                            color: rgb(0, 174, 255);
+                                        "
+                                        >{{ selectedObject?.accountEmail }}</a
+                                    >
+                                </div>
+                                <div class="info-item">
+                                    <strong>Ngày sinh:</strong>
+                                    <span>{{
+                                        selectedObject?.dateOfBirth
+                                            | date: "dd-MM-yyyy"
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Địa chỉ:</strong>
+                                    <span>{{ selectedObject?.address }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Tỉnh/Thành phố:</strong>
+                                    <span></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Quận/Huyện:</strong>
+                                    <span></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Phường/Xã:</strong>
+                                    <span></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Giới tính:</strong>
+                                    <span>{{
+                                        selectedObject?.sex == 0
+                                            ? "Nữ"
+                                            : selectedObject?.sex == 1
+                                              ? "Nam"
+                                              : "Khác"
+                                    }}</span>
+                                </div>
+                            </div>
+
+                            <div
+                                *ngIf="activeTab === 'employee'"
+                                class="user-info"
+                            >
+                                <div class="info-item">
+                                    <strong>Mã nhân viên:</strong>
+                                    <span>{{
+                                        selectedObject.employeeCode
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Email công ty:</strong>
+                                    <span>{{
+                                        selectedObject.companyEmail
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Đơn vị công tác:</strong>
+                                    <span>{{
+                                        selectedObject.organizationLeaders[0]
+                                            ?.organizationName
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Tên vị trí công việc:</strong>
+                                    <span>{{
+                                        selectedObject.staffPosition
+                                            .positionName
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Chức danh:</strong>
+                                    <span>{{
+                                        selectedObject.staffTitle.staffTitleName
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Quản lý trực tiếp:</strong>
+                                    <span
+                                        *ngIf="
+                                            selectedObject.managerDirect != null
+                                        "
+                                        >{{
+                                            selectedObject.managerDirect
+                                                ?.lastName
+                                        }}
+                                        {{
+                                            selectedObject.managerDirect
+                                                ?.firstName
+                                        }}</span
+                                    >
+                                    <span
+                                        *ngIf="
+                                            selectedObject.managerDirect == null
+                                        "
+                                        >Không có</span
+                                    >
+                                </div>
+                                <div class="info-item">
+                                    <strong>Ngày thử việc:</strong>
+                                    <span>{{
+                                        selectedObject.probationDate
+                                            | date: "dd-MM-yyyy"
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Ngày chính thức:</strong>
+                                    <span>{{
+                                        selectedObject.officialDate
+                                            | date: "dd-MM-yyyy"
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Trạng thái lao động:</strong>
+                                    <span>{{
+                                        selectedObject.workingStatus == 0
+                                            ? "Đang làm việc"
+                                            : "Đã nghỉ việc"
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Ngày nghỉ việc:</strong>
+                                    <span>{{
+                                        selectedObject.leaveJobDate
+                                            | date: "dd-MM-yyyy"
+                                    }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div
+                            class="dialog-footer"
+                            style="padding: 0; margin-top: 10px"
                         >
-                            Thông tin chung
-                        </li>
-                        <li
-                            [class.active]="activeTab === 'employee'"
-                            (click)="setActiveTab('employee')"
-                        >
-                            Thông tin nhân viên
-                        </li>
-                    </ul>
-                </div>
+                            <!-- Nút duy nhất -->
 
-                <div class="tab-content">
-                    <div *ngIf="activeTab === 'general'" class="user-info">
-                        <div class="info-item">
-                            <strong>Họ và tên:</strong>
-                            <span
-                                >{{ selectedObject?.firstName }}
-                                {{ selectedObject?.lastName }}</span
-                            >
-                        </div>
-                        <div class="info-item">
-                            <strong>Số điện thoại:</strong>
-                            <span>{{ selectedObject?.phoneNumber }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Email liên hệ:</strong>
-                            <a style="text-decoration: underline">{{
-                                selectedObject?.accountEmail
-                            }}</a>
-                        </div>
-                        <div class="info-item">
-                            <strong>Email tài khoản:</strong>
-                            <a
-                                style="
-                                    text-decoration: underline;
-                                    color: rgb(0, 174, 255);
-                                "
-                                >{{ selectedObject?.accountEmail }}</a
-                            >
-                        </div>
-                        <div class="info-item">
-                            <strong>Ngày sinh:</strong>
-                            <span>{{
-                                selectedObject?.dateOfBirth
-                                    | date : "dd-MM-yyyy"
-                            }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Địa chỉ:</strong>
-                            <span>{{ selectedObject?.address }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Tỉnh/Thành phố:</strong>
-                            <span></span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Quận/Huyện:</strong>
-                            <span></span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Phường/Xã:</strong>
-                            <span></span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Giới tính:</strong>
-                            <span>{{
-                                selectedObject?.sex == 0
-                                    ? "Nữ"
-                                    : selectedObject?.sex == 1
-                                    ? "Nam"
-                                    : "Khác"
-                            }}</span>
-                        </div>
-                    </div>
-
-                    <div *ngIf="activeTab === 'employee'" class="user-info">
-                        <div class="info-item">
-                            <strong>Mã nhân viên:</strong>
-                            <span>{{ selectedObject.employeeCode }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Email công ty:</strong>
-                            <span>{{ selectedObject.companyEmail }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Đơn vị công tác:</strong>
-                            <span>{{
-                                selectedObject.organizationLeaders[0]
-                                    ?.organizationName
-                            }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Tên vị trí công việc:</strong>
-                            <span>{{
-                                selectedObject.staffPosition.positionName
-                            }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Chức danh:</strong>
-                            <span>{{
-                                selectedObject.staffTitle.staffTitleName
-                            }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Quản lý trực tiếp:</strong>
-                            <span *ngIf="selectedObject.managerDirect != null"
-                                >{{ selectedObject.managerDirect?.lastName }}
-                                {{
-                                    selectedObject.managerDirect?.firstName
-                                }}</span
-                            >
-                            <span *ngIf="selectedObject.managerDirect == null"
-                                >Không có</span
-                            >
-                        </div>
-                        <div class="info-item">
-                            <strong>Ngày thử việc:</strong>
-                            <span>{{
-                                selectedObject.probationDate
-                                    | date : "dd-MM-yyyy"
-                            }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Ngày chính thức:</strong>
-                            <span>{{
-                                selectedObject.officialDate
-                                    | date : "dd-MM-yyyy"
-                            }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Trạng thái lao động:</strong>
-                            <span>{{
-                                selectedObject.workingStatus == 0
-                                    ? "Đang làm việc"
-                                    : "Đã nghỉ việc"
-                            }}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Ngày nghỉ việc:</strong>
-                            <span>{{
-                                selectedObject.leaveJobDate
-                                    | date : "dd-MM-yyyy"
-                            }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="dialog-footer" style="padding: 0; margin-top: 10px">
-                    <!-- Nút duy nhất -->
-
-                    <button
-                        pButton
-                        type="button"
-                        label="Sao chép đường dẫn kích hoạt"
-                        class="p-button"
-                        style="color: #fff !important"
-                    ></button>
-
-                    <button
-                        pButton
-                        type="button"
-                        [label]="
-                            isEmailActivated
-                                ? 'Ngừng kích hoạt'
-                                : 'Kích hoạt tài khoản'
-                        "
-                        [class.p-button-success]="!isEmailActivated"
-                        [class.p-button-danger]="isEmailActivated"
-                        class="custom-button"
-                        (click)="showConfirmDialog()"
-                    ></button>
-
-                    <!-- Hộp thoại xác nhận -->
-                    <p-dialog
-                        [(visible)]="isDialogVisiblekkk"
-                        [modal]="true"
-                        [closable]="false"
-                        [style]="{ width: '430px' }"
-                    >
-                        <p-header style="font-weight: bold">
-                            {{
-                                isEmailActivated
-                                    ? "Ngừng kích hoạt người dùng"
-                                    : "Kích hoạt người dùng"
-                            }}
-                        </p-header>
-                        <div>
-                            <p>
-                                Bạn có chắc chắn muốn
-                                <span>{{
-                                    isEmailActivated
-                                        ? "ngừng kích hoạt"
-                                        : "kích hoạt"
-                                }}</span>
-                                tài khoản
-                                <strong>{{ employeeName }}</strong> không?
-                            </p>
-                        </div>
-                        <p-footer>
                             <button
-                                type="button"
                                 pButton
-                                label="Hủy"
-                                icon="pi pi-times"
-                                (click)="onReject()"
+                                type="button"
+                                label="Sao chép đường dẫn kích hoạt"
+                                class="p-button"
+                                style="color: #fff !important"
                             ></button>
+
                             <button
-                                type="button"
                                 pButton
+                                type="button"
                                 [label]="
                                     isEmailActivated
-                                        ? 'Xác nhận ngừng kích hoạt'
-                                        : 'Xác nhận kích hoạt'
+                                        ? 'Ngừng kích hoạt'
+                                        : 'Kích hoạt tài khoản'
                                 "
                                 [class.p-button-success]="!isEmailActivated"
                                 [class.p-button-danger]="isEmailActivated"
-                                icon="pi pi-check"
-                                (click)="onAccept()"
+                                class="custom-button"
+                                (click)="showConfirmDialog()"
                             ></button>
-                        </p-footer>
-                    </p-dialog>
-                </div>
-            </div>
-        </p-dialog>
 
-        <!--  danh sách nhân viên -->
-        <div class="card-body object-list-body">
-            <div class="flex justify-content-center" *ngIf="!istwo1">
-                <span
-                    class="block mt-2 md:mt-0 p-input-icon-left cursor-pointer"
-                >
-                    <i class="pi pi-email"></i>
+                            <!-- Hộp thoại xác nhận -->
+                            <p-dialog
+                                [(visible)]="isDialogVisiblekkk"
+                                [modal]="true"
+                                [closable]="false"
+                                [style]="{ width: '430px' }"
+                            >
+                                <p-header style="font-weight: bold">
+                                    {{
+                                        isEmailActivated
+                                            ? "Ngừng kích hoạt người dùng"
+                                            : "Kích hoạt người dùng"
+                                    }}
+                                </p-header>
+                                <div>
+                                    <p>
+                                        Bạn có chắc chắn muốn
+                                        <span>{{
+                                            isEmailActivated
+                                                ? "ngừng kích hoạt"
+                                                : "kích hoạt"
+                                        }}</span>
+                                        tài khoản
+                                        <strong>{{ employeeName }}</strong>
+                                        không?
+                                    </p>
+                                </div>
+                                <p-footer>
+                                    <button
+                                        type="button"
+                                        pButton
+                                        label="Hủy"
+                                        icon="pi pi-times"
+                                        (click)="onReject()"
+                                    ></button>
+                                    <button
+                                        type="button"
+                                        pButton
+                                        [label]="
+                                            isEmailActivated
+                                                ? 'Xác nhận ngừng kích hoạt'
+                                                : 'Xác nhận kích hoạt'
+                                        "
+                                        [class.p-button-success]="
+                                            !isEmailActivated
+                                        "
+                                        [class.p-button-danger]="
+                                            isEmailActivated
+                                        "
+                                        icon="pi pi-check"
+                                        (click)="onAccept()"
+                                    ></button>
+                                </p-footer>
+                            </p-dialog>
+                        </div>
+                    </div>
+                </p-dialog>
 
-                    <button
-                        *ngIf="
-                            this.permisionHelper.hasPermissions([
-                                permissionConstant.ManageObjectSendMail
-                            ])
-                        "
-                        (click)="handleShowSendMailActive()"
-                        pButton
-                        pRipple
-                        label="Gửi lại Email kích hoạt"
-                        style="height: 40px; width: 180px; border-radius: 10px"
-                    ></button>
-                    <button
-                        *ngIf="
-                            this.permisionHelper.hasPermissions([
-                                permissionConstant.ManageObjectChangePosition
-                            ])
-                        "
-                        (click)="showDialog2()"
-                        pButton
-                        pRipple
-                        label="Thay đổi vị trí "
-                        style="
-                            margin-left: 5px;
-                            height: 40px;
-                            width: 180px;
-                            border-radius: 10px;
-                        "
-                    ></button>
-                    <button
-                        *ngIf="
-                            this.permisionHelper.hasPermissions([
-                                permissionConstant.ManageObjectDelete
-                            ])
-                        "
-                        (click)="showDialog3()"
-                        pButton
-                        pRipple
-                        label="Xóa"
-                        [style]="{
-                            marginLeft: '5px',
-                            height: '40px',
-                            backgroundColor: 'red',
-                            borderColor: 'red',
-                            borderRadius: '5px !important'
-                        }"
-                    ></button>
-                </span>
-                <span
-                    class="block mt-2 md:mt-0 p-input-icon-left ml-2 cursor-pointer"
-                    *ngIf="!istwo1"
-                >
-                    <p-dialog
-                        header="Cấp tổ chức"
-                        [modal]="true"
-                        [(visible)]="dialogVisible"
-                        [style]="{ width: '450px' }"
-                    >
-                        <div class="">
-                            <!--  Đơn vị -->
+                <!--  danh sách nhân viên -->
+                <div class="card-body object-list-body">
+                    <div class="flex justify-content-center" *ngIf="!istwo1">
+                        <span
+                            class="block mt-2 md:mt-0 p-input-icon-left cursor-pointer"
+                        >
+                            <i class="pi pi-email"></i>
 
-                            <div class="text-left">
-                                <span class=""
-                                    >Đơn vị công tác
-                                    <span class="red-asterisk">*</span></span
-                                >
-                                <div
-                                    class=""
-                                    style="width: 400px"
-                                    (focusout)="
-                                        handleTreeSelectFocusOut($event)
-                                    "
-                                >
-                                    <p-treeSelect
-                                        class="w-full custom-tree-select w-full"
-                                        containerStyleClass="w-full"
-                                        [(ngModel)]="organizatioParentIdObject"
-                                        [options]="nodes"
-                                        [filter]="true"
-                                        filterBy="label"
-                                        filterPlaceholder="Tìm đơn vị"
-                                        placeholder="Chọn đơn vị"
-                                        [showClear]="true"
-                                        (onClear)="validateParentUnit()"
-                                        (onChange)="onParentUnitChange($event)"
-                                        [style]="{
-                                            width: '400px',
-                                            marginRight: '10px'
-                                        }"
-                                    />
+                            <button
+                                *ngIf="
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageObjectSendMail,
+                                    ])
+                                "
+                                (click)="handleShowSendMailActive()"
+                                pButton
+                                pRipple
+                                label="Gửi lại Email kích hoạt"
+                                style="
+                                    height: 40px;
+                                    width: 180px;
+                                    border-radius: 10px;
+                                "
+                            ></button>
+                            <button
+                                *ngIf="
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageObjectChangePosition,
+                                    ])
+                                "
+                                (click)="showDialog2()"
+                                pButton
+                                pRipple
+                                label="Thay đổi vị trí "
+                                style="
+                                    margin-left: 5px;
+                                    height: 40px;
+                                    width: 180px;
+                                    border-radius: 10px;
+                                "
+                            ></button>
+                            <button
+                                *ngIf="
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageObjectDelete,
+                                    ])
+                                "
+                                (click)="showDialog3()"
+                                pButton
+                                pRipple
+                                label="Xóa"
+                                [style]="{
+                                    marginLeft: '5px',
+                                    height: '40px',
+                                    backgroundColor: 'red',
+                                    borderColor: 'red',
+                                    borderRadius: '5px !important',
+                                }"
+                            ></button>
+                        </span>
+                        <span
+                            class="block mt-2 md:mt-0 p-input-icon-left ml-2 cursor-pointer"
+                            *ngIf="!istwo1"
+                        >
+                            <p-dialog
+                                header="Cấp tổ chức"
+                                [modal]="true"
+                                [(visible)]="dialogVisible"
+                                [style]="{ width: '450px' }"
+                            >
+                                <div class="">
+                                    <!--  Đơn vị -->
+
+                                    <div class="text-left">
+                                        <span class=""
+                                            >Đơn vị công tác
+                                            <span class="red-asterisk"
+                                                >*</span
+                                            ></span
+                                        >
+                                        <div
+                                            class=""
+                                            style="width: 400px"
+                                            (focusout)="
+                                                handleTreeSelectFocusOut($event)
+                                            "
+                                        >
+                                            <p-treeSelect
+                                                class="w-full custom-tree-select w-full"
+                                                containerStyleClass="w-full"
+                                                [(ngModel)]="
+                                                    organizatioParentIdObject
+                                                "
+                                                [options]="nodes"
+                                                [filter]="true"
+                                                filterBy="label"
+                                                filterPlaceholder="Tìm đơn vị"
+                                                placeholder="Chọn đơn vị"
+                                                [showClear]="true"
+                                                (onClear)="validateParentUnit()"
+                                                (onChange)="
+                                                    onParentUnitChange($event)
+                                                "
+                                                [style]="{
+                                                    width: '290px',
+                                                    marginRight: '10px',
+                                                }"
+                                            />
+                                            <div
+                                                *ngIf="isParentUnitInvalid"
+                                                style="
+                                                    color: red;
+                                                    font-size: 12px;
+                                                "
+                                            >
+                                                <span
+                                                    >Vui lòng chọn đơn vị</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- vị trí công việc -->
+                                    <div class="text-left mt-3">
+                                        <span style="margin-bottom: 3px"
+                                            >Vị trí công việc</span
+                                        >
+                                        <p-dropdown
+                                            [options]="listAllStaff"
+                                            [(ngModel)]="selectedLocationUpdate"
+                                            optionLabel="positionName"
+                                            [filter]="true"
+                                            filterBy="positionName"
+                                            filterPlaceholder="Tìm vị trí"
+                                            placeholder="Vị trí"
+                                            [showClear]="true"
+                                            [style]="{
+                                                width: '400px',
+                                                'margin-right': '10px',
+                                            }"
+                                            (onChange)="
+                                                onPositionChange($event)
+                                            "
+                                        />
+                                    </div>
+                                    <div class="text-left mt-3">
+                                        <span>Chức danh</span>
+                                        <input
+                                            pInputText
+                                            type="text"
+                                            placeholder="Thêm cấp tổ chức"
+                                            style="width: 400px"
+                                            [hidden]="isCreateUnit"
+                                            [(ngModel)]="staffTitleName"
+                                            readonly
+                                        />
+                                    </div>
+                                    <div class="text-left mt-3 mb-5">
+                                        <span>Quản lý trực tiếp</span>
+
+                                        <p-multiSelect
+                                            [options]="listEmployeeUpdate"
+                                            [(ngModel)]="
+                                                organizationLeadersUpdate
+                                            "
+                                            optionLabel="name"
+                                            placeholder="Chọn quản lý trực tiếp"
+                                            [showClear]="true"
+                                            display="chip"
+                                            [style]="{
+                                                width: '400px',
+                                                height: '45px',
+                                                scrollY: 'auto',
+                                            }"
+                                            [selectionLimit]="1"
+                                        >
+                                        </p-multiSelect>
+
+                                        <div
+                                            *ngIf="
+                                                selectDepartmentHeads?.length
+                                            "
+                                            style="margin-top: 10px"
+                                        >
+                                            <span
+                                                *ngFor="
+                                                    let head of selectedDepartmentHeads;
+                                                    let i = index
+                                                "
+                                                class="selected-head"
+                                                style="
+                                                    display: inline-block;
+                                                    margin-right: 10px;
+                                                    padding: 5px 10px;
+                                                    background-color: #f0f0f0;
+                                                    border-radius: 16px;
+                                                    position: relative;
+                                                "
+                                            >
+                                                {{ head.name }}
+                                                <button
+                                                    (click)="
+                                                        removeSelectedHead(i)
+                                                    "
+                                                    style="
+                                                        background: none;
+                                                        border: none;
+                                                        color: red;
+                                                        font-weight: bold;
+                                                        margin-left: 5px;
+                                                        cursor: pointer;
+                                                    "
+                                                >
+                                                    x
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
                                     <div
-                                        *ngIf="isParentUnitInvalid"
-                                        style="color: red; font-size: 12px"
+                                        class=" "
+                                        style="
+                                            display: flex;
+                                            justify-content: end;
+                                        "
                                     >
-                                        <span>Vui lòng chọn đơn vị</span>
+                                        <span
+                                            (click)="onDialogClose()"
+                                            style="
+                                                padding: 10px 10px;
+                                                background-color: #fff;
+                                                color: #000;
+                                                border-radius: 6px;
+                                                border: 1px solid #ccc;
+                                                margin-right: 3px;
+                                                cursor: pointer;
+                                            "
+                                            >Hủy</span
+                                        >
+                                        <p-button
+                                            (click)="handleUpdateEmployee()"
+                                            label="Lưu"
+                                        />
                                     </div>
                                 </div>
-                            </div>
+                            </p-dialog>
+                        </span>
+                        <span
+                            *ngIf="!istwo1"
+                            class="block mt-2 cursor-pointer"
+                            style="
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                            "
+                        >
+                            <p-dialog
+                                header="Xóa nhân viên"
+                                [modal]="true"
+                                [(visible)]="isdelete"
+                                [style]="{ width: '25rem' }"
+                            >
+                                <p>
+                                    Hệ thống sẽ xóa
+                                    {{ selectedEmployeeIds.length }} nhân viên :
+                                    <span
+                                        *ngFor="
+                                            let name of nameListEmployeeDelete
+                                        "
+                                        >, {{ name }}</span
+                                    >
+                                </p>
+                                <div class="flex justify-content-end gap-2">
+                                    <p-button
+                                        (click)="handleDeleteEmployee()"
+                                        label="Xóa"
+                                        class="btn-delete"
+                                        [style]="{
+                                            backgroundColor: 'red',
+                                            borderColor: 'red',
+                                            borderRadius: '5px !important',
+                                        }"
+                                    />
 
-                            <!-- vị trí công việc -->
-                            <div class="text-left mt-3">
-                                <span style="margin-bottom: 3px"
-                                    >Vị trí công việc</span
-                                >
-                                <p-dropdown
-                                    [options]="listAllStaff"
-                                    [(ngModel)]="selectedLocationUpdate"
-                                    optionLabel="positionName"
-                                    [filter]="true"
-                                    filterBy="positionName"
-                                    filterPlaceholder="Tìm vị trí"
-                                    placeholder="Vị trí"
-                                    [showClear]="true"
-                                    [style]="{
-                                        width: '400px',
-                                        'margin-right': '10px'
-                                    }"
-                                    (onChange)="onPositionChange($event)"
-                                />
-                            </div>
-                            <div class="text-left mt-3">
-                                <span>Chức danh</span>
+                                    <p-button
+                                        label="Hủy"
+                                        severity="secondary"
+                                        (onClick)="hiddenDialogDelete()"
+                                        class="btn-cancel"
+                                        [style]="{
+                                            backgroundColor: '#2a2986',
+                                            borderColor: '#2a2986',
+                                            borderRadius: '5px !important',
+                                            color: 'white',
+                                        }"
+                                    />
+                                </div>
+                            </p-dialog>
+                        </span>
+                    </div>
+
+                    <div class="filter-row object-filter-row" *ngIf="istwo1">
+                        <!--  input search -->
+                        <div class="search-col object-search-col">
+                            <span
+                                class="block mt-2 md:mt-0 p-input-icon-left search-input-wrap"
+                            >
+                                <i class="pi pi-search"></i>
                                 <input
                                     pInputText
                                     type="text"
-                                    placeholder="Thêm cấp tổ chức"
-                                    style="width: 400px"
-                                    [hidden]="isCreateUnit"
-                                    [(ngModel)]="staffTitleName"
-                                    readonly
-                                />
-                            </div>
-                            <div class="text-left mt-3 mb-5">
-                                <span>Quản lý trực tiếp</span>
-
-                                <p-multiSelect
-                                    [options]="listEmployeeUpdate"
-                                    [(ngModel)]="organizationLeadersUpdate"
-                                    optionLabel="name"
-                                    placeholder="Chọn quản lý trực tiếp"
-                                    [showClear]="true"
-                                    display="chip"
-                                    [style]="{
-                                        width: '400px',
-                                        height: '45px',
-                                        scrollY: 'auto'
-                                    }"
-                                    [selectionLimit]="1"
-                                >
-                                </p-multiSelect>
-
-                                <div
-                                    *ngIf="selectDepartmentHeads?.length"
-                                    style="margin-top: 10px"
-                                >
-                                    <span
-                                        *ngFor="
-                                            let head of selectedDepartmentHeads;
-                                            let i = index
-                                        "
-                                        class="selected-head"
-                                        style="
-                                            display: inline-block;
-                                            margin-right: 10px;
-                                            padding: 5px 10px;
-                                            background-color: #f0f0f0;
-                                            border-radius: 16px;
-                                            position: relative;
-                                        "
-                                    >
-                                        {{ head.name }}
-                                        <button
-                                            (click)="removeSelectedHead(i)"
-                                            style="
-                                                background: none;
-                                                border: none;
-                                                color: red;
-                                                font-weight: bold;
-                                                margin-left: 5px;
-                                                cursor: pointer;
-                                            "
-                                        >
-                                            x
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div
-                                class=" "
-                                style="display: flex; justify-content: end"
-                            >
-                                <span
-                                    (click)="onDialogClose()"
+                                    placeholder="Tìm theo tên, điện thoại"
+                                    class="form-control filter-input"
                                     style="
-                                        padding: 10px 10px;
-                                        background-color: #fff;
-                                        color: #000;
-                                        border-radius: 6px;
-                                        border: 1px solid #ccc;
-                                        margin-right: 3px;
-                                        cursor: pointer;
+                                        width: 100%;
+                                        padding: 10px 37px;
+                                        height: 43px;
                                     "
-                                    >Hủy</span
-                                >
-                                <p-button
-                                    (click)="handleUpdateEmployee()"
-                                    label="Lưu"
+                                    [(ngModel)]="textSearch"
+                                />
+                            </span>
+                        </div>
+                        <div
+                            class="filter-action-col object-filter-actions flex"
+                        >
+                            <!--  chọn đơn vị -->
+                            <div
+                                class="ml-2 select-tree filter-control-wrap"
+                                style="width: 250px"
+                            >
+                                <p-treeSelect
+                                    class="md:w-20rem w-full filter-control"
+                                    containerStyleClass="w-full"
+                                    [(ngModel)]="organizatioParentSelect1"
+                                    [options]="nodes"
+                                    [filter]="true"
+                                    filterBy="label"
+                                    filterPlaceholder="Tìm đơn vị"
+                                    placeholder="Chọn đơn vị"
+                                    [showClear]="true"
+                                    (onChange)="
+                                        onParentUnitChangeSearch($event)
+                                    "
                                 />
                             </div>
-                        </div>
-                    </p-dialog>
-                </span>
-                <span
-                    *ngIf="!istwo1"
-                    class="block mt-2 cursor-pointer"
-                    style="
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                    "
-                >
-                    <p-dialog
-                        header="Xóa nhân viên"
-                        [modal]="true"
-                        [(visible)]="isdelete"
-                        [style]="{ width: '25rem' }"
-                    >
-                        <p>
-                            Hệ thống sẽ xóa
-                            {{ selectedEmployeeIds.length }} nhân viên :
-                            <span *ngFor="let name of nameListEmployeeDelete"
-                                >, {{ name }}</span
-                            >
-                        </p>
-                        <div class="flex justify-content-end gap-2">
-                            <p-button
-                                (click)="handleDeleteEmployee()"
-                                label="Xóa"
-                                class="btn-delete"
+
+                            <!--  vị trí -->
+                            <p-dropdown
+                                class="filter-control"
+                                [options]="listAllStaff"
+                                [(ngModel)]="selectedLocation"
+                                optionLabel="positionName"
+                                [filter]="true"
+                                filterBy="positionName"
+                                filterPlaceholder="Tìm vị trí"
+                                placeholder="Vị trí"
+                                [showClear]="true"
                                 [style]="{
-                                    backgroundColor: 'red',
-                                    borderColor: 'red',
-                                    borderRadius: '5px !important'
+                                    width: '170px',
+                                    'margin-right': '10px',
                                 }"
                             />
+                            <!--  trạng thái tài khoản -->
+                            <p-dropdown
+                                class="filter-control"
+                                [options]="optionAccountStatus"
+                                [(ngModel)]="selectedAccountStatus"
+                                optionLabel="name"
+                                [filter]="true"
+                                filterBy="name"
+                                filterPlaceholder="Tìm trạng thái"
+                                placeholder="Trạng thái"
+                                [showClear]="true"
+                                [style]="{ width: '210px' }"
+                            ></p-dropdown>
 
-                            <p-button
-                                label="Hủy"
-                                severity="secondary"
-                                (onClick)="hiddenDialogDelete()"
-                                class="btn-cancel"
-                                [style]="{
-                                    backgroundColor: '#2a2986',
-                                    borderColor: '#2a2986',
-                                    borderRadius: '5px !important',
-                                    color: 'white'
-                                }"
-                            />
+                            <div class="flex justify-content-center">
+                                <button
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    class="ml-2 buttonfilter filter-btn"
+                                    (click)="search()"
+                                    label="Lọc"
+                                ></button>
+                            </div>
                         </div>
-                    </p-dialog>
-                </span>
-            </div>
-
-            <div class="filter-row object-filter-row" *ngIf="istwo1">
-                <!--  input search -->
-                <div class="search-col object-search-col">
-                    <span class="block mt-2 md:mt-0 p-input-icon-left search-input-wrap">
-                        <i class="pi pi-search"></i>
-                        <input
-                            pInputText
-                            type="text"
-                            placeholder="Tìm theo tên, điện thoại"
-                            class="form-control filter-input"
-                            style="width: 100%"
-                            [(ngModel)]="textSearch"
-                        />
-                    </span>
-                </div>
-                <div class="filter-action-col object-filter-actions flex">
-                    <!--  chọn đơn vị -->
-                    <div class="ml-2 select-tree filter-control-wrap" style="width: 300px">
-                        <p-treeSelect
-                            class="md:w-20rem w-full filter-control"
-                            containerStyleClass="w-full"
-                            [(ngModel)]="organizatioParentSelect1"
-                            [options]="nodes"
-                            [filter]="true"
-                            filterBy="label"
-                            filterPlaceholder="Tìm đơn vị"
-                            placeholder="Chọn đơn vị"
-                            [showClear]="true"
-                            (onChange)="onParentUnitChangeSearch($event)"
-                        />
+                        <div
+                            class="column-toggle-placeholder"
+                            aria-hidden="true"
+                        ></div>
                     </div>
 
-                    <!--  vị trí -->
-                    <p-dropdown
-                        class="filter-control"
-                        [options]="listAllStaff"
-                        [(ngModel)]="selectedLocation"
-                        optionLabel="positionName"
-                        [filter]="true"
-                        filterBy="positionName"
-                        filterPlaceholder="Tìm vị trí"
-                        placeholder="Vị trí"
-                        [showClear]="true"
-                        [style]="{ width: '150px', 'margin-right': '10px' }"
-                    />
-                    <!--  trạng thái tài khoản -->
-                    <p-dropdown
-                        class="filter-control"
-                        [options]="optionAccountStatus"
-                        [(ngModel)]="selectedAccountStatus"
-                        optionLabel="name"
-                        [filter]="true"
-                        filterBy="name"
-                        filterPlaceholder="Tìm trạng thái"
-                        placeholder="Trạng thái"
-                        [showClear]="true"
-                        [style]="{ width: '250px' }"
-                    ></p-dropdown>
-
-                    <div class="flex justify-content-center">
-                        <button pButton pRipple type="button" class="ml-2 buttonfilter filter-btn" (click)="search()" label="Lọc"></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-section table-panel mt-2">
-                <p-table
-                    responsiveLayout="scroll"
-                    styleClass="p-datatable-striped"
-                    [rowHover]="true"
-                    [paginator]="false"
-                    [value]="listAllEmployee"
-                    [ngStyle]="{
-                        width: 'auto',
-                        'overflow-x': 'auto',
-                        'table-layout': 'auto'
-                    }"
-                >
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th class="sticky-col">
-                                <p-checkbox
-                                    [(ngModel)]="checked"
-                                    [binary]="true"
-                                    inputId="binary"
-                                    (onChange)="onSelectAllChange()"
-                                />
-                            </th>
-                            <th
-                                [hidden]="!listable[0].status"
-                                class="text-center sticky-col"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Mã nhân viên
-                            </th>
-                            <th
-                                [hidden]="!listable[1].status"
-                                class="text-center sticky-col"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Họ và tên
-                            </th>
-                            <th
-                                [hidden]="!listable[2].status"
-                                class="text-center"
-                                [style]="{ minWidth: '300px' }"
-                            >
-                                Đơn vị công tác
-                            </th>
-                            <th
-                                [hidden]="!listable[3].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Vị trí làm việc
-                            </th>
-                            <th
-                                [hidden]="!listable[4].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Chức danh
-                            </th>
-                            <th
-                                [hidden]="!listable[5].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Quản lý trực tiếp
-                            </th>
-                            <th
-                                [hidden]="!listable[6].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Ngày thử việc
-                            </th>
-                            <th
-                                [hidden]="!listable[7].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Ngày chính thức
-                            </th>
-                            <th
-                                [hidden]="!listable[8].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Trạng thái lao động
-                            </th>
-                            <th
-                                [hidden]="!listable[9].status"
-                                class="text-center"
-                                [style]="{ minWidth: '250px' }"
-                            >
-                                Trạng thái tài khoản
-                            </th>
-                            <th
-                                [hidden]="!listable[10].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Điện thoại cá nhân
-                            </th>
-                            <th
-                                [hidden]="!listable[11].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Điện thoại cơ quan
-                            </th>
-                            <th
-                                [hidden]="!listable[12].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Email cá nhân
-                            </th>
-                            <th
-                                [hidden]="!listable[13].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Email cơ quan
-                            </th>
-                            <th
-                                [hidden]="!listable[14].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Ngày sinh
-                            </th>
-                            <th
-                                [hidden]="!listable[15].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Giới tính
-                            </th>
-                            <th
-                                [hidden]="!listable[16].status"
-                                class="text-center"
-                                [style]="{ minWidth: '200px' }"
-                            >
-                                Địa chỉ
-                            </th>
-
-                            <th
-                                class="text-center"
-                                [style]="{ minWidth: '100px' }"
-                            >
-                                Hành động
-                            </th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-rowData let-i="rowIndex">
-                        <tr style="cursor: pointer">
-                            <td class="sticky-col">
-                                <p-checkbox
-                                    [(ngModel)]="rowData.checked"
-                                    [binary]="true"
-                                    inputId="binary{{ i }}"
-                                    (onChange)="onCheckboxChange()"
-                                />
-                            </td>
-                            <td
-                                class="min-w-200 sticky-col"
-                                [hidden]="!listable[0].status"
-                            >
-                                {{ rowData.employeeCode }}
-                            </td>
-                            <td
-                                class="min-w-200 sticky-col"
-                                [hidden]="!listable[1].status"
-                            >
-                                <div
-                                    class="d-flex justify-content-left align-items-center"
-                                >
-                                    <img
-                                        [src]="
-                                            baseImageUrl + rowData?.avatarUrl
-                                        "
-                                        style="border-radius: 50%"
-                                        width="40px"
-                                        height="40px"
-                                        class="me-2"
-                                    />
-                                    <span
-                                        class="ml-2"
-                                        (click)="onObjectClick(rowData)"
+                    <div class="table-section table-panel mt-2">
+                        <p-table
+                            responsiveLayout="scroll"
+                            styleClass="p-datatable-striped"
+                            [rowHover]="true"
+                            [paginator]="false"
+                            [value]="listAllEmployee"
+                            [ngStyle]="{
+                                width: 'auto',
+                                'overflow-x': 'auto',
+                                'table-layout': 'auto',
+                            }"
+                        >
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="sticky-col">
+                                        <p-checkbox
+                                            [(ngModel)]="checked"
+                                            [binary]="true"
+                                            inputId="binary"
+                                            (onChange)="onSelectAllChange()"
+                                        />
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[0].status"
+                                        class="text-center sticky-col"
+                                        [style]="{ minWidth: '200px' }"
                                     >
-                                        {{ rowData?.lastName }}
-                                        {{ rowData?.firstName }}
-                                    </span>
-                                </div>
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[2].status"
-                            >
-                                {{ rowData?.organization?.organizationName }}
-                            </td>
-
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[3].status"
-                            >
-                                {{ rowData?.staffPosition?.positionName }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[4].status"
-                            >
-                                {{ rowData?.staffTitle?.staffTitleName }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[5].status"
-                            >
-                                {{ rowData?.managerDirect?.lastName }}
-                                {{ rowData?.managerDirect?.firstName }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[6].status"
-                            >
-                                {{
-                                    rowData?.probationDate | date : "dd/MM/yyyy"
-                                }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[7].status"
-                            >
-                                {{
-                                    rowData?.officialDate | date : "dd/MM/yyyy"
-                                }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[8].status"
-                                style="cursor: pointer"
-                            >
-                                <span
-                                    class="work-status-span"
-                                    [ngStyle]="{
-                                        color: getWorkStatus(
-                                            rowData?.workingStatus
-                                        ).color,
-                                        'background-color': getWorkStatus(
-                                            rowData?.workingStatus
-                                        ).bgcolor
-                                    }"
-                                >
-                                    {{
-                                        getWorkStatus(rowData?.workingStatus)
-                                            .text
-                                    }}
-                                </span>
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[9].status"
-                            >
-                                <span
-                                    class="status-span"
-                                    [ngStyle]="{
-                                        color: getAccountStatus(
-                                            rowData?.accountStatus
-                                        ).color,
-                                        'background-color': getAccountStatus(
-                                            rowData?.accountStatus
-                                        ).bgColor
-                                    }"
-                                >
-                                    {{
-                                        getAccountStatus(rowData?.accountStatus)
-                                            .text
-                                    }}
-                                </span>
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[10].status"
-                            >
-                                {{ rowData?.phoneNumber }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[11].status"
-                            >
-                                {{ rowData?.workPhoneNumber }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[12].status"
-                            >
-                                {{ rowData?.accountEmail }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[13].status"
-                            >
-                                {{ rowData?.companyEmail }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[14].status"
-                            >
-                                {{ rowData?.dateOfBirth | date : "dd/MM/yyyy" }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[15].status"
-                            >
-                                {{ getSexStatus(rowData?.sex).text }}
-                            </td>
-                            <td
-                                class="text-center"
-                                [hidden]="!listable[16].status"
-                            >
-                                {{ rowData?.address }} {{ rowData?.street }}
-                                {{ rowData?.ward }} {{ rowData?.district }}
-                                {{ rowData?.city }}
-                            </td>
-                            <td
-                                class="text-center"
-                                class="cursor-pointer position-relative"
-                            >
-                                <div class="" style="display: flex">
-                                    <div
-                                        *ngIf="
-                                            this.permisionHelper.hasPermissions(
-                                                [
-
-                                                        permissionConstant.ManageObjectSendMail
-
-                                                ]
-                                            )
-                                        "
-                                        class="font-size-16 ml-2"
-                                        style="padding: 3px; border-radius: 50%"
-                                        (click)="handleShowResendEmail(rowData)"
+                                        Mã nhân viên
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[1].status"
+                                        class="text-center sticky-col"
+                                        [style]="{ minWidth: '200px' }"
                                     >
-                                        <i class="pi pi-envelope"></i>
-                                    </div>
-                                    <div
-                                        *ngIf="
-                                            this.permisionHelper.hasPermissions(
-                                                [
-
-                                                        permissionConstant.ManageObjectEdit
-
-                                                ]
-                                            )
-                                        "
-                                        class="font-size-16 ml-2"
-                                        style="padding: 3px; border-radius: 50%"
-                                        [routerLink]="[
-                                            '/object/edit',
-                                            rowData.id
-                                        ]"
+                                        Họ và tên
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[2].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '300px' }"
                                     >
-                                        <i class="pi pi-file-edit"></i>
-                                    </div>
-                                    <div
-                                        *ngIf="
-                                            this.permisionHelper.hasPermissions(
-                                                [
-
-                                                        permissionConstant.ManageObjectSendMail
-
-                                                ]
-                                            )
-                                        "
-                                        class="font-size-16"
-                                        style="padding: 3px; border-radius: 50%"
-                                        (click)="onObjectClick(rowData)"
+                                        Đơn vị công tác
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[3].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
                                     >
-                                        <i class="pi pi-eye"></i>
-                                    </div>
-                                    <!-- <div
+                                        Vị trí làm việc
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[4].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Chức danh
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[5].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Quản lý trực tiếp
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[6].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Ngày thử việc
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[7].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Ngày chính thức
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[8].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Trạng thái lao động
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[9].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '250px' }"
+                                    >
+                                        Trạng thái tài khoản
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[10].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Điện thoại cá nhân
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[11].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Điện thoại cơ quan
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[12].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Email cá nhân
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[13].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Email cơ quan
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[14].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Ngày sinh
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[15].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Giới tính
+                                    </th>
+                                    <th
+                                        [hidden]="!listable[16].status"
+                                        class="text-center"
+                                        [style]="{ minWidth: '200px' }"
+                                    >
+                                        Địa chỉ
+                                    </th>
+
+                                    <th
+                                        class="text-center"
+                                        [style]="{ minWidth: '100px' }"
+                                    >
+                                        Hành động
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="body"
+                                let-rowData
+                                let-i="rowIndex"
+                            >
+                                <tr style="cursor: pointer">
+                                    <td class="sticky-col">
+                                        <p-checkbox
+                                            [(ngModel)]="rowData.checked"
+                                            [binary]="true"
+                                            inputId="binary{{ i }}"
+                                            (onChange)="onCheckboxChange()"
+                                        />
+                                    </td>
+                                    <td
+                                        class="min-w-200 sticky-col"
+                                        [hidden]="!listable[0].status"
+                                    >
+                                        {{ rowData.employeeCode }}
+                                    </td>
+                                    <td
+                                        class="min-w-200 sticky-col"
+                                        [hidden]="!listable[1].status"
+                                    >
+                                        <div
+                                            class="d-flex justify-content-left align-items-center"
+                                        >
+                                            <img
+                                                [src]="
+                                                    baseImageUrl +
+                                                    rowData?.avatarUrl
+                                                "
+                                                style="border-radius: 50%"
+                                                width="40px"
+                                                height="40px"
+                                                class="me-2"
+                                            />
+                                            <span
+                                                class="ml-2"
+                                                (click)="onObjectClick(rowData)"
+                                            >
+                                                {{ rowData?.lastName }}
+                                                {{ rowData?.firstName }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[2].status"
+                                    >
+                                        {{
+                                            rowData?.organization
+                                                ?.organizationName
+                                        }}
+                                    </td>
+
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[3].status"
+                                    >
+                                        {{
+                                            rowData?.staffPosition?.positionName
+                                        }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[4].status"
+                                    >
+                                        {{
+                                            rowData?.staffTitle?.staffTitleName
+                                        }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[5].status"
+                                    >
+                                        {{ rowData?.managerDirect?.lastName }}
+                                        {{ rowData?.managerDirect?.firstName }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[6].status"
+                                    >
+                                        {{
+                                            rowData?.probationDate
+                                                | date: "dd/MM/yyyy"
+                                        }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[7].status"
+                                    >
+                                        {{
+                                            rowData?.officialDate
+                                                | date: "dd/MM/yyyy"
+                                        }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[8].status"
+                                        style="cursor: pointer"
+                                    >
+                                        <span
+                                            class="work-status-span"
+                                            [ngStyle]="{
+                                                color: getWorkStatus(
+                                                    rowData?.workingStatus
+                                                ).color,
+                                                'background-color':
+                                                    getWorkStatus(
+                                                        rowData?.workingStatus
+                                                    ).bgcolor,
+                                            }"
+                                        >
+                                            {{
+                                                getWorkStatus(
+                                                    rowData?.workingStatus
+                                                ).text
+                                            }}
+                                        </span>
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[9].status"
+                                    >
+                                        <span
+                                            class="status-span"
+                                            [ngStyle]="{
+                                                color: getAccountStatus(
+                                                    rowData?.accountStatus
+                                                ).color,
+                                                'background-color':
+                                                    getAccountStatus(
+                                                        rowData?.accountStatus
+                                                    ).bgColor,
+                                            }"
+                                        >
+                                            {{
+                                                getAccountStatus(
+                                                    rowData?.accountStatus
+                                                ).text
+                                            }}
+                                        </span>
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[10].status"
+                                    >
+                                        {{ rowData?.phoneNumber }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[11].status"
+                                    >
+                                        {{ rowData?.workPhoneNumber }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[12].status"
+                                    >
+                                        {{ rowData?.accountEmail }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[13].status"
+                                    >
+                                        {{ rowData?.companyEmail }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[14].status"
+                                    >
+                                        {{
+                                            rowData?.dateOfBirth
+                                                | date: "dd/MM/yyyy"
+                                        }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[15].status"
+                                    >
+                                        {{ getSexStatus(rowData?.sex).text }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        [hidden]="!listable[16].status"
+                                    >
+                                        {{ rowData?.address }}
+                                        {{ rowData?.street }}
+                                        {{ rowData?.ward }}
+                                        {{ rowData?.district }}
+                                        {{ rowData?.city }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        class="cursor-pointer position-relative"
+                                    >
+                                        <div class="" style="display: flex">
+                                            <div
+                                                *ngIf="
+                                                    this.permisionHelper.hasPermissions(
+                                                        [
+                                                            permissionConstant.ManageObjectSendMail,
+                                                        ]
+                                                    )
+                                                "
+                                                class="font-size-16 ml-2"
+                                                style="
+                                                    padding: 3px;
+                                                    border-radius: 50%;
+                                                "
+                                                (click)="
+                                                    handleShowResendEmail(
+                                                        rowData
+                                                    )
+                                                "
+                                            >
+                                                <i class="pi pi-envelope"></i>
+                                            </div>
+                                            <div
+                                                *ngIf="
+                                                    this.permisionHelper.hasPermissions(
+                                                        [
+                                                            permissionConstant.ManageObjectEdit,
+                                                        ]
+                                                    )
+                                                "
+                                                class="font-size-16 ml-2"
+                                                style="
+                                                    padding: 3px;
+                                                    border-radius: 50%;
+                                                "
+                                                [routerLink]="[
+                                                    '/object/edit',
+                                                    rowData.id,
+                                                ]"
+                                            >
+                                                <i class="pi pi-file-edit"></i>
+                                            </div>
+                                            <div
+                                                *ngIf="
+                                                    this.permisionHelper.hasPermissions(
+                                                        [
+                                                            permissionConstant.ManageObjectSendMail,
+                                                        ]
+                                                    )
+                                                "
+                                                class="font-size-16"
+                                                style="
+                                                    padding: 3px;
+                                                    border-radius: 50%;
+                                                "
+                                                (click)="onObjectClick(rowData)"
+                                            >
+                                                <i class="pi pi-eye"></i>
+                                            </div>
+                                            <!-- <div
                                         *ngIf="
                                             this.permisionHelper.hasPermissions(
                                                 [
@@ -1238,47 +1355,46 @@
                                             class="pi pi-trash"
                                         ></i>
                                     </div> -->
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="empty">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="8" class="text-center">
+                                            Không có dữ liệu
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </ng-template>
+                        </p-table>
+
+                        <div>
+                            <div class="paging-bot" *ngIf="totalItems > 0">
+                                <div class="paging-info">
+                                    <p [innerHTML]="currentPageReport"></p>
                                 </div>
-                            </td>
-                        </tr>
-                    </ng-template>
-
-                    <ng-template pTemplate="empty">
-                        <tbody>
-                            <tr>
-                                <td colspan="8" class="text-center">
-                                    Không có dữ liệu
-                                </td>
-                            </tr>
-                        </tbody>
-                    </ng-template>
-                </p-table>
-
-                <div>
-                    <div
-                        class="paging-bot"
-                        *ngIf="totalItems > 0"
-                    >
-                        <div class="paging-info">
-                            <p [innerHTML]="currentPageReport"></p>
+                                <p-paginator
+                                    class="org-paginator"
+                                    [rows]="pageSize"
+                                    [totalRecords]="totalItems"
+                                    [rowsPerPageOptions]="[10, 20, 30]"
+                                    (onPageChange)="onPageChange($event)"
+                                    (onRowsPerPageChange)="
+                                        onPageSizeChange($event)
+                                    "
+                                    [first]="(pageIndex - 1) * pageSize"
+                                    [pageLinkSize]="3"
+                                ></p-paginator>
+                            </div>
                         </div>
-                        <p-paginator
-                            class="org-paginator"
-                            [rows]="pageSize"
-                            [totalRecords]="totalItems"
-                            [rowsPerPageOptions]="[10, 20, 30]"
-                            (onPageChange)="onPageChange($event)"
-                            (onRowsPerPageChange)="onPageSizeChange($event)"
-                            [first]="(pageIndex - 1) * pageSize"
-                            [pageLinkSize]="3"
-                        ></p-paginator>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-</section>
+    </section>
 </main>
 
 <p-dialog
@@ -1341,7 +1457,7 @@
             [style]="{
                 backgroundColor: 'red',
                 borderColor: 'red',
-                borderRadius: '5px !important'
+                borderRadius: '5px !important',
             }"
         />
         <p-button
@@ -1353,7 +1469,7 @@
                 backgroundColor: '#2a2986',
                 borderColor: '#2a2986',
                 borderRadius: '5px !important',
-                color: 'white'
+                color: 'white',
             }"
         />
     </div>

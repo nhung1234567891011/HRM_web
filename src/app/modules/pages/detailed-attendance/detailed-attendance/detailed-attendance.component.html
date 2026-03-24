@@ -1,20 +1,11 @@
 <p-confirmDialog styleClass="confirm-delete-timesheet-dialog"></p-confirmDialog>
-<main id="main" class="main">
+<main id="main" class="main detailed-attendance-page">
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Bảng chấm công chi tiết</strong>
-            <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
-        </div>
-
-        <div class="btn-add-wrapper" *ngIf="this.permisionHelper.hasPermissions([permissionConstant.ManageDetailedTimekeepingCreate])">
-            <button
-                pButton
-                pRipple
-                label="Thêm mới"
-                icon="pi pi-plus"
-                style="height: 40px; width: 130px; border-radius: 10px"
-                (click)="showDialogAdd()"
-            ></button>
+            <app-shared-breadcrumb
+                [model]="$any(this).items || []"
+            ></app-shared-breadcrumb>
         </div>
     </div>
     <div class="toast-container">
@@ -26,182 +17,307 @@
     </div>
     <!-- End Page Title -->
     <section class="section k-list-table">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-lg-3 mt-3">
-                <input
-                  pInputText
-                  type="text"
-                  [(ngModel)]="searchNameInput"
-                  placeholder="Tìm kiếm tên bảng chấm công"
-                  (keyup.enter)="onSearchTimesheet()"
-                  [style]="{ height: '43px', width: '100%' }"
-                />
-              </div>              
-              <div class="col-lg-3 mt-3">
-                <div class="filter-container">
-                  <button (click)="prevMonth()"><i class="pi pi-arrow-left"></i></button>
-                  <span>{{ currentMonthYear.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' }) }}</span>
-                  <button (click)="nextMonth()"><i class="pi pi-arrow-right"></i></button>
-                </div>
-              </div>
-              
-              <div class="col-lg-3 mt-3">
-                <p-treeSelect
-                  [options]="treeData"
-                  [(ngModel)]="selectedNode"
-                  [placeholder]="'Chọn đơn vị'"
-                  [showClear]="true"
-                  [style]="{ width: '100%' }"
-                ></p-treeSelect>
-              </div>
-              
-              <div class="col-lg-1 mt-3">
-                <button 
-                    style="height: 43px;" 
-                    pButton 
-                    pRipple 
-                    label="Lọc"
-                    class="buttonfilter"
-                    (click)="getPagingDetailTimesheet()">
-                </button>
-              </div>
-                            <div class="col-lg-1 mt-3" style="display: flex; justify-content: flex-end;">
-                                <p-button
-                                    pTooltip="Ẩn/hiện cột"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-table"
-                                    (onClick)="colPanelRef.toggle($event)">
-                                </p-button>
-
-                                <p-overlayPanel #colPanelRef>
-                                    <div style="padding: 8px; min-width: 220px;">
-                                        <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
-                                        <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
-                                            <p-checkbox
-                                                [binary]="true"
-                                                [label]="col.header"
-                                                [ngModel]="isColVisible(col.field)"
-                                                (onChange)="onColumnToggle($event, col)"
-                                                [ngModelOptions]="{standalone: true}">
-                                            </p-checkbox>
-                                        </div>
-                                    </div>
-                                </p-overlayPanel>
+        <div class="table-shell">
+            <p-table
+                [value]="detailTimesheet"
+                [rows]="pageSize"
+                [totalRecords]="totalRecords"
+                [paginator]="false"
+                (onPage)="onPageChange($event)"
+                styleClass="p-datatable-striped"
+            >
+                <ng-template pTemplate="caption">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <div class="filter-col search-col">
+                                <span class="search-input-wrap">
+                                    <input
+                                        pInputText
+                                        type="text"
+                                        [(ngModel)]="searchNameInput"
+                                        placeholder="Tìm kiếm tên bảng chấm công"
+                                        (keyup.enter)="onSearchTimesheet()"
+                                    />
+                                </span>
                             </div>
-              
-            </div>
-            <div class="card mt-3">
-              <p-table [value]="detailTimesheet"
-                  [paginator]="true"
-                  [rows]="pageSize"
-                  [totalRecords]="totalRecords"
-                  [paginator]="false"
-                  (onPage)="onPageChange($event)"
-                  styleClass="p-datatable-striped">
-                  <ng-template pTemplate="header">
-                      <tr>
-                          <th style="width: 1%;">
-                              <p-checkbox [binary]="true" inputId="binary"></p-checkbox>
-                          </th>
-                                                    <th *ngIf="isColVisible('timekeepingSheetName')" style="width: 12%;">Tên bảng châm công</th>
-                                                    <th *ngIf="isColVisible('timeRange')" style="width: 9%;">Thời gian</th>
-                                                    <th *ngIf="isColVisible('timekeepingMethod')" style="width: 5%;">Chấm công</th>
-                                                    <th *ngIf="isColVisible('organizationName')" style="width: 10%;">Đơn vị áp dụng</th>
-                                                    <th *ngIf="isColVisible('positionNames')" style="width: 12%;">Vị trí</th>
-                                                    <th *ngIf="isColVisible('status')" style="width: 4%;">Trạng thái</th>
-                          <th style="width: 4%;" 
-                                                        *ngIf="isColVisible('action') && (
-                                                            this.permisionHelper.hasPermissions([permissionConstant.ManageDetailedTimekeepingEdit]) 
-                                                            || this.permisionHelper.hasPermissions([permissionConstant.ManageGeneralTimekeepingDelete]))"
-                                                    >
+
+                            <div class="filter-col month-col">
+                                <div class="month-nav">
+                                    <button
+                                        pButton
+                                        pRipple
+                                        type="button"
+                                        class="p-button-outlined p-button-secondary month-nav-btn"
+                                        icon="pi pi-arrow-left"
+                                        (click)="prevMonth()"
+                                    ></button>
+                                    <span class="month-nav-label">
+                                        {{
+                                            currentMonthYear.toLocaleDateString(
+                                                "vi-VN",
+                                                {
+                                                    month: "long",
+                                                    year: "numeric",
+                                                }
+                                            )
+                                        }}
+                                    </span>
+                                    <button
+                                        pButton
+                                        pRipple
+                                        type="button"
+                                        class="p-button-outlined p-button-secondary month-nav-btn"
+                                        icon="pi pi-arrow-right"
+                                        (click)="nextMonth()"
+                                    ></button>
+                                </div>
+                            </div>
+
+                            <div class="filter-col org-col">
+                                <p-treeSelect
+                                    [options]="treeData"
+                                    [(ngModel)]="selectedNode"
+                                    [placeholder]="'Chọn đơn vị'"
+                                    [showClear]="true"
+                                ></p-treeSelect>
+                            </div>
+
+                            <div class="filter-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    label="Lọc"
+                                    class="buttonfilter"
+                                    (click)="getPagingDetailTimesheet()"
+                                ></button>
+                            </div>
+                        </div>
+
+                        <div class="filter-right">
+                            <div class="filter-col">
+                                <div
+                                    class="column-toggle-placeholder"
+                                    data-column-toggle-placeholder
+                                    aria-hidden="true"
+                                ></div>
+                            </div>
+
+                            <button
+                                *ngIf="
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageDetailedTimekeepingCreate,
+                                    ])
+                                "
+                                pButton
+                                pRipple
+                                type="button"
+                                label="Thêm mới"
+                                icon="pi pi-plus"
+                                class="btn-add"
+                                (click)="showDialogAdd()"
+                            ></button>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 1%">
+                            <p-checkbox
+                                [binary]="true"
+                                inputId="binary"
+                            ></p-checkbox>
+                        </th>
+                        <th
+                            *ngIf="isColVisible('timekeepingSheetName')"
+                            style="width: 12%"
+                        >
+                            Tên bảng châm công
+                        </th>
+                        <th *ngIf="isColVisible('timeRange')" style="width: 9%">
+                            Thời gian
+                        </th>
+                        <th
+                            *ngIf="isColVisible('timekeepingMethod')"
+                            style="width: 5%"
+                        >
+                            Chấm công
+                        </th>
+                        <th
+                            *ngIf="isColVisible('organizationName')"
+                            style="width: 10%"
+                        >
+                            Đơn vị áp dụng
+                        </th>
+                        <th
+                            *ngIf="isColVisible('positionNames')"
+                            style="width: 12%"
+                        >
+                            Vị trí
+                        </th>
+                        <th *ngIf="isColVisible('status')" style="width: 4%">
+                            Trạng thái
+                        </th>
+                        <th
+                            style="width: 4%"
+                            *ngIf="
+                                isColVisible('action') &&
+                                (this.permisionHelper.hasPermissions([
+                                    permissionConstant.ManageDetailedTimekeepingEdit,
+                                ]) ||
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageGeneralTimekeepingDelete,
+                                    ]))
+                            "
+                        >
                             Thao tác
-                          </th>
-                      </tr>
-                  </ng-template>
-                  <ng-template pTemplate="body" let-detail>
-                      <tr>
-                          <td><p-checkbox [binary]="true" inputId="binary"></p-checkbox></td>
-                          <td *ngIf="isColVisible('timekeepingSheetName')">{{ detail.timekeepingSheetName }}</td>
-                          <td *ngIf="isColVisible('timeRange')">{{ detail.startDate | date: 'dd/MM/yyyy' }} - {{ detail.endDate | date: 'dd/MM/yyyy' }}</td>
-                          <td *ngIf="isColVisible('timekeepingMethod')">{{ detail.timekeepingMethod === 0 ? 'Theo giờ' : 'Theo ngày' }}</td>
-                          <td *ngIf="isColVisible('organizationName')">{{ detail.organization?.organizationName }}</td>
-                          <td *ngIf="isColVisible('positionNames')">
-                            <span *ngIf="isAllPositionsMatch(detail.positionNames)">
-                              Tất cả vị trí
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-detail>
+                    <tr>
+                        <td>
+                            <p-checkbox
+                                [binary]="true"
+                                inputId="binary"
+                            ></p-checkbox>
+                        </td>
+                        <td *ngIf="isColVisible('timekeepingSheetName')">
+                            {{ detail.timekeepingSheetName }}
+                        </td>
+                        <td *ngIf="isColVisible('timeRange')">
+                            {{ detail.startDate | date: "dd/MM/yyyy" }} -
+                            {{ detail.endDate | date: "dd/MM/yyyy" }}
+                        </td>
+                        <td *ngIf="isColVisible('timekeepingMethod')">
+                            {{
+                                detail.timekeepingMethod === 0
+                                    ? "Theo giờ"
+                                    : "Theo ngày"
+                            }}
+                        </td>
+                        <td *ngIf="isColVisible('organizationName')">
+                            {{ detail.organization?.organizationName }}
+                        </td>
+                        <td *ngIf="isColVisible('positionNames')">
+                            <span
+                                *ngIf="
+                                    isAllPositionsMatch(detail.positionNames)
+                                "
+                            >
+                                Tất cả vị trí
                             </span>
-                            <span *ngIf="!isAllPositionsMatch(detail.positionNames)">
-                              <span *ngIf="detail.positionNames.length <= 100">
-                                {{ detail.positionNames }}
-                              </span>
-                              <span *ngIf="detail.positionNames.length > 100">
-                                <span *ngIf="!expandedRows[detail.id]">
-                                  {{ detail.positionNames | slice: 0:100 }}...
-                                  <a href="#" (click)="toggleRow(detail.id, $event)">Xem thêm</a>
+                            <span
+                                *ngIf="
+                                    !isAllPositionsMatch(detail.positionNames)
+                                "
+                            >
+                                <span
+                                    *ngIf="detail.positionNames.length <= 100"
+                                >
+                                    {{ detail.positionNames }}
                                 </span>
-                                <span *ngIf="expandedRows[detail.id]">
-                                  {{ detail.positionNames }}
-                                  <a href="#" (click)="toggleRow(detail.id, $event)">Ẩn bớt</a>
+                                <span *ngIf="detail.positionNames.length > 100">
+                                    <span *ngIf="!expandedRows[detail.id]">
+                                        {{
+                                            detail.positionNames
+                                                | slice: 0 : 100
+                                        }}...
+                                        <a
+                                            href="#"
+                                            (click)="
+                                                toggleRow(detail.id, $event)
+                                            "
+                                            >Xem thêm</a
+                                        >
+                                    </span>
+                                    <span *ngIf="expandedRows[detail.id]">
+                                        {{ detail.positionNames }}
+                                        <a
+                                            href="#"
+                                            (click)="
+                                                toggleRow(detail.id, $event)
+                                            "
+                                            >Ẩn bớt</a
+                                        >
+                                    </span>
                                 </span>
-                              </span>
                             </span>
-                          </td>                                                                                                                                  
-                                                    <td *ngIf="isColVisible('status')">
-                            <span class="work-status-span"
-                              [ngStyle]="{'color': getWorkStatus(detail.isLock).color, 'background-color': getWorkStatus(detail.isLock).bgcolor}">
-                              {{ getWorkStatus(detail.isLock).text }}
+                        </td>
+                        <td *ngIf="isColVisible('status')">
+                            <span
+                                class="work-status-span"
+                                [ngStyle]="{
+                                    color: getWorkStatus(detail.isLock).color,
+                                    'background-color': getWorkStatus(
+                                        detail.isLock
+                                    ).bgcolor,
+                                }"
+                            >
+                                {{ getWorkStatus(detail.isLock).text }}
                             </span>
-                          </td>
-                                                    <td *ngIf="isColVisible('action') && (
-                                                             this.permisionHelper.hasPermissions([permissionConstant.ManageDetailedTimekeepingEdit])
-                                                             || this.permisionHelper.hasPermissions([permissionConstant.ManageGeneralTimekeepingDelete]))">
-                            <i *ngIf="this.permisionHelper.hasPermissions([permissionConstant.ManageDetailedTimekeepingEdit])"
-                               style="cursor: pointer;"
-                               class="pi pi-eye"
-                               (click)="viewDetailTimesheet(detail)"
-                               title="Xem chi tiết"></i>
-                            <i *ngIf="this.permisionHelper.hasPermissions([permissionConstant.ManageGeneralTimekeepingDelete])"
-                               style="padding-left: 15px; cursor: pointer;"
-                               class="pi pi-trash"
-                               (click)="confirmDeleteDetailTimesheet($event, detail)"></i>
-                          </td>
-                      </tr>
-                  </ng-template>
-              </p-table>
+                        </td>
+                        <td
+                            *ngIf="
+                                isColVisible('action') &&
+                                (this.permisionHelper.hasPermissions([
+                                    permissionConstant.ManageDetailedTimekeepingEdit,
+                                ]) ||
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageGeneralTimekeepingDelete,
+                                    ]))
+                            "
+                        >
+                            <i
+                                *ngIf="
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageDetailedTimekeepingEdit,
+                                    ])
+                                "
+                                style="cursor: pointer"
+                                class="pi pi-eye"
+                                (click)="viewDetailTimesheet(detail)"
+                                title="Xem chi tiết"
+                            ></i>
+                            <i
+                                *ngIf="
+                                    this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageGeneralTimekeepingDelete,
+                                    ])
+                                "
+                                style="padding-left: 15px; cursor: pointer"
+                                class="pi pi-trash"
+                                (click)="
+                                    confirmDeleteDetailTimesheet($event, detail)
+                                "
+                            ></i>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
 
-              <div
-              *ngIf="totalRecords === 0"
-              style="text-align: center; margin-top: 20px"
-          >
-              <strong style="text-align: center; width: 100%"
-                  >Không tìm thấy kết quả phù hợp</strong
-              >
-              </div>
-
-              <div class="paging-bot dg-fix">
-                  <div class="paging-info">
-                      <div [innerHTML]="currentPageReport"></div>
-                  </div>
-                  <p-paginator
-                      [rows]="this.pageSize"
-                      (onPageChange)="onPageChange($event)"
-                      [totalRecords]="
-                          totalRecords > 0 ? totalRecords : 1
-                      "
-                      [rowsPerPageOptions]="[10, 20, 30]"
-                      [first]="(this.pageIndex - 1) * this.pageSize"
-                  ></p-paginator>
-              </div>
-
+            <div
+                *ngIf="totalRecords === 0"
+                style="text-align: center; margin-top: 20px"
+            >
+                <strong style="text-align: center; width: 100%"
+                    >Không tìm thấy kết quả phù hợp</strong
+                >
             </div>
-          </div>
+
+            <div class="paging-bot aligned-paging">
+                <div class="paging-info">
+                    <div [innerHTML]="currentPageReport"></div>
+                </div>
+                <p-paginator
+                    [rows]="this.pageSize"
+                    (onPageChange)="onPageChange($event)"
+                    [totalRecords]="totalRecords > 0 ? totalRecords : 1"
+                    [rowsPerPageOptions]="[10, 20, 30]"
+                    [first]="(this.pageIndex - 1) * this.pageSize"
+                ></p-paginator>
+            </div>
         </div>
-      </div>
-        <!---->
     </section>
 </main>
 
@@ -237,7 +353,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('organizationId')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('organizationId')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Đơn vị không được bỏ trống
@@ -273,7 +393,10 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('detailTimesheetNameStaffPositions')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('detailTimesheetNameStaffPositions')
+                                ?.errors?.['required']
+                        "
                         class="error-message"
                     >
                         Vị trí không được bỏ trống
@@ -302,7 +425,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('timekeepingSheetName')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('timekeepingSheetName')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Tên không được bỏ trống
@@ -351,7 +478,11 @@
                         "
                     >
                         <div
-                            *ngIf="detailForm.get('startDate')?.errors?.['required']"
+                            *ngIf="
+                                detailForm.get('startDate')?.errors?.[
+                                    'required'
+                                ]
+                            "
                             class="error-message"
                         >
                             <small>Ngày bắt đầu không được bỏ trống</small>
@@ -367,7 +498,9 @@
                         "
                     >
                         <div
-                            *ngIf="detailForm.get('endDate')?.errors?.['required']"
+                            *ngIf="
+                                detailForm.get('endDate')?.errors?.['required']
+                            "
                             class="error-message"
                         >
                             <small>Ngày kết thúc không được bỏ trống</small>
@@ -399,7 +532,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('timekeepingMethod')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('timekeepingMethod')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Hình thức chấm công không được bỏ trống

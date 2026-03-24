@@ -1,26 +1,8 @@
-<main id="main" class="main">
+<main id="main" class="main contract-list-page">
     <div class="pagetitle">
         <div>
             <strong class="font-size-16">Danh sách hợp đồng</strong>
-<app-shared-breadcrumb></app-shared-breadcrumb>
-        </div>
-
-        <div
-            class="btn-add-wrapper"
-            *ngIf="
-                this.permisionHelper.hasPermissions([
-                    permissionConstant.ManageContractCreate
-                ])
-            "
-        >
-            <button
-                pButton
-                pRipple
-                label="Thêm mới"
-                icon="pi pi-plus"
-                style="height: 40px; width: 130px; border-radius: 10px"
-                [routerLink]="['/contract/create']"
-            ></button>
+            <app-shared-breadcrumb></app-shared-breadcrumb>
         </div>
     </div>
     <div class="toast-container">
@@ -35,87 +17,119 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 mt-3">
-                            <p-autoComplete
-                                [style]="{ height: '43px', width: '100%' }"
-                                [(ngModel)]="selectedEmployee"
-                                [suggestions]="filteredEmployees"
-                                (completeMethod)="searchEmployee($event)"
-                                [field]="'displayName'"
-                                [forceSelection]="true"
-                                [showClear]="true"
-                                placeholder="Tìm kiếm nhân viên"
-                            >
-                            </p-autoComplete>
-                        </div>
-
-                        <div class="col-lg-3 mt-3">
-                            <p-dropdown
-                                [(ngModel)]="selectedContractStatus"
-                                [options]="contractOption"
-                                optionLabel="name"
-                                [showClear]="true"
-                                placeholder="Tất cả hợp đồng"
-                                (onChange)="onContractStatusChange($event)"
-                                [style]="{ height: '43px', width: '100%' }"
-                            ></p-dropdown>
-                        </div>
-                        <div class="col-lg-3 mt-3">
-                            <p-treeSelect
-                                [options]="treeData"
-                                [(ngModel)]="selectedNode"
-                                [placeholder]="'Tất cả đơn vị'"
-                                [style]="{ width: '100%' }"
-                            ></p-treeSelect>
-                        </div>
-                        <div class="col-lg-1 mt-3">
-                            <button
-                                style="height: 43px"
-                                pButton
-                                pRipple
-                                label="Lọc"
-                                class="buttonfilter"
-                                (click)="getPagingContract()"
-                            ></button>
-                        </div>
-                        <div class="col-lg-1 mt-3">
-                            <div style="display: flex">
-                                <p-button
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-filter"
-                                ></p-button>
-
-                                <p-button
-                                    style="margin-left: 10px"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-file-export"
-                                ></p-button>
-
-                                <p-button
-                                    style="margin-left: 10px"
-                                    label=""
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    icon="pi pi-spin pi-cog"
-                                ></p-button>
-                            </div>
-                        </div>
-                    </div>
                     <div class="card mt-3">
                         <p-table
                             [value]="contracts"
-                            [paginator]="true"
-                            [rows]="pageSize"
-                            [totalRecords]="totalRecords"
-                            [paginator]="false"
-                            (onPage)="onPageChange($event)"
+                            responsiveLayout="scroll"
                             styleClass="p-datatable-striped"
                         >
+                            <ng-template pTemplate="caption">
+                                <div class="filter-row">
+                                    <div class="filter-left">
+                                        <div class="filter-col search-col">
+                                            <p-autoComplete
+                                                [(ngModel)]="selectedEmployee"
+                                                [suggestions]="
+                                                    filteredEmployees
+                                                "
+                                                (completeMethod)="
+                                                    searchEmployee($event)
+                                                "
+                                                [field]="'displayName'"
+                                                [forceSelection]="true"
+                                                [showClear]="true"
+                                                placeholder="Tìm kiếm nhân viên"
+                                            >
+                                            </p-autoComplete>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <p-dropdown
+                                                [(ngModel)]="
+                                                    selectedContractStatus
+                                                "
+                                                [options]="contractOption"
+                                                optionLabel="name"
+                                                [showClear]="true"
+                                                placeholder="Tất cả hợp đồng"
+                                                (onChange)="
+                                                    onContractStatusChange(
+                                                        $event
+                                                    )
+                                                "
+                                            ></p-dropdown>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <p-treeSelect
+                                                [(ngModel)]="selectedNode"
+                                                [options]="treeData"
+                                                [placeholder]="'Tất cả đơn vị'"
+                                            ></p-treeSelect>
+                                        </div>
+                                    </div>
+
+                                    <div class="filter-right">
+                                        <div class="filter-col">
+                                            <button
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                label="Lọc"
+                                                class="buttonfilter"
+                                                (click)="getPagingContract()"
+                                                [attr.data-tooltip]="'Lọc'"
+                                                [title]="'Lọc'"
+                                            ></button>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <p-button
+                                                type="button"
+                                                label=""
+                                                [outlined]="true"
+                                                severity="secondary"
+                                                icon="pi pi-file-export"
+                                                [attr.data-tooltip]="'Xuất'"
+                                                [title]="'Xuất'"
+                                            ></p-button>
+                                        </div>
+
+                                        <div class="filter-col">
+                                            <div
+                                                class="column-toggle-placeholder"
+                                                data-column-toggle-placeholder
+                                                aria-hidden="true"
+                                            ></div>
+                                        </div>
+
+                                        <div
+                                            class="filter-col"
+                                            *ngIf="
+                                                this.permisionHelper.hasPermissions(
+                                                    [
+                                                        permissionConstant.ManageContractCreate,
+                                                    ]
+                                                )
+                                            "
+                                        >
+                                            <button
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                label="Thêm mới"
+                                                icon="pi pi-plus"
+                                                class="btn-add-contract"
+                                                [routerLink]="[
+                                                    '/contract/create',
+                                                ]"
+                                                [attr.data-tooltip]="'Thêm mới'"
+                                                [title]="'Thêm mới'"
+                                            ></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="width: 1%">
@@ -147,7 +161,7 @@
                                     <td>
                                         {{
                                             contract.signingDate
-                                                | date : "dd/MM/yyyy"
+                                                | date: "dd/MM/yyyy"
                                         }}
                                     </td>
                                     <td>{{ contract.code ?? "N/A" }}</td>
@@ -165,13 +179,13 @@
                                     <td>
                                         {{
                                             contract.effectiveDate
-                                                | date : "dd/MM/yyyy"
+                                                | date: "dd/MM/yyyy"
                                         }}
                                     </td>
                                     <td>
                                         {{
                                             contract.expiryDate
-                                                | date : "dd/MM/yyyy"
+                                                | date: "dd/MM/yyyy"
                                         }}
                                     </td>
                                     <td style="text-align: center">
@@ -185,14 +199,14 @@
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractEdit
+                                                                permissionConstant.ManageContractEdit,
                                                             ]
                                                         )
                                                     "
                                                     class="menu-btn"
                                                     [routerLink]="[
                                                         '/contract/update',
-                                                        contract.id
+                                                        contract.id,
                                                     ]"
                                                 >
                                                     <i class="pi pi-pencil"></i>
@@ -203,7 +217,7 @@
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractTerminate
+                                                                permissionConstant.ManageContractTerminate,
                                                             ]
                                                         )
                                                     "
@@ -221,7 +235,7 @@
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractExport
+                                                                permissionConstant.ManageContractExport,
                                                             ]
                                                         )
                                                     "
@@ -237,7 +251,7 @@
                                                     *ngIf="
                                                         this.permisionHelper.hasPermissions(
                                                             [
-                                                                permissionConstant.ManageContractDelete
+                                                                permissionConstant.ManageContractDelete,
                                                             ]
                                                         )
                                                     "
@@ -280,7 +294,7 @@
                                 >
                                     <span>Ngày có hiệu lực: </span>
                                     <span>{{
-                                        effectiveDate | date : "dd/MM/yyyy"
+                                        effectiveDate | date: "dd/MM/yyyy"
                                     }}</span>
                                 </div>
 
@@ -313,7 +327,7 @@
                                                 "
                                                 [style]="{
                                                     height: '40px',
-                                                    width: '100%'
+                                                    width: '100%',
                                                 }"
                                                 inputId="icondisplay"
                                                 [class.disabled-calendar]="

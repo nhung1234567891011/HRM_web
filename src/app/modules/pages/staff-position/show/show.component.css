@@ -1,12 +1,12 @@
-.status-red{
+.status-red {
     color: red;
 }
 
-.status-red{
+.status-red {
     padding: 5px 15px;
-    background-color:#fcecec;
-    border-radius:8px;
-    font-size:14px;
+    background-color: #fcecec;
+    border-radius: 8px;
+    font-size: 14px;
 }
 
 .status-green {
@@ -17,9 +17,9 @@
     font-size: 14px;
 }
 
-.icon-tool{
+.icon-tool {
     padding: 8px;
-    border-radius:5px;
+    border-radius: 5px;
     background-color: #ebe9e9;
     transition: all 0.2s;
 }
@@ -36,9 +36,19 @@
 
 .filter-row {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: space-between;
     gap: 10px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    position: relative;
+}
+
+.filter-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .toolbar-actions {
@@ -48,6 +58,7 @@
 
 .search-col {
     min-width: 320px;
+    flex: 1 1 360px;
 }
 
 .search-input-wrap {
@@ -68,7 +79,17 @@
 }
 
 .filter-control-wrap {
-    min-width: 290px;
+    min-width: 210px;
+    flex: 0 0 210px;
+}
+
+:host ::ng-deep .filter-control {
+    width: 100%;
+    display: block;
+}
+
+:host ::ng-deep .filter-control .p-dropdown {
+    width: 100%;
 }
 
 .buttonfilter {
@@ -109,6 +130,20 @@
 
 .filter-end-btn {
     justify-content: flex-end;
+}
+
+.column-toggle-placeholder {
+    flex: 0 0 160px;
+    width: 160px;
+}
+
+.filter-toolbar-actions {
+    margin-left: auto;
+    align-items: center;
+    flex: 0 0 auto;
+    width: 280px;
+    justify-content: flex-end;
+    white-space: nowrap;
 }
 
 .column-panel {
@@ -213,26 +248,54 @@
 }
 
 .table-section {
-    margin-top: 20px;
+    margin-top: 8px;
     border: 1px solid #dbe3ec;
     border-radius: 10px;
     background: #fff;
-    overflow: visible;
+    overflow: hidden;
+    position: relative;
 }
 
-.table-section ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+.table-section ::ng-deep .p-datatable-wrapper {
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    scrollbar-gutter: stable both-edges;
+    padding-top: 14px;
+}
+
+:host ::ng-deep .table-section .app-table-column-toggle-toolbar {
+    position: absolute;
+    top: -64px;
+    right: 292px;
+    left: auto;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    z-index: 2;
+}
+
+:host ::ng-deep .table-section .app-table-column-toggle-button {
+    height: 40px;
+    min-height: 40px;
+    border-radius: 10px;
+    padding: 0 14px;
+    margin: 0;
+    line-height: 1;
+}
+
+.table-section ::ng-deep .p-datatable .p-datatable-thead>tr>th {
     background: #f3f6fa;
     color: #33465b;
     font-weight: 700;
     border-bottom: 1px solid #dbe3ec;
 }
 
-.table-section ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+.table-section ::ng-deep .p-datatable .p-datatable-tbody>tr>td {
     border-bottom: 1px solid #edf1f5;
     color: #2a3643;
 }
 
-.table-section ::ng-deep .p-datatable .p-datatable-tbody > tr:hover > td {
+.table-section ::ng-deep .p-datatable .p-datatable-tbody>tr:hover>td {
     background: #f9fbfe;
 }
 
@@ -280,6 +343,19 @@
 :host ::ng-deep .filter-row .p-dropdown .p-dropdown-trigger,
 :host ::ng-deep .filter-row .p-treeselect .p-treeselect-trigger {
     width: 2.4rem;
+}
+
+:host ::ng-deep .staff-position-status-panel ul.p-dropdown-items,
+:host ::ng-deep .staff-position-status-panel .p-dropdown-items {
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-start: 0 !important;
+    list-style: none !important;
+}
+
+:host ::ng-deep .staff-position-status-panel .p-dropdown-items .p-dropdown-item {
+    padding: 0.625rem 0.875rem !important;
 }
 
 :host ::ng-deep .org-paginator .p-paginator {
@@ -338,11 +414,30 @@
 @media (max-width: 1024px) {
     .filter-row {
         align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .filter-left {
+        width: 100%;
+        flex-wrap: wrap;
     }
 
     .filter-control-wrap,
     .search-col {
         min-width: 100%;
+    }
+
+    .column-toggle-placeholder {
+        display: none;
+    }
+
+    :host ::ng-deep .table-section .app-table-column-toggle-toolbar {
+        position: static;
+        margin-bottom: 8px;
+    }
+
+    .filter-toolbar-actions {
+        width: auto;
     }
 
     .column-toggle-wrap {

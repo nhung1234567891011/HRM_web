@@ -4,6 +4,125 @@
   padding: 0 !important;
 }
 
+.filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  flex-wrap: nowrap;
+}
+
+.filter-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.filter-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.filter-col {
+  display: flex;
+  align-items: center;
+}
+
+.search-col {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.search-input-wrap {
+  width: 100%;
+  position: relative;
+}
+
+::ng-deep .contract-list-page .search-input-wrap>i {
+  left: 0.75rem;
+  color: #64748b;
+}
+
+::ng-deep .contract-list-page .search-input-wrap .p-inputtext {
+  padding-left: 2.2rem !important;
+  width: 100%;
+}
+
+::ng-deep .contract-list-page .filter-row .p-dropdown,
+::ng-deep .contract-list-page .filter-row .p-treeselect {
+  min-width: 180px;
+}
+
+.column-toggle-placeholder {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+::ng-deep .contract-list-page .filter-row .p-inputtext,
+::ng-deep .contract-list-page .filter-row .p-dropdown,
+::ng-deep .contract-list-page .filter-row .p-dropdown .p-dropdown-label,
+::ng-deep .contract-list-page .filter-row .p-dropdown .p-dropdown-trigger,
+::ng-deep .contract-list-page .filter-row .p-treeselect,
+::ng-deep .contract-list-page .filter-row .p-treeselect .p-treeselect-label,
+::ng-deep .contract-list-page .filter-row .p-treeselect .p-treeselect-trigger,
+::ng-deep .contract-list-page .filter-row .p-button {
+  height: 40px;
+  min-height: 40px;
+}
+
+.buttonfilter {
+  height: 40px;
+  min-height: 40px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.btn-add-contract {
+  height: 40px;
+  min-height: 40px;
+  border-radius: 10px;
+  min-width: 130px;
+}
+
+:host ::ng-deep .contract-list-page .app-table-column-toggle-toolbar {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  margin-bottom: 0 !important;
+}
+
+:host ::ng-deep .contract-list-page .app-table-column-toggle-button:hover {
+  transform: none !important;
+}
+
+:host ::ng-deep .contract-list-page .paging-bot .p-paginator .p-paginator-rpp-options {
+  display: inline-flex;
+  align-items: center;
+}
+
+:host ::ng-deep .contract-list-page .paging-bot .p-paginator .p-paginator-rpp-options .p-dropdown-label,
+:host ::ng-deep .contract-list-page .paging-bot .p-paginator .p-paginator-rpp-options .p-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* PrimeNG dropdown panel is appended to body, so avoid :host scoping.
+   Only set the left padding of the list container to 0. */
+::ng-deep body:has(.contract-list-page) .p-dropdown-panel .p-dropdown-items {
+  padding-left: 0 !important;
+}
+
+/* Keep treeselect width flexible elsewhere, but stable in filter row */
+::ng-deep .contract-list-page .filter-row .p-treeselect {
+  width: auto;
+}
+
 
 .menu-items {
   display: flex;
@@ -33,15 +152,19 @@
 }
 
 .disabled-calendar {
-  pointer-events: none; /* Ngăn mọi sự kiện chuột */
-  opacity: 0.6; /* Tăng trực quan */
+  pointer-events: none;
+  /* Ngăn mọi sự kiện chuột */
+  opacity: 0.6;
+  /* Tăng trực quan */
 }
 
 
 #contract-content {
   font-family: "Times New Roman", Times, serif;
-  padding-top: 30px; /* Thêm khoảng cách trên */
-  padding-bottom: 30px; /* Thêm khoảng cách dưới */
+  padding-top: 30px;
+  /* Thêm khoảng cách trên */
+  padding-bottom: 30px;
+  /* Thêm khoảng cách dưới */
 }
 
 .contract {
@@ -148,12 +271,16 @@ td[colspan="2"] {
 }
 
 .contract-preview {
-  max-height: 70vh; /* Giới hạn chiều cao */
-  overflow-y: auto; /* Tạo thanh cuộn khi nội dung dài */
-  padding: 10px; /* Tạo khoảng cách đẹp hơn */
+  max-height: 70vh;
+  /* Giới hạn chiều cao */
+  overflow-y: auto;
+  /* Tạo thanh cuộn khi nội dung dài */
+  padding: 10px;
+  /* Tạo khoảng cách đẹp hơn */
 }
+
 .avoid {
-    page-break-before: always;
+  page-break-before: always;
 }
 
 .export-col {
