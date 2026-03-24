@@ -321,7 +321,7 @@ export class OrganiStructCreateComponent implements OnInit {
                 this.router.navigate(['/organizational-structure/show']);
             },
             (error) => {
-                this.messageService.add({ 'severity': 'warn', 'summary': 'Thành công', 'detail': 'Thêm cơ cấu tổ chức thành công' });
+                this.messageService.add({ 'severity': 'danger', 'summary': 'Thất bại', 'detail': 'Thêm cơ cấu tổ chức thất bại!' });
             }
         );
     }
