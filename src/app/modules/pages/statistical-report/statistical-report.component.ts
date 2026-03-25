@@ -193,7 +193,13 @@ export class StatisticalReportComponent implements OnInit {
                             stacked: true,
                             beginAtZero: true,
                             grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: { font: { size: 11 } },
+                            ticks: {
+                                font: { size: 11 },
+                                maxTicksLimit: 10,
+                                stepSize: 1,
+                            },
+                            min: 0,
+                            max: 10,
                         },
                     },
                 };
@@ -309,14 +315,26 @@ export class StatisticalReportComponent implements OnInit {
                             position: 'left',
                             title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
                             grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: { font: { size: 11 } },
+                            ticks: {
+                                font: { size: 11 },
+                                maxTicksLimit: 10,
+                                stepSize: 1,
+                            },
+                            min: 0,
+                            max: 10,
                         },
                         yOt: {
                             beginAtZero: true,
                             position: 'right',
                             title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
                             grid: { drawOnChartArea: false },
-                            ticks: { font: { size: 11 } },
+                            ticks: {
+                                font: { size: 11 },
+                                maxTicksLimit: 10,
+                                stepSize: 1,
+                            },
+                            min: 0,
+                            max: 10,
                         },
                     },
                 };
@@ -404,7 +422,13 @@ export class StatisticalReportComponent implements OnInit {
                 y: {
                     beginAtZero: true,
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                    ticks: { font: { size: 11 } },
+                    ticks: {
+                        font: { size: 11 },
+                        maxTicksLimit: 10,
+                        stepSize: 1,
+                    },
+                    min: 0,
+                    max: 10,
                 },
             };
         }

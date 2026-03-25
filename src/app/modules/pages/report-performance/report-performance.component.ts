@@ -346,7 +346,13 @@ export class ReportPerformanceComponent implements OnInit {
                 y: {
                     beginAtZero: true,
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                    ticks: { font: { size: 11 } },
+                    ticks: {
+                        font: { size: 11 },
+                        maxTicksLimit: 10,
+                        stepSize: 1,
+                    },
+                    min: 0, 
+                    max: 10,
                 },
             };
         }
