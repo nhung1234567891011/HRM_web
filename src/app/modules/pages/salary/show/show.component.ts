@@ -114,6 +114,7 @@ export class ShowComponent implements OnInit {
         private datePipe: DatePipe,
         private payrollService: PayrollService,
         private organiStructTypeService: OrganiStructTypeService,
+        private confirmationService: ConfirmationService,
         public hasPermissionHelper: HasPermissionHelper,
         private authService: AuthService,
         private toastService: ToastService,
@@ -425,31 +426,54 @@ export class ShowComponent implements OnInit {
 
     handleDeleteItem(event: any, data: any): void {
         if (this.isDeleting) return; // Ngăn spam khi đang xóa
-        this.isDeleting = true; // Đánh dấu đang xóa
-        this.payrollService.deleteDl(data.id).subscribe((results) => {
-            console.log(results);
-            if (results.status) {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: ' Thành công',
-                    detail: 'Xoá bảng lương thành công',
+        this.confirmationService.confirm({
+            target: event?.target,
+            message: 'Bạn có chắc chắn muốn xoá bảng lương này?',
+            header: 'Xác nhận xoá',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Xoá',
+            rejectLabel: 'Huỷ',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: () => {
+                this.isDeleting = true; // Đánh dấu đang xóa
+                this.payrollService.deleteDl(data.id).subscribe({
+                    next: (results) => {
+                        console.log(results);
+                        if (results.status) {
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: ' Thành công',
+                                detail: 'Xoá bảng lương thành công',
+                            });
+                            // Cập nhật queryParams để load lại trang
+                            this.router.navigate([], {
+                                queryParams: {
+                                    ...this.queryParameters,
+                                    delete: data.id,
+                                }, // Giữ lại params cũ
+                                queryParamsHandling: 'merge', // Merge với params hiện có
+                            });
+                            return;
+                        }
+
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Lỗi',
+                            detail: ' xoá bảng lương thất bại',
+                        });
+                    },
+                    error: () => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Lỗi',
+                            detail: ' xoá bảng lương thất bại',
+                        });
+                    },
+                    complete: () => {
+                        this.isDeleting = false; // Đánh dấu đã xử lý xong
+                    },
                 });
-                // Cập nhật queryParams để load lại trang
-                this.router.navigate([], {
-                    queryParams: {
-                        ...this.queryParameters,
-                        delete: data.id,
-                    }, // Giữ lại params cũ
-                    queryParamsHandling: 'merge', // Merge với params hiện có
-                });
-                this.isDeleting = false; // Đánh dấu đã xóa xong
-            } else {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Lỗi',
-                    detail: ' xoá bảng lương thất bại',
-                });
-            }
+            },
         });
     }
 }
