@@ -306,6 +306,7 @@ export class ReportPerformanceComponent implements OnInit {
         const isCircular = chartType === 'pie' || chartType === 'doughnut';
         const options: any = {
             responsive: true,
+            aspectRatio: 1,
             maintainAspectRatio: false,
             plugins: {
                 legend: {

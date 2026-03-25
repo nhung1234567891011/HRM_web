@@ -185,6 +185,7 @@ export class ReportAttendanceComponent implements OnInit {
                 };
                 this.monthlyChartOptions = {
                     responsive: true,
+                    aspectRatio: 1,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
@@ -301,6 +302,7 @@ export class ReportAttendanceComponent implements OnInit {
                 };
                 this.otTrendChartOptions = {
                     responsive: true,
+                    aspectRatio: 1,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
@@ -510,6 +512,7 @@ export class ReportAttendanceComponent implements OnInit {
         const isCircular = chartType === 'pie' || chartType === 'doughnut';
         const options: any = {
             responsive: true,
+            aspectRatio: 1,
             maintainAspectRatio: false,
             plugins: {
                 legend: {

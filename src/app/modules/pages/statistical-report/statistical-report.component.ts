@@ -155,6 +155,7 @@ export class StatisticalReportComponent implements OnInit {
                 };
                 this.incomeChartOptions = {
                     responsive: true,
+                    aspectRatio: 1,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
@@ -277,6 +278,7 @@ export class StatisticalReportComponent implements OnInit {
                 };
                 this.attendanceChartOptions = {
                     responsive: true,
+                    aspectRatio: 1,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
@@ -382,6 +384,7 @@ export class StatisticalReportComponent implements OnInit {
         const isCircular = chartType === 'pie' || chartType === 'doughnut';
         const options: any = {
             responsive: true,
+            aspectRatio: 1,
             maintainAspectRatio: false,
             plugins: {
                 legend: {

@@ -94,7 +94,7 @@ export class DepartmentReportsComponent {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 cutout: '80%',
                 plugins: {
                     legend: { display: false },

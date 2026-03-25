@@ -28,7 +28,7 @@ export class OverviewComponent implements OnInit {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         cutout: '80%', // Giảm độ dày (tăng giá trị để vòng nhỏ hơn)
         plugins: {
           legend: { display: false }
@@ -46,7 +46,7 @@ export class OverviewComponent implements OnInit {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         cutout: '80%', // Giảm độ dày (tăng giá trị để vòng nhỏ hơn)
         plugins: {
           legend: { display: false }
@@ -65,7 +65,7 @@ export class OverviewComponent implements OnInit {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         cutout: '80%', // Giảm độ dày
         plugins: {
           legend: { display: false }
@@ -84,7 +84,7 @@ export class OverviewComponent implements OnInit {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         cutout: '80%', // Giảm độ dày
         plugins: {
           legend: { display: false }

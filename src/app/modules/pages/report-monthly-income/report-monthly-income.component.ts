@@ -273,6 +273,7 @@ export class ReportMonthlyIncomeComponent implements OnInit {
     private getComboChartOptions(title: string, horizontal: boolean = false): any {
         return {
             responsive: true,
+            aspectRatio: 1,
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
@@ -327,6 +328,7 @@ export class ReportMonthlyIncomeComponent implements OnInit {
     private getChartOptions(title: string, horizontal: boolean = false): any {
         return {
             responsive: true,
+            aspectRatio: 1,
             maintainAspectRatio: false,
             indexAxis: horizontal ? 'y' : 'x',
             plugins: {
