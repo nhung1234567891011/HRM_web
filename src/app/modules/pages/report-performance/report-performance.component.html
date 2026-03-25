@@ -36,7 +36,7 @@
             </div>
             <div style="height: 420px;">
                 <p-chart *ngIf="chartVisible.deptKpi && canRenderChart('deptKpi')" [type]="deptKpiChartType" [data]="deptKpiChartData"
-                    [options]="deptKpiChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+                    [options]="" [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>
         </div>
     </div>
@@ -54,40 +54,6 @@
             <div style="height: 420px;">
                 <p-chart *ngIf="chartVisible.histogram && canRenderChart('histogram')" [type]="histogramChartType" [data]="histogramChartData"
                     [options]="histogramChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
-            </div>
-        </div>
-    </div>
-
-    <!-- Top nhân viên KPI -->
-    <div class="col-12 lg:col-6">
-        <div class="card">
-            <div class="flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Top nhân viên theo KPI (Top 20)</h4>
-                <p-dropdown [options]="chartTypeOptions" [(ngModel)]="empKpiChartType" optionLabel="label"
-                    appendTo="body"
-                    optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
-                    (onChange)="onChartTypeChange('empKpi', $event)"></p-dropdown>
-            </div>
-            <div style="height: 420px;">
-                <p-chart *ngIf="chartVisible.empKpi && canRenderChart('empKpi')" [type]="empKpiChartType" [data]="empKpiChartData"
-                    [options]="empKpiChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
-            </div>
-        </div>
-    </div>
-
-    <!-- Hiệu suất làm việc -->
-    <div class="col-12 lg:col-6">
-        <div class="card">
-            <div class="flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Hiệu suất làm việc (Top 20)</h4>
-                <p-dropdown [options]="chartTypeOptions" [(ngModel)]="efficiencyChartType" optionLabel="label"
-                    appendTo="body"
-                    optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
-                    (onChange)="onChartTypeChange('efficiency', $event)"></p-dropdown>
-            </div>
-            <div style="height: 420px;">
-                <p-chart *ngIf="chartVisible.efficiency && canRenderChart('efficiency')" [type]="efficiencyChartType" [data]="efficiencyChartData"
-                    [options]="efficiencyChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>
         </div>
     </div>
