@@ -56,6 +56,24 @@ export class ReportAttendanceComponent implements OnInit {
     ];
     selectedOrganization: any = null;
     selectedOrganizationId: number | null = null;
+
+    topScope: 'employee' | 'position' = 'employee';
+    topScopeOptions = [
+        { label: 'Theo nhân viên', value: 'employee' },
+        { label: 'Theo vị trí', value: 'position' },
+    ];
+    private lastAttendanceData: any = null;
+
+    // Top 7: tỷ lệ đi muộn
+    lateTopChartType: string = 'bar';
+    lateTopChartData: any;
+    lateTopChartOptions: any;
+
+    // Top 7: OT (giờ)
+    otTopChartType: string = 'bar';
+    otTopChartData: any;
+    otTopChartOptions: any;
+
     chartVisible: Record<'monthly' | 'leave' | 'employee' | 'deptOt' | 'otTrend', boolean> = {
         monthly: true,
         leave: true,
@@ -125,6 +143,7 @@ export class ReportAttendanceComponent implements OnInit {
         this.reportService.getAttendance(request).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
+                this.lastAttendanceData = data;
 
                 // Monthly attendance
                 const monthLabels = data.monthlyAttendances?.map((m: any) => `Tháng ${m.month}`) || [];
@@ -407,8 +426,122 @@ export class ReportAttendanceComponent implements OnInit {
                     ],
                 };
                 this.empChartOptions = this.getChartOptions('Chuyên cần theo nhân viên');
+                this.updateTop7LateAndOtCharts();
             }
         });
+    }
+
+    onTopScopeChange(): void {
+        this.updateTop7LateAndOtCharts();
+    }
+
+    private updateTop7LateAndOtCharts(): void {
+        if (!this.lastAttendanceData) return;
+        const data = this.lastAttendanceData;
+
+        if (this.topScope === 'employee') {
+            const emp = (data.employeeAttendances || []).map((e: any) => {
+                const workDays = e.workDays ?? 0;
+                const lateDays = e.lateDays ?? 0;
+                const lateRate = workDays > 0 ? (lateDays / workDays) * 100 : 0;
+                return { ...e, lateRate };
+            });
+
+            const lateTop = emp
+                .slice()
+                .sort((a: any, b: any) => (b.lateRate ?? 0) - (a.lateRate ?? 0))
+                .slice(0, 7);
+
+            this.lateTopChartData = {
+                labels: lateTop.map((e: any) => e.fullName),
+                datasets: [
+                    {
+                        label: 'Tỷ lệ đi muộn (%)',
+                        data: lateTop.map((e: any) => Number((e.lateRate ?? 0).toFixed(2))),
+                        backgroundColor: 'rgba(251, 146, 60, 0.75)',
+                        borderWidth: 0,
+                    },
+                ],
+            };
+
+            this.lateTopChartOptions = this.getChartOptions('Tỷ lệ đi muộn (Top 7)');
+            if (this.lateTopChartOptions?.scales?.y?.title) {
+                this.lateTopChartOptions.scales.y.title.text = 'Tỷ lệ (%)';
+            }
+
+            const otTop = emp
+                .slice()
+                .sort((a: any, b: any) => (b.overtimeHours ?? 0) - (a.overtimeHours ?? 0))
+                .slice(0, 7);
+
+            this.otTopChartData = {
+                labels: otTop.map((e: any) => e.fullName),
+                datasets: [
+                    {
+                        label: 'Giờ OT',
+                        data: otTop.map((e: any) => e.overtimeHours ?? 0),
+                        backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                        borderWidth: 0,
+                    },
+                ],
+            };
+
+            this.otTopChartOptions = this.getChartOptions('Giờ OT (Top 7)');
+            if (this.otTopChartOptions?.scales?.y?.title) {
+                this.otTopChartOptions.scales.y.title.text = 'Giờ OT';
+            }
+        } else {
+            const pos = (data.positionAttendances || []).map((p: any) => {
+                const workDays = p.totalWorkDays ?? 0;
+                const lateDays = p.totalLateDays ?? 0;
+                const lateRate = workDays > 0 ? (lateDays / workDays) * 100 : 0;
+                return { ...p, lateRate };
+            });
+
+            const lateTop = pos
+                .slice()
+                .sort((a: any, b: any) => (b.lateRate ?? 0) - (a.lateRate ?? 0))
+                .slice(0, 7);
+
+            this.lateTopChartData = {
+                labels: lateTop.map((p: any) => p.positionName),
+                datasets: [
+                    {
+                        label: 'Tỷ lệ đi muộn (%)',
+                        data: lateTop.map((p: any) => Number((p.lateRate ?? 0).toFixed(2))),
+                        backgroundColor: 'rgba(251, 146, 60, 0.75)',
+                        borderWidth: 0,
+                    },
+                ],
+            };
+
+            this.lateTopChartOptions = this.getChartOptions('Tỷ lệ đi muộn (Top 7)');
+            if (this.lateTopChartOptions?.scales?.y?.title) {
+                this.lateTopChartOptions.scales.y.title.text = 'Tỷ lệ (%)';
+            }
+
+            const otTop = pos
+                .slice()
+                .sort((a: any, b: any) => (b.totalOvertimeHours ?? 0) - (a.totalOvertimeHours ?? 0))
+                .slice(0, 7);
+
+            this.otTopChartData = {
+                labels: otTop.map((p: any) => p.positionName),
+                datasets: [
+                    {
+                        label: 'Giờ OT',
+                        data: otTop.map((p: any) => p.totalOvertimeHours ?? 0),
+                        backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                        borderWidth: 0,
+                    },
+                ],
+            };
+
+            this.otTopChartOptions = this.getChartOptions('Giờ OT (Top 7)');
+            if (this.otTopChartOptions?.scales?.y?.title) {
+                this.otTopChartOptions.scales.y.title.text = 'Giờ OT';
+            }
+        }
     }
 
     onChartTypeChange(chart: string, event: any): void {
@@ -555,11 +688,7 @@ export class ReportAttendanceComponent implements OnInit {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
                     ticks: {
                         font: { size: 11 },
-                        maxTicksLimit: 10,
-                        stepSize: 1,
                     },
-                    min: 0,
-                    max: 10,
                 },
             };
         }

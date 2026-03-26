@@ -11,11 +11,8 @@ import { TreeNode } from 'primeng/api';
 export class ReportPerformanceComponent implements OnInit {
     chartTypeOptions = [
         { label: 'Biểu đồ cột', value: 'bar' },
-        { label: 'Biểu đồ radar', value: 'radar' },
         { label: 'Biểu đồ đường', value: 'line' },
         { label: 'Biểu đồ cột ngang', value: 'horizontalBar' },
-        { label: 'Biểu đồ tròn', value: 'pie' },
-        { label: 'Biểu đồ donut', value: 'doughnut' },
     ];
 
     // Department KPI chart
@@ -121,74 +118,49 @@ export class ReportPerformanceComponent implements OnInit {
             if (res.status && res.data) {
                 const data = res.data;
 
-                // Position KPI with HighPerformers vs LowPerformers
+                // Hoa hồng theo vị trí
                 const positionLabels = data.positionPerformances?.map((d: any) => d.positionName) || [];
                 this.deptKpiChartData = {
                     labels: positionLabels,
                     datasets: [
                         {
-                            label: 'KPI trung bình',
+                            label: 'Tổng hoa hồng theo vị trí',
                             data: data.positionPerformances?.map((d: any) => d.averageKpi) || [],
                             backgroundColor: 'rgba(99, 102, 241, 0.75)',
                             borderColor: 'rgba(99, 102, 241, 1)',
                             borderWidth: 0,
                         },
-                        {
-                            label: 'Xuất sắc (≥80%)',
-                            data: data.positionPerformances?.map((d: any) => d.highPerformers) || [],
-                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            borderWidth: 0,
-                        },
-                        {
-                            label: 'Cần cải thiện (<50%)',
-                            data: data.positionPerformances?.map((d: any) => d.lowPerformers) || [],
-                            backgroundColor: 'rgba(239, 68, 68, 0.75)',
-                            borderColor: 'rgba(239, 68, 68, 1)',
-                            borderWidth: 0,
-                        },
                     ],
                 };
-                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo vị trí');
+                this.deptKpiChartOptions = this.getChartOptions('Tổng hoa hồng theo vị trí');
 
-                // KPI Distribution Histogram
-                const histLabels = data.kpiDistributions?.map((d: any) => d.rangeLabel) || [];
-                const histValues = data.kpiDistributions?.map((d: any) => d.count) || [];
+                // Top 7 nhân viên có hoa hồng cao
+                const topEmployees = (data.employeePerformances || []).slice(0, 7);
+                const histLabels = topEmployees.map((e: any) => e.fullName);
+                const histValues = topEmployees.map((e: any) => e.kpiScore);
                 this.histogramChartData = {
                     labels: histLabels,
                     datasets: [
                         {
-                            label: 'Số nhân viên',
+                            label: 'Lương hoa hồng',
                             data: histValues,
-                            backgroundColor: [
-                                'rgba(239, 68, 68, 0.75)',
-                                'rgba(251, 146, 60, 0.75)',
-                                'rgba(245, 158, 11, 0.75)',
-                                'rgba(59, 130, 246, 0.75)',
-                                'rgba(16, 185, 129, 0.75)',
-                            ],
-                            borderColor: [
-                                'rgba(239, 68, 68, 1)',
-                                'rgba(251, 146, 60, 1)',
-                                'rgba(245, 158, 11, 1)',
-                                'rgba(59, 130, 246, 1)',
-                                'rgba(16, 185, 129, 1)',
-                            ],
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
                             borderWidth: 0,
                         },
                     ],
                 };
-                this.histogramChartOptions = this.getChartOptions('Phân phối KPI nhân viên');
+                this.histogramChartOptions = this.getChartOptions('Top 7 nhân viên hoa hồng');
 
-                // Employee KPI (top 20)
-                const topEmployees = (data.employeePerformances || []).slice(0, 20);
-                const empLabels = topEmployees.map((e: any) => e.fullName);
+                // Employee KPI (top 20) - phần này không dùng trên template hiện tại
+                const topEmployeesForExtraCharts = (data.employeePerformances || []).slice(0, 20);
+                const empLabels = topEmployeesForExtraCharts.map((e: any) => e.fullName);
                 this.empKpiChartData = {
                     labels: empLabels,
                     datasets: [
                         {
                             label: 'KPI',
-                            data: topEmployees.map((e: any) => e.kpiScore),
+                            data: topEmployeesForExtraCharts.map((e: any) => e.kpiScore),
                             backgroundColor: this.generateColors(empLabels.length),
                         },
                     ],
@@ -201,7 +173,7 @@ export class ReportPerformanceComponent implements OnInit {
                     datasets: [
                         {
                             label: 'Hiệu suất (%)',
-                            data: topEmployees.map((e: any) => e.workEfficiency),
+                            data: topEmployeesForExtraCharts.map((e: any) => e.workEfficiency),
                             backgroundColor: 'rgba(16, 185, 129, 0.75)',
                             borderColor: 'rgba(16, 185, 129, 1)',
                             borderWidth: 0,
@@ -232,12 +204,12 @@ export class ReportPerformanceComponent implements OnInit {
         switch (chart) {
             case 'deptKpi':
                 this.deptKpiChartType = actualType;
-                this.deptKpiChartOptions = this.getChartOptions('KPI trung bình theo vị trí', isHorizontal, actualType);
+                this.deptKpiChartOptions = this.getChartOptions('Tổng hoa hồng theo vị trí', isHorizontal, actualType);
                 this.rebuildChart('deptKpi');
                 break;
             case 'histogram':
                 this.histogramChartType = actualType;
-                this.histogramChartOptions = this.getChartOptions('Phân phối KPI nhân viên', isHorizontal, actualType);
+                this.histogramChartOptions = this.getChartOptions('Top 7 nhân viên hoa hồng', isHorizontal, actualType);
                 this.rebuildChart('histogram');
                 break;
             case 'empKpi':
@@ -349,11 +321,8 @@ export class ReportPerformanceComponent implements OnInit {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
                     ticks: {
                         font: { size: 11 },
-                        maxTicksLimit: 10,
-                        stepSize: 1,
+                        // Không giới hạn max/min để biểu đồ hiển thị được giá trị hoa hồng lớn
                     },
-                    min: 0, 
-                    max: 10,
                 },
             };
         }

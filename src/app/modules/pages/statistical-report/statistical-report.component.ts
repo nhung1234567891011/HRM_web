@@ -217,7 +217,7 @@ export class StatisticalReportComponent implements OnInit {
                     labels: labels,
                     datasets: [
                         {
-                            label: 'KPI trung bình',
+                            label: 'Hoa hồng theo vị trí',
                             data: data.positionPerformances?.map((d: any) => d.averageKpi) || [],
                             backgroundColor: this.generateColors(labels.length),
                             borderColor: 'rgba(153, 102, 255, 1)',
@@ -225,7 +225,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', false, this.perfChartType);
+                this.perfChartOptions = this.getChartOptions('Hoa hồng theo vị trí', false, this.perfChartType);
             }
         });
     }
@@ -427,11 +427,7 @@ export class StatisticalReportComponent implements OnInit {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
                     ticks: {
                         font: { size: 11 },
-                        maxTicksLimit: 10,
-                        stepSize: 1,
                     },
-                    min: 0,
-                    max: 10,
                 },
             };
         }

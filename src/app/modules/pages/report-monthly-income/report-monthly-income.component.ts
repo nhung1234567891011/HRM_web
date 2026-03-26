@@ -110,7 +110,7 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                     datasets: [
                         {
                             type: 'bar',
-                            label: 'Lương cứng',
+                            label: 'Lương cơ bản thực nhận',
                             data: data.monthlySummaries?.map((m: any) => m.totalBaseSalary) || [],
                             backgroundColor: 'rgba(59, 130, 246, 0.75)',
                             borderWidth: 0,
@@ -119,18 +119,9 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                         },
                         {
                             type: 'bar',
-                            label: 'Phụ cấp',
-                            data: data.monthlySummaries?.map((m: any) => m.totalAllowance) || [],
-                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-                            borderWidth: 0,
-                            stack: 'income',
-                            order: 2,
-                        },
-                        {
-                            type: 'bar',
-                            label: 'Thưởng',
+                            label: 'KPI thực nhận',
                             data: data.monthlySummaries?.map((m: any) => m.totalBonus) || [],
-                            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
                             borderWidth: 0,
                             stack: 'income',
                             order: 2,
@@ -169,21 +160,15 @@ export class ReportMonthlyIncomeComponent implements OnInit {
                     labels: positionLabels,
                     datasets: [
                         {
-                            label: 'Lương cứng',
+                            label: 'Lương cơ bản thực nhận',
                             data: data.positionIncomes?.map((d: any) => d.totalBaseSalary) || [],
                             backgroundColor: 'rgba(59, 130, 246, 0.75)',
                             borderWidth: 0,
                         },
                         {
-                            label: 'Phụ cấp',
-                            data: data.positionIncomes?.map((d: any) => d.totalAllowance) || [],
-                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-                            borderWidth: 0,
-                        },
-                        {
-                            label: 'Thưởng',
+                            label: 'KPI thực nhận',
                             data: data.positionIncomes?.map((d: any) => d.totalBonus) || [],
-                            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
                             borderWidth: 0,
                         },
                         {

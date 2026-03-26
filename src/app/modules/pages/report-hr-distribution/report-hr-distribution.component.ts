@@ -22,16 +22,20 @@ export class ReportHrDistributionComponent implements OnInit {
     deptChartOptions: any;
 
     // Position chart
-    posChartType: string = 'bar';
+    posChartType: string = 'doughnut';
     posChartData: any;
     posChartOptions: any;
+    private posLabels: string[] = [];
+    private posCountValues: number[] = [];
+    private posPercentValues: number[] = [];
 
     // Status chart
     statusChartType: string = 'pie';
     statusChartData: any;
     statusChartOptions: any;
 
-    totalEmployees: number = 0;
+    totalActiveEmployees: number = 0;
+    positionRows: Array<{ positionName: string; value: number; percentage?: number }> = [];
     selectedOrganization: any = null;
     selectedOrganizationId: number | null = null;
     chartVisible: Record<'dept' | 'pos' | 'status', boolean> = {
@@ -94,7 +98,7 @@ export class ReportHrDistributionComponent implements OnInit {
         this.reportService.getHrDistribution(request).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
-                this.totalEmployees = data.totalEmployees;
+                this.totalActiveEmployees = data.totalActiveEmployees;
 
                 // Department distribution chart
                 const deptLabels = data.departmentDistributions?.map((d: any) => d.organizationName) || [];
@@ -110,16 +114,16 @@ export class ReportHrDistributionComponent implements OnInit {
                 this.deptChartOptions = this.getChartOptions('Phân bổ theo phòng ban', false, this.deptChartType);
 
                 // Position distribution chart
-                const posLabels = data.positionDistributions?.map((p: any) => p.positionName) || [];
-                const posValues = data.positionDistributions?.map((p: any) => p.employeeCount) || [];
-                this.posChartData = {
-                    labels: posLabels,
-                    datasets: [{
-                        label: 'Số nhân viên',
-                        data: posValues,
-                        backgroundColor: this.generateColors(posLabels.length),
-                    }],
-                };
+                this.posLabels = data.positionDistributions?.map((p: any) => p.positionName) || [];
+                this.posCountValues = data.positionDistributions?.map((p: any) => p.employeeCount) || [];
+                this.posPercentValues = data.positionDistributions?.map((p: any) => p.percentage) || [];
+                this.positionRows = (data.positionDistributions || []).map((p: any) => ({
+                    positionName: p.positionName,
+                    value: p.employeeCount,
+                    percentage: p.percentage,
+                }));
+
+                this.updatePosChartData();
                 this.posChartOptions = this.getChartOptions('Phân bổ theo vị trí', false, this.posChartType);
 
                 // Status distribution chart
@@ -155,6 +159,7 @@ export class ReportHrDistributionComponent implements OnInit {
                 break;
             case 'pos':
                 this.posChartType = actualType;
+                this.updatePosChartData();
                 this.posChartOptions = this.getChartOptions('Phân bổ theo vị trí', isHorizontal, actualType);
                 this.rebuildChart('pos');
                 break;
@@ -269,6 +274,21 @@ export class ReportHrDistributionComponent implements OnInit {
         }
 
         return options;
+    }
+
+    private updatePosChartData(): void {
+        const isCircular = this.posChartType === 'pie' || this.posChartType === 'doughnut';
+        const values = isCircular ? this.posPercentValues : this.posCountValues;
+        const label = isCircular ? 'Tỷ lệ (%)' : 'Số nhân viên';
+
+        this.posChartData = {
+            labels: this.posLabels,
+            datasets: [{
+                label,
+                data: values,
+                backgroundColor: this.generateColors(this.posLabels.length),
+            }],
+        };
     }
 
     private generateColors(count: number): string[] {
