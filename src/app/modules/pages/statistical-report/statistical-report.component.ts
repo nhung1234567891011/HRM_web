@@ -80,8 +80,8 @@ export class StatisticalReportComponent implements OnInit {
         this.reportService.getHrDistribution({}).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
-                const labels = data.departmentDistributions?.map((d: any) => d.organizationName) || [];
-                const values = data.departmentDistributions?.map((d: any) => d.employeeCount) || [];
+                const labels = data.positionDistributions?.map((p: any) => p.positionName) || [];
+                const values = data.positionDistributions?.map((p: any) => p.employeeCount) || [];
                 this.hrChartData = {
                     labels: labels,
                     datasets: [
@@ -92,7 +92,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo phòng ban', false, this.hrChartType);
+                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo vị trí', false, this.hrChartType);
             }
         });
     }
@@ -363,7 +363,7 @@ export class StatisticalReportComponent implements OnInit {
         switch (report) {
             case 'hr':
                 this.hrChartType = actualType;
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo phòng ban', isHorizontal, actualType);
+                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo vị trí', isHorizontal, actualType);
                 break;
             case 'income':
                 this.incomeChartType = actualType;
