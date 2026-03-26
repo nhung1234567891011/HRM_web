@@ -11,9 +11,13 @@
                     <p-dropdown [options]="yearOptions" [(ngModel)]="selectedYear" optionLabel="label" appendTo="body"
                         optionValue="value" placeholder="Chọn năm" [style]="{ width: '140px' }"
                         (onChange)="onFilterChange()"></p-dropdown>
-                    <p-dropdown [options]="monthOptions" [(ngModel)]="selectedMonth" optionLabel="label"
+                    <p-dropdown [options]="monthOptions" [(ngModel)]="fromMonth" optionLabel="label"
                         appendTo="body"
-                        optionValue="value" placeholder="Chọn tháng" [style]="{ width: '140px' }"
+                        optionValue="value" placeholder="Từ tháng" [style]="{ width: '140px' }"
+                        (onChange)="onFilterChange()"></p-dropdown>
+                    <p-dropdown [options]="monthOptions" [(ngModel)]="toMonth" optionLabel="label"
+                        appendTo="body"
+                        optionValue="value" placeholder="Đến tháng" [style]="{ width: '140px' }"
                         (onChange)="onFilterChange()"></p-dropdown>
                     <p-treeSelect [options]="treeData" [(ngModel)]="selectedOrganization" placeholder="Chọn phòng ban"
                         appendTo="body"

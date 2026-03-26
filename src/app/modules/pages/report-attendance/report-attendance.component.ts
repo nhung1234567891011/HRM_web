@@ -43,7 +43,8 @@ export class ReportAttendanceComponent implements OnInit {
     otTrendChartOptions: any;
 
     selectedYear: number = new Date().getFullYear();
-    selectedMonth: number | null = null;
+    fromMonth: number | null = null;
+    toMonth: number | null = null;
     yearOptions: any[] = [];
     monthOptions: any[] = [
         { label: 'Tất cả', value: null },
@@ -132,12 +133,18 @@ export class ReportAttendanceComponent implements OnInit {
     }
 
     onFilterChange(): void {
+        if (this.fromMonth && this.toMonth && this.fromMonth > this.toMonth) {
+            const tmp = this.fromMonth;
+            this.fromMonth = this.toMonth;
+            this.toMonth = tmp;
+        }
         this.loadReport();
     }
 
     loadReport(): void {
         const request: any = { year: this.selectedYear };
-        if (this.selectedMonth) request.month = this.selectedMonth;
+        if (this.fromMonth) request.fromMonth = this.fromMonth;
+        if (this.toMonth) request.toMonth = this.toMonth;
         if (this.selectedOrganizationId) request.organizationId = this.selectedOrganizationId;
 
         this.reportService.getAttendance(request).subscribe((res: any) => {

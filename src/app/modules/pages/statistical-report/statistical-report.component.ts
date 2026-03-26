@@ -13,6 +13,21 @@ import { ReportService } from 'src/app/core/services/report.service';
     styleUrls: ['./statistical-report.component.scss'],
 })
 export class StatisticalReportComponent implements OnInit {
+    // Period filter (dashboard)
+    selectedYear: number = new Date().getFullYear();
+    fromMonth: number | null = null;
+    toMonth: number | null = null;
+    yearOptions: any[] = [];
+    monthOptions: any[] = [
+        { label: 'Tất cả', value: null },
+        { label: 'Tháng 1', value: 1 }, { label: 'Tháng 2', value: 2 },
+        { label: 'Tháng 3', value: 3 }, { label: 'Tháng 4', value: 4 },
+        { label: 'Tháng 5', value: 5 }, { label: 'Tháng 6', value: 6 },
+        { label: 'Tháng 7', value: 7 }, { label: 'Tháng 8', value: 8 },
+        { label: 'Tháng 9', value: 9 }, { label: 'Tháng 10', value: 10 },
+        { label: 'Tháng 11', value: 11 }, { label: 'Tháng 12', value: 12 },
+    ];
+
     hrChartTypeOptions = [
         { label: 'Biểu đồ tròn', value: 'pie' },
         { label: 'Biểu đồ donut', value: 'doughnut' },
@@ -66,6 +81,9 @@ export class StatisticalReportComponent implements OnInit {
     constructor(private reportService: ReportService) { }
 
     ngOnInit(): void {
+        for (let y = this.selectedYear - 5; y <= this.selectedYear; y++) {
+            this.yearOptions.push({ label: `Năm ${y}`, value: y });
+        }
         this.loadAllReports();
     }
 
@@ -74,6 +92,21 @@ export class StatisticalReportComponent implements OnInit {
         this.loadMonthlyIncome();
         this.loadPerformance();
         this.loadAttendance();
+    }
+
+    onPeriodChange(): void {
+        if (this.fromMonth && this.toMonth && this.fromMonth > this.toMonth) {
+            const tmp = this.fromMonth;
+            this.fromMonth = this.toMonth;
+            this.toMonth = tmp;
+        }
+        this.loadAllReports();
+    }
+
+    private getMonthRange(): { start: number; end: number } {
+        const start = this.fromMonth ?? 1;
+        const end = this.toMonth ?? 12;
+        return start <= end ? { start, end } : { start: end, end: start };
     }
 
     loadHrDistribution(): void {
@@ -98,16 +131,38 @@ export class StatisticalReportComponent implements OnInit {
     }
 
     loadMonthlyIncome(): void {
-        this.reportService.getMonthlyIncome({ year: this.currentYear }).subscribe((res: any) => {
+        this.reportService.getMonthlyIncome({ year: this.selectedYear }).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
-                const labels = data.monthlySummaries?.map((m: any) => `Tháng ${m.month}`) || [];
+                const summaries = data.monthlySummaries || [];
+                const range = this.getMonthRange();
+                const byMonth = new Map<number, any>(
+                    summaries.map((m: any) => [Number(m.month), m])
+                );
+
+                const filledSummaries = Array.from({ length: range.end - range.start + 1 }, (_, i) => {
+                    const month = range.start + i;
+                    const existing = byMonth.get(month);
+                    return existing ?? {
+                        month,
+                        year: this.selectedYear,
+                        totalBaseSalary: 0,
+                        totalAllowance: 0,
+                        totalBonus: 0,
+                        totalOvertimePay: 0,
+                        totalDeductions: 0,
+                        totalNetSalary: 0,
+                        employeeCount: 0,
+                    };
+                });
+
+                const labels = filledSummaries.map((m: any) => `Tháng ${m.month}`);
                 this.incomeChartData = {
                     labels: labels,
                     datasets: [
                         {
                             label: 'Lương cứng',
-                            data: data.monthlySummaries?.map((m: any) => m.totalBaseSalary) || [],
+                            data: filledSummaries.map((m: any) => m.totalBaseSalary ?? 0),
                             backgroundColor: 'rgba(59, 130, 246, 0.75)',
                             borderColor: 'rgba(59, 130, 246, 1)',
                             borderWidth: 0,
@@ -115,7 +170,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                         {
                             label: 'Phụ cấp',
-                            data: data.monthlySummaries?.map((m: any) => m.totalAllowance) || [],
+                            data: filledSummaries.map((m: any) => m.totalAllowance ?? 0),
                             backgroundColor: 'rgba(16, 185, 129, 0.75)',
                             borderColor: 'rgba(16, 185, 129, 1)',
                             borderWidth: 0,
@@ -123,7 +178,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                         {
                             label: 'Thưởng',
-                            data: data.monthlySummaries?.map((m: any) => m.totalBonus) || [],
+                            data: filledSummaries.map((m: any) => m.totalBonus ?? 0),
                             backgroundColor: 'rgba(245, 158, 11, 0.75)',
                             borderColor: 'rgba(245, 158, 11, 1)',
                             borderWidth: 0,
@@ -131,7 +186,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                         {
                             label: 'Tăng ca',
-                            data: data.monthlySummaries?.map((m: any) => m.totalOvertimePay) || [],
+                            data: filledSummaries.map((m: any) => m.totalOvertimePay ?? 0),
                             backgroundColor: 'rgba(168, 85, 247, 0.75)',
                             borderColor: 'rgba(168, 85, 247, 1)',
                             borderWidth: 0,
@@ -139,7 +194,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                         {
                             label: 'Thực nhận',
-                            data: data.monthlySummaries?.map((m: any) => m.totalNetSalary) || [],
+                            data: filledSummaries.map((m: any) => m.totalNetSalary ?? 0),
                             borderColor: 'rgba(239, 68, 68, 1)',
                             backgroundColor: 'rgba(239, 68, 68, 0.1)',
                             borderWidth: 3,
@@ -209,7 +264,10 @@ export class StatisticalReportComponent implements OnInit {
     }
 
     loadPerformance(): void {
-        this.reportService.getPerformance({ year: this.currentYear }).subscribe((res: any) => {
+        const request: any = { year: this.selectedYear };
+        if (this.fromMonth) request.fromMonth = this.fromMonth;
+        if (this.toMonth) request.toMonth = this.toMonth;
+        this.reportService.getPerformance(request).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
                 const labels = data.positionPerformances?.map((d: any) => d.positionName) || [];
@@ -231,37 +289,56 @@ export class StatisticalReportComponent implements OnInit {
     }
 
     loadAttendance(): void {
-        this.reportService.getAttendance({ year: this.currentYear }).subscribe((res: any) => {
+        const request: any = { year: this.selectedYear };
+        if (this.fromMonth) request.fromMonth = this.fromMonth;
+        if (this.toMonth) request.toMonth = this.toMonth;
+        this.reportService.getAttendance(request).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
-                const labels = data.monthlyAttendances?.map((m: any) => `Tháng ${m.month}`) || [];
+                const monthItems = data.monthlyAttendances || [];
+                const range = this.getMonthRange();
+                const byMonth = new Map<number, any>(monthItems.map((m: any) => [Number(m.month), m]));
+                const filled = Array.from({ length: range.end - range.start + 1 }, (_, i) => {
+                    const month = range.start + i;
+                    const existing = byMonth.get(month);
+                    return existing ?? {
+                        month,
+                        year: this.selectedYear,
+                        totalWorkDays: 0,
+                        totalLateDays: 0,
+                        totalLeaveDays: 0,
+                        totalOvertimeHours: 0,
+                    };
+                });
+
+                const labels = filled.map((m: any) => `Tháng ${m.month}`);
                 this.attendanceChartData = {
                     labels: labels,
                     datasets: [
                         {
                             label: 'Ngày làm việc',
-                            data: data.monthlyAttendances?.map((m: any) => m.totalWorkDays) || [],
+                            data: filled.map((m: any) => m.totalWorkDays ?? 0),
                             backgroundColor: 'rgba(16, 185, 129, 0.75)',
                             borderColor: 'rgba(16, 185, 129, 1)',
                             borderWidth: 0,
                         },
                         {
                             label: 'Đi muộn',
-                            data: data.monthlyAttendances?.map((m: any) => m.totalLateDays) || [],
+                            data: filled.map((m: any) => m.totalLateDays ?? 0),
                             backgroundColor: 'rgba(251, 146, 60, 0.75)',
                             borderColor: 'rgba(251, 146, 60, 1)',
                             borderWidth: 0,
                         },
                         {
                             label: 'Nghỉ phép',
-                            data: data.monthlyAttendances?.map((m: any) => m.totalLeaveDays) || [],
+                            data: filled.map((m: any) => m.totalLeaveDays ?? 0),
                             backgroundColor: 'rgba(239, 68, 68, 0.75)',
                             borderColor: 'rgba(239, 68, 68, 1)',
                             borderWidth: 0,
                         },
                         {
                             label: 'Giờ tăng ca',
-                            data: data.monthlyAttendances?.map((m: any) => m.totalOvertimeHours) || [],
+                            data: filled.map((m: any) => m.totalOvertimeHours ?? 0),
                             borderColor: 'rgba(168, 85, 247, 1)',
                             backgroundColor: 'rgba(168, 85, 247, 0.1)',
                             borderWidth: 3,

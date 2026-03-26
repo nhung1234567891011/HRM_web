@@ -582,26 +582,6 @@ export class AppMenuComponent implements OnInit {
                                     icon: 'pi pi-chart-pie',
                                     routerLink: ['/statistical-report'],
                                 },
-                                {
-                                    label: 'Báo cáo phân bổ nhân sự',
-                                    icon: 'pi pi-users',
-                                    routerLink: ['/report-hr-distribution'],
-                                },
-                                {
-                                    label: 'Báo cáo tổng hợp thu nhập',
-                                    icon: 'pi pi-money-bill',
-                                    routerLink: ['/report-monthly-income'],
-                                },
-                                {
-                                    label: 'Báo cáo hiệu suất',
-                                    icon: 'pi pi-bolt',
-                                    routerLink: ['/report-performance'],
-                                },
-                                {
-                                    label: 'Báo cáo chuyên cần',
-                                    icon: 'pi pi-clock',
-                                    routerLink: ['/report-attendance'],
-                                },
                             ],
                         },
                     ] : []),

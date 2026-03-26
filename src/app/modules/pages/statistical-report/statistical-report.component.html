@@ -1,19 +1,9 @@
 <div class="grid">
-
     <!-- Báo cáo phân bổ nhân sự -->
-    <div class="col-12 lg:col-6">
+    <div class="chart-col">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Phân bổ nhân sự theo vị trí</h4>
-                <div class="flex align-items-center gap-2">
-                    <p-dropdown [options]="hrChartTypeOptions" [(ngModel)]="hrChartType" optionLabel="label"
-                        optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
-                        (onChange)="onChartTypeChange('hr', $event)"></p-dropdown>
-                    <a routerLink="/report-hr-distribution" 
-                        class="p-button p-button-text p-button-sm p-button-rounded">
-                        <i class="pi pi-external-link"></i>
-                    </a>
-                </div>
+                <h4 class="m-0">Báo cáo phân bổ nhân sự</h4>
             </div>
             <div style="height: 380px;">
                 <p-chart *ngIf="hrChartData" [type]="hrChartType" [data]="hrChartData" [options]="hrChartOptions"
@@ -23,18 +13,14 @@
     </div>
 
     <!-- Báo cáo thu nhập theo tháng -->
-    <div class="col-12 lg:col-6">
+    <div class="chart-col">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Thu nhập theo tháng</h4>
+                <h4 class="m-0">Báo cáo tổng hợp thu nhập (theo tháng)</h4>
                 <div class="flex align-items-center gap-2">
                     <p-dropdown [options]="incomeChartTypeOptions" [(ngModel)]="incomeChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('income', $event)"></p-dropdown>
-                    <a routerLink="/report-monthly-income" 
-                        class="p-button p-button-text p-button-sm p-button-rounded">
-                        <i class="pi pi-external-link"></i>
-                    </a>
                 </div>
             </div>
             <div style="height: 380px;">
@@ -45,18 +31,14 @@
     </div>
 
     <!-- Báo cáo hiệu suất -->
-    <div class="col-12 lg:col-6">
+    <div class="chart-col">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Hoa hồng</h4>
+                <h4 class="m-0">Báo cáo hiệu suất (KPI doanh số theo hoa hồng)</h4>
                 <div class="flex align-items-center gap-2">
                     <p-dropdown [options]="perfChartTypeOptions" [(ngModel)]="perfChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('performance', $event)"></p-dropdown>
-                    <a routerLink="/report-performance" 
-                        class="p-button p-button-text p-button-sm p-button-rounded">
-                        <i class="pi pi-external-link"></i>
-                    </a>
                 </div>
             </div>
             <div style="height: 380px;">
@@ -67,18 +49,14 @@
     </div>
 
     <!-- Báo cáo chuyên cần -->
-    <div class="col-12 lg:col-6">
+    <div class="chart-col">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Chuyên cần</h4>
+                <h4 class="m-0">Báo cáo chuyên cần</h4>
                 <div class="flex align-items-center gap-2">
                     <p-dropdown [options]="attendanceChartTypeOptions" [(ngModel)]="attendanceChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('attendance', $event)"></p-dropdown>
-                    <a routerLink="/report-attendance" 
-                        class="p-button p-button-text p-button-sm p-button-rounded">
-                        <i class="pi pi-external-link"></i>
-                    </a>
                 </div>
             </div>
             <div style="height: 380px;">
