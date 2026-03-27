@@ -11,6 +11,8 @@ import { HasPermissionHelper } from 'src/app/core/helpers/has-permission.helper'
 import html2pdf from 'html2pdf.js';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { from, of } from 'rxjs';
+import { catchError, concatMap, map, toArray } from 'rxjs/operators';
 
 @Component({
     selector: 'app-contract-list',
@@ -40,6 +42,9 @@ export class ContractListComponent implements OnInit {
     selectedCompany: any = {};
     contractDelete!: any;
     showDiaLogDelete: boolean = false;
+    selectedContractIds: number[] = [];
+    selectAllCurrentPage: boolean = false;
+    isBulkDeleteDialog: boolean = false;
     permissionConstant = PermissionConstant;
     displayDialog: boolean = false;
     displayPreview: boolean = false;
@@ -121,6 +126,7 @@ export class ContractListComponent implements OnInit {
         this.contractService.getPagingAllContract(request).subscribe(
             (response: any) => {
                 this.contracts = response.items;
+                this.resetSelection();
                 console.log('contractData', this.contracts);
                 this.totalRecords = response.totalRecords;
                 this.updateCurrentPageReport();
@@ -366,6 +372,124 @@ export class ContractListComponent implements OnInit {
         this.pageSize = event.rows;
         this.pageIndex = event.page + 1;
         this.getPagingContract();
+    }
+
+    private getCurrentPageContractIds(): number[] {
+        if (!Array.isArray(this.contracts)) {
+            return [];
+        }
+
+        return this.contracts
+            .map((contract: any) => contract?.id)
+            .filter((id: any) => id !== null && id !== undefined);
+    }
+
+    private resetSelection(): void {
+        this.selectedContractIds = [];
+        this.selectAllCurrentPage = false;
+    }
+
+    private updateSelectAllState(): void {
+        const currentPageIds = this.getCurrentPageContractIds();
+        this.selectAllCurrentPage =
+            currentPageIds.length > 0 &&
+            currentPageIds.every((id) => this.selectedContractIds.includes(id));
+    }
+
+    isContractSelected(contractId: number): boolean {
+        return this.selectedContractIds.includes(contractId);
+    }
+
+    onToggleSelectAll(checked: boolean): void {
+        const currentPageIds = this.getCurrentPageContractIds();
+
+        if (checked) {
+            this.selectedContractIds = [...currentPageIds];
+            this.selectAllCurrentPage = true;
+            return;
+        }
+
+        this.resetSelection();
+    }
+
+    onToggleContractSelection(contract: any, checked: boolean): void {
+        if (!contract?.id) {
+            return;
+        }
+
+        if (checked) {
+            if (!this.selectedContractIds.includes(contract.id)) {
+                this.selectedContractIds = [
+                    ...this.selectedContractIds,
+                    contract.id,
+                ];
+            }
+        } else {
+            this.selectedContractIds = this.selectedContractIds.filter(
+                (id) => id !== contract.id
+            );
+        }
+
+        this.updateSelectAllState();
+    }
+
+    openDeleteSelectedDialog(): void {
+        if (this.selectedContractIds.length === 0) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: 'Cảnh báo',
+                    detail: 'Vui lòng chọn ít nhất một hợp đồng để xóa.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
+        this.isBulkDeleteDialog = true;
+        this.showDiaLogDelete = true;
+    }
+
+    private deleteSelectedContracts(): void {
+        const selectedIds = [...this.selectedContractIds];
+
+        from(selectedIds)
+            .pipe(
+                concatMap((id) =>
+                    this.contractService.deleteContract(id).pipe(
+                        map(() => ({ id, success: true })),
+                        catchError(() => of({ id, success: false }))
+                    )
+                ),
+                toArray()
+            )
+            .subscribe((results) => {
+                const successCount = results.filter((r) => r.success).length;
+                const failCount = results.length - successCount;
+
+                if (failCount === 0) {
+                    this.messages = [
+                        {
+                            severity: 'success',
+                            summary: 'Thành công',
+                            detail: `Đã xóa ${successCount} hợp đồng`,
+                            life: 3000,
+                        },
+                    ];
+                } else {
+                    this.messages = [
+                        {
+                            severity: 'warn',
+                            summary: 'Hoàn tất một phần',
+                            detail: `Đã xóa ${successCount} hợp đồng, ${failCount} hợp đồng xóa thất bại`,
+                            life: 4000,
+                        },
+                    ];
+                }
+
+                this.closeDiaLogDelete();
+                this.getPagingContract();
+            });
     }
 
     goToPreviousPage(): void {
@@ -1012,16 +1136,23 @@ export class ContractListComponent implements OnInit {
 
 
     openDiaLogDelete(contract: any): void {
+        this.isBulkDeleteDialog = false;
         this.contractDelete = contract;
         this.showDiaLogDelete = true;
     }
 
     closeDiaLogDelete(): void {
         this.showDiaLogDelete = false;
+        this.isBulkDeleteDialog = false;
         this.contractDelete = null;
     }
 
     ClickDelete(): void {
+        if (this.isBulkDeleteDialog) {
+            this.deleteSelectedContracts();
+            return;
+        }
+
         if (this.contractDelete) {
             const contractId = this.contractDelete.id;
             this.contractService.deleteContract(contractId).subscribe({
@@ -1035,6 +1166,7 @@ export class ContractListComponent implements OnInit {
                         },
                     ];
                     this.closeDiaLogDelete();
+                    this.resetSelection();
                     this.getPagingContract();
                 },
                 error: (err) => {

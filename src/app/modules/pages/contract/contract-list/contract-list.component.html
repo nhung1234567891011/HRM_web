@@ -112,6 +112,43 @@
                                             ></p-button>
                                         </div>
 
+                                        <div
+                                            class="filter-col"
+                                            *ngIf="
+                                                this.permisionHelper.hasPermissions(
+                                                    [
+                                                        permissionConstant.ManageContractDelete,
+                                                    ]
+                                                )
+                                            "
+                                        >
+                                            <button
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                [label]="
+                                                    'Xóa đã chọn (' +
+                                                    selectedContractIds.length +
+                                                    ')'
+                                                "
+                                                icon="pi pi-trash"
+                                                class="p-button-danger p-button-outlined"
+                                                [disabled]="
+                                                    selectedContractIds.length ===
+                                                    0
+                                                "
+                                                (click)="
+                                                    openDeleteSelectedDialog()
+                                                "
+                                                [attr.data-tooltip]="
+                                                    'Xóa các hợp đồng đã chọn (' +
+                                                    selectedContractIds.length +
+                                                    ')'
+                                                "
+                                                [title]="'Xóa các hợp đồng đã chọn (' + selectedContractIds.length + ')'"
+                                            ></button>
+                                        </div>
+
                                         <div class="filter-col">
                                             <div
                                                 class="column-toggle-placeholder"
@@ -154,7 +191,11 @@
                                     <th style="width: 1%">
                                         <p-checkbox
                                             [binary]="true"
-                                            inputId="binary"
+                                            [ngModel]="selectAllCurrentPage"
+                                            inputId="selectAllContracts"
+                                            (onChange)="
+                                                onToggleSelectAll($event.checked)
+                                            "
                                         ></p-checkbox>
                                     </th>
                                     <th
@@ -224,7 +265,16 @@
                                     <td>
                                         <p-checkbox
                                             [binary]="true"
-                                            inputId="binary"
+                                            [ngModel]="
+                                                isContractSelected(contract.id)
+                                            "
+                                            inputId="contract-{{ contract.id }}"
+                                            (onChange)="
+                                                onToggleContractSelection(
+                                                    contract,
+                                                    $event.checked
+                                                )
+                                            "
                                         ></p-checkbox>
                                     </td>
                                     <td *ngIf="isColVisible('signingDate')">
@@ -858,11 +908,17 @@
 <p-dialog
     [(visible)]="showDiaLogDelete"
     [modal]="true"
-    [header]="'Xóa hợp đồng'"
+    [header]="isBulkDeleteDialog ? 'Xóa nhiều hợp đồng' : 'Xóa hợp đồng'"
     [style]="{ width: '450px' }"
     [closable]="false"
 >
-    <div *ngIf="contractDelete">
+    <div *ngIf="isBulkDeleteDialog">
+        <p>
+            Bạn có chắc muốn xóa {{ selectedContractIds.length }} hợp đồng đã
+            chọn? Lưu ý: Sau khi xóa bạn không thể hoàn tác hay khôi phục.
+        </p>
+    </div>
+    <div *ngIf="!isBulkDeleteDialog && contractDelete">
         <p>
             Bạn có chắc muốn xóa đơn vị cơ cấu này? Lưu ý: Sau khi xóa bạn không
             thể hoàn tác hay khôi phục.
