@@ -234,15 +234,27 @@ export class ShowRoleComponent implements OnInit {
 			this.roleService.delete(role.id).subscribe({
 				next: (res: any) => {
 					if (res?.status) {
-						this.toastr.success(res.message || 'Xoá vai trò thành công!');
+						this.messageService.add({
+							severity: 'success',
+							summary: 'Thành công',
+							detail: res.message,
+						});
 					} else {
-						this.toastr.error(res?.message || 'Xoá vai trò thất bại!');
+						this.messageService.add({
+							severity: 'error',
+							summary: 'Thất bại',
+							detail: res.message,
+						});
 					}
 					this.reloadRoles();
 				},
 				error: (err) => {
 					console.error(err);
-					this.toastr.error('Có lỗi xảy ra khi xoá vai trò!');
+					this.messageService.add({
+						severity: 'error',
+						summary: 'Lỗi',
+						detail: 'Lỗi hệ thống: Tên vai trò không được trùng nhau',
+					});
 				}
 			});
 		});
