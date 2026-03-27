@@ -23,7 +23,14 @@
 
             <div class="input-group-custom">
                 <i class="pi pi-lock input-icon"></i>
-                <input formControlName="password" type="password" placeholder="Mật khẩu">
+                <input formControlName="password" [type]="showPassword ? 'text' : 'password'" placeholder="Mật khẩu">
+                <button
+                    type="button"
+                    class="toggle-password-btn"
+                    (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="showPassword ? 'Ẩn mật khẩu' : 'Hiển thị mật khẩu'">
+                    <i [class]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                </button>
                 <app-validation-message [form]="loginForm" [messages]="validationMessages"
                     field="password"></app-validation-message>
             </div>

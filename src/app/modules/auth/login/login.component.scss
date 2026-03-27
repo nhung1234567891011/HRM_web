@@ -105,7 +105,7 @@
 
     input {
         width: 100%;
-        padding: 12px 14px 12px 42px;
+        padding: 12px 42px 12px 42px;
         border: 1px solid #d0d7e2;
         border-radius: 6px;
         font-size: 14px;
@@ -121,6 +121,24 @@
         &:focus {
             border-color: #2a5daa;
             box-shadow: 0 0 0 2px rgba(42, 93, 170, 0.12);
+        }
+    }
+
+    .toggle-password-btn {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #8a9ab5;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+
+        &:hover {
+            color: #2a5daa;
         }
     }
 }

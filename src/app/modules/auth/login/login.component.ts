@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
 	//Core
 	Page = Page;
 	isSubmitting: boolean = false;
+	showPassword: boolean = false;
 
 	//State
 	loginForm: FormGroup;
@@ -38,6 +39,10 @@ export class LoginComponent implements OnInit {
 	}
 
 	ngOnInit() {
+	}
+
+	public togglePasswordVisibility() {
+		this.showPassword = !this.showPassword;
 	}
 
 	public handleOnSubmitLogin() {
