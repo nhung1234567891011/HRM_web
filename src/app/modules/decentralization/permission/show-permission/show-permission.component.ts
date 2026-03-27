@@ -66,7 +66,7 @@ export class ShowPermissionComponent implements OnInit {
 	columnSearch: string = '';
 	showColumnPanel: boolean = false;
 	tempColumnVisibility: Record<string, boolean> = {};
-	parentPermissionOptions: Array<{ label: string; value: number }> = [];
+	createParentPermission: any = null;
 
 	// dialog CRUD
 	displayPermissionDialog = false;
@@ -77,7 +77,6 @@ export class ShowPermissionComponent implements OnInit {
 		displayName: null,
 		description: null,
 		section: Section.Privilege,
-		parentPermissionId: null,
 	};
 	sectionLabel = SectionLabel;
 	section = Section;
@@ -187,17 +186,6 @@ export class ShowPermissionComponent implements OnInit {
 		return result;
 	}
 
-	private rebuildParentOptions() {
-		this.parentPermissionOptions = (this.permissions || [])
-			.filter((p) => p?.id != null)
-			.map((p) => {
-				const prefix = p?._level ? `${'— '.repeat(p._level)}` : '';
-				const label = `${prefix}${p.displayName || p.name || ''}`.trim();
-				return { label: label || `#${p.id}`, value: p.id };
-			});
-	}
-
-
 	//get data
 	getPermissions(request: any) {
 		const apiRequest = {
@@ -220,7 +208,6 @@ export class ShowPermissionComponent implements OnInit {
 				this.updateCurrentPageReport();
 
 				this.selectedPermissions = [];
-				this.rebuildParentOptions();
 			}
 		})
 	}
@@ -284,15 +271,15 @@ export class ShowPermissionComponent implements OnInit {
 		});
 	}
 
-	openCreateDialog() {
+	openCreateDialog(parentPermission: any) {
 		this.permissionDialogMode = 'create';
+		this.createParentPermission = parentPermission ?? null;
 		this.permissionForm = {
 			id: null,
 			name: null,
 			displayName: null,
 			description: null,
-			section: Section.Privilege,
-			parentPermissionId: null,
+			section: parentPermission?.section ?? Section.Privilege,
 		};
 		this.displayPermissionDialog = true;
 	}
@@ -305,7 +292,6 @@ export class ShowPermissionComponent implements OnInit {
 			displayName: permission?.displayName ?? null,
 			description: permission?.description ?? null,
 			section: permission?.section ?? Section.Privilege,
-			parentPermissionId: permission?.parentPermissionId ?? null,
 		};
 		this.displayPermissionDialog = true;
 	}
@@ -318,7 +304,6 @@ export class ShowPermissionComponent implements OnInit {
 			displayName: this.permissionForm.displayName?.trim(),
 			description: this.permissionForm.description ?? null,
 			section: this.permissionForm.section,
-			parentPermissionId: this.permissionForm.parentPermissionId ?? null,
 		};
 
 		if (!payload.name || !payload.displayName) {
@@ -331,7 +316,20 @@ export class ShowPermissionComponent implements OnInit {
 		}
 
 		if (this.permissionDialogMode === 'create') {
-			this.permissionService.create(payload).subscribe((res: any) => {
+			const parentPermissionId = this.createParentPermission?.id ?? null;
+			if (!parentPermissionId) {
+				this.messageService.add({
+					severity: 'warn',
+					summary: 'Thiếu thông tin',
+					detail: 'Vui lòng chọn quyền cha bằng nút thêm trên từng dòng.',
+				});
+				return;
+			}
+
+			this.permissionService.create({
+				...payload,
+				parentPermissionId
+			}).subscribe((res: any) => {
 				if (res?.status === false) {
 					this.messageService.add({
 						severity: 'error',
@@ -346,6 +344,7 @@ export class ShowPermissionComponent implements OnInit {
 					detail: res?.message || 'Thêm quyền hạn thành công',
 				});
 				this.displayPermissionDialog = false;
+				this.createParentPermission = null;
 				this.reloadData();
 			});
 			return;
@@ -360,6 +359,7 @@ export class ShowPermissionComponent implements OnInit {
 					detail: res?.message || 'Cập nhật quyền hạn thành công',
 				});
 				this.displayPermissionDialog = false;
+				this.createParentPermission = null;
 				this.reloadData();
 			} else {
 				this.messageService.add({
@@ -413,7 +413,7 @@ export class ShowPermissionComponent implements OnInit {
 
 	//data front end
 	columns = [
-		{ field: 'name', header: 'Tên quyền hạn', selected: true },
+		{ field: 'name', header: 'Mã quyền hạn', selected: true },
 		{ field: 'displayName', header: 'Tên hiển thị quyền hạn', selected: true },
 		{ field: 'description', header: 'Mô tả', selected: true },
 		{ field: 'action', header: 'Hành động', selected: true }

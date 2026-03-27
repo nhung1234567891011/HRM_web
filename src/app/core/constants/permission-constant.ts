@@ -187,6 +187,6 @@ export enum PermissionConstant {
     ManagePro = 'MPRO',
 
     // Statistical Report Permissions
-    ManageStatisticalReport = 'MSR',
-    ManageStatisticalReportView = 'MSR.V',
+    ManageStatisticalReport = 'MREPORT',
+    ManageStatisticalReportView = 'MREPORT1',
 }

@@ -31,9 +31,6 @@
             <button pButton pRipple icon="pi pi-sync" class="buttonfilter button-outline" (click)="onRefreshSearch()"></button>
         </div>
 
-        <div class="filter-action-col">
-            <button pButton pRipple icon="pi pi-plus-circle" label="Thêm" class="buttonfilter" (click)="openCreateDialog()"></button>
-        </div>
     </div>
 </div>
 
@@ -60,6 +57,13 @@
                     </span>
                     <span *ngSwitchCase="'action'">
                         <div class="" style="display: flex; align-items: center;">
+                            <div
+                                class="font-size-16 ml-2"
+                                style="padding: 3px; border-radius: 50%"
+                                (click)="openCreateDialog(permission)"
+                            >
+                                <i class="pi pi-plus-circle"></i>
+                            </div>
                             <div
                                 class="font-size-16 ml-2"
                                 style="padding: 3px; border-radius: 50%"
@@ -108,18 +112,19 @@
 <p-dialog
     [header]="
         permissionDialogMode === 'create'
-            ? 'Thêm quyền hạn'
+            ? 'Thêm quyền con'
             : permissionDialogMode === 'edit'
             ? 'Cập nhật quyền hạn'
             : 'Chi tiết quyền hạn'
     "
     [(visible)]="displayPermissionDialog"
+    (onHide)="createParentPermission = null"
     [modal]="true"
     [style]="{ width: '520px' }"
 >
     <div class="p-fluid">
         <div class="field">
-            <label>Tên quyền hạn</label>
+            <label>Mã quyền hạn</label>
             <input
                 pInputText
                 [(ngModel)]="permissionForm.name"
@@ -147,17 +152,13 @@
                 placeholder="Chọn phân hệ"
             ></p-dropdown>
         </div>
-        <div class="field">
+        <div *ngIf="permissionDialogMode === 'create'" class="field">
             <label>Quyền cha</label>
-            <p-dropdown
-                [options]="parentPermissionOptions"
-                optionLabel="label"
-                optionValue="value"
-                [(ngModel)]="permissionForm.parentPermissionId"
-                [disabled]="permissionDialogMode === 'view'"
-                [showClear]="true"
-                placeholder="(Không chọn nếu là quyền cha)"
-            ></p-dropdown>
+            <input
+                pInputText
+                [value]="createParentPermission?.displayName || createParentPermission?.name"
+                disabled
+            />
         </div>
         <div class="field">
             <label>Mô tả</label>

@@ -27,13 +27,17 @@ export class AppMenuComponent implements OnInit {
     ) {
         this.authService.userCurrent.subscribe((user) => {
             this.userCurrent = user;
-            // console.log(this.userCurrent);
+            // Rebuild menu khi user/permissions đã được load (tránh build lúc userCurrent=null)
+            if (this.userCurrent) {
+                this.buildMenuModel();
+            }
         });
     }
     ngOnInit() {
         // console.log(this.userCurrent.roleNames);
         this.refreshTokenService.startConnection();
         this.refreshTokenService.addActivityListener((activity) => {
+            if (!this.userCurrent) return;
             if (activity != null && activity.id == this.userCurrent.id) {
                 // console.log('đổi nhóm quyền');
                 this.authToken = this.authService.getAuthTokenLocalStorage();
@@ -63,6 +67,7 @@ export class AppMenuComponent implements OnInit {
             if (
                 !this.isRefreshing &&
                 activity != null &&
+                this.userCurrent &&
                 this.userCurrent.roleNames.includes(activity.normalizedName)
             ) {
                 // console.log(this.authToken);
@@ -136,7 +141,11 @@ export class AppMenuComponent implements OnInit {
         // };
         //#endregion
 
-        //front end
+        this.buildMenuModel();
+    }
+
+    private buildMenuModel() {
+        // front end
         this.model = [
             {
                 label: '',

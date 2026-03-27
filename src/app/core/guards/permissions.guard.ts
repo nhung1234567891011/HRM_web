@@ -25,6 +25,7 @@ export class PermissionGuard implements CanActivate {
         ] as string[];
         const userPermissions =
             this.authService.getUserCurrent()?.permissions || [];
+            console.log(userPermissions);
 
         const hasAllRequiredPermissions = (permissions: string[]): boolean => {
             if (
