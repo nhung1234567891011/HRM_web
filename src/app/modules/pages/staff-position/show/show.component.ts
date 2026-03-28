@@ -72,25 +72,6 @@ export class ShowComponent implements OnInit {
         keyWord: null,
     };
 
-    showColumnPanel: boolean = false;
-    columnSearch: string = '';
-    readonly columnStorageKey: string = 'staffPosition.visibleColumns';
-    columnOptions: { key: string; label: string }[] = [
-        { key: 'positionCode', label: 'Mã vị trí' },
-        { key: 'positionName', label: 'Tên vị trí' },
-        { key: 'groupPosition', label: 'Đơn vị' },
-        { key: 'staffTitle', label: 'Chức danh' },
-        { key: 'status', label: 'Trạng thái theo dõi' },
-    ];
-    visibleColumns: Record<string, boolean> = {
-        positionCode: true,
-        positionName: true,
-        groupPosition: true,
-        staffTitle: true,
-        status: true,
-    };
-    tempVisibleColumns: Record<string, boolean> = { ...this.visibleColumns };
-
     // Delete dialog variables
     showDiaLogDelete: boolean = false;
     itemToDelete: any = null;
@@ -98,7 +79,6 @@ export class ShowComponent implements OnInit {
     itemsToDelete: any[] = [];
 
     ngOnInit() {
-        this.loadVisibleColumns();
         this.items = [{ label: 'Hệ thống' }, { label: 'Vị trí' }];
         this.route.queryParams.subscribe((params) => {
             const request = {
@@ -117,88 +97,6 @@ export class ShowComponent implements OnInit {
             };
             // console.log(this.queryParameters);
             this.getStaffPositions(request);
-        });
-    }
-
-    get filteredColumnOptions() {
-        const query = this.columnSearch.trim().toLowerCase();
-        if (!query) {
-            return this.columnOptions;
-        }
-
-        return this.columnOptions.filter((column) =>
-            column.label.toLowerCase().includes(query),
-        );
-    }
-
-    loadVisibleColumns() {
-        const raw = localStorage.getItem(this.columnStorageKey);
-        if (!raw) {
-            this.tempVisibleColumns = { ...this.visibleColumns };
-            return;
-        }
-
-        try {
-            const parsed = JSON.parse(raw);
-            this.visibleColumns = {
-                ...this.visibleColumns,
-                ...parsed,
-            };
-            this.tempVisibleColumns = { ...this.visibleColumns };
-        } catch {
-            this.tempVisibleColumns = { ...this.visibleColumns };
-        }
-    }
-
-    saveVisibleColumns() {
-        localStorage.setItem(
-            this.columnStorageKey,
-            JSON.stringify(this.visibleColumns),
-        );
-    }
-
-    isColumnVisible(columnKey: string): boolean {
-        return !!this.visibleColumns[columnKey];
-    }
-
-    isTempColumnVisible(columnKey: string): boolean {
-        return !!this.tempVisibleColumns[columnKey];
-    }
-
-    toggleColumnPanel() {
-        this.showColumnPanel = !this.showColumnPanel;
-        if (this.showColumnPanel) {
-            this.tempVisibleColumns = { ...this.visibleColumns };
-            this.columnSearch = '';
-        }
-    }
-
-    closeColumnPanel() {
-        this.showColumnPanel = false;
-        this.tempVisibleColumns = { ...this.visibleColumns };
-        this.columnSearch = '';
-    }
-
-    applyColumnChanges() {
-        this.visibleColumns = { ...this.tempVisibleColumns };
-        this.saveVisibleColumns();
-        this.showColumnPanel = false;
-    }
-
-    onTempColumnToggle(columnKey: string) {
-        this.tempVisibleColumns[columnKey] =
-            !this.tempVisibleColumns[columnKey];
-    }
-
-    selectAllColumns() {
-        this.columnOptions.forEach((column) => {
-            this.tempVisibleColumns[column.key] = true;
-        });
-    }
-
-    clearAllColumns() {
-        this.columnOptions.forEach((column) => {
-            this.tempVisibleColumns[column.key] = false;
         });
     }
 

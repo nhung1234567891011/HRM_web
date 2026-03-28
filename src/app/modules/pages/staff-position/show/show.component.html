@@ -55,6 +55,7 @@
                     </div>
                     <div
                         class="column-toggle-placeholder"
+                        data-column-toggle-placeholder
                         aria-hidden="true"
                     ></div>
                 </div>
@@ -103,22 +104,19 @@
                             <th>
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
-                            <th *ngIf="isColumnVisible('positionCode')">
+                            <th>
                                 Mã vị trí
                             </th>
-                            <th *ngIf="isColumnVisible('positionName')">
+                            <th>
                                 Tên vị trí
                             </th>
-                            <th *ngIf="isColumnVisible('groupPosition')">
+                            <th>
                                 Đơn vị
                             </th>
-                            <th *ngIf="isColumnVisible('staffTitle')">
+                            <th>
                                 Chức danh
                             </th>
-                            <th
-                                *ngIf="isColumnVisible('status')"
-                                class="text-center"
-                            >
+                            <th class="text-center">
                                 Trạng thái theo dõi
                             </th>
                             <th class="text-center">Hành động</th>
@@ -131,22 +129,19 @@
                                     [value]="rowData"
                                 ></p-tableCheckbox>
                             </td>
-                            <td *ngIf="isColumnVisible('positionCode')">
+                            <td>
                                 {{ rowData.positionCode }}
                             </td>
-                            <td *ngIf="isColumnVisible('positionName')">
+                            <td>
                                 {{ rowData.positionName }}
                             </td>
-                            <td *ngIf="isColumnVisible('groupPosition')">
+                            <td>
                                 {{ rowData.groupPosition?.groupPositionName }}
                             </td>
-                            <td *ngIf="isColumnVisible('staffTitle')">
+                            <td>
                                 {{ rowData.staffTitle?.staffTitleName }}
                             </td>
-                            <td
-                                *ngIf="isColumnVisible('status')"
-                                class="text-center"
-                            >
+                            <td class="text-center">
                                 <p-inputSwitch
                                     [(ngModel)]="rowData.staffPositionStatus"
                                     (onChange)="onStatusChange(rowData)"
