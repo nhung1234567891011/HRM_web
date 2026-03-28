@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MenuItem, TreeNode } from 'primeng/api';
-import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { PermissionConstant } from 'src/app/core/constants/permission-constant';
 import { HasPermissionHelper } from 'src/app/core/helpers/has-permission.helper';
@@ -17,15 +16,10 @@ import { OrganizationService } from 'src/app/core/services/organization.service'
 })
 export class OrganiStructListComponent implements OnInit {
   @ViewChild('dataTable', { static: true }) dataTable!: Table;
-  @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('columnToggleWrap') columnToggleWrap?: ElementRef<HTMLElement>;
   messages: any[] = [];
   items: MenuItem[] | undefined;
   struct!: any;
-  pageSize: number = 10;
-  pageIndex: number = 1;
-  totalRecords: number = 0;
-  currentPageReport: string = '';
   organizationUnits: OrganizationUnit[] = [];
   keyWord: string = '';
   showDiaLogDelete: boolean = false;
@@ -78,8 +72,8 @@ export class OrganiStructListComponent implements OnInit {
 
   loadOrganizationData() {
     const request: any = {
-      pageSize: this.pageSize,
-      pageIndex: this.pageIndex,
+      pageSize: 10000,
+      pageIndex: 1,
       keyWord: this.keyWord.trim()
     };
     this.organizationService.getPagingAll(request).subscribe((response: any) => {
@@ -87,8 +81,6 @@ export class OrganiStructListComponent implements OnInit {
         const rootUnits = response.data.items.map((unit: any) => this.mapToOrganizationUnit(unit, 1));
         this.organizationUnits = rootUnits;
         console.log(this.organizationUnits);
-        this.totalRecords = response.data.totalRecords;
-        this.updateCurrentPageReport();
       }
     });
   }
@@ -199,12 +191,6 @@ export class OrganiStructListComponent implements OnInit {
     unit.expanded = !unit.expanded; // Toggle the expanded state for the unit
   }
 
-  onPageChange(event: any): void {
-    this.pageSize = event.rows;
-    this.pageIndex = event.page + 1;
-    this.loadOrganizationData();
-  }
-
   toggleColumnPanel(): void {
     if (this.showColumnPanel) {
       this.closeColumnPanel();
@@ -278,31 +264,4 @@ export class OrganiStructListComponent implements OnInit {
     return this.columnVisibility[key] !== false;
   }
 
-  goToPreviousPage(): void {
-    if (this.pageIndex > 1) {
-      this.pageIndex--;
-      this.loadOrganizationData();
-    }
-  }
-
-  goToNextPage(): void {
-    const lastPage = Math.ceil(this.totalRecords / this.pageSize);
-    if (this.pageIndex < lastPage) {
-      this.pageIndex++;
-      this.loadOrganizationData();
-    }
-  }
-  updateCurrentPageReport(): void {
-    const startRecord = (this.pageIndex - 1) * this.pageSize + 1;
-    const endRecord = Math.min(
-      this.pageIndex * this.pageSize,
-      this.totalRecords
-    );
-    if (this.totalRecords === 0) {
-      this.currentPageReport = `<strong>0</strong> - <strong>${endRecord}</strong> trong <strong>${this.totalRecords}</strong> bản ghi`;
-    }
-    if (this.totalRecords > 0) {
-      this.currentPageReport = `<strong>${startRecord}</strong> - <strong>${endRecord}</strong> trong <strong>${this.totalRecords}</strong> bản ghi`;
-    }
-  }
 }

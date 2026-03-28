@@ -207,16 +207,6 @@
             </table>
             </div>
 
-            <div class="paging-bot dg-fix">
-              <div class="paging-info">
-                <div [innerHTML]="currentPageReport"></div>
-              </div>
-              <p-paginator class="org-paginator" [rows]="this.pageSize" (onPageChange)="onPageChange($event)"
-                [totalRecords]="totalRecords > 0 ? totalRecords : 1" [rowsPerPageOptions]="[10, 20, 30]" [first]="
-                          (this.pageIndex - 1) *
-                          this.pageSize
-                        "></p-paginator>
-            </div>
           </div>
         </div>
       </div>

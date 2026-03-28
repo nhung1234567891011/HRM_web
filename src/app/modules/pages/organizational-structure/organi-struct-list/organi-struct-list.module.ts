@@ -5,7 +5,6 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
-import { PaginatorModule } from 'primeng/paginator';
 import { TreeTableModule } from 'primeng/treetable';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -24,7 +23,6 @@ import { OrganiStructListRoutingModule } from './organi-struct-list-routing.modu
     InputSwitchModule,
     MessagesModule,
     ToastModule,
-    PaginatorModule,
     TreeTableModule,
     ButtonModule,
     TableModule,
