@@ -55,7 +55,11 @@ export class ShowComponent implements OnInit {
         },
         { field: 'createdAt', header: 'Ngày tổng hợp', selected: true },
         { field: 'updatedAt', header: 'Ngày cập nhật', selected: true },
-        { field: 'payrollStatuslabel', header: 'Trạng thái', selected: true },
+        {
+            field: 'payrollConfirmationStatusLabel',
+            header: 'Trạng thái xác nhận',
+            selected: true,
+        },
     ];
 
     paging: any = {
@@ -81,7 +85,7 @@ export class ShowComponent implements OnInit {
         private payrollService: PayrollService,
         private organiStructTypeService: OrganiStructTypeService,
         private authService: AuthService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
     ) {
         this.authService.userCurrent.subscribe((user) => {
             this.user = user;
@@ -223,21 +227,18 @@ export class ShowComponent implements OnInit {
                             break;
                     }
                     let payrollConfirmationStatusLabel = '';
-                    switch (item.confirmationStatus) {
-                        case this.PayrollConfirmationStatusEmployeeEnum.NotSent:
+                    switch (item.payrollConfirmationStatus) {
+                        case PayrollConfirmationStatus.NotSent:
                             payrollConfirmationStatusLabel =
                                 'Chưa gửi xác nhận';
                             break;
-                        case this.PayrollConfirmationStatusEmployeeEnum
-                            .Rejected:
+                        case PayrollConfirmationStatus.NotConfirmed:
                             payrollConfirmationStatusLabel = 'Từ chối xác nhận';
                             break;
-                        case this.PayrollConfirmationStatusEmployeeEnum
-                            .Confirming:
+                        case PayrollConfirmationStatus.Confirming:
                             payrollConfirmationStatusLabel = 'Đang xác nhận';
                             break;
-                        case this.PayrollConfirmationStatusEmployeeEnum
-                            .Confirmed:
+                        case PayrollConfirmationStatus.Confirmed:
                             payrollConfirmationStatusLabel = 'Đã xác nhận';
                             break;
                     }
@@ -260,11 +261,11 @@ export class ShowComponent implements OnInit {
 
                     const formattedCreatedAt = this.datePipe.transform(
                         item.createdAt,
-                        'dd-MM-yyyy'
+                        'dd-MM-yyyy',
                     );
                     const formattedUpdatedAt = this.datePipe.transform(
                         item.createdAt,
-                        'dd-MM-yyyy'
+                        'dd-MM-yyyy',
                     );
                     return {
                         ...item,
@@ -306,7 +307,7 @@ export class ShowComponent implements OnInit {
                         this.queryParameters.organization =
                             this.getOrganization(
                                 this.organizations,
-                                organizationId
+                                organizationId,
                             );
                     }
                 });
@@ -328,7 +329,7 @@ export class ShowComponent implements OnInit {
     }
     handleConcatenatePropertyValues(
         items: any[],
-        propertyName1: string
+        propertyName1: string,
     ): string {
         if (!items || items.length === 0) {
             return '';
@@ -345,7 +346,7 @@ export class ShowComponent implements OnInit {
             label: node.organizationName,
             data: node.id,
             children: (node.organizationChildren || []).map((child: any) =>
-                this.handleConvertToTree(child)
+                this.handleConvertToTree(child),
             ),
         };
     }
@@ -361,12 +362,12 @@ export class ShowComponent implements OnInit {
     handleConvertToTreeSelect() {
         if (Array.isArray(this.organizations)) {
             this.organizations = this.organizations.map((organization) =>
-                this.handleMapToTreeNode(organization)
+                this.handleMapToTreeNode(organization),
             );
         } else {
             console.error(
                 'organizations không phải là mảng',
-                this.organizations
+                this.organizations,
             );
         }
     }
@@ -374,7 +375,7 @@ export class ShowComponent implements OnInit {
     handleSearchSalary() {}
 
     getPayrollConfirmationStatusEmployee(
-        status: PayrollConfirmationStatusEmployee
+        status: PayrollConfirmationStatusEmployee,
     ): {
         text: string;
         color: string;
@@ -383,7 +384,7 @@ export class ShowComponent implements OnInit {
         switch (status) {
             case PayrollConfirmationStatusEmployee.NotSent:
                 return {
-                    text: 'Bị từ chối',
+                    text: 'Chưa gửi',
                     color: '#721c24', // màu đỏ đậm
                     bgColor: '#f8d7da', // màu đỏ nhạt
                 };
@@ -395,9 +396,9 @@ export class ShowComponent implements OnInit {
                 };
             case PayrollConfirmationStatusEmployee.Rejected:
                 return {
-                    text: 'Đã xác nhận',
-                    color: '#155724', // màu xanh lá đậm
-                    bgColor: '#d4edda', // màu xanh lá nhạt
+                    text: 'Đã từ chối',
+                    color: '#721c24',
+                    bgColor: '#f8d7da',
                 };
             case PayrollConfirmationStatusEmployee.Confirmed:
                 return {
@@ -418,11 +419,11 @@ export class ShowComponent implements OnInit {
 
     handleApplyChangeSelectedColumns() {
         const selectedColumnsLeaveApplication = this.columns.filter(
-            (col) => col.selected
+            (col) => col.selected,
         );
         localStorage.setItem(
             'selectedColumnsLeaveApplication',
-            JSON.stringify(selectedColumnsLeaveApplication)
+            JSON.stringify(selectedColumnsLeaveApplication),
         );
         this.displayColumnsCustom = false;
     }
@@ -430,7 +431,7 @@ export class ShowComponent implements OnInit {
     onSearchColumn(event: Event) {
         const query = (event.target as HTMLInputElement).value.toLowerCase();
         this.filteredColumns = this.columns.filter((col) =>
-            col.header.toLowerCase().includes(query)
+            col.header.toLowerCase().includes(query),
         );
     }
     onSearch() {

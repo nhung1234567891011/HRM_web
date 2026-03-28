@@ -5,7 +5,9 @@
         <p-toolbar styleClass="mb-2">
             <div class="">
                 <strong class="font-size-16">Bảng lương chi tiết</strong>
-                <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
+                <app-shared-breadcrumb
+                    [model]="$any(this).items || []"
+                ></app-shared-breadcrumb>
             </div>
             <!-- <ng-template pTemplate="right">
                 <div class="flex gap-2">
@@ -47,7 +49,9 @@
                         </div>
                         <p-button
                             [label]="isPayrollLocked ? 'Đã khóa' : 'Chưa khóa'"
-                            [icon]="isPayrollLocked ? 'pi pi-lock' : 'pi pi-unlock'"
+                            [icon]="
+                                isPayrollLocked ? 'pi pi-lock' : 'pi pi-unlock'
+                            "
                             (click)="clockWorkDialog = true"
                             [outlined]="true"
                             severity="secondary"
@@ -218,7 +222,9 @@
                                     Thưởng
                                 </th>
                                 <th
-                                    *ngIf="isColumnVisible('allowanceMealTravel')"
+                                    *ngIf="
+                                        isColumnVisible('allowanceMealTravel')
+                                    "
                                     class="text-center"
                                 >
                                     Phụ cấp đi lại, ăn trưa
@@ -278,7 +284,9 @@
                                     Tổng lương
                                 </th>
                                 <th
-                                    *ngIf="isColumnVisible('totalReceivedSalary')"
+                                    *ngIf="
+                                        isColumnVisible('totalReceivedSalary')
+                                    "
                                     class="text-center"
                                 >
                                     Tổng lương thực nhận
@@ -289,7 +297,7 @@
                                 >
                                     Trạng thái
                                 </th>
-                                <th class="text-center">Hành động</th>
+                                <!-- <th class="text-center">Hành động</th> -->
                             </tr>
                         </ng-template>
                         <ng-template
@@ -321,7 +329,7 @@
                                     *ngIf="isColumnVisible('baseSalary')"
                                     class="text-center"
                                 >
-                                    {{ rowData.baseSalary | number : "1.0-0" }}
+                                    {{ rowData.baseSalary | number: "1.0-0" }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('standardWorkDays')"
@@ -334,8 +342,7 @@
                                     class="text-center"
                                 >
                                     {{
-                                        rowData.actualWorkDays
-                                            | number : "1.0-0"
+                                        rowData.actualWorkDays | number: "1.0-0"
                                     }}
                                 </td>
                                 <td
@@ -343,15 +350,14 @@
                                     class="text-center"
                                 >
                                     {{
-                                        rowData.receivedSalary
-                                            | number : "1.0-0"
+                                        rowData.receivedSalary | number: "1.0-0"
                                     }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('kpi')"
                                     class="text-center"
                                 >
-                                    {{ rowData.kpi | number : "1.0-0" }}
+                                    {{ rowData.kpi | number: "1.0-0" }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('kpiPercentage')"
@@ -363,37 +369,49 @@
                                     *ngIf="isColumnVisible('kpiSalary')"
                                     class="text-center"
                                 >
-                                    {{ rowData.kpiSalary | number : "1.0-0" }}
+                                    {{ rowData.kpiSalary | number: "1.0-0" }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('bonus')"
                                     class="text-center"
                                 >
-                                    {{ rowData.bonus | number : "1.0-0" }}
+                                    {{ rowData.bonus | number: "1.0-0" }}
                                 </td>
                                 <td
-                                    *ngIf="isColumnVisible('allowanceMealTravel')"
+                                    *ngIf="
+                                        isColumnVisible('allowanceMealTravel')
+                                    "
                                     class="text-center"
                                 >
-                                    {{ rowData.allowanceMealTravel | number : "1.0-0" }}
+                                    {{
+                                        rowData.allowanceMealTravel
+                                            | number: "1.0-0"
+                                    }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('parkingAmount')"
                                     class="text-center"
                                 >
-                                    {{ rowData.parkingAmount | number : "1.0-0" }}
+                                    {{
+                                        rowData.parkingAmount | number: "1.0-0"
+                                    }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('commissionAmount')"
                                     class="text-center"
                                 >
-                                    {{ rowData.commissionAmount | number : "1.0-0" }}
+                                    {{
+                                        rowData.commissionAmount
+                                            | number: "1.0-0"
+                                    }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('overtimeAmount')"
                                     class="text-center"
                                 >
-                                    {{ rowData.overtimeAmount | number : "1.0-0" }}
+                                    {{
+                                        rowData.overtimeAmount | number: "1.0-0"
+                                    }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('socialInsurance')"
@@ -401,14 +419,14 @@
                                 >
                                     {{
                                         rowData.socialInsurance
-                                            | number : "1.0-0"
+                                            | number: "1.0-0"
                                     }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('unionFee')"
                                     class="text-center"
                                 >
-                                    {{ rowData.unionFee | number : "1.0-0" }}
+                                    {{ rowData.unionFee | number: "1.0-0" }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('salaryRate')"
@@ -421,8 +439,7 @@
                                     class="text-center"
                                 >
                                     {{
-                                        rowData.totalDeduction
-                                            | number : "1.0-0"
+                                        rowData.totalDeduction | number: "1.0-0"
                                     }}
                                 </td>
                                 <td
@@ -430,23 +447,24 @@
                                     class="text-center"
                                 >
                                     {{
-                                        rowData.totalAllowance
-                                            | number : "1.0-0"
+                                        rowData.totalAllowance | number: "1.0-0"
                                     }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('totalSalary')"
                                     class="text-center"
                                 >
-                                    {{ rowData.totalSalary | number : "1.0-0" }}
+                                    {{ rowData.totalSalary | number: "1.0-0" }}
                                 </td>
                                 <td
-                                    *ngIf="isColumnVisible('totalReceivedSalary')"
+                                    *ngIf="
+                                        isColumnVisible('totalReceivedSalary')
+                                    "
                                     class="text-center"
                                 >
                                     {{
                                         rowData.totalReceivedSalary
-                                            | number : "1.0-0"
+                                            | number: "1.0-0"
                                     }}
                                 </td>
                                 <td
@@ -455,7 +473,7 @@
                                 >
                                     <span>{{ rowData.statusName }}</span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <div
                                         class="flex gap-1 justify-content-center"
                                     >
@@ -472,7 +490,7 @@
                                             ></i
                                         ></span>
                                     </div>
-                                </td>
+                                </td> -->
                             </tr>
                         </ng-template>
                     </p-table>

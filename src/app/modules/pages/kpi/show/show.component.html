@@ -5,7 +5,9 @@
         <p-toolbar styleClass="mb-2">
             <div class="">
                 <strong class="font-size-16">Doanh thu hoa hồng</strong>
-                <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
+                <app-shared-breadcrumb
+                    [model]="$any(this).items || []"
+                ></app-shared-breadcrumb>
             </div>
             <div class="toast-container">
                 <p-messages
@@ -15,9 +17,7 @@
                 ></p-messages>
             </div>
             <ng-template pTemplate="right">
-                <div class="flex gap-2">
-                    
-                </div>
+                <div class="flex gap-2"></div>
             </ng-template>
         </p-toolbar>
         <div class="card">
@@ -93,7 +93,7 @@
                         class="flex flex-column"
                         *ngIf="
                             this.permisionHelper.hasPermissions([
-                                permissionConstant.ManageKPICreate
+                                permissionConstant.ManageKPICreate,
                             ])
                         "
                     >
@@ -123,21 +123,39 @@
                             <!-- <th>
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th> -->
-                            <th *ngIf="isColVisible('nameKpiTable')" style="width: 20%">Tên bảng tổng hợp doanh thu hoa hồng</th>
-                            <th *ngIf="isColVisible('organizationName')" style="width: 20%">Đơn vị áp dụng</th>
-                            <th *ngIf="isColVisible('positionNames')" style="width: 30%">Vị trí áp dụng</th>
-                            <th *ngIf="isColVisible('timeRange')" style="width: 20%">Thời gian</th>
+                            <th
+                                *ngIf="isColVisible('nameKpiTable')"
+                                style="width: 20%"
+                            >
+                                Tên bảng tổng hợp doanh thu hoa hồng
+                            </th>
+                            <th
+                                *ngIf="isColVisible('organizationName')"
+                                style="width: 20%"
+                            >
+                                Đơn vị áp dụng
+                            </th>
+                            <th
+                                *ngIf="isColVisible('positionNames')"
+                                style="width: 30%"
+                            >
+                                Vị trí áp dụng
+                            </th>
+                            <th
+                                *ngIf="isColVisible('timeRange')"
+                                style="width: 20%"
+                            >
+                                Thời gian
+                            </th>
                             <th
                                 *ngIf="
                                     isColVisible('action') &&
-                                    (
+                                    (this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageKPIEdit,
+                                    ]) ||
                                         this.permisionHelper.hasPermissions([
-                                            permissionConstant.ManageKPIEdit
-                                        ]) ||
-                                        this.permisionHelper.hasPermissions([
-                                            permissionConstant.ManageKPIDelete
-                                        ])
-                                    )
+                                            permissionConstant.ManageKPIDelete,
+                                        ]))
                                 "
                                 style="width: 20%"
                             >
@@ -152,11 +170,22 @@
                                     [value]="rowData"
                                 ></p-tableCheckbox>
                             </td> -->
-                            <td *ngIf="isColVisible('nameKpiTable')" [routerLink]="['/detail-kpi', rowData.id]">
+                            <td
+                                *ngIf="isColVisible('nameKpiTable')"
+                                [routerLink]="['/detail-kpi', rowData.id]"
+                            >
                                 {{ rowData.nameKpiTable }}
                             </td>
-                            <td *ngIf="isColVisible('organizationName')" [routerLink]="['/detail-kpi', rowData.id]">{{ rowData.organizationName }}</td>
-                            <td *ngIf="isColVisible('positionNames')" [routerLink]="['/detail-kpi', rowData.id]">
+                            <td
+                                *ngIf="isColVisible('organizationName')"
+                                [routerLink]="['/detail-kpi', rowData.id]"
+                            >
+                                {{ rowData.organizationName }}
+                            </td>
+                            <td
+                                *ngIf="isColVisible('positionNames')"
+                                [routerLink]="['/detail-kpi', rowData.id]"
+                            >
                                 <span
                                     *ngIf="
                                         isAllPositionsMatch(
@@ -188,7 +217,7 @@
                                         <span *ngIf="!expandedRows[rowData.id]">
                                             {{
                                                 rowData.positionNames
-                                                    | slice : 0 : 100
+                                                    | slice: 0 : 100
                                             }}...
                                             <a
                                                 href="#"
@@ -217,21 +246,22 @@
                                     </span>
                                 </span>
                             </td>
-                            <td *ngIf="isColVisible('timeRange')" [routerLink]="['/detail-kpi', rowData.id]">
-                                {{ rowData.fromDate | date : "dd/MM/yyyy" }} -
-                                {{ rowData.toDate | date : "dd/MM/yyyy" }}
+                            <td
+                                *ngIf="isColVisible('timeRange')"
+                                [routerLink]="['/detail-kpi', rowData.id]"
+                            >
+                                {{ rowData.fromDate | date: "dd/MM/yyyy" }} -
+                                {{ rowData.toDate | date: "dd/MM/yyyy" }}
                             </td>
                             <td
                                 *ngIf="
                                     isColVisible('action') &&
-                                    (
+                                    (this.permisionHelper.hasPermissions([
+                                        permissionConstant.ManageKPIEdit,
+                                    ]) ||
                                         this.permisionHelper.hasPermissions([
-                                            permissionConstant.ManageKPIEdit
-                                        ]) ||
-                                        this.permisionHelper.hasPermissions([
-                                            permissionConstant.ManageKPIDelete
-                                        ])
-                                    )
+                                            permissionConstant.ManageKPIDelete,
+                                        ]))
                                 "
                                 class="text-center"
                             >
@@ -241,7 +271,7 @@
                                         *ngIf="
                                             this.permisionHelper.hasPermissions(
                                                 [
-                                                    permissionConstant.ManageKPIEdit
+                                                    permissionConstant.ManageKPIEdit,
                                                 ]
                                             )
                                         "
@@ -260,7 +290,7 @@
                                         *ngIf="
                                             this.permisionHelper.hasPermissions(
                                                 [
-                                                    permissionConstant.ManageKPIDelete
+                                                    permissionConstant.ManageKPIDelete,
                                                 ]
                                             )
                                         "
@@ -268,7 +298,12 @@
                                         <i
                                             style="display: block"
                                             class="pi pi-trash"
-                                            (click)="confirmDeleteKpi($event, rowData)"
+                                            (click)="
+                                                confirmDeleteKpi(
+                                                    $event,
+                                                    rowData
+                                                )
+                                            "
                                         ></i>
                                     </span>
                                 </div>
@@ -304,7 +339,7 @@
 </div>
 
 <p-dialog
-    header="Thêm bảng tổng hợp KPI"
+    header="Thêm mới bảng tổng hợp doanh thu hoa hồng"
     [modal]="true"
     [style]="{ width: '40vw' }"
     [(visible)]="createKpiVisible"
@@ -337,7 +372,9 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('createTime')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('createTime')?.errors?.['required']
+                        "
                         class="error-message"
                     >
                         <small>Thời gian không được bỏ trống</small>
@@ -367,7 +404,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('organizationId')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('organizationId')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         <small>Đơn vị không được bỏ trống</small>
@@ -400,7 +441,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('kpiTablePositions')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('kpiTablePositions')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Vị trí không được bỏ trống
@@ -428,7 +473,9 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('nameKpiTable')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('nameKpiTable')?.errors?.['required']
+                        "
                         class="error-message"
                     >
                         Tên bảng tổng hợp KPI không được bỏ trống
@@ -461,7 +508,7 @@
 </p-dialog>
 
 <p-dialog
-    header="Cập nhật bảng tổng hợp KPI"
+    header="Cập nhật bảng tổng hợp doanh thu hoa hồng"
     [modal]="true"
     [style]="{ width: '40vw' }"
     [(visible)]="updateKpiVisible"
@@ -495,7 +542,9 @@
                     "
                 >
                     <div
-                        *ngIf="detailForm.get('createTime')?.errors?.['required']"
+                        *ngIf="
+                            detailForm.get('createTime')?.errors?.['required']
+                        "
                         class="error-message"
                     >
                         <small>Thời gian không được bỏ trống</small>
@@ -526,7 +575,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailUpdateForm.get('organizationId')?.errors?.['required']"
+                        *ngIf="
+                            detailUpdateForm.get('organizationId')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         <small>Đơn vị không được bỏ trống</small>
@@ -560,7 +613,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailUpdateForm.get('kpiTablePositions')?.errors?.['required']"
+                        *ngIf="
+                            detailUpdateForm.get('kpiTablePositions')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Vị trí không được bỏ trống
@@ -589,7 +646,11 @@
                     "
                 >
                     <div
-                        *ngIf="detailUpdateForm.get('nameKpiTable')?.errors?.['required']"
+                        *ngIf="
+                            detailUpdateForm.get('nameKpiTable')?.errors?.[
+                                'required'
+                            ]
+                        "
                         class="error-message"
                     >
                         Tên bảng tổng hợp KPI không được bỏ trống
