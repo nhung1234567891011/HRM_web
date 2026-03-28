@@ -21,7 +21,8 @@
     background-color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
+    line-height: 1;
 }
 
 .lock {
@@ -29,6 +30,131 @@
     color: gray;
     padding: 0 10px;
     cursor: pointer;
+}
+
+.timesheet-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border-bottom: 1px solid #dbe3ec;
+}
+
+.timesheet-title-wrap {
+    min-width: 0;
+    flex: 1;
+}
+
+.timesheet-panel-title {
+    margin: 0;
+    color: #1e2834;
+    font-size: 1.05rem;
+    line-height: 1.35;
+}
+
+.timesheet-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.timesheet-lock {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.timesheet-lock i {
+    font-size: 16px;
+}
+
+.paging-bot.dg-fix {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    border-top: 1px solid #dbe3ec;
+    background: linear-gradient(180deg, #fbfdff 0%, #f3f7fb 100%);
+}
+
+.paging-info {
+    color: #4d5e71;
+    font-size: 13px;
+    font-weight: 600;
+    background: #eaf1f8;
+    border: 1px solid #d1dcea;
+    border-radius: 999px;
+    padding: 6px 12px;
+}
+
+:host ::ng-deep .org-paginator .p-paginator {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown {
+    min-width: 76px;
+    height: 2rem;
+    border-radius: 8px;
+    border-color: #cdd9e6;
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown .p-dropdown-label {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown .p-dropdown-trigger {
+    width: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:host ::ng-deep .org-paginator .p-dropdown .p-dropdown-trigger-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+@media (max-width: 1024px) {
+    .timesheet-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .timesheet-panel-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .sheet-key {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sheet-key > div:last-child {
+        width: 100%;
+    }
+
+    .sheet-key > div:last-child p-treeSelect {
+        width: 100% !important;
+    }
+
+    .paging-bot.dg-fix {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 /* Filters */

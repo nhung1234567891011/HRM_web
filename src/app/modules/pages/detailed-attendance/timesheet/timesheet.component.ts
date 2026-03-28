@@ -33,7 +33,7 @@ export class TimesheetComponent implements OnInit {
     invalidDateRange = false;
     selector: any;
     contractOption: any;
-    pageSize: number = 30;
+    pageSize: number = 10;
     pageIndex: number = 1;
     display: boolean = false;
     isDialogVisible: boolean = false;
@@ -50,6 +50,8 @@ export class TimesheetComponent implements OnInit {
     currentLockState: boolean = false;
     currentShiftWorkId: string = '';
     employees: any[] = [];
+    allEmployees: any[] = [];
+    totalRecords: number = 0;
     employeesName: any[] = [];
     timesheetDataById: any;
     timesheetDate: string;
@@ -162,6 +164,32 @@ export class TimesheetComponent implements OnInit {
 
     CallSnaphot(): void {
         this.detailById = +this.route.snapshot.paramMap.get('id')!;
+    }
+
+    canAddAttendance(): boolean {
+        return this.userCurrent?.roleNames?.includes('admin') || this.userCurrent?.roleNames?.includes('ADMIN') || false;
+    }
+
+    get currentPageReport(): string {
+        if (!this.totalRecords) {
+            return '0 - 0 trong 0 bản ghi';
+        }
+
+        const startRecord = (this.pageIndex - 1) * this.pageSize + 1;
+        const endRecord = Math.min(this.pageIndex * this.pageSize, this.totalRecords);
+        return `${startRecord} - ${endRecord} trong ${this.totalRecords} bản ghi`;
+    }
+
+    onPageChange(event: any): void {
+        this.pageIndex = (event.page ?? 0) + 1;
+        this.pageSize = event.rows ?? this.pageSize;
+        this.applyClientPagination();
+    }
+
+    private applyClientPagination(): void {
+        const start = (this.pageIndex - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        this.employees = this.allEmployees.slice(start, end);
     }
 
     getOrganizations(): void {
@@ -595,7 +623,16 @@ export class TimesheetComponent implements OnInit {
                             schedule,
                         };
                     });
-                    console.log('this.employees', this.employees);
+                    this.allEmployees = this.employees;
+                    this.totalRecords = this.allEmployees.length;
+
+                    // Nếu đổi điều kiện lọc/search thì quay về trang đầu nếu trang hiện tại vượt quá tổng trang.
+                    const totalPages = Math.max(1, Math.ceil(this.totalRecords / this.pageSize));
+                    if (this.pageIndex > totalPages) {
+                        this.pageIndex = 1;
+                    }
+
+                    this.applyClientPagination();
                 }
             });
     }

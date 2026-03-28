@@ -389,11 +389,14 @@ li {}
     z-index: 1200;
     display: none;
     width: 330px;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
     background: #fff;
     border: 1px solid #d7e2f0;
     border-radius: 10px;
     box-shadow: 0 12px 30px rgba(21, 43, 67, 0.18);
     padding: 12px;
+    overflow: hidden;
 }
 
 .app-table-column-toggle-title {
@@ -451,7 +454,7 @@ li {}
 
 .app-table-column-toggle-list {
     max-height: 230px;
-    // overflow-y: auto;
+    overflow-y: auto;
     border: 1px solid #edf1f7;
     border-radius: 8px;
     padding: 6px;
@@ -466,6 +469,14 @@ li {}
     padding: 6px;
     border-radius: 6px;
     transition: background-color 0.2s ease;
+}
+
+.app-table-column-toggle-item span {
+    min-width: 0;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .app-table-column-toggle-item:hover {

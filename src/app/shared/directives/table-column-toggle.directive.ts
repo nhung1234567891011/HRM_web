@@ -32,6 +32,13 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
 
     private destroyDocumentClick?: () => void;
     private destroyDocumentKeydown?: () => void;
+    private readonly onDocumentScroll = () => {
+        if (this.panelVisible) {
+            this.positionPanel();
+        }
+    };
+    private destroyWindowResize?: () => void;
+    private destroyWindowOrientationChange?: () => void;
     private tableObserver?: MutationObserver;
     private syncTimer?: ReturnType<typeof setTimeout>;
 
@@ -58,6 +65,9 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         this.tableObserver?.disconnect();
         this.destroyDocumentClick?.();
         this.destroyDocumentKeydown?.();
+        document.removeEventListener('scroll', this.onDocumentScroll, true);
+        this.destroyWindowResize?.();
+        this.destroyWindowOrientationChange?.();
 
         if (this.panelEl) {
             this.panelEl.remove();
@@ -185,6 +195,28 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
                 }
             },
         );
+
+        document.addEventListener('scroll', this.onDocumentScroll, true);
+
+        this.destroyWindowResize = this.renderer.listen(
+            'window',
+            'resize',
+            () => {
+                if (this.panelVisible) {
+                    this.positionPanel();
+                }
+            },
+        );
+
+        this.destroyWindowOrientationChange = this.renderer.listen(
+            'window',
+            'orientationchange',
+            () => {
+                if (this.panelVisible) {
+                    this.positionPanel();
+                }
+            },
+        );
     }
 
     private togglePanel(): void {
@@ -208,10 +240,10 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
 
         this.renderColumnList();
 
-        const buttonRect = this.buttonEl.getBoundingClientRect();
         this.panelEl.style.display = 'block';
-        this.panelEl.style.top = `${buttonRect.bottom + 8}px`;
-        this.panelEl.style.left = `${Math.max(8, buttonRect.right - 330)}px`;
+        this.panelEl.style.visibility = 'hidden';
+        this.positionPanel();
+        this.panelEl.style.visibility = 'visible';
 
         this.panelVisible = true;
         this.searchInputEl?.focus();
@@ -227,6 +259,45 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
         if (this.searchInputEl) {
             this.searchInputEl.value = '';
         }
+    }
+
+    private positionPanel(): void {
+        if (!this.panelEl || !this.buttonEl) {
+            return;
+        }
+
+        const margin = 8;
+        const gap = 8;
+        const buttonRect = this.buttonEl.getBoundingClientRect();
+
+        const panelWidth = this.panelEl.offsetWidth || 330;
+        const panelHeight = this.panelEl.offsetHeight || 320;
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        let left = buttonRect.right - panelWidth;
+        let top = buttonRect.bottom + gap;
+
+        if (left < margin) {
+            left = margin;
+        }
+
+        if (left + panelWidth > viewportWidth - margin) {
+            left = Math.max(margin, viewportWidth - panelWidth - margin);
+        }
+
+        if (top + panelHeight > viewportHeight - margin) {
+            const topAboveButton = buttonRect.top - panelHeight - gap;
+            if (topAboveButton >= margin) {
+                top = topAboveButton;
+            } else {
+                top = Math.max(margin, viewportHeight - panelHeight - margin);
+            }
+        }
+
+        this.panelEl.style.left = `${Math.round(left)}px`;
+        this.panelEl.style.top = `${Math.round(top)}px`;
     }
 
     private syncColumnsFromTable(): void {

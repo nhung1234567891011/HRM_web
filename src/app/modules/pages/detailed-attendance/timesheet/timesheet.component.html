@@ -1,31 +1,9 @@
 <main id="main" class="main">
     <div class="pagetitle">
-        <header class="header">
-            <h1>{{ this.timesheet?.timekeepingSheetName }} từ {{ this.timesheet?.startDate | date: 'dd/MM/yyyy' }} - {{ this.timesheet?.endDate | date: 'dd/MM/yyyy' }}</h1>
-            <button
-              class="edit-btn"
-              (click)="showDialogEdit()"
-              [disabled]="isLocked"
-              [ngClass]="{'disabled-btn': isLocked}">
-              ✎
-            </button>
-            <span class="lock" (click)="showConfirmDialog(isLocked)">
-              <i
-                [ngClass]="isLocked ? 'pi pi-lock' : 'pi pi-unlock'"
-                [style.color]="isLocked ? 'red' : 'black'"
-                style="font-size: 16px;"
-              ></i>
-              {{ isLocked ? 'Đã khóa' : 'Chưa khóa' }}
-            </span>
-
-            <p-dialog [(visible)]="displayConfirmDialog" [modal]="true" [closable]="false" [header]="dialogTitle">
-              <p>{{ dialogMessage }}</p>
-              <div class="p-dialog-footer">
-                <button pButton label="Xác nhận" icon="pi pi-check" (click)="confirmToggleLock()"></button>
-                <button style="margin-left: 20px;" pButton label="Hủy" icon="pi pi-times" class="p-button-secondary" (click)="cancelToggleLock()"></button>
-              </div>
-            </p-dialog>
-        </header>
+        <div>
+            <h1>Bảng chấm công chi tiết</h1>
+            <app-shared-breadcrumb></app-shared-breadcrumb>
+        </div>
     </div>
     <div class="toast-container">
       <p-messages [(value)]="messages" [enableService]="false"
@@ -37,6 +15,35 @@
         <div class="col-lg-12">
           <div class="card-body">
             <div class="card mt-3">
+                <div class="timesheet-panel-header">
+                    <div class="timesheet-title-wrap">
+                        <h2 class="timesheet-panel-title">{{ this.timesheet?.timekeepingSheetName }} từ {{ this.timesheet?.startDate | date: 'dd/MM/yyyy' }} - {{ this.timesheet?.endDate | date: 'dd/MM/yyyy' }}</h2>
+                    </div>
+                    <div class="timesheet-panel-actions">
+                        <button
+                          class="edit-btn"
+                          (click)="showDialogEdit()"
+                          [disabled]="isLocked"
+                          [ngClass]="{'disabled-btn': isLocked}">
+                          ✎
+                        </button>
+                        <span class="lock timesheet-lock" (click)="showConfirmDialog(isLocked)">
+                          <i
+                            [ngClass]="isLocked ? 'pi pi-lock' : 'pi pi-unlock'"
+                            [style.color]="isLocked ? 'red' : 'black'"
+                          ></i>
+                          {{ isLocked ? 'Đã khóa' : 'Chưa khóa' }}
+                        </span>
+                    </div>
+                </div>
+
+                <p-dialog [(visible)]="displayConfirmDialog" [modal]="true" [closable]="false" [header]="dialogTitle">
+                  <p>{{ dialogMessage }}</p>
+                  <div class="p-dialog-footer">
+                    <button pButton label="Xác nhận" icon="pi pi-check" (click)="confirmToggleLock()"></button>
+                    <button style="margin-left: 20px;" pButton label="Hủy" icon="pi pi-times" class="p-button-secondary" (click)="cancelToggleLock()"></button>
+                  </div>
+                </p-dialog>
                 <div class="filters">
                     <div class="filter-icons">
                       <span class="blue-dot"></span> Tăng ca
@@ -141,9 +148,9 @@
                                         <div style="color: gray; font-weight: bold; font-size: 0.8em;">{{ day.holiday }}</div>
                                     </div>
                                     <div *ngIf="!day.holiday"
-                                         (click)="openAddAbsentDialog(day, employee.id)"
-                                         [ngStyle]="{ 'cursor': isLocked ? 'not-allowed' : 'pointer' }"
-                                         title="Nhấn để thêm chấm công">
+                                         (click)="canAddAttendance() && openAddAbsentDialog(day, employee.id)"
+                                         [ngStyle]="{ 'cursor': (isLocked || !canAddAttendance()) ? 'not-allowed' : 'pointer', 'opacity': (isLocked || !canAddAttendance()) ? 0.5 : 1 }"
+                                         [title]="canAddAttendance() ? 'Nhấn để thêm chấm công' : 'Chỉ Admin mới có thể thêm chấm công'">
                                         <div [ngStyle]="{ 'background-color': 'lightgray', 'width': '10px', 'height': '10px', 'border-radius': '50%', 'margin': '0 auto 5px auto' }"></div>
                                         <div style="color: gray; font-size: 0.8em;">---</div>
                                         <div style="color: #bbb; font-size: 0.75em;">+ Thêm</div>
@@ -172,6 +179,20 @@
                         </tr>
                     </ng-template>
                 </p-table>
+
+                <div class="paging-bot dg-fix" *ngIf="totalRecords > 0">
+                  <div class="paging-info">
+                    <div [innerHTML]="currentPageReport"></div>
+                  </div>
+                  <p-paginator
+                    class="org-paginator"
+                    [rows]="pageSize"
+                    (onPageChange)="onPageChange($event)"
+                    [totalRecords]="totalRecords"
+                    [rowsPerPageOptions]="[10, 20, 30]"
+                    [first]="(pageIndex - 1) * pageSize"
+                  />
+                </div>
 
             </div>
           </div>
