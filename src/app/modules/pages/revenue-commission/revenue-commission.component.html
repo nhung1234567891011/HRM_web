@@ -1,239 +1,393 @@
 <div class="grid">
-  <p-confirmDialog appendTo="body" [closable]="false"></p-confirmDialog>
-  <div class="col-12">
-    <p-toolbar styleClass="mb-2">
-      <div class="">
-        <strong class="font-size-16">Cấu hình hoa hồng doanh thu</strong>
-        <app-shared-breadcrumb [model]="$any(this).items || []"></app-shared-breadcrumb>
-      </div>
-      <div class="p-toolbar-group-end">
-        <button pButton type="button" label="Thêm mới" icon="pi pi-plus" (click)="openCreate()"></button>
-      </div>
-    </p-toolbar>
-
-    <div class="toast-container">
-      <p-messages [(value)]="messages" [enableService]="false" [closable]="false"></p-messages>
-    </div>
-
-    <div class="card">
-      <div class="flex gap-3" style="justify-content: space-between;">
-        <div class="flex gap-3">
-          <p-treeSelect
-            [options]="treeData"
-            [(ngModel)]="filterOrgNode"
-            [placeholder]="'Chọn đơn vị'"
-            [showClear]="true"
-            [style]="{ width: '300px' }"
-            (onNodeSelect)="onOrgFilterChange()"
-            (onClear)="onOrgFilterChange()"
-          ></p-treeSelect>
-
-          <p-dropdown
-            [options]="targetTypes"
-            [(ngModel)]="selectedTargetType"
-            optionLabel="label"
-            [showClear]="true"
-            [style]="{ width: '200px' }"
-            placeholder="Đối tượng"
-            (onChange)="fetchData()"
-            (onClear)="fetchData()"
-          ></p-dropdown>
-
-          <p-dropdown
-            [options]="statuses"
-            [(ngModel)]="selectedStatus"
-            optionLabel="label"
-            [showClear]="true"
-            [style]="{ width: '220px' }"
-            placeholder="Trạng thái"
-            (onChange)="fetchData()"
-            (onClear)="fetchData()"
-          ></p-dropdown>
-
-          <p-button
-            pTooltip="Ẩn/hiện cột"
-            label=""
-            [outlined]="true"
-            severity="secondary"
-            icon="pi pi-table"
-            (onClick)="colPanelRef.toggle($event)"
-          ></p-button>
-
-          <p-overlayPanel #colPanelRef>
-            <div style="padding: 8px; min-width: 220px;">
-              <p style="font-weight: 600; margin-bottom: 8px;">Chọn cột hiển thị</p>
-              <div *ngFor="let col of allColumns" style="margin-bottom: 6px;">
-                <p-checkbox
-                  [binary]="true"
-                  [label]="col.header"
-                  [ngModel]="isColVisible(col.field)"
-                  (onChange)="onColumnToggle($event, col)"
-                  [ngModelOptions]="{ standalone: true }"
+    <p-confirmDialog appendTo="body" [closable]="false"></p-confirmDialog>
+    <div class="col-12">
+        <p-toolbar styleClass="mb-2">
+            <div class="">
+                <strong class="font-size-16"
+                    >Cấu hình hoa hồng doanh thu</strong
                 >
-                </p-checkbox>
-              </div>
+                <app-shared-breadcrumb
+                    [model]="$any(this).items || []"
+                ></app-shared-breadcrumb>
             </div>
-          </p-overlayPanel>
-        </div>
-      </div>
-
-      <div class="table-section" style="margin-top: 16px">
-        <p-table
-          [value]="policies"
-          [rows]="pageSize"
-          [totalRecords]="totalRecords"
-          [paginator]="false"
-          responsiveLayout="scroll"
-          styleClass="p-datatable-striped"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th *ngIf="isColVisible('organizationName')" style="width: 25%;">Đơn vị</th>
-              <th *ngIf="isColVisible('targetType')" style="width: 10%;">Đối tượng</th>
-              <th *ngIf="isColVisible('effectiveFrom')" style="width: 15%;">Hiệu lực từ</th>
-              <th *ngIf="isColVisible('effectiveTo')" style="width: 15%;">Hiệu lực đến</th>
-              <th *ngIf="isColVisible('status')" style="width: 15%;">Trạng thái</th>
-              <th *ngIf="isColVisible('action')" style="width: 20%;">Thao tác</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData>
-            <tr>
-              <td *ngIf="isColVisible('organizationName')">{{ rowData.organizationName }}</td>
-              <td *ngIf="isColVisible('targetType')">{{ rowData.targetType === 0 ? 'SALE' : 'CTV' }}</td>
-              <td *ngIf="isColVisible('effectiveFrom')">{{ rowData.effectiveFrom ? (rowData.effectiveFrom | date : 'dd/MM/yyyy') : '-' }}</td>
-              <td *ngIf="isColVisible('effectiveTo')">{{ rowData.effectiveTo ? (rowData.effectiveTo | date : 'dd/MM/yyyy') : '-' }}</td>
-              <td *ngIf="isColVisible('status')">{{ rowData.status === 0 ? 'Đang áp dụng' : 'Ngừng áp dụng' }}</td>
-              <td *ngIf="isColVisible('action')">
+            <div class="p-toolbar-group-end">
                 <button
-                  pButton
-                  type="button"
-                  label="Sửa"
-                  icon="pi pi-pencil"
-                  class="p-button-text"
-                  (click)="openEdit(rowData)"
+                    pButton
+                    type="button"
+                    label="Thêm mới"
+                    icon="pi pi-plus"
+                    (click)="openCreate()"
                 ></button>
-                <button
-                  pButton
-                  type="button"
-                  label="Xoá"
-                  icon="pi pi-trash"
-                  class="p-button-text p-button-danger"
-                  (click)="confirmDeletePolicy($event, rowData)"
-                ></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+            </div>
+        </p-toolbar>
 
-        <div *ngIf="totalRecords === 0" style="text-align: center; margin-top: 20px;">
-          <strong style="text-align: center; width: 100%">Không tìm thấy kết quả phù hợp</strong>
+        <div class="toast-container">
+            <p-messages
+                [(value)]="messages"
+                [enableService]="false"
+                [closable]="false"
+            ></p-messages>
         </div>
 
-        <div class="paging-bot dg-fix">
-          <div class="paging-info">
-            <div [innerHTML]="currentPageReport"></div>
-          </div>
-          <p-paginator
-            [rows]="this.pageSize"
-            (onPageChange)="onPageChange($event)"
-            [totalRecords]="totalRecords > 0 ? totalRecords : 1"
-            [rowsPerPageOptions]="[10, 20, 30]"
-            [first]="(this.pageIndex - 1) * this.pageSize"
-          ></p-paginator>
+        <div class="card">
+            <div class="flex gap-3" style="justify-content: space-between">
+                <div class="flex gap-3">
+                    <p-treeSelect
+                        [options]="treeData"
+                        [(ngModel)]="filterOrgNode"
+                        [placeholder]="'Chọn đơn vị'"
+                        [showClear]="true"
+                        [style]="{ width: '300px' }"
+                        (onNodeSelect)="onOrgFilterChange()"
+                        (onClear)="onOrgFilterChange()"
+                    ></p-treeSelect>
+
+                    <p-dropdown
+                        [options]="targetTypes"
+                        [(ngModel)]="selectedTargetType"
+                        optionLabel="label"
+                        [showClear]="true"
+                        [style]="{ width: '200px' }"
+                        placeholder="Đối tượng"
+                        (onChange)="fetchData()"
+                        (onClear)="fetchData()"
+                    ></p-dropdown>
+
+                    <p-dropdown
+                        [options]="statuses"
+                        [(ngModel)]="selectedStatus"
+                        optionLabel="label"
+                        [showClear]="true"
+                        [style]="{ width: '220px' }"
+                        placeholder="Trạng thái"
+                        (onChange)="fetchData()"
+                        (onClear)="fetchData()"
+                    ></p-dropdown>
+
+                    <p-button
+                        pTooltip="Ẩn/hiện cột"
+                        label=""
+                        [outlined]="true"
+                        severity="secondary"
+                        icon="pi pi-table"
+                        (onClick)="colPanelRef.toggle($event)"
+                    ></p-button>
+
+                    <p-overlayPanel #colPanelRef>
+                        <div style="padding: 8px; min-width: 220px">
+                            <p style="font-weight: 600; margin-bottom: 8px">
+                                Chọn cột hiển thị
+                            </p>
+                            <div
+                                *ngFor="let col of allColumns"
+                                style="margin-bottom: 6px"
+                            >
+                                <p-checkbox
+                                    [binary]="true"
+                                    [label]="col.header"
+                                    [ngModel]="isColVisible(col.field)"
+                                    (onChange)="onColumnToggle($event, col)"
+                                    [ngModelOptions]="{ standalone: true }"
+                                >
+                                </p-checkbox>
+                            </div>
+                        </div>
+                    </p-overlayPanel>
+                </div>
+            </div>
+
+            <div class="table-section" style="margin-top: 16px">
+                <p-table
+                    [value]="policies"
+                    [rows]="pageSize"
+                    [totalRecords]="totalRecords"
+                    [paginator]="false"
+                    responsiveLayout="scroll"
+                    styleClass="p-datatable-striped"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th
+                                *ngIf="isColVisible('organizationName')"
+                                style="width: 25%"
+                            >
+                                Đơn vị
+                            </th>
+                            <th
+                                *ngIf="isColVisible('targetType')"
+                                style="width: 10%"
+                            >
+                                Đối tượng
+                            </th>
+                            <th
+                                *ngIf="isColVisible('effectiveFrom')"
+                                style="width: 15%"
+                            >
+                                Hiệu lực từ
+                            </th>
+                            <th
+                                *ngIf="isColVisible('effectiveTo')"
+                                style="width: 15%"
+                            >
+                                Hiệu lực đến
+                            </th>
+                            <th
+                                *ngIf="isColVisible('status')"
+                                style="width: 15%"
+                            >
+                                Trạng thái
+                            </th>
+                            <th
+                                *ngIf="isColVisible('action')"
+                                style="width: 20%"
+                            >
+                                Thao tác
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <td *ngIf="isColVisible('organizationName')">
+                                {{ rowData.organizationName }}
+                            </td>
+                            <td *ngIf="isColVisible('targetType')">
+                                {{ rowData.targetType === 0 ? "SALE" : "CTV" }}
+                            </td>
+                            <td *ngIf="isColVisible('effectiveFrom')">
+                                {{
+                                    rowData.effectiveFrom
+                                        ? (rowData.effectiveFrom
+                                          | date: "dd/MM/yyyy")
+                                        : "-"
+                                }}
+                            </td>
+                            <td *ngIf="isColVisible('effectiveTo')">
+                                {{
+                                    rowData.effectiveTo
+                                        ? (rowData.effectiveTo
+                                          | date: "dd/MM/yyyy")
+                                        : "-"
+                                }}
+                            </td>
+                            <td *ngIf="isColVisible('status')">
+                                {{
+                                    rowData.status === 0
+                                        ? "Đang áp dụng"
+                                        : "Ngừng áp dụng"
+                                }}
+                            </td>
+                            <td *ngIf="isColVisible('action')">
+                                <button
+                                    pButton
+                                    type="button"
+                                    label="Sửa"
+                                    icon="pi pi-pencil"
+                                    class="p-button-text"
+                                    (click)="openEdit(rowData)"
+                                ></button>
+                                <button
+                                    pButton
+                                    type="button"
+                                    label="Xoá"
+                                    icon="pi pi-trash"
+                                    class="p-button-text p-button-danger"
+                                    (click)="
+                                        confirmDeletePolicy($event, rowData)
+                                    "
+                                ></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+                <div
+                    *ngIf="totalRecords === 0"
+                    style="text-align: center; margin-top: 20px"
+                >
+                    <strong style="text-align: center; width: 100%"
+                        >Không tìm thấy kết quả phù hợp</strong
+                    >
+                </div>
+
+                <div class="paging-bot dg-fix">
+                    <div class="paging-info">
+                        <div [innerHTML]="currentPageReport"></div>
+                    </div>
+                    <p-paginator
+                        [rows]="this.pageSize"
+                        (onPageChange)="onPageChange($event)"
+                        [totalRecords]="totalRecords > 0 ? totalRecords : 1"
+                        [rowsPerPageOptions]="[10, 20, 30]"
+                        [first]="(this.pageIndex - 1) * this.pageSize"
+                    ></p-paginator>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <p-dialog
-  [(visible)]="policyDialog"
-  [modal]="true"
-  [style]="{ width: '900px' }"
-  [header]="isEdit ? 'Cập nhật cấu hình hoa hồng' : 'Thêm cấu hình hoa hồng'"
-  (onHide)="closeDialog()"
+    [(visible)]="policyDialog"
+    [modal]="true"
+    [style]="{
+        width: '900px',
+        maxHeight: 'calc(100vh - 100px)',
+        display: 'flex',
+        flexDirection: 'column',
+    }"
+    [maximizable]="true"
+    [header]="isEdit ? 'Cập nhật cấu hình hoa hồng' : 'Thêm cấu hình hoa hồng'"
+    (onHide)="closeDialog()"
 >
-  <form [formGroup]="form" class="p-fluid">
-    <div class="grid">
-      <div class="col-12 md:col-6">
-        <label>Đơn vị</label>
-        <p-treeSelect
-          [options]="treeData"
-          [(ngModel)]="dialogOrgNode"
-          [ngModelOptions]="{ standalone: true }"
-          [placeholder]="'Chọn đơn vị'"
-          [showClear]="true"
-          (onNodeSelect)="onDialogOrgSelect()"
-          (onClear)="onDialogOrgSelect()"
-        ></p-treeSelect>
-      </div>
-      <div class="col-12 md:col-6">
-        <label>Đối tượng</label>
-        <p-dropdown
-          [options]="targetTypes"
-          optionLabel="label"
-          optionValue="value"
-          formControlName="targetType"
-        ></p-dropdown>
-      </div>
-      <div class="col-12 md:col-6">
-        <label>Hiệu lực từ</label>
-        <p-calendar formControlName="effectiveFrom" dateFormat="dd/mm/yy"></p-calendar>
-      </div>
-      <div class="col-12 md:col-6">
-        <label>Hiệu lực đến</label>
-        <p-calendar formControlName="effectiveTo" dateFormat="dd/mm/yy"></p-calendar>
-      </div>
-      <div class="col-12 md:col-6">
-        <label>Trạng thái</label>
-        <p-dropdown
-          [options]="statuses"
-          optionLabel="label"
-          optionValue="value"
-          formControlName="status"
-        ></p-dropdown>
-      </div>
+    <div
+        style="
+            overflow-y: auto;
+            flex: 1;
+            max-height: calc(100vh - 200px);
+            padding-right: 8px;
+        "
+    >
+        <form [formGroup]="form" class="p-fluid">
+            <div class="grid">
+                <div class="col-12 md:col-6">
+                    <label>Đơn vị</label>
+                    <p-treeSelect
+                        [options]="treeData"
+                        [(ngModel)]="dialogOrgNode"
+                        [ngModelOptions]="{ standalone: true }"
+                        [placeholder]="'Chọn đơn vị'"
+                        [showClear]="true"
+                        (onNodeSelect)="onDialogOrgSelect()"
+                        (onClear)="onDialogOrgSelect()"
+                    ></p-treeSelect>
+                </div>
+                <div class="col-12 md:col-6">
+                    <label>Đối tượng</label>
+                    <p-dropdown
+                        [options]="targetTypes"
+                        optionLabel="label"
+                        optionValue="value"
+                        formControlName="targetType"
+                    ></p-dropdown>
+                </div>
+                <div class="col-12 md:col-6">
+                    <label>Hiệu lực từ</label>
+                    <p-calendar
+                        formControlName="effectiveFrom"
+                        dateFormat="dd/mm/yy"
+                    ></p-calendar>
+                </div>
+                <div class="col-12 md:col-6">
+                    <label>Hiệu lực đến</label>
+                    <p-calendar
+                        formControlName="effectiveTo"
+                        dateFormat="dd/mm/yy"
+                    ></p-calendar>
+                </div>
+                <div class="col-12 md:col-6">
+                    <label>Trạng thái</label>
+                    <p-dropdown
+                        [options]="statuses"
+                        optionLabel="label"
+                        optionValue="value"
+                        formControlName="status"
+                    ></p-dropdown>
+                </div>
+            </div>
+
+            <div
+                style="
+                    margin-top: 12px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
+                <strong>Bậc hoa hồng (luỹ tiến)</strong>
+                <button
+                    pButton
+                    type="button"
+                    label="Thêm bậc"
+                    icon="pi pi-plus"
+                    (click)="addTier()"
+                ></button>
+            </div>
+
+            <p-table
+                [value]="tiers.controls"
+                styleClass="p-datatable-striped"
+                responsiveLayout="scroll"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 22%">Từ (₫)</th>
+                        <th style="width: 22%">Đến (₫)</th>
+                        <th style="width: 20%">% hưởng</th>
+                        <th style="width: 16%">Thứ tự</th>
+                        <th style="width: 20%">Thao tác</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-i="rowIndex">
+                    <tr [formGroup]="row">
+                        <td>
+                            <input
+                                type="number"
+                                pInputText
+                                formControlName="fromAmount"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                type="number"
+                                pInputText
+                                formControlName="toAmount"
+                                placeholder="(trống = không giới hạn)"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                type="number"
+                                pInputText
+                                formControlName="ratePercent"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                type="number"
+                                pInputText
+                                formControlName="sortOrder"
+                            />
+                        </td>
+                        <td>
+                            <button
+                                pButton
+                                type="button"
+                                label="Xoá"
+                                icon="pi pi-trash"
+                                class="p-button-text p-button-danger"
+                                (click)="confirmRemoveTier($event, i)"
+                            ></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </form>
     </div>
 
-    <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-      <strong>Bậc hoa hồng (luỹ tiến)</strong>
-      <button pButton type="button" label="Thêm bậc" icon="pi pi-plus" (click)="addTier()"></button>
-    </div>
-
-    <p-table [value]="tiers.controls" styleClass="p-datatable-striped" responsiveLayout="scroll">
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="width: 22%;">Từ (₫)</th>
-          <th style="width: 22%;">Đến (₫)</th>
-          <th style="width: 20%;">% hưởng</th>
-          <th style="width: 16%;">Thứ tự</th>
-          <th style="width: 20%;">Thao tác</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-row let-i="rowIndex">
-        <tr [formGroup]="row">
-          <td><input type="number" pInputText formControlName="fromAmount" /></td>
-          <td><input type="number" pInputText formControlName="toAmount" placeholder="(trống = không giới hạn)" /></td>
-          <td><input type="number" pInputText formControlName="ratePercent" /></td>
-          <td><input type="number" pInputText formControlName="sortOrder" /></td>
-          <td>
-            <button
-              pButton
-              type="button"
-              label="Xoá"
-              icon="pi pi-trash"
-              class="p-button-text p-button-danger"
-              (click)="confirmRemoveTier($event, i)"
-            ></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </form>
-
-  <ng-template pTemplate="footer">
-    <button pButton type="button" label="Huỷ" class="p-button-text" (click)="closeDialog()"></button>
-    <button pButton type="button" label="Lưu" icon="pi pi-save" (click)="save()"></button>
-  </ng-template>
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            type="button"
+            label="Huỷ"
+            class="p-button-text"
+            (click)="closeDialog()"
+        ></button>
+        <button
+            pButton
+            type="button"
+            label="Lưu"
+            icon="pi pi-save"
+            (click)="save()"
+        ></button>
+    </ng-template>
 </p-dialog>
-

@@ -132,7 +132,6 @@ export class TableColumnToggleDirective implements AfterViewInit, OnDestroy {
             <div class="app-table-column-toggle-list"></div>
             <div class="app-table-column-toggle-footer">
                 <button type="button" data-action="close" title="Đóng bảng tùy chỉnh" data-tooltip="Đóng">Đóng</button>
-                <button type="button" data-action="default" title="Đặt lại cấu hình cột mặc định" data-tooltip="Khôi phục mặc định">Mặc định</button>
                 <button type="button" class="primary" data-action="apply" title="Áp dụng cấu hình cột" data-tooltip="Áp dụng">Áp dụng</button>
             </div>
         `;
