@@ -29,7 +29,7 @@
             <div class="filter-action-col">
               <button pButton pRipple label="Lọc" class="buttonfilter" (click)="loadOrganizationData()"></button>
             </div>
-            <div class="filter-action-col column-toggle-wrap">
+            <div class="filter-action-col column-toggle-wrap" #columnToggleWrap>
               <button pButton pRipple type="button" label="Ẩn/hiện cột" icon="pi pi-sliders-h"
                 class="buttonfilter button-outline" (click)="toggleColumnPanel()"></button>
               <div class="column-panel" *ngIf="showColumnPanel">
@@ -51,10 +51,12 @@
                   <button type="button" class="column-link-btn" (click)="clearAllColumns()">Bỏ tất cả</button>
                 </div>
 
-                <label class="column-item" *ngFor="let col of filteredColumnOptions">
-                  <input type="checkbox" [checked]="isTempColumnVisible(col.key)" (change)="onTempColumnToggle(col.key)" />
-                  <span>{{ col.label }}</span>
-                </label>
+                <div class="column-list">
+                  <label class="column-item" *ngFor="let col of filteredColumnOptions">
+                    <input type="checkbox" [checked]="isTempColumnVisible(col.key)" (change)="onTempColumnToggle(col.key)" />
+                    <span>{{ col.label }}</span>
+                  </label>
+                </div>
 
                 <div class="column-panel-footer">
                   <button type="button" class="column-footer-btn column-cancel" (click)="closeColumnPanel()">Đóng</button>

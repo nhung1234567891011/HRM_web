@@ -14,6 +14,13 @@
                     ></p-messages>
                 </div>
             </p-toolbar>
+            <div
+                *ngIf="isReadOnlyContract"
+                class="p-message p-message-warn"
+                style="margin-bottom: 12px;"
+            >
+                Hợp đồng đã chấm dứt/hết hiệu lực, không được chỉnh sửa thông tin chính.
+            </div>
             <div class="grid p-fluid">
                 <div class="col-12 md:col-12">
                     <div class="box">
@@ -754,6 +761,7 @@
                                     label="Thêm mới"
                                     class="button-allowances"
                                     (click)="showDialogAllowance()"
+                                    [disabled]="isReadOnlyContract"
                                 ></button>
                             </div>
                             <div class="table-allowances">
@@ -817,6 +825,7 @@
                                                 <td>{{ allowance.note }}</td>
                                                 <td>
                                                     <a
+                                                        *ngIf="!isReadOnlyContract"
                                                         (click)="
                                                             openEditAllowance(
                                                                 allowance
@@ -831,6 +840,7 @@
                                                         ></i>
                                                     </a>
                                                     <i
+                                                        *ngIf="!isReadOnlyContract"
                                                         class="pi pi-trash"
                                                         (click)="
                                                             deleteAllowance(
@@ -884,6 +894,7 @@
                                                 </td>
                                                 <td style="width: 8%">
                                                     <a
+                                                        *ngIf="!isReadOnlyContract"
                                                         (click)="
                                                             openEditAllowance(
                                                                 allowance
@@ -898,6 +909,7 @@
                                                         ></i>
                                                     </a>
                                                     <i
+                                                        *ngIf="!isReadOnlyContract"
                                                         class="pi pi-trash"
                                                         (click)="
                                                             deleteAllowanceNew(
@@ -960,6 +972,7 @@
                 label="Lưu"
                 class="p-button-primary"
                 (click)="onUpdateContract()"
+                [disabled]="isReadOnlyContract"
             ></button>
         </div>
 

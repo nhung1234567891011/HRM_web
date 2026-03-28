@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
@@ -18,6 +18,7 @@ import { OrganizationService } from 'src/app/core/services/organization.service'
 export class OrganiStructListComponent implements OnInit {
   @ViewChild('dataTable', { static: true }) dataTable!: Table;
   @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('columnToggleWrap') columnToggleWrap?: ElementRef<HTMLElement>;
   messages: any[] = [];
   items: MenuItem[] | undefined;
   struct!: any;
@@ -213,6 +214,22 @@ export class OrganiStructListComponent implements OnInit {
     this.tempColumnVisibility = { ...this.columnVisibility };
     this.columnSearch = '';
     this.showColumnPanel = true;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.showColumnPanel) {
+      return;
+    }
+
+    const target = event.target as Node | null;
+    const panelWrapper = this.columnToggleWrap?.nativeElement;
+
+    if (target && panelWrapper?.contains(target)) {
+      return;
+    }
+
+    this.closeColumnPanel();
   }
 
   closeColumnPanel(): void {

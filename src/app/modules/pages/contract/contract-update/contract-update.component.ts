@@ -78,6 +78,7 @@ export class ContractUpdateComponent {
     showErrorExpiryDate: boolean = false;
     showErrorContractType: boolean = false;
     showErrorAllowanceName: boolean = false;
+    isReadOnlyContract: boolean = false;
 
     allowanceNameOptions = [{ label: 'Hỗ trợ', value: 1 }];
 
@@ -113,6 +114,30 @@ export class ContractUpdateComponent {
         this.loadContractDuration();
         this.loadWorkingForm();
         this.loadEmployees();
+    }
+
+    private blockWhenReadOnlyContract(): boolean {
+        if (!this.isReadOnlyContract) {
+            return false;
+        }
+
+        this.messages = [
+            {
+                severity: 'warn',
+                summary: 'Không thể chỉnh sửa',
+                detail: 'Hợp đồng đã chấm dứt/hết hiệu lực, không được chỉnh sửa thông tin chính.',
+                life: 3000,
+            },
+        ];
+        return true;
+    }
+
+    private lockFormForReadOnlyContract(): void {
+        if (!this.isReadOnlyContract || !this.contractUpdateForm) {
+            return;
+        }
+
+        this.contractUpdateForm.disable();
     }
 
     initForm() {
@@ -169,6 +194,7 @@ export class ContractUpdateComponent {
     getContractById(): void {
         this.contractService.getByIdContract(this.contractById).subscribe({
             next: (data) => {
+                this.isReadOnlyContract = data.expiredStatus === true;
                 this.selectedAttachment = data;
                 if (this.selectedAttachment.attachment) {
                     this.Url = this.selectedAttachment.attachment;
@@ -206,6 +232,9 @@ export class ContractUpdateComponent {
                     contractType: data.contractType,
                     unit: data.unit,
                 });
+
+                this.lockFormForReadOnlyContract();
+
                 this.getAllowancesByContractId(data.id);
             },
             error: (err) => {
@@ -230,6 +259,10 @@ export class ContractUpdateComponent {
     }
 
     openEditAllowance(allowance: any): void {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         this.news = allowance.isNew;
         if (this.news) {
             this.editAllowance(allowance);
@@ -444,6 +477,10 @@ export class ContractUpdateComponent {
     }
 
     removeFile(): void {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         this.Url = null;
         this.selectedAttachment.attachment = null;
         this.contractUpdateForm.patchValue({
@@ -963,6 +1000,10 @@ export class ContractUpdateComponent {
     }
 
     saveAllowance() {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         const newAllowance = { ...this.allowanceUpdateForm.value };
         let hasError = false;
 
@@ -995,6 +1036,10 @@ export class ContractUpdateComponent {
     }
 
     saveAndResetAllowance() {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         const newAllowance = { ...this.allowanceUpdateForm.value };
         let hasError = false;
 
@@ -1070,6 +1115,10 @@ export class ContractUpdateComponent {
     }
 
     updateAllowanceSave(): void {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         const allowanceData = {
             id: this.allowanceUpdateForm.value.id,
             contractId: this.allowanceUpdateForm.value.contractId,
@@ -1144,6 +1193,10 @@ export class ContractUpdateComponent {
 
     // Delete an allowance
     deleteAllowance(allowance: any) {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         this.allowanceList = this.allowanceList.filter(
             (item) => item !== allowance
         );
@@ -1151,6 +1204,10 @@ export class ContractUpdateComponent {
     }
 
     deleteAllowanceNew(allowance: any) {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         this.allowanceListNew = this.allowanceListNew.filter(
             (item) => item !== allowance
         );
@@ -1158,6 +1215,10 @@ export class ContractUpdateComponent {
     }
 
     showDialogAllowance() {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         this.displayDialog = true;
     }
 
@@ -1220,6 +1281,10 @@ export class ContractUpdateComponent {
     }
 
     onUpdateContract() {
+        if (this.blockWhenReadOnlyContract()) {
+            return;
+        }
+
         console.log('đã click');
         const contractData = this.contractUpdateForm.value;
         let hasError = false;

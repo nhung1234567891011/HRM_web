@@ -87,6 +87,22 @@ export class ContractListComponent implements OnInit {
         this.getCompanyData(1);
     }
 
+    private isExpiredContract(contract: any): boolean {
+        return contract?.expiredStatus === true;
+    }
+
+    canEditContract(contract: any): boolean {
+        return !this.isExpiredContract(contract);
+    }
+
+    canTerminateContract(contract: any): boolean {
+        return !this.isExpiredContract(contract);
+    }
+
+    private getApiErrorDetail(error: any, fallback: string): string {
+        return error?.error?.detail || fallback;
+    }
+
     onEdit(contract: any) {
         console.log('Sửa hợp đồng:', contract);
     }
@@ -249,6 +265,18 @@ export class ContractListComponent implements OnInit {
     }
 
     onTerminate(contract: any) {
+        if (!this.canTerminateContract(contract)) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: 'Không thể chấm dứt',
+                    detail: 'Hợp đồng đã ở trạng thái hết hiệu lực, không thể chấm dứt lại.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
         this.selectedContractId = contract.id;
         this.effectiveDate = new Date(contract.effectiveDate);
         this.isTerminateDialogVisible = true;
@@ -327,12 +355,15 @@ export class ContractListComponent implements OnInit {
                     this.isTerminateDialogVisible = false;
                     this.getPagingContract();
                 },
-                error: () => {
+                error: (error: any) => {
                     this.messages = [
                         {
                             severity: 'error',
                             summary: 'Thất bại',
-                            detail: 'Có lỗi xảy ra.',
+                            detail: this.getApiErrorDetail(
+                                error,
+                                'Có lỗi xảy ra.'
+                            ),
                             life: 3000,
                         },
                     ];

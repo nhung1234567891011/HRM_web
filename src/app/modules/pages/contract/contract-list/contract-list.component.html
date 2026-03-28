@@ -337,7 +337,7 @@
                                                             [
                                                                 permissionConstant.ManageContractEdit,
                                                             ]
-                                                        )
+                                                        ) && canEditContract(contract)
                                                     "
                                                     class="menu-btn"
                                                     [routerLink]="[
@@ -355,7 +355,7 @@
                                                             [
                                                                 permissionConstant.ManageContractTerminate,
                                                             ]
-                                                        )
+                                                        ) && canTerminateContract(contract)
                                                     "
                                                     (click)="
                                                         onTerminate(contract)
