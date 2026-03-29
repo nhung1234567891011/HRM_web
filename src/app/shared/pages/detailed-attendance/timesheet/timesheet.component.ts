@@ -152,11 +152,16 @@ export class TimesheetComponent implements OnInit {
             pageIndex: this.pageIndex,
         };
         this.organizationService.getPagingAll(request).subscribe((response) => {
-            if (response.status) {
-                this.treeData = this.transformToTreeNode(response.data.items);
+            if (response?.status) {
+                const items = Array.isArray(response?.data?.items)
+                    ? response.data.items
+                    : [];
+                this.treeData = this.transformToTreeNode(items);
+
+                const userOrganizationId = this.userCurrent?.organization?.id;
                 const selectedNode = this.findNodeById(
                     this.treeData,
-                    this.userCurrent.organization.id
+                    userOrganizationId
                 );
                 if (selectedNode) {
                     this.selectedNode = selectedNode;
@@ -164,12 +169,16 @@ export class TimesheetComponent implements OnInit {
             }
         });
     }
-    findNodeById(nodes: TreeNode[], id: string): TreeNode | null {
+    findNodeById(nodes: TreeNode[], id: any): TreeNode | null {
+        if (!Array.isArray(nodes) || id == null) {
+            return null;
+        }
+
         for (const node of nodes) {
-            if (node.data.id === id) {
+            if (node?.data?.id === id) {
                 return node; // Nếu tìm thấy node phù hợp
             }
-            if (node.children && node.children.length > 0) {
+            if (Array.isArray(node?.children) && node.children.length > 0) {
                 const found = this.findNodeById(node.children, id);
                 if (found) {
                     return found;
@@ -184,8 +193,11 @@ export class TimesheetComponent implements OnInit {
             pageIndex: this.pageIndex,
         };
         this.staffPositionService.getPaging(request).subscribe((response) => {
-            if (response.status) {
-                this.staffPosition = response.data.items.map((item: any) => ({
+            if (response?.status) {
+                const items = Array.isArray(response?.data?.items)
+                    ? response.data.items
+                    : [];
+                this.staffPosition = items.map((item: any) => ({
                     id: item.id,
                     name: item.positionName,
                 }));
@@ -194,10 +206,14 @@ export class TimesheetComponent implements OnInit {
     }
 
     transformToTreeNode(data: any[]): TreeNode[] {
+        if (!Array.isArray(data)) {
+            return [];
+        }
+
         return data.map((item) => ({
             label: item.organizationName,
             data: item,
-            children: item.organizationChildren
+            children: Array.isArray(item.organizationChildren)
                 ? this.transformToTreeNode(item.organizationChildren)
                 : [],
             expanded: false,
@@ -205,11 +221,15 @@ export class TimesheetComponent implements OnInit {
     }
 
     findTreeNodeById(treeData: TreeNode[], id: any): TreeNode | null {
+        if (!Array.isArray(treeData) || id == null) {
+            return null;
+        }
+
         for (const node of treeData) {
-            if (node.data.id === id) {
+            if (node?.data?.id === id) {
                 return node;
             }
-            if (node.children && node.children.length > 0) {
+            if (Array.isArray(node?.children) && node.children.length > 0) {
                 const foundNode = this.findTreeNodeById(node.children, id);
                 if (foundNode) {
                     return foundNode;
@@ -225,17 +245,20 @@ export class TimesheetComponent implements OnInit {
             pageIndex: this.pageIndex,
         };
         this.employeesService.getEmployees(request).subscribe((data: any) => {
-            this.employeesName = data.items.map((employeesName) => ({
+            const items = Array.isArray(data?.items) ? data.items : [];
+            this.employeesName = items.map((employeesName: any) => ({
                 ...employeesName,
-                displayName: `${employeesName.firstName} ${employeesName.lastName}`,
+                displayName: `${employeesName?.firstName || ''} ${
+                    employeesName?.lastName || ''
+                }`.trim(),
             }));
         });
     }
 
     searchEmployee(event: any) {
-        const query = event.query.toLowerCase();
+        const query = (event?.query || '').toLowerCase();
         this.filteredEmployees = this.employeesName.filter((employeesName) =>
-            employeesName.displayName.toLowerCase().includes(query)
+            (employeesName?.displayName || '').toLowerCase().includes(query)
         );
     }
 
@@ -244,36 +267,52 @@ export class TimesheetComponent implements OnInit {
             id: this.detailById,
         };
         this.staffDetailService.getById(request).subscribe((response: any) => {
-            if (response && response.status) {
+            if (response?.status && response?.data) {
                 const data = response.data;
                 this.timesheet = data;
 
                 const startDate = new Date(data.startDate);
                 const endDate = new Date(data.endDate);
 
-                startDate.setHours(0, 0, 0, 0);
-                endDate.setHours(23, 59, 59, 999);
+                if (
+                    !Number.isNaN(startDate.getTime()) &&
+                    !Number.isNaN(endDate.getTime())
+                ) {
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate.setHours(23, 59, 59, 999);
+                    this.dateRange = this.generateDateRange(startDate, endDate);
+                } else {
+                    this.dateRange = [];
+                }
 
-                this.dateRange = this.generateDateRange(startDate, endDate);
                 // Gán dữ liệu vào form
                 this.detailUpdateForm.patchValue({
                     id: data.id,
                     timekeepingSheetName: data.timekeepingSheetName,
-                    startDate: new Date(data.startDate),
-                    endDate: new Date(data.endDate),
+                    startDate: !Number.isNaN(startDate.getTime())
+                        ? new Date(data.startDate)
+                        : null,
+                    endDate: !Number.isNaN(endDate.getTime())
+                        ? new Date(data.endDate)
+                        : null,
                     isLock: data.isLock,
                     timekeepingMethod: data.timekeepingMethod,
                 });
 
-                this.isLocked = data.isLock;
+                this.isLocked = !!data.isLock;
 
                 const selectedPositions =
-                    data.detailTimesheetNameStaffPositions?.map(
+                    (Array.isArray(data.detailTimesheetNameStaffPositions)
+                        ? data.detailTimesheetNameStaffPositions
+                        : [])?.map(
                         (item: any) => item.id
                     ) || [];
 
                 // Tìm các vị trí trong staffPosition tương ứng với id đã chọn
-                const selectedStaffPositions = this.staffPosition.filter(
+                const selectedStaffPositions = (Array.isArray(this.staffPosition)
+                    ? this.staffPosition
+                    : []
+                ).filter(
                     (position: any) => selectedPositions.includes(position.id)
                 );
 
@@ -348,7 +387,15 @@ export class TimesheetComponent implements OnInit {
     }
 
     formatTime(time: string): string {
+        if (!time || typeof time !== 'string') {
+            return '00:00';
+        }
+
         const date = new Date(`1970-01-01T${time}Z`); // Tạo đối tượng Date từ chuỗi thời gian
+        if (Number.isNaN(date.getTime())) {
+            return '00:00';
+        }
+
         const hours = date.getUTCHours().toString().padStart(2, '0'); // Lấy giờ
         const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Lấy phút
         return `${hours}:${minutes}`;
@@ -360,11 +407,27 @@ export class TimesheetComponent implements OnInit {
         };
         this.timeSheetService.getTimesheetData(request).subscribe(
             (response) => {
-                if (response.status) {
-                    this.timesheetData = response.data;
+                if (response?.status) {
+                    this.timesheetData = {
+                        ...this.timesheetData,
+                        ...(response?.data || {}),
+                    };
+                } else {
+                    this.timesheetData = {
+                        totalWokring: 0,
+                        totalLeaveWorking: 0,
+                        totalLateEarly: 0,
+                        totalNotCheck: 0,
+                    };
                 }
             },
             (error) => {
+                this.timesheetData = {
+                    totalWokring: 0,
+                    totalLeaveWorking: 0,
+                    totalLateEarly: 0,
+                    totalNotCheck: 0,
+                };
                 console.error('Error fetching timesheet data', error);
             }
         );
@@ -377,49 +440,97 @@ export class TimesheetComponent implements OnInit {
             pageIndex: this.pageIndex,
             DetailTimeSheetId: this.detailById,
             KeyWord: this.selectedEmployee
-                ? this.selectedEmployee.displayName.replace('+', ' ')
+                ? (this.selectedEmployee.displayName || '').replace('+', ' ')
                 : '',
             OrganizationId:
-                this.selectedNode?.data?.id || this.userCurrent.organization.id,
+                this.selectedNode?.data?.id ||
+                this.userCurrent?.organization?.id ||
+                null,
         };
 
         // Gọi API mới lấy dữ liệu nhân viên theo DetailTimeSheet (KHÔNG phân trang)
         this.timeSheetService
             .getTimesheetByDetailSheet(request)
             .subscribe((response: any) => {
-                if (response && response.status) {
+                if (response?.status) {
                     // API get-detail-time-sheet trả data là List<GetDetailTimesheetWithEmployeeDto>
-                    const items = response.data;
+                    const items = Array.isArray(response?.data)
+                        ? response.data
+                        : [];
 
                     // Gọi API lấy danh sách ngày lễ
                     this.employees = items.map((item: any) => {
+                        const timesheets = Array.isArray(item?.timesheets)
+                            ? item.timesheets
+                            : [];
+                        const holidays = Array.isArray(item?.holidays)
+                            ? item.holidays
+                            : [];
+
                         const schedule = this.dateRange.map((date) => {
+                            const currentDate = new Date(date?.date);
+                            const isDateValid = !Number.isNaN(
+                                currentDate.getTime()
+                            );
                             const isToday =
-                                new Date(date.date).toDateString() === today; // Đánh dấu nếu là ngày hôm nay
-                            const timesheet = item.timesheets.find(
-                                (ts: any) =>
-                                    new Date(ts.date).toDateString() ===
-                                    new Date(date.date).toDateString()
-                            );
-                            const currentDate = new Date(date.date);
+                                isDateValid &&
+                                currentDate.toDateString() === today; // Đánh dấu nếu là ngày hôm nay
 
-                            // Kiểm tra ngày lễ khớp với ngày trong dateRange
-                            const holiday = item.holidays?.find(
-                                (h: any) =>
-                                    currentDate >= new Date(h.fromDate) &&
-                                    currentDate <= new Date(h.toDate) &&
-                                    item.isOffical
+                            const timesheet = timesheets.find((ts: any) => {
+                                const tsDate = new Date(ts?.date);
+                                return (
+                                    isDateValid &&
+                                    !Number.isNaN(tsDate.getTime()) &&
+                                    tsDate.toDateString() ===
+                                        currentDate.toDateString()
+                                );
+                            });
+
+                            const shifts = Array.isArray(timesheet?.shifts)
+                                ? timesheet.shifts
+                                : [];
+
+                            const holiday = holidays.find(
+                                (h: any) => {
+                                    const fromDate = new Date(h?.fromDate);
+                                    const toDate = new Date(h?.toDate);
+
+                                    return (
+                                        isDateValid &&
+                                        !Number.isNaN(fromDate.getTime()) &&
+                                        !Number.isNaN(toDate.getTime()) &&
+                                        currentDate >= fromDate &&
+                                        currentDate <= toDate &&
+                                        !!item?.isOffical
+                                    );
+                                }
                             );
 
-                            if (timesheet || holiday) {
-                                const shiftMorning = timesheet?.shifts.find(
+                            if (shifts.length > 0 || holiday) {
+                                const shiftMorning = shifts.find(
                                     (shift: any) => {
+                                        if (
+                                            !shift?.startTime ||
+                                            !shift?.endTime
+                                        ) {
+                                            return false;
+                                        }
+
                                         const shiftStartTime = new Date(
                                             `1970-01-01T${shift.startTime}`
                                         );
                                         const shiftEndTime = new Date(
                                             `1970-01-01T${shift.endTime}`
                                         );
+                                        if (
+                                            Number.isNaN(
+                                                shiftStartTime.getTime()
+                                            ) ||
+                                            Number.isNaN(shiftEndTime.getTime())
+                                        ) {
+                                            return false;
+                                        }
+
                                         const morningStart = new Date(
                                             '1970-01-01T08:00:00'
                                         );
@@ -433,14 +544,30 @@ export class TimesheetComponent implements OnInit {
                                     }
                                 );
 
-                                const shiftAfternoon = timesheet?.shifts.find(
+                                const shiftAfternoon = shifts.find(
                                     (shift: any) => {
+                                        if (
+                                            !shift?.startTime ||
+                                            !shift?.endTime
+                                        ) {
+                                            return false;
+                                        }
+
                                         const shiftStartTime = new Date(
                                             `1970-01-01T${shift.startTime}`
                                         );
                                         const shiftEndTime = new Date(
                                             `1970-01-01T${shift.endTime}`
                                         );
+                                        if (
+                                            Number.isNaN(
+                                                shiftStartTime.getTime()
+                                            ) ||
+                                            Number.isNaN(shiftEndTime.getTime())
+                                        ) {
+                                            return false;
+                                        }
+
                                         const afternoonStart = new Date(
                                             '1970-01-01T13:15:00'
                                         );
@@ -454,12 +581,17 @@ export class TimesheetComponent implements OnInit {
                                     }
                                 );
 
-                                const singleShift = timesheet?.shifts.find(
-                                    (shift: any) =>
-                                        !shift.shiftTableName.includes(
-                                            'sáng'
-                                        ) &&
-                                        !shift.shiftTableName.includes('chiều')
+                                const singleShift = shifts.find((shift: any) => {
+                                    const shiftName = String(
+                                        shift?.shiftTableName || ''
+                                    ).toLowerCase();
+
+                                    return (
+                                        shiftName.length > 0 &&
+                                        !shiftName.includes('sáng') &&
+                                        !shiftName.includes('chiều')
+                                    );
+                                }
                                 );
 
                                 if (singleShift) {
@@ -475,7 +607,8 @@ export class TimesheetComponent implements OnInit {
                                         morningtimeSheetId:
                                             singleShift.timeSheetId,
                                         morningtimeKeepingLeaveStatus:
-                                            singleShift.timeKeepingLeaveStatus,
+                                            singleShift.timeKeepingLeaveStatus ??
+                                            TimeKeepingLeaveStatus.None,
                                         morningColor: singleShift.isEnoughWork
                                             ? 'green'
                                             : 'yellow',
@@ -507,7 +640,8 @@ export class TimesheetComponent implements OnInit {
                                         morningtimeSheetId:
                                             shiftMorning?.timeSheetId || null,
                                         morningtimeKeepingLeaveStatus:
-                                            singleShift?.timeKeepingLeaveStatus,
+                                            shiftMorning?.timeKeepingLeaveStatus ??
+                                            TimeKeepingLeaveStatus.None,
                                         afternoon: shiftAfternoon
                                             ? `${this.formatTime(
                                                   shiftAfternoon.startTime ||
@@ -531,12 +665,13 @@ export class TimesheetComponent implements OnInit {
                                             null,
                                         morningColor: shiftMorning?.isEnoughWork
                                             ? 'green'
-                                            : 'yellow',
+                                            : 'lightgray',
                                         afternoonColor:
                                             shiftAfternoon?.isEnoughWork
                                                 ? 'green'
-                                                : 'yellow',
+                                                : 'lightgray',
                                         singleShift: false,
+                                        permittedLeave: null,
                                         holiday: holiday ? holiday.name : null,
                                         isToday,
                                     };
@@ -545,8 +680,16 @@ export class TimesheetComponent implements OnInit {
                                 return {
                                     morning: null,
                                     morningName: null,
+                                    morningshiftWorkId: null,
+                                    morningtimeSheetId: null,
+                                    morningtimeKeepingLeaveStatus:
+                                        TimeKeepingLeaveStatus.None,
                                     afternoon: null,
                                     afternoonName: null,
+                                    afternoonshiftWorkId: null,
+                                    afternoontimeSheetId: null,
+                                    afternoontimeKeepingLeaveStatus:
+                                        TimeKeepingLeaveStatus.None,
                                     morningColor: 'lightgray',
                                     afternoonColor: 'lightgray',
                                     singleShift: false,
@@ -558,14 +701,20 @@ export class TimesheetComponent implements OnInit {
                         });
 
                         return {
-                            id: item.id,
-                            employeeCode: item.employeeCode,
-                            name: `${item.lastName} ${item.firstName}`,
+                            id: item?.id,
+                            employeeCode: item?.employeeCode || '---',
+                            name: `${item?.lastName || ''} ${
+                                item?.firstName || ''
+                            }`.trim() || '---',
                             schedule,
                         };
                     });
-                    console.log('this.employees', this.employees);
+                    return;
                 }
+
+                this.employees = [];
+            }, () => {
+                this.employees = [];
             });
     }
 
@@ -742,8 +891,8 @@ export class TimesheetComponent implements OnInit {
                 (breakEndTime.getTime() - breakStartTime.getTime()) /
                 (1000 * 60 * 60);
         }
-        console.log('breakEndTime', breakEndTime.getTime());
-        console.log('breakStartTime', breakStartTime.getTime());
+        console.log('breakEndTime', breakEndTime?.getTime());
+        console.log('breakStartTime', breakStartTime?.getTime());
         console.log('breakTime', breakTime);
 
         // Tính thời gian nghỉ mới nhập vào (new break time)
@@ -811,8 +960,8 @@ export class TimesheetComponent implements OnInit {
             });
         }
 
-        console.log('shiftStartTime', shiftStartTime.getTime());
-        console.log('selectedShiftStartTime', selectedShiftStartTime.getTime());
+        console.log('shiftStartTime', shiftStartTime?.getTime());
+        console.log('selectedShiftStartTime', selectedShiftStartTime?.getTime());
 
         // Tính thời gian về sớm (so với giờ kết thúc ca)
         const selectedShiftEndTime = this.selectedShiftData?.endTime
@@ -838,13 +987,25 @@ export class TimesheetComponent implements OnInit {
         this.isPatching = false;
     }
 
-    openDialog(shiftId: string, timeSheetId: number) {
+    openDialog(shiftId: string | null, timeSheetId: number | null) {
         if (this.isLocked) {
             this.messages = [
                 {
                     severity: 'warn',
                     summary: '',
                     detail: 'Thao tác đang bị khóa.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
+        if (!shiftId || !timeSheetId) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: '',
+                    detail: 'Không tìm thấy dữ liệu ca làm việc để hiển thị.',
                     life: 3000,
                 },
             ];
@@ -861,7 +1022,7 @@ export class TimesheetComponent implements OnInit {
         this.timeSheetService
             .getByShiftWorkdId(request)
             .subscribe((response: any) => {
-                if (response && response.status) {
+                if (response?.status) {
                     this.selectedShiftData = response.data; // Lưu dữ liệu ca làm việc vào biến
                     this.isDialogVisible = true;
 
@@ -873,16 +1034,20 @@ export class TimesheetComponent implements OnInit {
                         this.timeSheetService
                             .getById(request)
                             .subscribe((timeSheetResponse: any) => {
-                                if (timeSheetResponse) {
+                                const timeSheetData =
+                                    timeSheetResponse?.data ||
+                                    timeSheetResponse;
+
+                                if (timeSheetData) {
                                     // Lưu dữ liệu từ getById vào this.timeSheetRaw
                                     this.timeSheetRaw = {
                                         ...this.timeSheetRaw,
-                                        startTime: timeSheetResponse.startTime,
-                                        endTime: timeSheetResponse.endTime,
+                                        startTime: timeSheetData.startTime,
+                                        endTime: timeSheetData.endTime,
                                     };
 
                                     // Định dạng ngày
-                                    const rawDate = timeSheetResponse.date;
+                                    const rawDate = timeSheetData.date;
                                     this.selectedDate = rawDate
                                         ? new Date(rawDate).toLocaleDateString(
                                               'vi-VN'
@@ -957,6 +1122,10 @@ export class TimesheetComponent implements OnInit {
 
         if (typeof time === 'string') {
             const [hours, minutes, seconds] = time.split(':').map(Number);
+            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                return null;
+            }
+
             const date = new Date();
             date.setHours(hours, minutes, seconds || 0, 0);
             return date;
@@ -967,8 +1136,24 @@ export class TimesheetComponent implements OnInit {
     }
 
     private convertToISODate(dateString: string): string {
+        if (!dateString || typeof dateString !== 'string') {
+            return new Date().toISOString();
+        }
+
         const [day, month, year] = dateString.split('/').map(Number);
+        if (
+            Number.isNaN(day) ||
+            Number.isNaN(month) ||
+            Number.isNaN(year)
+        ) {
+            return new Date().toISOString();
+        }
+
         const date = new Date(Date.UTC(year, month - 1, day)); // Tạo ngày theo UTC
+        if (Number.isNaN(date.getTime())) {
+            return new Date().toISOString();
+        }
+
         return date.toISOString(); // Trả về định dạng ISO
     }
 
@@ -976,16 +1161,13 @@ export class TimesheetComponent implements OnInit {
         const detailData = this.detailUpdateForm.value;
         let hasError = false;
 
-        if (
-            !detailData.organizationId ||
-            detailData.organizationId.length === 0
-        ) {
+        if (!detailData.organizationId) {
             this.showErrorOrganizationId = true;
             hasError = true;
         }
 
         if (
-            !detailData.detailTimesheetNameStaffPositions ||
+            !Array.isArray(detailData.detailTimesheetNameStaffPositions) ||
             detailData.detailTimesheetNameStaffPositions.length === 0
         ) {
             this.showErrorDetailTimesheet = true;
@@ -994,25 +1176,26 @@ export class TimesheetComponent implements OnInit {
 
         if (
             !detailData.timekeepingSheetName ||
-            detailData.timekeepingSheetName.length === 0
+            !String(detailData.timekeepingSheetName).trim()
         ) {
             this.showErrorTimekeepingSheetName = true;
             hasError = true;
         }
 
-        if (!detailData.startDate || detailData.startDate.length === 0) {
+        if (!detailData.startDate) {
             this.showErrorStartDate = true;
             hasError = true;
         }
 
-        if (!detailData.endDate || detailData.endDate.length === 0) {
+        if (!detailData.endDate) {
             this.showErrorEndDate = true;
             hasError = true;
         }
 
         if (
-            !detailData.timekeepingMethod &&
-            detailData.timekeepingMethod.length === 0
+            detailData.timekeepingMethod === null ||
+            detailData.timekeepingMethod === undefined ||
+            detailData.timekeepingMethod === ''
         ) {
             this.showErrorTimekeepingMethod = true;
             hasError = true;
@@ -1035,6 +1218,21 @@ export class TimesheetComponent implements OnInit {
         const startDate = new Date(formValue.startDate);
         const endDate = new Date(formValue.endDate);
 
+        if (
+            Number.isNaN(startDate.getTime()) ||
+            Number.isNaN(endDate.getTime())
+        ) {
+            this.messages = [
+                {
+                    severity: 'error',
+                    summary: 'Không thể lưu vì:',
+                    detail: 'Ngày bắt đầu hoặc ngày kết thúc không hợp lệ',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
         // Lấy múi giờ địa phương và điều chỉnh ngày
         const startOffset = startDate.getTimezoneOffset() * 60000; // Múi giờ trong mili giây
         const localStartDate = new Date(
@@ -1054,11 +1252,15 @@ export class TimesheetComponent implements OnInit {
             endDate: localEndDate,
             timekeepingMethod: formValue.timekeepingMethod,
             isLock: true,
-            staffTimesheets: formValue.detailTimesheetNameStaffPositions.map(
-                (position: any) => ({
+            staffTimesheets: (
+                Array.isArray(formValue.detailTimesheetNameStaffPositions)
+                    ? formValue.detailTimesheetNameStaffPositions
+                    : []
+            )
+                .filter((position: any) => position?.id)
+                .map((position: any) => ({
                     staffPositionId: position.id,
-                })
-            ),
+                })),
         };
 
         const shiftWorkId = this.detailById;
@@ -1096,9 +1298,7 @@ export class TimesheetComponent implements OnInit {
         }
 
         const formValues = this.timeTrackingForm.value;
-        const selectedDateISO = this.selectedDate
-            ? this.convertToISODate(this.selectedDate)
-            : new Date().toISOString();
+        const selectedDateISO = this.convertToISODate(this.selectedDate || '');
 
         const startTime = this.formatToTimeString(
             this.convertToDateTime(formValues.startTime)
@@ -1110,7 +1310,7 @@ export class TimesheetComponent implements OnInit {
             date: selectedDateISO,
             startTime: startTime,
             endTime: endTime,
-            numberOfWorkingHour: formValues.numberOfWorkingHour,
+            numberOfWorkingHour: formValues.numberOfWorkingHour || 0,
             lateDuration: formValues.lateDuration || 0,
             earlyLeaveDuration: formValues.earlyLeaveDuration || 0,
         };
@@ -1150,9 +1350,14 @@ export class TimesheetComponent implements OnInit {
 
         // Trường hợp input là chuỗi thời gian
         if (typeof date === 'string') {
-            const [hours, minutes, seconds] = date.split(':');
+            const [hours = '', minutes = '', seconds = ''] = date.split(':');
+
+            if (!hours || !minutes) {
+                return '';
+            }
+
             return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${
-                seconds?.padStart(2, '0') || '00'
+                (seconds || '00').padStart(2, '0')
             }`;
         }
 

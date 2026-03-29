@@ -81,17 +81,6 @@
                                     [showClear]="true"
                                 ></p-treeSelect>
                             </div>
-
-                            <div class="filter-col">
-                                <button
-                                    pButton
-                                    pRipple
-                                    type="button"
-                                    label="Lọc"
-                                    class="buttonfilter"
-                                    (click)="getPagingDetailTimesheet()"
-                                ></button>
-                            </div>
                         </div>
 
                         <div class="filter-right">
@@ -117,6 +106,17 @@
                                 class="btn-add"
                                 (click)="showDialogAdd()"
                             ></button>
+
+                            <div class="filter-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    label="Lọc"
+                                    class="buttonfilter"
+                                    (click)="getPagingDetailTimesheet()"
+                                ></button>
+                            </div>
                         </div>
                     </div>
                 </ng-template>
