@@ -37,6 +37,10 @@ export class SummaryTimesheetService {
         );
     }
 
+    delete(id: number): Observable<any> {
+        return this.http.put(`summary-time-sheet/delete?id=${id}`, {});
+    }
+
     exportSummaryTimeSheetWithEmployeeToExcel(request: any = null): Observable<Blob> {
         return this.http.getBlob(
             'summary-time-sheet/export-summary-time-sheet-with-employee',
