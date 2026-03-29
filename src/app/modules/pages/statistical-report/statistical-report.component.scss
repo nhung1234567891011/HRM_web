@@ -73,17 +73,25 @@
     padding: 0.75rem;
     gap: 1rem;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(10, minmax(0, 1fr));
 }
 
 .chart-col {
     min-width: 0;
-    grid-column: span 2;
 }
 
-.chart-col-income,
+.chart-col-hr,
+.chart-col-income {
+    grid-column: span 5;
+}
+
+.chart-col-performance,
 .chart-col-attendance {
-    grid-column: span 3;
+    grid-column: span 4;
+}
+
+.chart-col-attendance {
+    grid-column: span 6;
 }
 
 .chart-body {
@@ -129,9 +137,7 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .chart-col,
-    .chart-col-income,
-    .chart-col-attendance {
+    .chart-col {
         grid-column: span 1;
     }
 }
@@ -147,9 +153,7 @@
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .chart-col,
-    .chart-col-income,
-    .chart-col-attendance {
+    .chart-col {
         grid-column: span 1;
     }
 }
