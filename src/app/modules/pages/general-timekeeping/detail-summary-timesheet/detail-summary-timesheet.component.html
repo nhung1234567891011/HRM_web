@@ -1,4 +1,4 @@
-<main id="main" class="main">
+<main id="main" class="main detail-summary-timesheet-page">
     <div class="pagetitle">
         <div>
             <strong class="font-size-16"
@@ -46,9 +46,7 @@
                                         ])
                                     "
                                 >
-                                    <span
-                                        ><i class="pi pi-money-bill"></i
-                                    ></span>
+                                    <span><i class="pi pi-money-bill"></i></span>
                                     {{ isTransferringPayroll ? 'Đã chuyển tính lương' : 'Chuyển tính lương' }}
                                 </button>
                                 <button
@@ -72,107 +70,41 @@
                         </header>
 
                         <div class="sheet-key">
-                            <span class="p-input-icon-left" style="width: 100%">
-                                <i class="pi pi-search"></i>
-                                <input
-                                    pInputText
-                                    type="text"
-                                    [style]="{ height: '43px', width: '100%' }"
-                                    [(ngModel)]="selectedEmployee"
-                                    placeholder="Tìm kiếm nhân viên"
-                                    (keyup.enter)="fetchData()"
-                                />
-                            </span>
+                            <div class="filter-col search-col">
+                                <span class="p-input-icon-left filter-input-wrap">
+                                    <i class="pi pi-search"></i>
+                                    <input
+                                        pInputText
+                                        type="text"
+                                        [style]="{ height: '43px', width: '100%' }"
+                                        [(ngModel)]="selectedEmployee"
+                                        placeholder="Tìm kiếm nhân viên"
+                                        (keyup.enter)="fetchData()"
+                                    />
+                                </span>
+                            </div>
 
-                            <div style="display: flex">
-                                <p-treeSelect
-                                    [options]="treeData"
-                                    [(ngModel)]="selectedNode"
-                                    [placeholder]="'Chọn đơn vị'"
-                                    [style]="{ width: '300px' }"
-                                    [showClear]="true"
-                                    (onNodeSelect)="fetchData()"
-                                    (onClear)="fetchData()"
-                                ></p-treeSelect>
-
-                                <div style="display: flex; margin: 0 20px">
-                                    <button
-                                        pButton
-                                        style="border-color: #a1b5f2 !important"
-                                        class="boder-x"
-                                        label=""
-                                        severity="secondary"
-                                        icon="pi pi-filter"
-                                        (click)="fetchData()"
-                                    ></button>
-
-                                    <p-button
-                                        [style]="{'border-color': '#a1b5f2', 'margin-left': '10px'}"
-                                        class="boder-x"
-                                        label=""
-                                        severity="secondary"
-                                        icon="pi pi-file-export"
-                                        (click)="exportOrganizationsToExcel()"
-                                    ></p-button>
-
-                                    <p-button
-                                        [style]="{'border-color': '#a1b5f2', 'margin-left': '10px'}"
-                                        class="boder-x"
-                                        severity="secondary"
-                                        icon="pi pi-cog"
-                                        (click)="openColumnDialog()"
-                                    ></p-button>
-
-                                    <p-dialog
-                                        header="Tùy chỉnh cột hiển thị"
-                                        [(visible)]="displayColumnsCustom"
-                                        [style]="{ width: '300px' }"
-                                        [position]="'right'"
-                                    >
-                                        <div>
-                                            <span class="p-input-icon-left">
-                                                <i class="pi pi-search"></i>
-                                                <input
-                                                    pInputText
-                                                    type="text"
-                                                    (input)="
-                                                        onSearchColumn($event)
-                                                    "
-                                                    placeholder="Tìm kiếm cột..."
-                                                />
-                                            </span>
-                                            <ul
-                                                class="custom-checkbox-list p-mt-2"
-                                            >
-                                                <li
-                                                    *ngFor="
-                                                        let col of filteredColumns
-                                                    "
-                                                >
-                                                    <p-checkbox
-                                                        name="selectedColumns"
-                                                        [value]="col.field"
-                                                        [(ngModel)]="
-                                                            col.selected
-                                                        "
-                                                        binary="true"
-                                                        label="{{ col.header }}"
-                                                    ></p-checkbox>
-                                                </li>
-                                            </ul>
-
-                                            <button
-                                                pButton
-                                                type="button"
-                                                label="Áp dụng"
-                                                class="button-right"
-                                                (click)="
-                                                    handleApplyChangeSelectedColumns()
-                                                "
-                                            ></button>
-                                        </div>
-                                    </p-dialog>
+                            <div class="filter-actions">
+                                <div class="filter-col org-col">
+                                    <p-treeSelect
+                                        [options]="treeData"
+                                        [(ngModel)]="selectedNode"
+                                        [placeholder]="'Chọn đơn vị'"
+                                        [style]="{ width: '100%' }"
+                                        [showClear]="true"
+                                        (onNodeSelect)="fetchData()"
+                                        (onClear)="fetchData()"
+                                    ></p-treeSelect>
                                 </div>
+
+                                <p-button
+                                    [style]="{'border-color': '#a1b5f2'}"
+                                    class="boder-x action-icon-btn"
+                                    label=""
+                                    severity="secondary"
+                                    icon="pi pi-file-export"
+                                    (click)="exportOrganizationsToExcel()"
+                                ></p-button>
                             </div>
                         </div>
 
@@ -364,7 +296,7 @@
                             >
                         </div>
 
-                        <div class="paging-bot dg-fix">
+                        <div class="paging-bot dg-fix aligned-paging">
                             <div class="paging-info">
                                 <div [innerHTML]="currentPageReport"></div>
                             </div>
