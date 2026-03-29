@@ -582,9 +582,10 @@ export class TimesheetComponent implements OnInit {
                                 );
 
                                 const singleShift = shifts.find((shift: any) => {
-                                    const shiftName = String(
-                                        shift?.shiftTableName || ''
-                                    ).toLowerCase();
+                                    const shiftName =
+                                        shift?.shiftTableName
+                                            ?.toString()
+                                            .toLowerCase() ?? '';
 
                                     return (
                                         shiftName.length > 0 &&

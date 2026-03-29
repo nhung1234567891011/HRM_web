@@ -360,6 +360,49 @@
     min-width: 0;
 }
 
+.contact-card {
+    --contact-label-col: 154px;
+    --contact-input-col: 660px;
+    --contact-col-gap: 6px;
+}
+
+.contact-card .fields-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.contact-card .field-row {
+    width: min(
+        100%,
+        calc(
+            var(--contact-label-col) +
+                var(--contact-input-col) +
+                var(--contact-col-gap)
+        )
+    );
+    margin-left: auto;
+    grid-template-columns: var(--contact-label-col) minmax(0, 1fr);
+    gap: var(--contact-col-gap);
+}
+
+.contact-card .field-label {
+    text-align: right;
+}
+
+.contact-card .field-error {
+    width: min(
+        100%,
+        calc(
+            var(--contact-label-col) +
+                var(--contact-input-col) +
+                var(--contact-col-gap)
+        )
+    );
+    margin: 6px 0 10px auto;
+    padding-left: calc(var(--contact-label-col) + var(--contact-col-gap));
+}
+
 .field-row {
     display: grid;
     grid-template-columns: 210px minmax(0, 1fr);
@@ -667,8 +710,24 @@
         gap: 5px;
     }
 
+    .contact-card .field-row {
+        width: 100%;
+        margin-left: 0;
+        grid-template-columns: 1fr;
+    }
+
+    .contact-card .field-label {
+        text-align: left;
+    }
+
     .field-error {
         margin: 6px 0 10px;
+    }
+
+    .contact-card .field-error {
+        width: 100%;
+        margin: 6px 0 10px;
+        padding-left: 0;
     }
 
     .company-hero {

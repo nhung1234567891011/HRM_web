@@ -88,8 +88,15 @@ export class CompanyInfoComponent implements OnInit {
                 null,
                 [Validators.required, Validators.pattern(/^\d{10}$/)]
             ],
-            fax: [null, [Validators.required, this.whitespaceValidator()]],
-            email: ['', [Validators.pattern(/@/)]],
+            fax: [
+                null,
+                [
+                    Validators.required,
+                    this.whitespaceValidator(),
+                    Validators.pattern(/^\d{1,20}$/),
+                ],
+            ],
+            email: ['', [Validators.required, Validators.email]],
             website: [''],
         });
         this.originalFormValue = this.companyForm.value;
@@ -245,6 +252,23 @@ export class CompanyInfoComponent implements OnInit {
         }
     }
 
+    onNumericInput(event: Event, controlName: string, maxLength: number): void {
+        const input = event.target as HTMLInputElement;
+        let sanitizedValue = input.value.replace(/\D/g, '');
+
+        if (sanitizedValue.length > maxLength) {
+            sanitizedValue = sanitizedValue.slice(0, maxLength);
+        }
+
+        if (input.value !== sanitizedValue) {
+            input.value = sanitizedValue;
+        }
+
+        this.companyForm
+            .get(controlName)
+            ?.setValue(sanitizedValue, { emitEvent: false });
+    }
+
     startEditing() {
         this.isEditing = true;
         this.originalFormValue = { ...this.companyForm.value };
@@ -270,8 +294,38 @@ export class CompanyInfoComponent implements OnInit {
         this.isManualPosition = !this.isManualPosition;
     }
 
+    private hasInvalidContactFields(): boolean {
+        const phoneNumberControl = this.companyForm.get('phoneNumber');
+        const normalizedPhoneNumber = (phoneNumberControl?.value ?? '')
+            .toString()
+            .trim()
+            .replace(/\s+/g, '');
+
+        if (phoneNumberControl?.value !== normalizedPhoneNumber) {
+            phoneNumberControl?.setValue(normalizedPhoneNumber, {
+                emitEvent: false,
+            });
+        }
+
+        const contactControls = ['phoneNumber', 'email', 'fax'];
+
+        contactControls.forEach((controlName) => {
+            const control = this.companyForm.get(controlName);
+            control?.markAsTouched();
+            control?.markAsDirty();
+            control?.updateValueAndValidity();
+        });
+
+        return contactControls.some(
+            (controlName) => this.companyForm.get(controlName)?.invalid ?? false
+        );
+    }
+
     updateCompanyInfo(): void {
         let hasError = false;
+        if (this.hasInvalidContactFields()) {
+            hasError = true;
+        }
 
         if (!this.companyForm.get('fullName')?.valid) {
             this.showErrorsFullName = true;

@@ -370,7 +370,7 @@
                 </div>
             </article>
 
-            <article class="info-card">
+            <article class="info-card contact-card">
                 <div class="card-header">
                     <h3>LIÊN HỆ</h3>
                 </div>
@@ -429,12 +429,15 @@
                             <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-phone"></i>{{ companyForm.get('phoneNumber')?.value === 'string' ? '' : companyForm.get('phoneNumber')?.value }}</div>
                             <input
                                 *ngIf="isEditing"
-                                type="number"
+                                type="text"
+                                inputmode="numeric"
                                 class="form-control"
                                 [ngClass]="{ 'invalid-input': companyForm.get('phoneNumber')?.invalid && (companyForm.get('phoneNumber')?.touched || companyForm.get('phoneNumber')?.dirty) }"
                                 pInputText
                                 formControlName="phoneNumber"
                                 placeholder="Nhập số điện thoại"
+                                maxlength="10"
+                                (input)="onNumericInput($event, 'phoneNumber', 10)"
                             />
                         </div>
                         <div class="field-error" *ngIf="isEditing && companyForm.get('phoneNumber')?.touched && companyForm.get('phoneNumber')?.invalid">
@@ -447,18 +450,21 @@
                             <div class="field-value icon-link" *ngIf="!isEditing"><i class="pi pi-phone"></i>{{ companyForm.get('fax')?.value === 'string' ? '' : companyForm.get('fax')?.value }}</div>
                             <input
                                 *ngIf="isEditing"
-                                type="number"
+                                type="text"
+                                inputmode="numeric"
                                 class="form-control"
                                 [ngClass]="{ 'invalid-input': companyForm.get('fax')?.invalid && (companyForm.get('fax')?.touched || companyForm.get('fax')?.dirty) }"
                                 pInputText
                                 formControlName="fax"
                                 placeholder="Nhập số fax"
                                 maxlength="20"
+                                (input)="onNumericInput($event, 'fax', 20)"
                             />
                         </div>
                         <div class="field-error" *ngIf="isEditing && companyForm.get('fax')?.touched && companyForm.get('fax')?.invalid">
                             <span class="red-asterisk" *ngIf="companyForm.get('fax')?.hasError('required')">Không được để trống</span>
                             <span class="red-asterisk" *ngIf="companyForm.get('fax')?.hasError('whitespace')">Không được nhập toàn khoảng trắng</span>
+                            <span class="red-asterisk" *ngIf="companyForm.get('fax')?.hasError('pattern')">Số fax chỉ được nhập số và tối đa 20 chữ số</span>
                         </div>
 
                         <div class="field-row">
@@ -475,8 +481,9 @@
                                 maxlength="30"
                             />
                         </div>
-                        <div class="field-error" *ngIf="isEditing && companyForm.get('email')?.touched && companyForm.get('email')?.hasError('pattern')">
-                            <span class="red-asterisk">Email phải chứa ký tự &#64;</span>
+                        <div class="field-error" *ngIf="isEditing && companyForm.get('email')?.touched && companyForm.get('email')?.invalid">
+                            <span class="red-asterisk" *ngIf="companyForm.get('email')?.hasError('required')">Không được để trống</span>
+                            <span class="red-asterisk" *ngIf="companyForm.get('email')?.hasError('email')">Email không đúng định dạng</span>
                         </div>
 
                         <div class="field-row">

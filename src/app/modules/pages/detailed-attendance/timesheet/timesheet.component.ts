@@ -502,12 +502,19 @@ export class TimesheetComponent implements OnInit {
                                     }
                                 );
 
-                                const singleShift = timesheet?.shifts.find(
-                                    (shift: any) =>
-                                        !shift.shiftTableName.includes(
-                                            'sáng'
-                                        ) &&
-                                        !shift.shiftTableName.includes('chiều')
+                                const singleShift = timesheet?.shifts?.find(
+                                    (shift: any) => {
+                                        const shiftName =
+                                            shift?.shiftTableName
+                                                ?.toString()
+                                                .toLowerCase() ?? '';
+
+                                        return (
+                                            shiftName.length > 0 &&
+                                            !shiftName.includes('sáng') &&
+                                            !shiftName.includes('chiều')
+                                        );
+                                    }
                                 );
 
                                 // Tổng giờ làm trong ngày (tất cả ca): > 8h → tăng ca
