@@ -229,13 +229,24 @@ export class StatisticalReportComponent implements OnInit {
         this.reportService.getPerformance(request).subscribe((res: any) => {
             if (res.status && res.data) {
                 const data = res.data;
-                const labels = data.positionPerformances?.map((d: any) => d.positionName) || [];
+                const topEmployees = (data.employeePerformances || [])
+                    .map((d: any) => {
+                        const commissionRevenue = Number(d.kpiScore ?? 0);
+                        return {
+                            fullName: d.fullName || 'Chưa có tên',
+                            commissionRevenue: Number.isFinite(commissionRevenue) ? commissionRevenue : 0,
+                        };
+                    })
+                    .sort((a: any, b: any) => b.commissionRevenue - a.commissionRevenue)
+                    .slice(0, 10);
+
+                const labels = topEmployees.map((d: any) => d.fullName);
                 this.perfChartData = {
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Hoa hồng theo vị trí',
-                            data: data.positionPerformances?.map((d: any) => d.averageKpi) || [],
+                            label: 'Doanh thu hoa hồng',
+                            data: topEmployees.map((d: any) => d.commissionRevenue),
                             backgroundColor: this.generateColors(labels.length),
                             borderColor: 'rgba(153, 102, 255, 1)',
                             borderWidth: 2,
@@ -451,10 +462,42 @@ export class StatisticalReportComponent implements OnInit {
     }
 
     private getPerformanceChartOptions(horizontal: boolean = false, chartType: string = 'bar'): any {
-        const options = this.getChartOptions('Hoa hồng theo vị trí', horizontal, chartType);
+        const options = this.getChartOptions('Top 10 doanh thu hoa hồng theo nhân viên', horizontal, chartType);
         const isCircular = chartType === 'pie' || chartType === 'doughnut';
 
         if (!isCircular) {
+            const valueAxis = horizontal ? 'x' : 'y';
+
+            options.scales = {
+                ...options.scales,
+                [valueAxis]: {
+                    ...(options.scales?.[valueAxis] || {}),
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Doanh thu hoa hồng (đ)',
+                        font: { size: 12, weight: '600' },
+                    },
+                    ticks: {
+                        ...(options.scales?.[valueAxis]?.ticks || {}),
+                        callback: (value: any) => this.formatCurrencyAxisValue(Number(value)),
+                    },
+                },
+            };
+
+            options.plugins = {
+                ...options.plugins,
+                tooltip: {
+                    ...options.plugins.tooltip,
+                    callbacks: {
+                        label: (context: any) => {
+                            const value = this.getTooltipNumericValue(context);
+                            return `${context.label}: ${value.toLocaleString('vi-VN')} đ`;
+                        },
+                    },
+                },
+            };
+
             return options;
         }
 
@@ -481,7 +524,7 @@ export class StatisticalReportComponent implements OnInit {
                         const data = context.dataset?.data || [];
                         const total = data.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
                         const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-                        return `${context.label}: ${value.toLocaleString('vi-VN')} (${percentage}%)`;
+                        return `${context.label}: ${value.toLocaleString('vi-VN')} đ (${percentage}%)`;
                     },
                 },
             },
@@ -638,7 +681,7 @@ export class StatisticalReportComponent implements OnInit {
                     ctx.fill();
 
                     const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-                    const label = `${labels[index] ?? `Vị trí ${index + 1}`}: ${percentage}%`;
+                    const label = `${labels[index] ?? `Nhân viên ${index + 1}`}: ${percentage}%`;
 
                     ctx.fillStyle = '#334155';
                     ctx.textAlign = cos >= 0 ? 'left' : 'right';
