@@ -78,6 +78,11 @@
         cursor: pointer;
     }
 
+    .row-actions i.disabled-action {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
     .empty-state {
         text-align: center;
         margin-top: 20px;

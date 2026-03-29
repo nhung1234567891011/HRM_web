@@ -292,6 +292,8 @@
                                         ])
                                     "
                                     class="pi pi-trash"
+                                    [class.disabled-action]="detail.isTransferredToPayroll"
+                                    (click)="deleteSummaryTimesheet(detail)"
                                 ></i>
                             </div>
                         </td>

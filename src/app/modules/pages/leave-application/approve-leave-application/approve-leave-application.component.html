@@ -483,7 +483,7 @@
                                         <i class="pi pi-eye"></i>
                                     </div>
                                     <div
-                                        *ngIf="leaveApp.status === 0"
+                                        *ngIf="leaveApp.status === 0 && leaveApp.employeeId === user.employee.id"
                                         (click)="confirmDelete(leaveApp.id)"
                                         class="font-size-16 ml-2 action-icon action-delete"
                                         style="padding: 3px; border-radius: 50%"

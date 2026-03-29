@@ -107,6 +107,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 	};
 	public queryParameters: any = {
 		...this.config.paging,
+		forApproval: true,
 		organizationId: null,
 		organization: null,
 		keyWord: null,
@@ -194,6 +195,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 		this.route.queryParams.subscribe((params) => {
 			const request = {
 				...params,
+				forApproval: true,
 				pageIndex: params['pageIndex']
 					? params['pageIndex']
 					: this.config.paging.pageIndex,
@@ -203,6 +205,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 			};
 			this.queryParameters = {
 				...params,
+				forApproval: true,
 				organizationId: this.queryParameters.organization?.data || null,
 				keyWord: this.queryParameters.keyWord
 					? this.queryParameters.keyWord.trim()
@@ -448,8 +451,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 						const isApproverOfItem = item.leaveApplicationApprovers
 							?.map((a: any) => a.approverId)
 							.includes(this.user.employee.id);
-						const isCreator = item.employeeId === this.user.employee.id;
-						return isAdmin || isApproverOfItem || isCreator;
+						return isAdmin || isApproverOfItem;
 					});
 					if (this.leaveApplications.length === 0) {
 						this.paging.pageIndex = 1;
@@ -547,6 +549,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 		this.route.queryParams.subscribe((params) => {
 			const request = {
 				...params,
+				forApproval: true,
 				organizationId: this.queryParameters.organization?.data || null,
 				keyWord: this.queryParameters.keyWord
 					? this.queryParameters.keyWord.trim()
@@ -586,6 +589,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 		this.route.queryParams.subscribe((params) => {
 			const request = {
 				...params,
+				forApproval: true,
 				organizationId: null,
 				keyWord: null,
 				employeeId: null,

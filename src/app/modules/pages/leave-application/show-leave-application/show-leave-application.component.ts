@@ -92,6 +92,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
     };
     public queryParameters: any = {
         ...this.config.paging,
+        forApproval: false,
         organizationId: null,
         organization: null,
         keyWord: null,
@@ -159,6 +160,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
         this.route.queryParams.subscribe((params) => {
             const request = {
                 ...params,
+                forApproval: false,
                 pageIndex: params['pageIndex']
                     ? params['pageIndex']
                     : this.config.paging.pageIndex,
@@ -171,6 +173,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
             };
             this.queryParameters = {
                 ...params,
+                forApproval: false,
                 organizationId: this.queryParameters.organization?.data || null,
                 keyWord: this.queryParameters.keyWord
                     ? this.queryParameters.keyWord.trim()
@@ -356,6 +359,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
         this.route.queryParams.subscribe((params) => {
             const request = {
                 ...params,
+                forApproval: false,
                 organizationId: this.queryParameters.organization?.data || null,
                 keyWord: this.queryParameters.keyWord
                     ? this.queryParameters.keyWord.trim()
@@ -394,6 +398,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
         this.route.queryParams.subscribe((params) => {
             const request = {
                 ...params,
+                forApproval: false,
                 organizationId: null,
                 keyWord: null,
                 employeeId:

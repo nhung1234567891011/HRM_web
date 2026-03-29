@@ -13,7 +13,7 @@
         </div>
 
         <div class="btn-add-wrapper">
-            <p-button
+            <!-- <p-button
                 style="margin-right: 10px"
                 pTooltip="Ẩn/hiện cột"
                 label=""
@@ -21,7 +21,7 @@
                 severity="secondary"
                 icon="pi pi-table"
                 (onClick)="colPanelRef.toggle($event)"
-            ></p-button>
+            ></p-button> -->
             <button
             *ngIf="this.permisionHelper.hasPermissions([permissionConstant.ManageLeaveRegulationsCreate])"
                 (click)="showDialogCreate()"
@@ -239,18 +239,17 @@
 
                             <div>
                                 <div
-                                    class="flex justify-content-between"
+                                    class="flex justify-content-between paging-wrapper"
                                     *ngIf="totalItems > 0"
                                 >
-                                    <div class="paging-info"></div>
+                                    <div class="paging-info">
+                                        <div [innerHTML]="currentPageReport"></div>
+                                    </div>
                                     <p-paginator
                                         [rows]="pageSize"
                                         [totalRecords]="totalItems"
                                         [rowsPerPageOptions]="[10, 20, 30]"
                                         (onPageChange)="onPageChange($event)"
-                                        (onRowsPerPageChange)="
-                                            onPageSizeChange($event)
-                                        "
                                         [first]="(pageIndex - 1) * pageSize"
                                         [pageLinkSize]="3"
                                     ></p-paginator>

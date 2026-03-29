@@ -477,6 +477,61 @@ export class GeneralTimekeepComponent implements OnInit {
         }
     }
 
+    deleteSummaryTimesheet(detail: any): void {
+        if (!detail?.id) {
+            return;
+        }
+
+        if (detail?.isTransferredToPayroll) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: 'Không thể xóa',
+                    detail: 'Bảng chấm công tổng hợp đã chuyển tính lương, không thể xóa.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
+        const confirmDelete = window.confirm(
+            `Bạn có chắc chắn muốn xóa bảng chấm công tổng hợp "${detail.timekeepingSheetName}"?`
+        );
+
+        if (!confirmDelete) {
+            return;
+        }
+
+        this.summaryTimeKeepService.delete(detail.id).subscribe(
+            () => {
+                this.messages = [
+                    {
+                        severity: 'success',
+                        summary: 'Thành công',
+                        detail: 'Xóa bảng chấm công tổng hợp thành công.',
+                        life: 3000,
+                    },
+                ];
+                this.getPagingSummaryTimesheet();
+            },
+            (error: any) => {
+                const message =
+                    error?.error?.message ||
+                    error?.error?.detail ||
+                    'Xóa bảng chấm công tổng hợp thất bại.';
+
+                this.messages = [
+                    {
+                        severity: 'error',
+                        summary: 'Không thể xóa',
+                        detail: message,
+                        life: 3000,
+                    },
+                ];
+            }
+        );
+    }
+
     onSubmit(): void {
         const detailData = this.detailForm.value;
         let hasError = false;

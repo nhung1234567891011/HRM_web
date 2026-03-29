@@ -393,3 +393,91 @@ td {
 .boder-x{
     border-color: #a1b5f2;
 }
+
+.detail-summary-timesheet-page {
+    .sheet-key {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 10px 0 14px;
+    }
+
+    .filter-col {
+        min-width: 0;
+    }
+
+    .search-col {
+        flex: 1 1 320px;
+        min-width: 260px;
+    }
+
+    .filter-input-wrap {
+        width: 100%;
+        display: block;
+    }
+
+    .filter-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-left: auto;
+    }
+
+    .org-col {
+        width: 300px;
+        max-width: 100%;
+        flex: 0 1 300px;
+    }
+
+    .action-icon-btn {
+        flex: 0 0 auto;
+    }
+
+    .paging-bot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+}
+
+:host ::ng-deep .detail-summary-timesheet-page .sheet-key .p-treeselect,
+:host ::ng-deep .detail-summary-timesheet-page .sheet-key .p-button,
+:host ::ng-deep .detail-summary-timesheet-page .sheet-key .p-button button,
+:host ::ng-deep .detail-summary-timesheet-page .sheet-key .p-inputtext {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+
+:host ::ng-deep .detail-summary-timesheet-page .action-icon-btn .p-button {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+}
+
+:host ::ng-deep .detail-summary-timesheet-page .app-table-column-toggle-toolbar {
+    display: none !important;
+}
+
+:host ::ng-deep .detail-summary-timesheet-page .aligned-paging .p-paginator {
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+:host ::ng-deep .detail-summary-timesheet-page .aligned-paging .p-paginator-rpp-options,
+:host ::ng-deep .detail-summary-timesheet-page .aligned-paging .p-dropdown,
+:host ::ng-deep .detail-summary-timesheet-page .aligned-paging .p-dropdown-label,
+:host ::ng-deep .detail-summary-timesheet-page .aligned-paging .p-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+}
