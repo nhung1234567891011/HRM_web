@@ -73,6 +73,7 @@ export class StatisticalReportComponent implements OnInit {
     perfChartType: string = 'bar';
     perfChartData: any;
     perfChartOptions: any;
+    perfChartPlugins: any[] = [];
 
     // Attendance
     attendanceChartType: string = 'bar';
@@ -87,6 +88,7 @@ export class StatisticalReportComponent implements OnInit {
 
     ngOnInit(): void {
         this.hrChartPlugins = [this.createHrPieCalloutPlugin()];
+        this.perfChartPlugins = [this.createPerformancePieCalloutPlugin()];
         for (let y = this.selectedYear - 5; y <= this.selectedYear; y++) {
             this.yearOptions.push({ label: `Năm ${y}`, value: y });
         }
@@ -240,7 +242,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.perfChartOptions = this.getChartOptions('Hoa hồng theo vị trí', false, this.perfChartType);
+                this.perfChartOptions = this.getPerformanceChartOptions(false, this.perfChartType);
             }
         });
     }
@@ -345,7 +347,7 @@ export class StatisticalReportComponent implements OnInit {
                 break;
             case 'performance':
                 this.perfChartType = actualType;
-                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', isHorizontal, actualType);
+                this.perfChartOptions = this.getPerformanceChartOptions(isHorizontal, actualType);
                 break;
             case 'attendance':
                 this.attendanceIsHorizontal = isHorizontal;
@@ -410,6 +412,46 @@ export class StatisticalReportComponent implements OnInit {
 
     private getHrChartOptions(horizontal: boolean = false, chartType: string = 'bar'): any {
         const options = this.getChartOptions('Phân bổ nhân sự theo vị trí', horizontal, chartType);
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+
+        if (!isCircular) {
+            return options;
+        }
+
+        options.layout = {
+            padding: {
+                top: 20,
+                right: 90,
+                bottom: 20,
+                left: 90,
+            },
+        };
+
+        options.plugins = {
+            ...options.plugins,
+            legend: {
+                ...options.plugins.legend,
+                display: false,
+            },
+            tooltip: {
+                ...options.plugins.tooltip,
+                callbacks: {
+                    label: (context: any) => {
+                        const value = this.getTooltipNumericValue(context);
+                        const data = context.dataset?.data || [];
+                        const total = data.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                        return `${context.label}: ${value.toLocaleString('vi-VN')} (${percentage}%)`;
+                    },
+                },
+            },
+        };
+
+        return options;
+    }
+
+    private getPerformanceChartOptions(horizontal: boolean = false, chartType: string = 'bar'): any {
+        const options = this.getChartOptions('Hoa hồng theo vị trí', horizontal, chartType);
         const isCircular = chartType === 'pie' || chartType === 'doughnut';
 
         if (!isCircular) {
@@ -517,6 +559,86 @@ export class StatisticalReportComponent implements OnInit {
 
                     const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
                     const label = `${labels[index] ?? `Nhóm ${index + 1}`}: ${percentage}%`;
+
+                    ctx.fillStyle = '#334155';
+                    ctx.textAlign = cos >= 0 ? 'left' : 'right';
+                    ctx.fillText(label, endX + (cos >= 0 ? 5 : -5), endY);
+                });
+
+                ctx.restore();
+            },
+        };
+    }
+
+    private createPerformancePieCalloutPlugin(): any {
+        return {
+            id: 'performancePieCalloutPlugin',
+            afterDatasetsDraw: (chart: any) => {
+                const chartType = chart?.config?.type;
+                if (chartType !== 'pie' && chartType !== 'doughnut') {
+                    return;
+                }
+
+                const dataset = chart?.data?.datasets?.[0];
+                const labels = chart?.data?.labels || [];
+                const values = dataset?.data || [];
+                const total = values.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+
+                const meta = chart.getDatasetMeta(0);
+                if (!meta?.data?.length) {
+                    return;
+                }
+
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.strokeStyle = '#64748b';
+                ctx.fillStyle = '#334155';
+                ctx.lineWidth = 1.5;
+                ctx.font = '500 11px "Segoe UI", sans-serif';
+                ctx.textBaseline = 'middle';
+
+                meta.data.forEach((arc: any, index: number) => {
+                    const value = Number(values[index] ?? 0);
+                    if (!Number.isFinite(value) || value <= 0) {
+                        return;
+                    }
+
+                    const angle = (arc.startAngle + arc.endAngle) / 2;
+                    const cos = Math.cos(angle);
+                    const sin = Math.sin(angle);
+
+                    const startX = arc.x + cos * (arc.outerRadius * 0.9);
+                    const startY = arc.y + sin * (arc.outerRadius * 0.9);
+                    const bendX = arc.x + cos * (arc.outerRadius + 16);
+                    const bendY = arc.y + sin * (arc.outerRadius + 16);
+                    const endX = bendX + (cos >= 0 ? 30 : -30);
+                    const endY = bendY;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(bendX, bendY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+
+                    const arrowAngle = Math.atan2(arc.y - startY, arc.x - startX);
+                    const arrowSize = 6;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle + Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle + Math.PI / 7) * arrowSize
+                    );
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle - Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle - Math.PI / 7) * arrowSize
+                    );
+                    ctx.closePath();
+                    ctx.fillStyle = '#64748b';
+                    ctx.fill();
+
+                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                    const label = `${labels[index] ?? `Vị trí ${index + 1}`}: ${percentage}%`;
 
                     ctx.fillStyle = '#334155';
                     ctx.textAlign = cos >= 0 ? 'left' : 'right';

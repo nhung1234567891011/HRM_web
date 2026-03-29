@@ -57,7 +57,7 @@
             </div>
             <div style="height: 380px;">
                 <p-chart *ngIf="perfChartData" [type]="perfChartType" [data]="perfChartData"
-                    [options]="perfChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+                    [options]="perfChartOptions" [plugins]="perfChartPlugins" [style]="{ width: '100%', height: '100%' }"></p-chart>
             </div>
         </div>
     </div>
