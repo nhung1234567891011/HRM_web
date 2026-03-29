@@ -639,7 +639,6 @@ export class EditLeaveApplicationComponent implements OnInit {
               this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Vui lòng nhập đầy đủ thông tin!' });
               return;
             }
-            debugger
 
             const startDate = new Date(this.leaveApplicationForm.value.startDate);
             startDate.setHours(startDate.getHours() + 7);
@@ -656,12 +655,23 @@ export class EditLeaveApplicationComponent implements OnInit {
             };
 
             this.leaveApplicationService.updateLeaveApplication(this.leaveApplicationForm.value.id, formData).subscribe(
-              (response) => {
-                this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật đơn nghỉ thành công!' });
-                this.router.navigate(['/leave-application']);
+                            (res: any) => {
+                                const responseMessage = res?.data?.message || res?.message || 'Cập nhật đơn nghỉ thành công!';
+
+                                if (res?.status) {
+                                        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: responseMessage });
+                                        this.router.navigate(['/leave-application']);
+                                        return;
+                                }
+
+                                this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: responseMessage });
               },
               (error) => {
-                this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Cập nhật đơn nghỉ thất bại!' });
+                                const errorMessage =
+                                        error?.error?.data?.message ||
+                                        error?.error?.message ||
+                                        'Cập nhật đơn nghỉ thất bại!';
+                                this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: errorMessage });
               }
             );
           }

@@ -539,6 +539,45 @@
 </main>
 
 <p-dialog
+    [(visible)]="showRejectDialog"
+    [modal]="true"
+    [header]="'Xác nhận từ chối đơn xin nghỉ'"
+    [style]="{ width: '500px' }"
+    [closable]="false"
+>
+    <p>{{ rejectDialogMessage }}</p>
+    <div class="field mt-3">
+        <label style="font-weight: 600"
+            >Lý do từ chối<span class="red-asterisk">*</span></label
+        >
+        <textarea
+            pInputTextarea
+            [(ngModel)]="rejectNote"
+            [ngModelOptions]="{ standalone: true }"
+            rows="4"
+            placeholder="Nhập lý do từ chối"
+            style="width: 100%"
+        ></textarea>
+    </div>
+    <div class="d-flex justify-content-end mt-4">
+        <button
+            pButton
+            pRipple
+            label="Hủy"
+            class="p-button-secondary me-2"
+            (click)="cancelRejectLeaveDialog()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Xác nhận từ chối"
+            class="p-button-danger"
+            (click)="confirmRejectLeaveApplication()"
+        ></button>
+    </div>
+</p-dialog>
+
+<p-dialog
     [(visible)]="displayDeleteDialog"
     [modal]="true"
     [header]="'Xóa đơn xin nghỉ'"

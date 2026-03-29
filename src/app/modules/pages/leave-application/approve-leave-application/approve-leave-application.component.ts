@@ -35,6 +35,7 @@ import { ShiftWorkService } from 'src/app/core/services/shift-work.service';
 import { CheckinCheckoutService } from 'src/app/core/services/checkin-checkout.service';
 import { CalendarModule } from 'primeng/calendar';
 import { MessagesModule } from 'primeng/messages';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TableColumnToggleDirective } from 'src/app/shared/directives/table-column-toggle.directive';
 
 @Component({
@@ -58,6 +59,7 @@ import { TableColumnToggleDirective } from 'src/app/shared/directives/table-colu
 		UtilityModule,
 		CalendarModule,
 		MessagesModule,
+		InputTextareaModule,
 		TableColumnToggleDirective,
 	],
 	providers: [DatePipe],
@@ -130,6 +132,10 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 	displayDeleteDialog = false; // Kiểm soát hiển thị dialog
 	selectedLeaveId?: number;
 	selectedLeaveName?: string;
+	showRejectDialog = false;
+	rejectNote: string = '';
+	rejectDialogMessage: string = '';
+	pendingRejectLeaveApplication: any = null;
 
 	constructor(
 		private leaveApplicationService: LeaveApplicationService,
@@ -669,6 +675,15 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 			' ' +
 			leaveApplication.employee.firstName +
 			'|';
+
+		if (status === this.leaveApplicationStatus.Rejected) {
+			this.pendingRejectLeaveApplication = leaveApplication;
+			this.rejectNote = '';
+			this.rejectDialogMessage = `Bạn có muốn từ chối đơn xin nghỉ của nhân viên ${employeeName} không?`;
+			this.showRejectDialog = true;
+			return;
+		}
+
 		this.dialogMessage = `Bạn có muốn ${status === this.leaveApplicationStatus.Approved
 			? 'duyệt'
 			: 'từ chối'
@@ -690,10 +705,11 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 				.updateStatus(params, request)
 				.subscribe((res) => {
 					if (res.status == true) {
+						const responseMessage = res?.data?.message || res?.message || 'Cập nhật trạng thái đơn xin nghỉ thành công';
 						this.messageService.add({
 							severity: 'success',
 							summary: 'Thành công',
-							detail: res.message,
+							detail: responseMessage,
 						});
 						this.leaveApplications.find(
 							(lea) => lea.id == leaveApplication.id
@@ -701,6 +717,84 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 					}
 				});
 		});
+	}
+
+	confirmRejectLeaveApplication() {
+		const leaveApplication = this.pendingRejectLeaveApplication;
+		if (!leaveApplication) {
+			this.cancelRejectLeaveDialog();
+			return;
+		}
+
+		const reason = (this.rejectNote || '').trim();
+		if (!reason) {
+			this.messageService.add({
+				severity: 'warn',
+				summary: 'Cảnh báo',
+				detail: 'Vui lòng nhập lý do từ chối',
+			});
+			return;
+		}
+
+		const params = {
+			id: leaveApplication.id,
+		};
+		const request = {
+			status: this.leaveApplicationStatus.Rejected,
+			approverNote: reason,
+			updateDaysRemainingTypeOfLeaveEmployeeRequest: {
+				daysRemaining: leaveApplication.numberOfDays,
+				employeeId: leaveApplication.employeeId,
+				typeOfLeaveId: leaveApplication.typeOfLeaveId,
+				year: this.extractYear(leaveApplication.startDate),
+			},
+		};
+
+		this.leaveApplicationService.updateStatus(params, request).subscribe({
+			next: (res) => {
+				const responseMessage = res?.data?.message || res?.message || 'Từ chối đơn xin nghỉ thành công';
+				if (res?.status === true) {
+					this.messageService.add({
+						severity: 'success',
+						summary: 'Thành công',
+						detail: responseMessage,
+					});
+					const target = this.leaveApplications.find(
+						(lea) => lea.id == leaveApplication.id
+					);
+					if (target) {
+						target.status = this.leaveApplicationStatus.Rejected;
+						target.approverNote = reason;
+					}
+					this.cancelRejectLeaveDialog();
+					return;
+				}
+
+				this.messageService.add({
+					severity: 'error',
+					summary: 'Lỗi',
+					detail: responseMessage,
+				});
+			},
+			error: (error) => {
+				const errorMessage =
+					error?.error?.data?.message ||
+					error?.error?.message ||
+					'Từ chối đơn xin nghỉ thất bại';
+				this.messageService.add({
+					severity: 'error',
+					summary: 'Lỗi',
+					detail: errorMessage,
+				});
+			},
+		});
+	}
+
+	cancelRejectLeaveDialog() {
+		this.showRejectDialog = false;
+		this.rejectNote = '';
+		this.rejectDialogMessage = '';
+		this.pendingRejectLeaveApplication = null;
 	}
 	handleUpdateStatusMultiple(status: any) {
 		let employeeName = '';
