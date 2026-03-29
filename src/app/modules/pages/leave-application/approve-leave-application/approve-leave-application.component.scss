@@ -446,6 +446,12 @@ textarea {
         display: block;
     }
 
+    .column-toggle-placeholder {
+        display: flex;
+        align-items: center;
+        height: 40px;
+    }
+
     .paging-bot {
         display: flex;
         align-items: center;
@@ -503,6 +509,10 @@ textarea {
 }
 
 :host ::ng-deep .leave-application-page .app-table-column-toggle-toolbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 40px;
     margin: 0;
 }
 

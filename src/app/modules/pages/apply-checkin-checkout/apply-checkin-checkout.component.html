@@ -54,6 +54,16 @@
                             </div>
 
                             <div class="filter-col">
+                                <button
+                                    pButton
+                                    pRipple
+                                    [label]="forApprovalView ? 'Đơn cần duyệt' : 'Đơn của tôi'"
+                                    class="filter-btn"
+                                    (click)="setViewMode(!forApprovalView)"
+                                ></button>
+                            </div>
+
+                            <div class="filter-col">
                                 <p-button
                                     class="filter-btn-icon"
                                     pTooltip="Xuất Excel"
@@ -184,16 +194,14 @@
                             <p-overlayPanel #menu>
                                 <div class="menu-items">
                                     <button
-                                        *ngIf="user.id == contract.employee?.id"
+                                        *ngIf="canEdit(contract)"
                                         class="menu-btn"
                                         (click)="showDialogEdit(contract.id)"
                                     >
                                         <i class="pi pi-pencil"> Sửa</i>
                                     </button>
                                     <button
-                                        *ngIf="
-                                            user.id !== contract.employee?.id
-                                        "
+                                        *ngIf="!canEdit(contract)"
                                         class="menu-btn"
                                         (click)="showDialogEdit(contract.id)"
                                     >
@@ -202,18 +210,14 @@
                                     <button
                                         class="menu-btn"
                                         (click)="updateStatus(contract, 1)"
-                                        *ngIf="
-                                            contract.checkInCheckOutStatus === 0
-                                        "
+                                        *ngIf="canApprove(contract)"
                                     >
                                         <i class="pi pi-check"></i> Xác nhận
                                     </button>
                                     <button
                                         class="menu-btn"
                                         (click)="updateStatus(contract, 2)"
-                                        *ngIf="
-                                            contract.checkInCheckOutStatus === 0
-                                        "
+                                        *ngIf="canApprove(contract)"
                                     >
                                         <i class="pi pi-times"></i> Từ chối
                                     </button>

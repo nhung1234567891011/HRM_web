@@ -251,34 +251,36 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 			pageIndex: this.pageIndex,
 		};
 		this.employeeService.getEmployees(request).subscribe((data) => {
-			this.employeess = data.items.map((employee: any) => ({
+			const items = data?.items || [];
+
+			this.employeess = items.map((employee: any) => ({
 				id: employee.id,
 				name: `${employee.lastName} ${employee.firstName}`,
 				employeeCode: employee.employeeCode,
-				organizationId: employee.organization.id || '',
+				organizationId: employee.organization?.id || '',
 				positionName: employee.staffPosition?.positionName,
 			}));
 
 			this.units = [
 				...new Set(
-					data.items
+					items
 						.map((employee: any) => ({
-							id: employee.organization.id || '',
+							id: employee.organization?.id || '',
 							name:
-								employee.organization.organizationName ||
+								employee.organization?.organizationName ||
 								'Không xác định',
 						}))
 						.filter((unit) => unit.id)
 				),
 			];
 
-			this.represenSigning = data.items
+			this.represenSigning = items
 				.filter((employee: any) => employee.workingStatus === 0)
 				.map((employee: any) => ({
 					id: employee.id,
 					name: `${employee.lastName} ${employee.firstName}`,
 					employeeCode: employee.employeeCode,
-					organizationId: employee.organization.id || '',
+					organizationId: employee.organization?.id || '',
 					positionName: employee.staffPosition?.positionName,
 				}));
 		});
