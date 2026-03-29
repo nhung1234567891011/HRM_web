@@ -57,10 +57,11 @@ export class StatisticalReportComponent implements OnInit {
     ];
 
     // HR Distribution
-    hrChartType: string = 'pie';
+    hrChartType: string = 'doughnut';
     hrChartData: any;
     hrChartOptions: any;
     hrChartPlugins: any[] = [];
+    hrTotalEmployees: number = 0;
 
     // Monthly Income
     incomeChartType: string = 'bar';
@@ -129,6 +130,9 @@ export class StatisticalReportComponent implements OnInit {
                 const data = res.data;
                 const labels = data.positionDistributions?.map((p: any) => p.positionName) || [];
                 const values = data.positionDistributions?.map((p: any) => p.employeeCount) || [];
+                const datasetTotal = values.reduce((sum: number, value: any) => sum + (Number(value) || 0), 0);
+                const totalEmployees = Number(data.totalEmployees);
+                this.hrTotalEmployees = Number.isFinite(totalEmployees) ? totalEmployees : datasetTotal;
                 this.hrChartData = {
                     labels: labels,
                     datasets: [
@@ -602,6 +606,22 @@ export class StatisticalReportComponent implements OnInit {
                     ctx.textAlign = cos >= 0 ? 'left' : 'right';
                     ctx.fillText(label, endX + (cos >= 0 ? 5 : -5), endY);
                 });
+
+                if (chartType === 'doughnut') {
+                    const centerX = meta.data[0].x;
+                    const centerY = meta.data[0].y;
+                    const centerTotal = Number.isFinite(this.hrTotalEmployees) ? this.hrTotalEmployees : total;
+
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '600 12px "Segoe UI", sans-serif';
+                    ctx.fillText('Tổng nhân sự', centerX, centerY - 11);
+
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = '700 22px "Segoe UI", sans-serif';
+                    ctx.fillText(centerTotal.toLocaleString('vi-VN'), centerX, centerY + 12);
+                }
 
                 ctx.restore();
             },
