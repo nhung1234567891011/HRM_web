@@ -39,7 +39,7 @@
                                 <button
                                     class="salary-transfer-button"
                                     (click)="handleTransferToPayroll()"
-                                    [disabled]="isTransferringPayroll"
+                                    [disabled]="isTransferringPayroll || !canTransferToPayroll()"
                                     *ngIf="
                                         this.permisionHelper.hasPermissions([
                                             permissionConstant.ManageGeneralTimekeepingTransferSalary

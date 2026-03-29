@@ -209,25 +209,25 @@ export class AppMenuComponent implements OnInit {
                 ],
             },
 
-            {
-                label: '',
-                items: this.hasPermissionHelper.hasPermissions([
-                    PermissionConstant.ManagePro,
-                    PermissionConstant.ManagePro,
-                ]) ? [
-                    {
-                        label: 'Thông tin cá nhân',
-                        icon: 'pi pi-user',
-                        items: [
-                            {
-                                label: 'Thêm thông tin',
-                                icon: 'pi pi-user-plus',
-                                routerLink: ['/personnel-record'],
-                            },
-                        ],
-                    },
-                ] : [],
-            },
+            // {
+            //     label: '',
+            //     items: this.hasPermissionHelper.hasPermissions([
+            //         PermissionConstant.ManagePro,
+            //         PermissionConstant.ManagePro,
+            //     ]) ? [
+            //         {
+            //             label: 'Thông tin cá nhân',
+            //             icon: 'pi pi-user',
+            //             items: [
+            //                 {
+            //                     label: 'Thêm thông tin',
+            //                     icon: 'pi pi-user-plus',
+            //                     routerLink: ['/personnel-record'],
+            //                 },
+            //             ],
+            //         },
+            //     ] : [],
+            // },
 
             {
                 label: '',

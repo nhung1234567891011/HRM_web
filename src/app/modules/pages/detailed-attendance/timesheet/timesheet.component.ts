@@ -143,7 +143,7 @@ export class TimesheetComponent implements OnInit {
 
         this.timeTrackingForm = this.fb.group({
             date: [null, Validators.required],
-            numberOfWorkingHour: [null, Validators.required],
+            numberOfWorkingHour: [{ value: null, disabled: true }, Validators.required],
             startTime: [null, Validators.required],
             endTime: [null],
             startTakeABreak: [null, Validators.required],
