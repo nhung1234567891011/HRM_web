@@ -79,3 +79,9 @@
 .chart-col {
     min-width: 0;
 }
+
+.chart-body {
+    width: 100%;
+    min-height: 280px;
+    transition: height 0.25s ease;
+}

@@ -65,6 +65,8 @@ export class StatisticalReportComponent implements OnInit {
     incomeChartType: string = 'bar';
     incomeChartData: any;
     incomeChartOptions: any;
+    incomeChartContainerHeight: number = 360;
+    incomeIsHorizontal: boolean = false;
 
     // Performance
     perfChartType: string = 'bar';
@@ -75,6 +77,8 @@ export class StatisticalReportComponent implements OnInit {
     attendanceChartType: string = 'bar';
     attendanceChartData: any;
     attendanceChartOptions: any;
+    attendanceChartContainerHeight: number = 360;
+    attendanceIsHorizontal: boolean = false;
 
     currentYear: number = new Date().getFullYear();
 
@@ -208,57 +212,8 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.incomeChartOptions = {
-                    responsive: true,
-                    aspectRatio: 1,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                font: { size: 12, weight: '500' },
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                            },
-                        },
-                        title: {
-                            display: true,
-                            text: 'Thu nhập theo tháng',
-                            font: { size: 16, weight: '600' },
-                            padding: { top: 10, bottom: 20 },
-                            color: '#1e293b',
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            cornerRadius: 8,
-                            titleFont: { size: 13, weight: '600' },
-                            bodyFont: { size: 12 },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: { font: { size: 11 } },
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: {
-                                font: { size: 11 },
-                                maxTicksLimit: 10,
-                                stepSize: 1,
-                            },
-                            min: 0,
-                            max: 10,
-                        },
-                    },
-                };
+                this.incomeChartOptions = this.getIncomeChartOptions(this.incomeIsHorizontal);
+                this.updateChartContainerHeight('income');
             }
         });
     }
@@ -348,75 +303,13 @@ export class StatisticalReportComponent implements OnInit {
                             pointBackgroundColor: 'rgba(168, 85, 247, 1)',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            yAxisID: 'yOt',
+                            ...(this.attendanceIsHorizontal ? { xAxisID: 'xOt' } : { yAxisID: 'yOt' }),
                             tension: 0.4,
                         },
                     ],
                 };
-                this.attendanceChartOptions = {
-                    responsive: true,
-                    aspectRatio: 1,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                font: { size: 12, weight: '500' },
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                            },
-                        },
-                        title: {
-                            display: true,
-                            text: 'Chuyên cần theo tháng',
-                            font: { size: 16, weight: '600' },
-                            padding: { top: 10, bottom: 20 },
-                            color: '#1e293b',
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            cornerRadius: 8,
-                            titleFont: { size: 13, weight: '600' },
-                            bodyFont: { size: 12 },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: { font: { size: 11 } },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            position: 'left',
-                            title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: {
-                                font: { size: 11 },
-                                maxTicksLimit: 10,
-                                stepSize: 1,
-                            },
-                            min: 0,
-                            max: 10,
-                        },
-                        yOt: {
-                            beginAtZero: true,
-                            position: 'right',
-                            title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
-                            grid: { drawOnChartArea: false },
-                            ticks: {
-                                font: { size: 11 },
-                                maxTicksLimit: 10,
-                                stepSize: 1,
-                            },
-                            min: 0,
-                            max: 10,
-                        },
-                    },
-                };
+                this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
+                this.updateChartContainerHeight('attendance');
             }
         });
     }
@@ -443,18 +336,230 @@ export class StatisticalReportComponent implements OnInit {
                 this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo vị trí', isHorizontal, actualType);
                 break;
             case 'income':
+                this.incomeIsHorizontal = isHorizontal;
                 this.incomeChartType = actualType;
-                this.incomeChartOptions = this.getChartOptions('Thu nhập theo tháng', isHorizontal, actualType);
+                this.incomeChartOptions = this.getIncomeChartOptions(this.incomeIsHorizontal);
+                this.updateChartContainerHeight('income');
                 break;
             case 'performance':
                 this.perfChartType = actualType;
                 this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', isHorizontal, actualType);
                 break;
             case 'attendance':
+                this.attendanceIsHorizontal = isHorizontal;
                 this.attendanceChartType = actualType;
-                this.attendanceChartOptions = this.getChartOptions('Chuyên cần theo tháng', isHorizontal, actualType);
+                this.syncAttendanceOvertimeAxis();
+                this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
+                this.updateChartContainerHeight('attendance');
                 break;
         }
+    }
+
+    private syncAttendanceOvertimeAxis(): void {
+        if (!this.attendanceChartData?.datasets) {
+            return;
+        }
+
+        const axisKey = this.attendanceIsHorizontal ? 'xAxisID' : 'yAxisID';
+        const axisId = this.attendanceIsHorizontal ? 'xOt' : 'yOt';
+
+        this.attendanceChartData = {
+            ...this.attendanceChartData,
+            datasets: this.attendanceChartData.datasets.map((dataset: any) => {
+                if (dataset.label !== 'Giờ tăng ca') {
+                    return dataset;
+                }
+
+                const { xAxisID, yAxisID, ...rest } = dataset;
+                return {
+                    ...rest,
+                    [axisKey]: axisId,
+                };
+            }),
+        };
+    }
+
+    private updateChartContainerHeight(report: 'income' | 'attendance'): void {
+        const chartData = report === 'income' ? this.incomeChartData : this.attendanceChartData;
+        const chartOptions = report === 'income' ? this.incomeChartOptions : this.attendanceChartOptions;
+        const labelCount = chartData?.labels?.length ?? 0;
+        const isHorizontal = chartOptions?.indexAxis === 'y';
+        const containerHeight = this.calculateChartContainerHeight(labelCount, isHorizontal);
+
+        if (report === 'income') {
+            this.incomeChartContainerHeight = containerHeight;
+            return;
+        }
+
+        this.attendanceChartContainerHeight = containerHeight;
+    }
+
+    private calculateChartContainerHeight(labelCount: number, isHorizontal: boolean): number {
+        const safeLabelCount = Math.max(labelCount, 1);
+
+        if (isHorizontal) {
+            const dynamicHeight = 180 + safeLabelCount * 42;
+            return Math.min(Math.max(dynamicHeight, 320), 680);
+        }
+
+        const dynamicHeight = 300 + Math.ceil(safeLabelCount / 6) * 20;
+        return Math.min(Math.max(dynamicHeight, 300), 440);
+    }
+
+    private getIncomeChartOptions(horizontal: boolean = false): any {
+        const categoryAxis = horizontal ? 'y' : 'x';
+        const valueAxis = horizontal ? 'x' : 'y';
+
+        return {
+            responsive: true,
+            aspectRatio: 1,
+            maintainAspectRatio: false,
+            indexAxis: horizontal ? 'y' : 'x',
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: 'Thu nhập theo tháng',
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: (context: any) => {
+                            const value = this.getTooltipNumericValue(context);
+                            return `${context.dataset.label}: ${value.toLocaleString('vi-VN')} đ`;
+                        },
+                    },
+                },
+            },
+            scales: {
+                [categoryAxis]: {
+                    stacked: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                [valueAxis]: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: { display: true, text: 'Tiền (đ)', font: { size: 12, weight: '600' } },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: {
+                        font: { size: 11 },
+                        callback: (value: any) => this.formatCurrencyAxisValue(Number(value)),
+                    },
+                },
+            },
+        };
+    }
+
+    private getAttendanceChartOptions(horizontal: boolean = false): any {
+        const categoryAxis = horizontal ? 'y' : 'x';
+        const dayAxis = horizontal ? 'x' : 'y';
+        const overtimeAxis = horizontal ? 'xOt' : 'yOt';
+
+        return {
+            responsive: true,
+            aspectRatio: 1,
+            maintainAspectRatio: false,
+            indexAxis: horizontal ? 'y' : 'x',
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: 'Chuyên cần theo tháng',
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: (context: any) => {
+                            const value = this.getTooltipNumericValue(context);
+                            const isOvertime = context.dataset?.label === 'Giờ tăng ca';
+                            return `${context.dataset.label}: ${value.toLocaleString('vi-VN')} ${isOvertime ? 'giờ' : 'ngày'}`;
+                        },
+                    },
+                },
+            },
+            scales: {
+                [categoryAxis]: {
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                [dayAxis]: {
+                    beginAtZero: true,
+                    position: horizontal ? 'bottom' : 'left',
+                    title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                [overtimeAxis]: {
+                    beginAtZero: true,
+                    position: horizontal ? 'top' : 'right',
+                    title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
+                    grid: { drawOnChartArea: false },
+                    ticks: { font: { size: 11 } },
+                },
+            },
+        };
+    }
+
+    private getTooltipNumericValue(context: any): number {
+        const parsedValue = context?.parsed?.y ?? context?.parsed?.x;
+        const rawValue = parsedValue ?? context?.raw ?? 0;
+        const numeric = Number(rawValue);
+        return Number.isFinite(numeric) ? numeric : 0;
+    }
+
+    private formatCurrencyAxisValue(value: number): string {
+        if (!Number.isFinite(value)) {
+            return '0';
+        }
+
+        const absValue = Math.abs(value);
+
+        if (absValue >= 1_000_000_000) {
+            return `${(value / 1_000_000_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} tỷ`;
+        }
+
+        if (absValue >= 1_000_000) {
+            return `${(value / 1_000_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} triệu`;
+        }
+
+        if (absValue >= 1_000) {
+            return `${(value / 1_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} nghìn`;
+        }
+
+        return value.toLocaleString('vi-VN');
     }
 
     private getChartOptions(title: string, horizontal: boolean = false, chartType: string = 'bar'): any {
