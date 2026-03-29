@@ -502,17 +502,14 @@ export class TimesheetComponent implements OnInit {
                                     }
                                 );
 
-                                const singleShift = timesheet?.shifts?.find(
+                                const singleShift = timesheet?.shifts.find(
                                     (shift: any) => {
-                                        const shiftName =
-                                            shift?.shiftTableName
-                                                ?.toString()
-                                                .toLowerCase() ?? '';
-
+                                        const shiftTableName = String(
+                                            shift?.shiftTableName ?? ''
+                                        ).toLowerCase();
                                         return (
-                                            shiftName.length > 0 &&
-                                            !shiftName.includes('sáng') &&
-                                            !shiftName.includes('chiều')
+                                            !shiftTableName.includes('sáng') &&
+                                            !shiftTableName.includes('chiều')
                                         );
                                     }
                                 );

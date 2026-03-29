@@ -168,23 +168,33 @@ export class AppTopBarComponent implements OnInit {
         // this.notificationService.startConnection();
         // this.getNotification();
 
-        this.notificationService.startConnection().then(() => {
-            this.getNotification();
-            this.notificationService.notifications$.subscribe(
-                (notification) => {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Thông báo',
-                        detail: notification.content,
-                    });
-                    this.notifications.unshift(notification);
-                    //this.getNotification();
-                    this.unreadCount = this.notifications.filter(
-                        (x) => x.isRead !== true
-                    ).length;
-                }
-            );
-        });
+        this.notificationService
+            .startConnection()
+            .then(() => {
+                this.getNotification();
+                this.notificationService.notifications$.subscribe(
+                    (notification) => {
+                        if (!notification || typeof notification !== 'object') {
+                            return;
+                        }
+
+                        const content = notification.content || 'Bạn có thông báo mới';
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Thông báo',
+                            detail: content,
+                        });
+                        this.notifications.unshift(notification);
+                        //this.getNotification();
+                        this.unreadCount = this.notifications.filter(
+                            (x) => x.isRead !== true
+                        ).length;
+                    }
+                );
+            })
+            .catch((error) => {
+                console.warn('Notification hub connection failed', error);
+            });
         // this.remindWorkNotificationService.startConnection().then(() => {
         //     this.remindWorkNotificationService.subscriptionStatus$.subscribe(
         //         (data) => {
