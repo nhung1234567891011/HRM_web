@@ -41,7 +41,7 @@
                   <p>{{ dialogMessage }}</p>
                   <div class="p-dialog-footer">
                     <button pButton label="Xác nhận" icon="pi pi-check" (click)="confirmToggleLock()"></button>
-                    <button style="margin-left: 20px;" pButton label="Hủy" icon="pi pi-times" class="p-button-secondary" (click)="cancelToggleLock()"></button>
+                    <button [style]="{ 'margin-left': '20px' }" pButton label="Hủy" icon="pi pi-times" class="p-button-secondary" (click)="cancelToggleLock()"></button>
                   </div>
                 </p-dialog>
                 <div class="filters">
@@ -108,7 +108,7 @@
                       ></p-treeSelect>
 
                       <p-button
-                          style="margin-left: 10px;"
+                          [style]="{ 'margin-left': '10px' }"
                           label=""
                           [outlined]="true"
                           severity="secondary"
@@ -117,7 +117,7 @@
                     </div>
                 </div>
 
-                <p-table #dt [value]="employees" responsiveLayout="scroll" scrollable scrollHeight="500px" style="min-width: 100%;">
+                <p-table #dt [value]="employees" responsiveLayout="scroll" scrollable scrollHeight="500px" [style]="{ 'min-width': '100%' }">
                     <ng-template pTemplate="header">
                         <tr>
                             <th style="position: sticky; left: 0; background: white; z-index: 1; width: 200px; min-width: 200px; height: 100px; display: flex; align-items: center; padding: 10px;">
@@ -134,7 +134,7 @@
                     <ng-template pTemplate="body" let-employee>
                         <tr>
                             <td style="position: sticky; left: 0; background: white; z-index: 1; width: 200px; min-width: 200px; height: 100px; display: flex; align-items: center; padding: 10px;">
-                                <p-checkbox style="margin-right: 10px;"></p-checkbox>
+                                <p-checkbox [style]="{ 'margin-right': '10px' }"></p-checkbox>
                                 <div>
                                     <div>{{ employee.name }}</div>
                                     <div style="font-size: 0.8em; color: gray">{{ employee.employeeCode }}</div>
@@ -285,7 +285,6 @@
               [style]="{ width: '90%' }"
               placeholder="Chọn ngày bắt đầu"
               inputId="icondisplay"
-              [locale]="'vi'"
               [dateFormat]="'dd/mm/yy'"
               [ngClass]="{ 'disabled-class': isDisabled }"
             />
@@ -297,7 +296,6 @@
               [style]="{ width: '100%', 'padding-left': '20px' }"
               placeholder="Chọn ngày kết thúc"
               inputId="icondisplay"
-              [locale]="'vi'"
               [dateFormat]="'dd/mm/yy'"
               [ngClass]="{ 'disabled-class': isDisabled }"/>
           </div>
@@ -345,7 +343,7 @@
       </button>
 
       <button
-        style="margin-left: 10px;"
+        [style]="{ 'margin-left': '10px' }"
         pButton
         label="Lưu"
         class="p-button-primary"
@@ -382,7 +380,7 @@
       <div class="grid">
         <div class="col-6">Số giờ</div>
         <div class="col-6">
-          <input pInputText formControlName="numberOfWorkingHour" disabled />
+          <input pInputText formControlName="numberOfWorkingHour" />
         </div>
       </div>
       <div class="grid">
@@ -470,7 +468,7 @@
       <div class="grid">
         <div class="col-6">Tổng thời gian làm thêm giờ</div>
         <div class="col-6">
-          <input pInputText formControlName="overtimeHours" disabled />
+          <input pInputText formControlName="overtimeHours" />
         </div>
       </div>
     </div>

@@ -296,6 +296,18 @@ export class DetailSummaryTimesheetComponent implements OnInit {
             return;
         }
 
+        if (!this.canTransferToPayroll()) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: 'Chưa thể chuyển',
+                    detail: 'Chi tiết chấm công phải được xác nhận hết trước khi chuyển tính lương.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
         if (!this.summarysheet) {
             this.messages = [
                 {
@@ -355,6 +367,11 @@ export class DetailSummaryTimesheetComponent implements OnInit {
                 ];
             },
         });
+    }
+
+    canTransferToPayroll(): boolean {
+        const status = this.summaryTimesheet?.[0]?.status;
+        return status === SummaryTimesheetNameEmployeeConfirmStatus.Confirm;
     }
 
     getButtonText(): string {

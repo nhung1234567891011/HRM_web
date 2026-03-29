@@ -16,9 +16,28 @@
     flex: 1;
 }
 
+.red-asterisk {
+    color: #e53935;
+}
+
+:host ::ng-deep .invalid-field .p-inputtext,
+:host ::ng-deep .invalid-field .p-dropdown,
+:host ::ng-deep .invalid-field .p-dropdown-label,
+:host ::ng-deep .invalid-field .p-calendar .p-inputtext,
+textarea.invalid-field {
+    border-color: #e53935 !important;
+    box-shadow: 0 0 0 1px #e53935 inset;
+}
+
 .checkbox-group {
     display: flex;
     gap: 15px;
+}
+
+.invalid-field-group {
+    border: 1px solid #e53935;
+    border-radius: 6px;
+    padding: 8px;
 }
 
 .checkbox-group p-checkbox {
