@@ -134,7 +134,7 @@ export class ShowTimeSheetComponent implements OnInit {
 			const request = {
 				...params,
 				employeeId: params['employeeId']
-					? params['employeeId'] : this.user.employee.id,
+					? params['employeeId'] : this.user?.employee?.id,
 				pageIndex: params['pageIndex']
 					? params['pageIndex']
 					: this.config.paging.pageIndex,
@@ -163,30 +163,39 @@ export class ShowTimeSheetComponent implements OnInit {
 
 	//get data
 	public getTimeSheets(request: any): any {
+		const currentPageIndex = Number(request?.pageIndex) || 1;
+		const currentPageSize = Number(request?.pageSize) || this.config.paging.pageSize;
+
 		this.summaryTimesheetNameEmployeeConfirmService
 			.pagingEmployee(request)
 			.subscribe((result: any) => {
-				if (result.status) {
-					if (
-						request.pageIndex !== 1 &&
-						result.data.items.length === 0
-					) {
-						this.route.queryParams.subscribe((params) => {
-							const request = {
-								...params,
-								pageIndex: 1,
-							};
+				if (result?.status) {
+					const responseData = result?.data || {};
+					const items = Array.isArray(responseData.items) ? responseData.items : [];
 
-							this.router.navigate([], {
-								relativeTo: this.route,
-								queryParams: request,
-								queryParamsHandling: 'merge',
-							});
+					if (
+						currentPageIndex !== 1 &&
+						items.length === 0
+					) {
+						const requestWithFirstPage = {
+							...this.route.snapshot.queryParams,
+							pageIndex: 1,
+						};
+
+						this.router.navigate([], {
+							relativeTo: this.route,
+							queryParams: requestWithFirstPage,
+							queryParamsHandling: 'merge',
 						});
+						return;
 					}
-					this.timeSheets = result.data.items.map((item: any) => {
+
+					this.timeSheets = items.map((item: any) => {
+						const confirmInfo = item?.summaryTimesheetNameEmployeeConfirm || {};
+						const status = confirmInfo.status;
+
 						let statusLabel = '';
-						switch (item.summaryTimesheetNameEmployeeConfirm.status) {
+						switch (status) {
 							case SummaryTimesheetNameEmployeeConfirmStatus.Pending:
 								statusLabel = 'Đang chờ duyệt';
 								break;
@@ -196,7 +205,11 @@ export class ShowTimeSheetComponent implements OnInit {
 							case SummaryTimesheetNameEmployeeConfirmStatus.Reject:
 								statusLabel = 'Bị từ chối';
 								break;
+							default:
+								statusLabel = 'Chưa được gửi';
+								break;
 						}
+
 						let timekeepingMethodLabel = '';
 						switch (item.timekeepingMethod) {
 							case TimekeepingMethod.Hour:
@@ -205,71 +218,134 @@ export class ShowTimeSheetComponent implements OnInit {
 							case TimekeepingMethod.Day:
 								timekeepingMethodLabel = 'Theo ngày';
 								break;
+							default:
+								timekeepingMethodLabel = '';
+								break;
 						}
-						const formattedStartDate = this.datePipe.transform(item.startDate, 'dd-MM-yyyy');
-						const formattedEndDate = this.datePipe.transform(item.endDate, 'dd-MM-yyyy');
+
+						const formattedStartDate = this.datePipe.transform(item?.startDate, 'dd-MM-yyyy') || '';
+						const formattedEndDate = this.datePipe.transform(item?.endDate, 'dd-MM-yyyy') || '';
+						const timeRange = formattedStartDate && formattedEndDate
+							? `${formattedStartDate}=>${formattedEndDate}`
+							: formattedStartDate || formattedEndDate;
 
 						return {
 							...item,
+							summaryTimesheetNameEmployeeConfirm: confirmInfo,
 							statusLabel,
 							timekeepingMethodLabel,
-							time: formattedStartDate + '=>' + formattedEndDate,
+							time: timeRange,
 							startDate: formattedStartDate,
 							endDate: formattedEndDate
 						};
 					});
+
 					if (this.timeSheets.length === 0) {
 						this.paging.pageIndex = 1;
 					}
 
-					const { items, ...paging } = result.data;
-					this.paging = paging;
+					const { items: _items, ...paging } = responseData;
+					this.paging = {
+						...this.paging,
+						...paging,
+						pageIndex: Number(paging?.pageIndex) || currentPageIndex,
+						pageSize: Number(paging?.pageSize) || currentPageSize,
+						totalRecords: Number(paging?.totalRecords) || 0,
+						totalPages: Number(paging?.totalPages) || 0,
+					};
 
 					this.selectedtimeSheets = [];
+					return;
 				}
+
+				this.timeSheets = [];
+				this.selectedtimeSheets = [];
+				this.paging = {
+					...this.paging,
+					pageIndex: 1,
+					pageSize: currentPageSize,
+					totalRecords: 0,
+					totalPages: 0,
+				};
+			}, () => {
+				this.timeSheets = [];
+				this.selectedtimeSheets = [];
+				this.paging = {
+					...this.paging,
+					pageIndex: 1,
+					pageSize: currentPageSize,
+					totalRecords: 0,
+					totalPages: 0,
+				};
 			});
 	}
 
 	//search data
 	onSearch() {
-		this.route.queryParams.subscribe(params => {
-			const request = {
-				...params,
-				organizationId: this.queryParameters.organization?.data || null,
-				keyWord: this.queryParameters.keyWord ? this.queryParameters.keyWord.trim() : null,
-				employeeId: this.queryParameters.employee?.id || this.queryParameters.employeeId || null,
-				startDate: this.queryParameters.startDate || null,
-				endDate: this.queryParameters.endDate || null,
-				date: this.queryParameters.date || null,
-				status: this.queryParameters.status != null ? this.queryParameters.status : null,
-				sortBy: this.queryParameters.sortBy || null,
-				orderBy: this.queryParameters.orderBy || null
-			};
+		const request = {
+			...this.route.snapshot.queryParams,
+			organizationId: this.queryParameters.organization?.data || null,
+			keyWord: this.queryParameters.keyWord ? this.queryParameters.keyWord.trim() : null,
+			employeeId: this.queryParameters.employee?.id || this.queryParameters.employeeId || null,
+			startDate: this.queryParameters.startDate || null,
+			endDate: this.queryParameters.endDate || null,
+			date: this.queryParameters.date || null,
+			status: this.queryParameters.status != null ? this.queryParameters.status : null,
+			sortBy: this.queryParameters.sortBy || null,
+			orderBy: this.queryParameters.orderBy || null,
+			pageIndex: 1,
+		};
 
-			this.router.navigate([], {
-				relativeTo: this.route,
-				queryParams: request,
-				queryParamsHandling: 'merge',
-			});
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: request,
+			queryParamsHandling: 'merge',
 		});
 	}
 
 	onPageChange(event: any) {
 		this.paging.pageIndex = event.page + 1;
 		this.paging.pageSize = event.rows;
-		this.route.queryParams.subscribe((params) => {
-			const request = {
-				...params,
-				pageIndex: event.page + 1,
-				pageSize: event.rows,
-			};
+		const request = {
+			...this.route.snapshot.queryParams,
+			pageIndex: event.page + 1,
+			pageSize: event.rows,
+		};
 
-			this.router.navigate([], {
-				relativeTo: this.route,
-				queryParams: request,
-				queryParamsHandling: 'merge',
-			});
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: request,
+			queryParamsHandling: 'merge',
 		});
+	}
+
+	getDisplayStartRecord(): number {
+		const totalRecords = Number(this.paging?.totalRecords) || 0;
+		if (totalRecords === 0 || !this.timeSheets?.length) {
+			return 0;
+		}
+
+		const pageIndex = Number(this.paging?.pageIndex) || 1;
+		const pageSize = Number(this.paging?.pageSize) || this.config.paging.pageSize;
+		return (pageIndex - 1) * pageSize + 1;
+	}
+
+	getDisplayEndRecord(): number {
+		const totalRecords = Number(this.paging?.totalRecords) || 0;
+		if (totalRecords === 0 || !this.timeSheets?.length) {
+			return 0;
+		}
+
+		const pageIndex = Number(this.paging?.pageIndex) || 1;
+		const pageSize = Number(this.paging?.pageSize) || this.config.paging.pageSize;
+		const pageStart = (pageIndex - 1) * pageSize;
+		const currentRows = this.timeSheets.length;
+		return Math.min(pageStart + currentRows, totalRecords);
+	}
+
+	getVisibleColumnCount(): number {
+		const visibleColumns = this.columns.filter((col) => col.selected).length;
+		return visibleColumns + 1;
 	}
 
 
