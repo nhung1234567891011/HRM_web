@@ -227,6 +227,7 @@
                                 >
                                     <i class="pi pi-search"></i>
                                     <p-autoComplete
+                                        [style]="{ width: '100px' }"
                                         [suggestions]="employees"
                                         (completeMethod)="
                                             onEmployeeSearch($event)
@@ -450,6 +451,8 @@
                                                 leaveApplicationStatus.Approved
                                             )
                                         "
+                                        pTooltip="Duyệt đơn"
+                                        tooltipPosition="top"
                                         class="font-size-16 ml-2 action-icon action-approve"
                                         style="padding: 3px; border-radius: 50%"
                                     >
@@ -467,12 +470,16 @@
                                                 leaveApplicationStatus.Rejected
                                             )
                                         "
+                                        pTooltip="Từ chối đơn"
+                                        tooltipPosition="top"
                                         class="font-size-16 ml-2 action-icon action-reject"
                                         style="padding: 3px; border-radius: 50%"
                                     >
                                         <i class="pi pi-thumbs-down-fill"></i>
                                     </div>
                                     <div
+                                        pTooltip="Xem chi tiết"
+                                        tooltipPosition="top"
                                         class="font-size-16 ml-2 action-icon action-view"
                                         style="padding: 3px; border-radius: 50%"
                                         [routerLink]="[
@@ -485,6 +492,8 @@
                                     <div
                                         *ngIf="leaveApp.status === 0 && leaveApp.employeeId === user.employee.id"
                                         (click)="confirmDelete(leaveApp.id)"
+                                        pTooltip="Xóa đơn"
+                                        tooltipPosition="top"
                                         class="font-size-16 ml-2 action-icon action-delete"
                                         style="padding: 3px; border-radius: 50%"
                                     >

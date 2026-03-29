@@ -64,7 +64,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
     //enum
     leaveApplicationStatus = LeaveApplicationStatus;
     //var
-    leaveApplications: any[];
+    leaveApplications: any[] = [];
     selectedLeaveApplications: any[] = [];
     breadcrumbs: any[];
     statuses: SelectItem[];
@@ -147,10 +147,29 @@ export class ShowLeaveApplicationComponent implements OnInit {
         );
         if (savedColumns) {
             const savedSettings = JSON.parse(savedColumns);
+            if (Array.isArray(savedSettings) && savedSettings.length > 0) {
+                this.columns.forEach((col) => {
+                    col.selected = !!savedSettings.find(
+                        (savedCol) => savedCol.field === col.field
+                    );
+                });
+            }
+        }
+
+        if (!this.columns.some((col) => col.selected)) {
+            const defaultVisibleFields = new Set([
+                'employeeName',
+                'startDate',
+                'endDate',
+                'numberOfDays',
+                'typeOfLeave',
+                'approver',
+                'status',
+                'action',
+            ]);
+
             this.columns.forEach((col) => {
-                col.selected = !!savedSettings.find(
-                    (savedCol) => savedCol.field === col.field
-                );
+                col.selected = defaultVisibleFields.has(col.field);
             });
         }
 
@@ -167,9 +186,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
                 pageSize: params['pageSize']
                     ? params['pageSize']
                     : this.config.paging.pageSize,
-                employeeId:
-                    this.user.employee.id ||
-                    null,
+                employeeId: this.user?.employee?.id || null,
             };
             this.queryParameters = {
                 ...params,
@@ -178,9 +195,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
                 keyWord: this.queryParameters.keyWord
                     ? this.queryParameters.keyWord.trim()
                     : null,
-                employeeId:
-                    this.user.employee.id ||
-                    null,
+                employeeId: this.user?.employee?.id || null,
                 startDate: this.queryParameters.startDate || null,
                 endDate: this.queryParameters.endDate || null,
                 numberOfDays: this.queryParameters.numberOfDays || null,
@@ -206,13 +221,20 @@ export class ShowLeaveApplicationComponent implements OnInit {
     //get data
 
     public getLeaveApplications(request: any): any {
+        const currentPageIndex = Number(request.pageIndex) || 1;
+
         this.leaveApplicationService
             .paging(request)
             .subscribe((result: any) => {
-                if (result.status) {
+                if (result?.status) {
+                    const responseData = result?.data || {};
+                    const items = Array.isArray(responseData.items)
+                        ? responseData.items
+                        : [];
+
                     if (
-                        request.pageIndex !== 1 &&
-                        result.data.items.length === 0
+                        currentPageIndex !== 1 &&
+                        items.length === 0
                     ) {
                         this.route.queryParams.subscribe((params) => {
                             const request = {
@@ -227,7 +249,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
                             });
                         });
                     }
-                    this.leaveApplications = result.data.items.map(
+                    this.leaveApplications = items.map(
                         (item: any) => {
                             let statusLabel = '';
                             switch (item.status) {
@@ -267,8 +289,17 @@ export class ShowLeaveApplicationComponent implements OnInit {
                         this.paging.pageIndex = 1;
                     }
 
-                    const { items, ...paging } = result.data;
-                    this.paging = paging;
+                    const { items: _items, ...paging } = responseData;
+                    this.paging = {
+                        ...this.paging,
+                        ...paging,
+                        pageIndex: Number(paging.pageIndex) || 1,
+                        pageSize:
+                            Number(paging.pageSize) ||
+                            this.paging.pageSize ||
+                            DEFAULT_PAGE_SIZE,
+                        totalRecords: Number(paging.totalRecords) || 0,
+                    };
 
                     this.selectedLeaveApplications = [];
                 }
@@ -276,7 +307,13 @@ export class ShowLeaveApplicationComponent implements OnInit {
     }
 
     getOrganizations() {
-        const request = { id: this.user.organization.id };;
+        const organizationId = this.user?.organization?.id;
+        if (!organizationId) {
+            this.organizations = [];
+            return;
+        }
+
+        const request = { id: organizationId };
         this.organiStructTypeService
             .getOrganiStructType(request.id)
             .subscribe((res) => {
@@ -317,10 +354,16 @@ export class ShowLeaveApplicationComponent implements OnInit {
     }
 
     getEmployees(keyWord: any = null) {
+        const organizationId = this.user?.organization?.id;
+        if (!organizationId) {
+            this.employees = [];
+            return;
+        }
+
         const request = {
             pageIndex: 1,
             pageSize: 20,
-            organizationId: this.user.organization.id,
+            organizationId,
             keyWord: keyWord,
         };
         this.employeeService.paging(request).subscribe((res) => {
@@ -364,9 +407,7 @@ export class ShowLeaveApplicationComponent implements OnInit {
                 keyWord: this.queryParameters.keyWord
                     ? this.queryParameters.keyWord.trim()
                     : null,
-                employeeId:
-                    this.user.employee.id ||
-                    null,
+                employeeId: this.user?.employee?.id || null,
                 startDate: this.queryParameters.startDate || null,
                 endDate: this.queryParameters.endDate || null,
                 numberOfDays: this.queryParameters.numberOfDays || null,
@@ -401,9 +442,8 @@ export class ShowLeaveApplicationComponent implements OnInit {
                 forApproval: false,
                 organizationId: null,
                 keyWord: null,
-                employeeId:
-                    this.user.employee.id ||
-                    null, startDate: null,
+                employeeId: this.user?.employee?.id || null,
+                startDate: null,
                 endDate: null,
                 numberOfDays: null,
                 typeOfLeaveId: null,
@@ -447,6 +487,35 @@ export class ShowLeaveApplicationComponent implements OnInit {
                 queryParamsHandling: 'merge',
             });
         });
+    }
+
+    getPagingStartRecord(): number {
+        const totalRecords = Number(this.paging?.totalRecords) || 0;
+        if (totalRecords === 0) {
+            return 0;
+        }
+
+        const pageIndex = Number(this.paging?.pageIndex) || 1;
+        const pageSize = Number(this.paging?.pageSize) || DEFAULT_PAGE_SIZE;
+        return (pageIndex - 1) * pageSize + 1;
+    }
+
+    getPagingEndRecord(): number {
+        const totalRecords = Number(this.paging?.totalRecords) || 0;
+        if (totalRecords === 0) {
+            return 0;
+        }
+
+        const pageIndex = Number(this.paging?.pageIndex) || 1;
+        const pageSize = Number(this.paging?.pageSize) || DEFAULT_PAGE_SIZE;
+        const pageStart = (pageIndex - 1) * pageSize;
+        const currentRows = this.leaveApplications?.length ?? 0;
+
+        if (currentRows > 0) {
+            return Math.min(pageStart + currentRows, totalRecords);
+        }
+
+        return Math.min(pageIndex * pageSize, totalRecords);
     }
 
     onEmployeeSearch(event: any): void {

@@ -89,7 +89,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 	checkInForm: FormGroup;
 	showEmojiPicker = false;
 	messages: any[] = [];
-    emojiList = ['😀', '😂', '😍', '😎', '🤔', '😭', '😡', '🥳', '😜', '😇'];
+	emojiList = ['😀', '😂', '😍', '😎', '🤔', '😭', '😡', '🥳', '😜', '😇'];
 	//search
 	public paging: any = {
 		pageIndex: DEFAULT_PAGE_INDEX,
@@ -127,9 +127,9 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 
 	//flag
 	displayColumnsCustom: boolean = false;
-    displayDeleteDialog = false; // Kiểm soát hiển thị dialog
-    selectedLeaveId?: number;
-    selectedLeaveName?: string;
+	displayDeleteDialog = false; // Kiểm soát hiển thị dialog
+	selectedLeaveId?: number;
+	selectedLeaveName?: string;
 
 	constructor(
 		private leaveApplicationService: LeaveApplicationService,
@@ -173,6 +173,11 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 					(savedCol) => savedCol.field === col.field
 				);
 			});
+		}
+
+		const actionColumn = this.columns.find((col) => col.field === 'action');
+		if (actionColumn) {
+			actionColumn.selected = true;
 		}
 
 		this.checkInForm = this.fb.group({
@@ -355,37 +360,37 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 			(response) => {
 				console.log('Gửi thành công:', response);
 				this.messages = [
-                    {
-                        severity: 'success',
-                        summary: 'Thành công',
-                        detail: 'Lưu thông tin thành công',
-                        life: 3000,
-                    },
-                ];
+					{
+						severity: 'success',
+						summary: 'Thành công',
+						detail: 'Lưu thông tin thành công',
+						life: 3000,
+					},
+				];
 			},
 			(error) => {
 				console.error('Lỗi khi gửi:', error);
 				this.messages = [
-                    {
-                        severity: 'error',
-                        summary: 'Thất bại',
-                        detail: 'Đã có lỗi xảy ra',
-                        life: 3000,
-                    },
-                ];
+					{
+						severity: 'error',
+						summary: 'Thất bại',
+						detail: 'Đã có lỗi xảy ra',
+						life: 3000,
+					},
+				];
 			}
 		);
 	}
 
 	toggleEmojiPicker() {
-        this.showEmojiPicker = !this.showEmojiPicker;
-    }
+		this.showEmojiPicker = !this.showEmojiPicker;
+	}
 
-    insertEmoji(emoji: string) {
-        const textarea = document.getElementById("descriptionBox") as HTMLTextAreaElement;
-        textarea.value += emoji;
-        this.showEmojiPicker = false; // Đóng popup sau khi chọn emoji
-    }
+	insertEmoji(emoji: string) {
+		const textarea = document.getElementById("descriptionBox") as HTMLTextAreaElement;
+		textarea.value += emoji;
+		this.showEmojiPicker = false; // Đóng popup sau khi chọn emoji
+	}
 
 	//get data
 
@@ -411,6 +416,8 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 							});
 						});
 					}
+					console.log(result);
+
 					this.leaveApplications = result.data.items.map(
 						(item: any) => {
 							let statusLabel = '';
@@ -446,13 +453,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 								createdAt: formattedCreatedAt,
 							};
 						}
-					).filter((item: any) => {
-						const isAdmin = this.user.roleNames?.includes('Admin');
-						const isApproverOfItem = item.leaveApplicationApprovers
-							?.map((a: any) => a.approverId)
-							.includes(this.user.employee.id);
-						return isAdmin || isApproverOfItem;
-					});
+					).filter((item: any) => this.canViewLeaveApplication(item));
 					if (this.leaveApplications.length === 0) {
 						this.paging.pageIndex = 1;
 					}
@@ -652,7 +653,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 	//handle update
 
 	handleUpdateStatus(leaveApplication: any, status: any) {
-		if (!this.isApprover(leaveApplication)) {
+		if (!this.canApproveLeaveApplication(leaveApplication)) {
 			this.messageService.add({
 				severity: 'warn',
 				summary: 'Cảnh báo',
@@ -703,7 +704,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 		let employeeName = '';
 		const request = [];
 		this.selectedLeaveApplications.forEach((leaveApp) => {
-			if (leaveApp.status == this.leaveApplicationStatus.Pending && this.isApprover(leaveApp)) {
+			if (leaveApp.status == this.leaveApplicationStatus.Pending && this.canApproveLeaveApplication(leaveApp)) {
 				employeeName +=
 					'|' +
 					(leaveApp.employee?.lastName ?? '') +
@@ -820,8 +821,43 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 		return null;
 	}
 	//function compare
+	canViewLeaveApplication(leaveApp: any): boolean {
+		const currentEmployeeId = this.user?.employee?.id;
+
+		if (!currentEmployeeId) {
+			return false;
+		}
+
+		const isAdmin = this.user?.roleNames?.includes('Admin');
+		const isApprover = (leaveApp?.leaveApplicationApprovers || []).some(
+			(item: any) => item?.approverId === currentEmployeeId
+		);
+		const isReplacement = (leaveApp?.leaveApplicationReplacements || []).some(
+			(item: any) => item?.replacementId === currentEmployeeId
+		);
+
+		return !!(isAdmin || isApprover || isReplacement);
+	}
+
+	canApproveLeaveApplication(leaveApp: any): boolean {
+		const currentEmployeeId = Number(this.user?.employee?.id);
+
+		if (!currentEmployeeId) {
+			return false;
+		}
+
+		const isApprover = (leaveApp?.leaveApplicationApprovers || []).some(
+			(item: any) => Number(item?.approverId) === currentEmployeeId
+		);
+		const isReplacement = (leaveApp?.leaveApplicationReplacements || []).some(
+			(item: any) => Number(item?.replacementId) === currentEmployeeId
+		);
+
+		return isApprover || isReplacement;
+	}
+
 	isApprover(leaveApp: any) {
-		return leaveApp.leaveApplicationApprovers.map(item => item.approverId).includes(this.user.employee.id);
+		return this.canApproveLeaveApplication(leaveApp);
 	}
 
 	//data front end
@@ -917,33 +953,33 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 				};
 		}
 	}
-    confirmDelete(id: number, name: string) {
-        this.selectedLeaveId = id;
-        //this.selectedLeaveName = name;
-        this.displayDeleteDialog = true;
-      }
+	confirmDelete(id: number, name: string) {
+		this.selectedLeaveId = id;
+		//this.selectedLeaveName = name;
+		this.displayDeleteDialog = true;
+	}
 
-      // Xóa đơn nghỉ
-      deleteLeave() {
-        if (this.selectedLeaveId !== undefined) {
-          this.leaveApplicationService.deleteLeaveApplication(this.selectedLeaveId).subscribe({
-            next: (response) => {
-              this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Xóa đơn xin nghỉ thành công!' });
-              this.leaveApplications = this.leaveApplications.filter(l => l.id !== this.selectedLeaveId);
-              this.displayDeleteDialog = false;
-            },
-            error: (err) => {
-              this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Xóa đơn nghỉ thất bại!' });
-              console.error(err);
-            }
-          });
-        }
-      }
+	// Xóa đơn nghỉ
+	deleteLeave() {
+		if (this.selectedLeaveId !== undefined) {
+			this.leaveApplicationService.deleteLeaveApplication(this.selectedLeaveId).subscribe({
+				next: (response) => {
+					this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Xóa đơn xin nghỉ thành công!' });
+					this.leaveApplications = this.leaveApplications.filter(l => l.id !== this.selectedLeaveId);
+					this.displayDeleteDialog = false;
+				},
+				error: (err) => {
+					this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Xóa đơn nghỉ thất bại!' });
+					console.error(err);
+				}
+			});
+		}
+	}
 
-      // Đóng dialog mà không xóa
-      cancelDelete() {
-        this.displayDeleteDialog = false;
-      }
+	// Đóng dialog mà không xóa
+	cancelDelete() {
+		this.displayDeleteDialog = false;
+	}
 }
 
 //ignore

@@ -98,16 +98,19 @@
                         >
                             {{
                                 col.field.includes("employeeName")
-                                    ? leaveApp.employee.lastName +
-                                      " " +
-                                      leaveApp.employee.firstName
+                                    ? (
+                                          (leaveApp.employee?.lastName || '') +
+                                          ' ' +
+                                          (leaveApp.employee?.firstName || '')
+                                      ).trim()
                                     : ""
                             }}
                             <span *ngIf="col.field.includes('position')">
                                 <span
                                     *ngFor="
-                                        let position of leaveApp.employee
-                                            .staffPositions
+                                        let position of
+                                            leaveApp.employee?.staffPositions ||
+                                            []
                                     "
                                 >
                                     {{ position.positionName }}
@@ -116,39 +119,46 @@
                             <span *ngIf="col.field.includes('approver')">
                                 <span
                                     *ngFor="
-                                        let approver of leaveApp.leaveApplicationApprovers
+                                        let approver of
+                                            leaveApp.leaveApplicationApprovers ||
+                                            []
                                     "
                                 >
-                                    | {{ approver.approver.lastName }}
-                                    {{ approver.approver.firstName }} |
+                                    | {{ approver.approver?.lastName }}
+                                    {{ approver.approver?.firstName }} |
                                 </span>
                             </span>
                             <span *ngIf="col.field.includes('substitute')">
                                 <span
                                     *ngFor="
-                                        let replacement of leaveApp.leaveApplicationReplacements
+                                        let replacement of
+                                            leaveApp.leaveApplicationReplacements ||
+                                            []
                                     "
                                 >
-                                    | {{ replacement.replacement.lastName }}
-                                    {{ replacement.replacement.firstName }} |
+                                    | {{ replacement.replacement?.lastName }}
+                                    {{ replacement.replacement?.firstName }} |
                                 </span>
                             </span>
                             <span *ngIf="col.field.includes('relatedPerson')">
                                 <span
                                     *ngFor="
-                                        let relatedPerson of leaveApp.leaveApplicationRelatedPeople
+                                        let relatedPerson of
+                                            leaveApp.leaveApplicationRelatedPeople ||
+                                            []
                                     "
                                 >
-                                    | {{ relatedPerson.relatedPerson.lastName }}
+                                    |
+                                    {{ relatedPerson.relatedPerson?.lastName }}
                                     {{
-                                        relatedPerson.relatedPerson.firstName
+                                        relatedPerson.relatedPerson?.firstName
                                     }}
                                     |
                                 </span>
                             </span>
                             <span *ngIf="col.field.includes('typeOfLeave')">
                                 <span>
-                                    {{ leaveApp.typeOfLeave.name }}
+                                    {{ leaveApp.typeOfLeave?.name }}
                                 </span>
                             </span>
                             <span
@@ -260,13 +270,11 @@
                 <div class="paging-info">
                     <p>
                         <span style="font-weight: 500">{{
-                            1 + (paging.pageIndex - 1) * paging.pageSize
+                            getPagingStartRecord()
                         }}</span>
                         -
                         <span style="font-weight: 500">{{
-                            1 +
-                                (paging.pageIndex - 1) * paging.pageSize +
-                                (paging.pageSize - 1)
+                            getPagingEndRecord()
                         }}</span>
                         trong
                         <span style="font-weight: 500">{{
@@ -275,7 +283,7 @@
                         bản ghi
                     </p>
                 </div>
-                <div *ngIf="leaveApplications?.length > 0">
+                <div *ngIf="paging.totalRecords > 0">
                     <p-paginator
                         class="custum-paging"
                         (onPageChange)="onPageChange($event)"
