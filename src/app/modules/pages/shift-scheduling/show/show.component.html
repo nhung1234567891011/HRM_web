@@ -21,19 +21,6 @@
                             ])
                         "
                     ></button>
-                    <p-button
-                        label="Xóa"
-                        *ngIf="
-                            hasPermissionHelper.hasPermissions([
-                                permissionConstant.ManageShiftAllocationDelete
-                            ])
-                        "
-                        [disabled]="
-                            this.selectedShift.length > 0 ? false : true
-                        "
-                        (click)="handleOnDeleteMultiple($event)"
-                        severity="danger"
-                    ></p-button>
                 </div>
             </ng-template>
         </p-toolbar>
@@ -61,14 +48,14 @@
                     </button>
                 </div>
                 <div class="flex flex-column">
-                    <p-button
+                    <!-- <p-button
                         pTooltip="Ẩn/hiện cột"
                         label=""
                         [outlined]="true"
                         severity="secondary"
                         icon="pi pi-table"
                         (onClick)="colPanelRef.toggle($event)"
-                    ></p-button>
+                    ></p-button> -->
 
                     <p-overlayPanel #colPanelRef>
                         <div style="padding: 8px; min-width: 220px;">
