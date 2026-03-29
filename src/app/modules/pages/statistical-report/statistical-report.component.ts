@@ -57,30 +57,38 @@ export class StatisticalReportComponent implements OnInit {
     ];
 
     // HR Distribution
-    hrChartType: string = 'bar';
+    hrChartType: string = 'pie';
     hrChartData: any;
     hrChartOptions: any;
+    hrChartPlugins: any[] = [];
 
     // Monthly Income
     incomeChartType: string = 'bar';
     incomeChartData: any;
     incomeChartOptions: any;
+    incomeChartContainerHeight: number = 360;
+    incomeIsHorizontal: boolean = false;
 
     // Performance
-    perfChartType: string = 'bar';
+    perfChartType: string = 'pie';
     perfChartData: any;
     perfChartOptions: any;
+    perfChartPlugins: any[] = [];
 
     // Attendance
     attendanceChartType: string = 'bar';
     attendanceChartData: any;
     attendanceChartOptions: any;
+    attendanceChartContainerHeight: number = 360;
+    attendanceIsHorizontal: boolean = false;
 
     currentYear: number = new Date().getFullYear();
 
     constructor(private reportService: ReportService) { }
 
     ngOnInit(): void {
+        this.hrChartPlugins = [this.createHrPieCalloutPlugin()];
+        this.perfChartPlugins = [this.createPerformancePieCalloutPlugin()];
         for (let y = this.selectedYear - 5; y <= this.selectedYear; y++) {
             this.yearOptions.push({ label: `Năm ${y}`, value: y });
         }
@@ -125,7 +133,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo vị trí', false, this.hrChartType);
+                this.hrChartOptions = this.getHrChartOptions(false, this.hrChartType);
             }
         });
     }
@@ -208,57 +216,8 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.incomeChartOptions = {
-                    responsive: true,
-                    aspectRatio: 1,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                font: { size: 12, weight: '500' },
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                            },
-                        },
-                        title: {
-                            display: true,
-                            text: 'Thu nhập theo tháng',
-                            font: { size: 16, weight: '600' },
-                            padding: { top: 10, bottom: 20 },
-                            color: '#1e293b',
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            cornerRadius: 8,
-                            titleFont: { size: 13, weight: '600' },
-                            bodyFont: { size: 12 },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: { font: { size: 11 } },
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: {
-                                font: { size: 11 },
-                                maxTicksLimit: 10,
-                                stepSize: 1,
-                            },
-                            min: 0,
-                            max: 10,
-                        },
-                    },
-                };
+                this.incomeChartOptions = this.getIncomeChartOptions(this.incomeIsHorizontal);
+                this.updateChartContainerHeight('income');
             }
         });
     }
@@ -283,7 +242,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.perfChartOptions = this.getChartOptions('Hoa hồng theo vị trí', false, this.perfChartType);
+                this.perfChartOptions = this.getPerformanceChartOptions(false, this.perfChartType);
             }
         });
     }
@@ -348,75 +307,13 @@ export class StatisticalReportComponent implements OnInit {
                             pointBackgroundColor: 'rgba(168, 85, 247, 1)',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            yAxisID: 'yOt',
+                            ...(this.attendanceIsHorizontal ? { xAxisID: 'xOt' } : { yAxisID: 'yOt' }),
                             tension: 0.4,
                         },
                     ],
                 };
-                this.attendanceChartOptions = {
-                    responsive: true,
-                    aspectRatio: 1,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                font: { size: 12, weight: '500' },
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                            },
-                        },
-                        title: {
-                            display: true,
-                            text: 'Chuyên cần theo tháng',
-                            font: { size: 16, weight: '600' },
-                            padding: { top: 10, bottom: 20 },
-                            color: '#1e293b',
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            cornerRadius: 8,
-                            titleFont: { size: 13, weight: '600' },
-                            bodyFont: { size: 12 },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: { font: { size: 11 } },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            position: 'left',
-                            title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
-                            grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                            ticks: {
-                                font: { size: 11 },
-                                maxTicksLimit: 10,
-                                stepSize: 1,
-                            },
-                            min: 0,
-                            max: 10,
-                        },
-                        yOt: {
-                            beginAtZero: true,
-                            position: 'right',
-                            title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
-                            grid: { drawOnChartArea: false },
-                            ticks: {
-                                font: { size: 11 },
-                                maxTicksLimit: 10,
-                                stepSize: 1,
-                            },
-                            min: 0,
-                            max: 10,
-                        },
-                    },
-                };
+                this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
+                this.updateChartContainerHeight('attendance');
             }
         });
     }
@@ -440,21 +337,473 @@ export class StatisticalReportComponent implements OnInit {
         switch (report) {
             case 'hr':
                 this.hrChartType = actualType;
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo vị trí', isHorizontal, actualType);
+                this.hrChartOptions = this.getHrChartOptions(isHorizontal, actualType);
                 break;
             case 'income':
+                this.incomeIsHorizontal = isHorizontal;
                 this.incomeChartType = actualType;
-                this.incomeChartOptions = this.getChartOptions('Thu nhập theo tháng', isHorizontal, actualType);
+                this.incomeChartOptions = this.getIncomeChartOptions(this.incomeIsHorizontal);
+                this.updateChartContainerHeight('income');
                 break;
             case 'performance':
                 this.perfChartType = actualType;
-                this.perfChartOptions = this.getChartOptions('Hiệu suất theo vị trí', isHorizontal, actualType);
+                this.perfChartOptions = this.getPerformanceChartOptions(isHorizontal, actualType);
                 break;
             case 'attendance':
+                this.attendanceIsHorizontal = isHorizontal;
                 this.attendanceChartType = actualType;
-                this.attendanceChartOptions = this.getChartOptions('Chuyên cần theo tháng', isHorizontal, actualType);
+                this.syncAttendanceOvertimeAxis();
+                this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
+                this.updateChartContainerHeight('attendance');
                 break;
         }
+    }
+
+    private syncAttendanceOvertimeAxis(): void {
+        if (!this.attendanceChartData?.datasets) {
+            return;
+        }
+
+        const axisKey = this.attendanceIsHorizontal ? 'xAxisID' : 'yAxisID';
+        const axisId = this.attendanceIsHorizontal ? 'xOt' : 'yOt';
+
+        this.attendanceChartData = {
+            ...this.attendanceChartData,
+            datasets: this.attendanceChartData.datasets.map((dataset: any) => {
+                if (dataset.label !== 'Giờ tăng ca') {
+                    return dataset;
+                }
+
+                const { xAxisID, yAxisID, ...rest } = dataset;
+                return {
+                    ...rest,
+                    [axisKey]: axisId,
+                };
+            }),
+        };
+    }
+
+    private updateChartContainerHeight(report: 'income' | 'attendance'): void {
+        const chartData = report === 'income' ? this.incomeChartData : this.attendanceChartData;
+        const chartOptions = report === 'income' ? this.incomeChartOptions : this.attendanceChartOptions;
+        const labelCount = chartData?.labels?.length ?? 0;
+        const isHorizontal = chartOptions?.indexAxis === 'y';
+        const containerHeight = this.calculateChartContainerHeight(labelCount, isHorizontal);
+
+        if (report === 'income') {
+            this.incomeChartContainerHeight = containerHeight;
+            return;
+        }
+
+        this.attendanceChartContainerHeight = containerHeight;
+    }
+
+    private calculateChartContainerHeight(labelCount: number, isHorizontal: boolean): number {
+        const safeLabelCount = Math.max(labelCount, 1);
+
+        if (isHorizontal) {
+            const dynamicHeight = 180 + safeLabelCount * 42;
+            return Math.min(Math.max(dynamicHeight, 320), 680);
+        }
+
+        const dynamicHeight = 300 + Math.ceil(safeLabelCount / 6) * 20;
+        return Math.min(Math.max(dynamicHeight, 300), 440);
+    }
+
+    private getHrChartOptions(horizontal: boolean = false, chartType: string = 'bar'): any {
+        const options = this.getChartOptions('Phân bổ nhân sự theo vị trí', horizontal, chartType);
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+
+        if (!isCircular) {
+            return options;
+        }
+
+        options.layout = {
+            padding: {
+                top: 20,
+                right: 90,
+                bottom: 20,
+                left: 90,
+            },
+        };
+
+        options.plugins = {
+            ...options.plugins,
+            legend: {
+                ...options.plugins.legend,
+                display: false,
+            },
+            tooltip: {
+                ...options.plugins.tooltip,
+                callbacks: {
+                    label: (context: any) => {
+                        const value = this.getTooltipNumericValue(context);
+                        const data = context.dataset?.data || [];
+                        const total = data.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                        return `${context.label}: ${value.toLocaleString('vi-VN')} (${percentage}%)`;
+                    },
+                },
+            },
+        };
+
+        return options;
+    }
+
+    private getPerformanceChartOptions(horizontal: boolean = false, chartType: string = 'bar'): any {
+        const options = this.getChartOptions('Hoa hồng theo vị trí', horizontal, chartType);
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+
+        if (!isCircular) {
+            return options;
+        }
+
+        options.layout = {
+            padding: {
+                top: 20,
+                right: 90,
+                bottom: 20,
+                left: 90,
+            },
+        };
+
+        options.plugins = {
+            ...options.plugins,
+            legend: {
+                ...options.plugins.legend,
+                display: false,
+            },
+            tooltip: {
+                ...options.plugins.tooltip,
+                callbacks: {
+                    label: (context: any) => {
+                        const value = this.getTooltipNumericValue(context);
+                        const data = context.dataset?.data || [];
+                        const total = data.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                        return `${context.label}: ${value.toLocaleString('vi-VN')} (${percentage}%)`;
+                    },
+                },
+            },
+        };
+
+        return options;
+    }
+
+    private createHrPieCalloutPlugin(): any {
+        return {
+            id: 'hrPieCalloutPlugin',
+            afterDatasetsDraw: (chart: any) => {
+                const chartType = chart?.config?.type;
+                if (chartType !== 'pie' && chartType !== 'doughnut') {
+                    return;
+                }
+
+                const dataset = chart?.data?.datasets?.[0];
+                const labels = chart?.data?.labels || [];
+                const values = dataset?.data || [];
+                const total = values.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+
+                const meta = chart.getDatasetMeta(0);
+                if (!meta?.data?.length) {
+                    return;
+                }
+
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.strokeStyle = '#64748b';
+                ctx.fillStyle = '#334155';
+                ctx.lineWidth = 1.5;
+                ctx.font = '500 11px "Segoe UI", sans-serif';
+                ctx.textBaseline = 'middle';
+
+                meta.data.forEach((arc: any, index: number) => {
+                    const value = Number(values[index] ?? 0);
+                    if (!Number.isFinite(value) || value <= 0) {
+                        return;
+                    }
+
+                    const angle = (arc.startAngle + arc.endAngle) / 2;
+                    const cos = Math.cos(angle);
+                    const sin = Math.sin(angle);
+
+                    const startX = arc.x + cos * (arc.outerRadius * 0.9);
+                    const startY = arc.y + sin * (arc.outerRadius * 0.9);
+                    const bendX = arc.x + cos * (arc.outerRadius + 16);
+                    const bendY = arc.y + sin * (arc.outerRadius + 16);
+                    const endX = bendX + (cos >= 0 ? 30 : -30);
+                    const endY = bendY;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(bendX, bendY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+
+                    const arrowAngle = Math.atan2(arc.y - startY, arc.x - startX);
+                    const arrowSize = 6;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle + Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle + Math.PI / 7) * arrowSize
+                    );
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle - Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle - Math.PI / 7) * arrowSize
+                    );
+                    ctx.closePath();
+                    ctx.fillStyle = '#64748b';
+                    ctx.fill();
+
+                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                    const label = `${labels[index] ?? `Nhóm ${index + 1}`}: ${percentage}%`;
+
+                    ctx.fillStyle = '#334155';
+                    ctx.textAlign = cos >= 0 ? 'left' : 'right';
+                    ctx.fillText(label, endX + (cos >= 0 ? 5 : -5), endY);
+                });
+
+                ctx.restore();
+            },
+        };
+    }
+
+    private createPerformancePieCalloutPlugin(): any {
+        return {
+            id: 'performancePieCalloutPlugin',
+            afterDatasetsDraw: (chart: any) => {
+                const chartType = chart?.config?.type;
+                if (chartType !== 'pie' && chartType !== 'doughnut') {
+                    return;
+                }
+
+                const dataset = chart?.data?.datasets?.[0];
+                const labels = chart?.data?.labels || [];
+                const values = dataset?.data || [];
+                const total = values.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+
+                const meta = chart.getDatasetMeta(0);
+                if (!meta?.data?.length) {
+                    return;
+                }
+
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.strokeStyle = '#64748b';
+                ctx.fillStyle = '#334155';
+                ctx.lineWidth = 1.5;
+                ctx.font = '500 11px "Segoe UI", sans-serif';
+                ctx.textBaseline = 'middle';
+
+                meta.data.forEach((arc: any, index: number) => {
+                    const value = Number(values[index] ?? 0);
+                    if (!Number.isFinite(value) || value <= 0) {
+                        return;
+                    }
+
+                    const angle = (arc.startAngle + arc.endAngle) / 2;
+                    const cos = Math.cos(angle);
+                    const sin = Math.sin(angle);
+
+                    const startX = arc.x + cos * (arc.outerRadius * 0.9);
+                    const startY = arc.y + sin * (arc.outerRadius * 0.9);
+                    const bendX = arc.x + cos * (arc.outerRadius + 16);
+                    const bendY = arc.y + sin * (arc.outerRadius + 16);
+                    const endX = bendX + (cos >= 0 ? 30 : -30);
+                    const endY = bendY;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(bendX, bendY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+
+                    const arrowAngle = Math.atan2(arc.y - startY, arc.x - startX);
+                    const arrowSize = 6;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle + Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle + Math.PI / 7) * arrowSize
+                    );
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle - Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle - Math.PI / 7) * arrowSize
+                    );
+                    ctx.closePath();
+                    ctx.fillStyle = '#64748b';
+                    ctx.fill();
+
+                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                    const label = `${labels[index] ?? `Vị trí ${index + 1}`}: ${percentage}%`;
+
+                    ctx.fillStyle = '#334155';
+                    ctx.textAlign = cos >= 0 ? 'left' : 'right';
+                    ctx.fillText(label, endX + (cos >= 0 ? 5 : -5), endY);
+                });
+
+                ctx.restore();
+            },
+        };
+    }
+
+    private getIncomeChartOptions(horizontal: boolean = false): any {
+        const categoryAxis = horizontal ? 'y' : 'x';
+        const valueAxis = horizontal ? 'x' : 'y';
+
+        return {
+            responsive: true,
+            aspectRatio: 1,
+            maintainAspectRatio: false,
+            indexAxis: horizontal ? 'y' : 'x',
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: 'Thu nhập theo tháng',
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: (context: any) => {
+                            const value = this.getTooltipNumericValue(context);
+                            return `${context.dataset.label}: ${value.toLocaleString('vi-VN')} đ`;
+                        },
+                    },
+                },
+            },
+            scales: {
+                [categoryAxis]: {
+                    stacked: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                [valueAxis]: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: { display: true, text: 'Tiền (đ)', font: { size: 12, weight: '600' } },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: {
+                        font: { size: 11 },
+                        callback: (value: any) => this.formatCurrencyAxisValue(Number(value)),
+                    },
+                },
+            },
+        };
+    }
+
+    private getAttendanceChartOptions(horizontal: boolean = false): any {
+        const categoryAxis = horizontal ? 'y' : 'x';
+        const dayAxis = horizontal ? 'x' : 'y';
+        const overtimeAxis = horizontal ? 'xOt' : 'yOt';
+
+        return {
+            responsive: true,
+            aspectRatio: 1,
+            maintainAspectRatio: false,
+            indexAxis: horizontal ? 'y' : 'x',
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: 'Chuyên cần theo tháng',
+                    font: { size: 16, weight: '600' },
+                    padding: { top: 10, bottom: 20 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: (context: any) => {
+                            const value = this.getTooltipNumericValue(context);
+                            const isOvertime = context.dataset?.label === 'Giờ tăng ca';
+                            return `${context.dataset.label}: ${value.toLocaleString('vi-VN')} ${isOvertime ? 'giờ' : 'ngày'}`;
+                        },
+                    },
+                },
+            },
+            scales: {
+                [categoryAxis]: {
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                [dayAxis]: {
+                    beginAtZero: true,
+                    position: horizontal ? 'bottom' : 'left',
+                    title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 } },
+                },
+                [overtimeAxis]: {
+                    beginAtZero: true,
+                    position: horizontal ? 'top' : 'right',
+                    title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
+                    grid: { drawOnChartArea: false },
+                    ticks: { font: { size: 11 } },
+                },
+            },
+        };
+    }
+
+    private getTooltipNumericValue(context: any): number {
+        const parsedValue = context?.parsed?.y ?? context?.parsed?.x;
+        const rawValue = parsedValue ?? context?.raw ?? 0;
+        const numeric = Number(rawValue);
+        return Number.isFinite(numeric) ? numeric : 0;
+    }
+
+    private formatCurrencyAxisValue(value: number): string {
+        if (!Number.isFinite(value)) {
+            return '0';
+        }
+
+        const absValue = Math.abs(value);
+
+        if (absValue >= 1_000_000_000) {
+            return `${(value / 1_000_000_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} tỷ`;
+        }
+
+        if (absValue >= 1_000_000) {
+            return `${(value / 1_000_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} triệu`;
+        }
+
+        if (absValue >= 1_000) {
+            return `${(value / 1_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} nghìn`;
+        }
+
+        return value.toLocaleString('vi-VN');
     }
 
     private getChartOptions(title: string, horizontal: boolean = false, chartType: string = 'bar'): any {
