@@ -1,6 +1,6 @@
 <div class="grid">
     <!-- Báo cáo phân bổ nhân sự -->
-    <div class="chart-col">
+    <div class="chart-col chart-col-hr">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Báo cáo phân bổ nhân sự</h4>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Báo cáo thu nhập theo tháng -->
-    <div class="chart-col">
+    <div class="chart-col chart-col-income">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Báo cáo tổng hợp thu nhập</h4>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Báo cáo hiệu suất -->
-    <div class="chart-col">
+    <div class="chart-col chart-col-performance">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Báo cáo hiệu suất (KPI doanh số theo hoa hồng)</h4>
@@ -63,7 +63,7 @@
     </div>
 
     <!-- Báo cáo chuyên cần -->
-    <div class="chart-col">
+    <div class="chart-col chart-col-attendance">
         <div class="card">
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Báo cáo chuyên cần</h4>
@@ -81,9 +81,22 @@
                         (onChange)="onChartTypeChange('attendance', $event)"></p-dropdown>
                 </div>
             </div>
-            <div class="chart-body" [style.height.px]="attendanceChartContainerHeight">
-                <p-chart *ngIf="attendanceChartData" [type]="attendanceChartType" [data]="attendanceChartData"
-                    [options]="attendanceChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+            <div class="attendance-charts-row">
+                <div class="attendance-chart-panel">
+                    <h5 class="mini-chart-title">Biểu đồ chuyên cần</h5>
+                    <div class="chart-body chart-body-compact" [style.height.px]="attendanceChartContainerHeight">
+                        <p-chart *ngIf="attendanceChartData" [type]="attendanceChartType" [data]="attendanceChartData"
+                            [options]="attendanceChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+                    </div>
+                </div>
+
+                <div class="attendance-chart-panel attendance-ot-wrapper">
+                    <h5 class="mini-chart-title">Biểu đồ số giờ OT</h5>
+                    <div class="chart-body chart-body-compact" [style.height.px]="overtimeChartContainerHeight">
+                        <p-chart *ngIf="overtimeChartData" [type]="overtimeChartType" [data]="overtimeChartData"
+                            [options]="overtimeChartOptions" [style]="{ width: '100%', height: '100%' }"></p-chart>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

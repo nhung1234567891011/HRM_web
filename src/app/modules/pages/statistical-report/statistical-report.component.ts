@@ -79,8 +79,14 @@ export class StatisticalReportComponent implements OnInit {
     attendanceChartType: string = 'bar';
     attendanceChartData: any;
     attendanceChartOptions: any;
-    attendanceChartContainerHeight: number = 360;
+    attendanceChartContainerHeight: number = 380;
     attendanceIsHorizontal: boolean = false;
+
+    // Attendance overtime chart
+    overtimeChartType: string = 'line';
+    overtimeChartData: any;
+    overtimeChartOptions: any;
+    overtimeChartContainerHeight: number = 380;
 
     currentYear: number = new Date().getFullYear();
 
@@ -306,25 +312,32 @@ export class StatisticalReportComponent implements OnInit {
                             borderColor: 'rgba(239, 68, 68, 1)',
                             borderWidth: 0,
                         },
+                    ],
+                };
+
+                this.overtimeChartData = {
+                    labels: labels,
+                    datasets: [
                         {
                             label: 'Giờ tăng ca',
                             data: filled.map((m: any) => m.totalOvertimeHours ?? 0),
                             borderColor: 'rgba(168, 85, 247, 1)',
-                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.16)',
                             borderWidth: 3,
-                            fill: false,
-                            type: 'line',
-                            pointRadius: 5,
+                            fill: true,
+                            pointRadius: 4,
                             pointBackgroundColor: 'rgba(168, 85, 247, 1)',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            ...(this.attendanceIsHorizontal ? { xAxisID: 'xOt' } : { yAxisID: 'yOt' }),
-                            tension: 0.4,
+                            tension: 0.35,
                         },
                     ],
                 };
+
                 this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
+                this.overtimeChartOptions = this.getOvertimeChartOptions();
                 this.updateChartContainerHeight('attendance');
+                this.updateChartContainerHeight('overtime');
             }
         });
     }
@@ -363,38 +376,20 @@ export class StatisticalReportComponent implements OnInit {
             case 'attendance':
                 this.attendanceIsHorizontal = isHorizontal;
                 this.attendanceChartType = actualType;
-                this.syncAttendanceOvertimeAxis();
                 this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
                 this.updateChartContainerHeight('attendance');
                 break;
         }
     }
 
-    private syncAttendanceOvertimeAxis(): void {
-        if (!this.attendanceChartData?.datasets) {
+    private updateChartContainerHeight(report: 'income' | 'attendance' | 'overtime'): void {
+        if (report === 'overtime') {
+            const labelCount = this.overtimeChartData?.labels?.length ?? 0;
+            const dynamicHeight = this.calculateChartContainerHeight(labelCount, false);
+            this.overtimeChartContainerHeight = Math.max(dynamicHeight, 380);
             return;
         }
 
-        const axisKey = this.attendanceIsHorizontal ? 'xAxisID' : 'yAxisID';
-        const axisId = this.attendanceIsHorizontal ? 'xOt' : 'yOt';
-
-        this.attendanceChartData = {
-            ...this.attendanceChartData,
-            datasets: this.attendanceChartData.datasets.map((dataset: any) => {
-                if (dataset.label !== 'Giờ tăng ca') {
-                    return dataset;
-                }
-
-                const { xAxisID, yAxisID, ...rest } = dataset;
-                return {
-                    ...rest,
-                    [axisKey]: axisId,
-                };
-            }),
-        };
-    }
-
-    private updateChartContainerHeight(report: 'income' | 'attendance'): void {
         const chartData = report === 'income' ? this.incomeChartData : this.attendanceChartData;
         const chartOptions = report === 'income' ? this.incomeChartOptions : this.attendanceChartOptions;
         const labelCount = chartData?.labels?.length ?? 0;
@@ -406,19 +401,19 @@ export class StatisticalReportComponent implements OnInit {
             return;
         }
 
-        this.attendanceChartContainerHeight = containerHeight;
+        this.attendanceChartContainerHeight = Math.max(containerHeight, 380);
     }
 
-    private calculateChartContainerHeight(labelCount: number, isHorizontal: boolean): number {
+    private calculateChartContainerHeight(labelCount: number, isHorizontal: boolean, compact: boolean = false): number {
         const safeLabelCount = Math.max(labelCount, 1);
 
         if (isHorizontal) {
-            const dynamicHeight = 180 + safeLabelCount * 42;
-            return Math.min(Math.max(dynamicHeight, 320), 680);
+            const dynamicHeight = (compact ? 140 : 180) + safeLabelCount * (compact ? 28 : 42);
+            return Math.min(Math.max(dynamicHeight, compact ? 220 : 320), compact ? 420 : 680);
         }
 
-        const dynamicHeight = 300 + Math.ceil(safeLabelCount / 6) * 20;
-        return Math.min(Math.max(dynamicHeight, 300), 440);
+        const dynamicHeight = (compact ? 190 : 300) + Math.ceil(safeLabelCount / 6) * (compact ? 14 : 20);
+        return Math.min(Math.max(dynamicHeight, compact ? 200 : 300), compact ? 300 : 440);
     }
 
     private getHrChartOptions(horizontal: boolean = false, chartType: string = 'bar'): any {
@@ -757,7 +752,6 @@ export class StatisticalReportComponent implements OnInit {
     private getAttendanceChartOptions(horizontal: boolean = false): any {
         const categoryAxis = horizontal ? 'y' : 'x';
         const dayAxis = horizontal ? 'x' : 'y';
-        const overtimeAxis = horizontal ? 'xOt' : 'yOt';
 
         return {
             responsive: true,
@@ -769,8 +763,8 @@ export class StatisticalReportComponent implements OnInit {
                     display: true,
                     position: 'bottom',
                     labels: {
-                        padding: 15,
-                        font: { size: 12, weight: '500' },
+                        padding: 10,
+                        font: { size: 11, weight: '500' },
                         usePointStyle: true,
                         pointStyle: 'circle',
                     },
@@ -778,8 +772,8 @@ export class StatisticalReportComponent implements OnInit {
                 title: {
                     display: true,
                     text: 'Chuyên cần theo tháng',
-                    font: { size: 16, weight: '600' },
-                    padding: { top: 10, bottom: 20 },
+                    font: { size: 14, weight: '600' },
+                    padding: { top: 8, bottom: 12 },
                     color: '#1e293b',
                 },
                 tooltip: {
@@ -791,8 +785,7 @@ export class StatisticalReportComponent implements OnInit {
                     callbacks: {
                         label: (context: any) => {
                             const value = this.getTooltipNumericValue(context);
-                            const isOvertime = context.dataset?.label === 'Giờ tăng ca';
-                            return `${context.dataset.label}: ${value.toLocaleString('vi-VN')} ${isOvertime ? 'giờ' : 'ngày'}`;
+                            return `${context.dataset.label}: ${value.toLocaleString('vi-VN')} ngày`;
                         },
                     },
                 },
@@ -800,21 +793,84 @@ export class StatisticalReportComponent implements OnInit {
             scales: {
                 [categoryAxis]: {
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                    ticks: { font: { size: 11 } },
+                    ticks: {
+                        font: { size: 10 },
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        maxRotation: 0,
+                        minRotation: 0,
+                    },
                 },
                 [dayAxis]: {
                     beginAtZero: true,
                     position: horizontal ? 'bottom' : 'left',
-                    title: { display: true, text: 'Ngày', font: { size: 12, weight: '600' } },
+                    title: { display: true, text: 'Ngày', font: { size: 11, weight: '600' } },
                     grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
-                    ticks: { font: { size: 11 } },
+                    ticks: {
+                        font: { size: 10 },
+                        maxTicksLimit: 5,
+                    },
                 },
-                [overtimeAxis]: {
+            },
+        };
+    }
+
+    private getOvertimeChartOptions(): any {
+        return {
+            responsive: true,
+            aspectRatio: 1,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 10,
+                        font: { size: 11, weight: '500' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                    },
+                },
+                title: {
+                    display: true,
+                    text: 'Thời gian OT theo tháng',
+                    font: { size: 14, weight: '600' },
+                    padding: { top: 8, bottom: 16 },
+                    color: '#1e293b',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: (context: any) => {
+                            const value = this.getTooltipNumericValue(context);
+                            return `${context.dataset.label}: ${value.toLocaleString('vi-VN')} giờ`;
+                        },
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: {
+                        font: { size: 10 },
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        maxRotation: 0,
+                        minRotation: 0,
+                    },
+                },
+                y: {
                     beginAtZero: true,
-                    position: horizontal ? 'top' : 'right',
-                    title: { display: true, text: 'Giờ tăng ca', font: { size: 12, weight: '600' } },
-                    grid: { drawOnChartArea: false },
-                    ticks: { font: { size: 11 } },
+                    title: { display: true, text: 'Giờ OT', font: { size: 11, weight: '600' } },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                    ticks: {
+                        font: { size: 10 },
+                        maxTicksLimit: 5,
+                    },
                 },
             },
         };
