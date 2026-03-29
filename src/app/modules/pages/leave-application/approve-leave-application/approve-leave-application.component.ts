@@ -453,7 +453,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 								createdAt: formattedCreatedAt,
 							};
 						}
-					).filter((item: any) => this.canViewLeaveApplication(item));
+					);
 					if (this.leaveApplications.length === 0) {
 						this.paging.pageIndex = 1;
 					}
@@ -822,7 +822,7 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 	}
 	//function compare
 	canViewLeaveApplication(leaveApp: any): boolean {
-		const currentEmployeeId = this.user?.employee?.id;
+		const currentEmployeeId = Number(this.user?.employee?.id);
 
 		if (!currentEmployeeId) {
 			return false;
@@ -830,10 +830,10 @@ export class ApproveLeaveApplicationComponent implements OnInit {
 
 		const isAdmin = this.user?.roleNames?.includes('Admin');
 		const isApprover = (leaveApp?.leaveApplicationApprovers || []).some(
-			(item: any) => item?.approverId === currentEmployeeId
+			(item: any) => Number(item?.approverId) === currentEmployeeId
 		);
 		const isReplacement = (leaveApp?.leaveApplicationReplacements || []).some(
-			(item: any) => item?.replacementId === currentEmployeeId
+			(item: any) => Number(item?.replacementId) === currentEmployeeId
 		);
 
 		return !!(isAdmin || isApprover || isReplacement);
