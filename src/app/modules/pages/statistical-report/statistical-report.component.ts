@@ -57,7 +57,7 @@ export class StatisticalReportComponent implements OnInit {
     ];
 
     // HR Distribution
-    hrChartType: string = 'bar';
+    hrChartType: string = 'pie';
     hrChartData: any;
     hrChartOptions: any;
     hrChartPlugins: any[] = [];
@@ -70,7 +70,7 @@ export class StatisticalReportComponent implements OnInit {
     incomeIsHorizontal: boolean = false;
 
     // Performance
-    perfChartType: string = 'bar';
+    perfChartType: string = 'pie';
     perfChartData: any;
     perfChartOptions: any;
     perfChartPlugins: any[] = [];
