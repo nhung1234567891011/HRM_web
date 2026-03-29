@@ -60,6 +60,7 @@ export class StatisticalReportComponent implements OnInit {
     hrChartType: string = 'bar';
     hrChartData: any;
     hrChartOptions: any;
+    hrChartPlugins: any[] = [];
 
     // Monthly Income
     incomeChartType: string = 'bar';
@@ -85,6 +86,7 @@ export class StatisticalReportComponent implements OnInit {
     constructor(private reportService: ReportService) { }
 
     ngOnInit(): void {
+        this.hrChartPlugins = [this.createHrPieCalloutPlugin()];
         for (let y = this.selectedYear - 5; y <= this.selectedYear; y++) {
             this.yearOptions.push({ label: `Năm ${y}`, value: y });
         }
@@ -129,7 +131,7 @@ export class StatisticalReportComponent implements OnInit {
                         },
                     ],
                 };
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo vị trí', false, this.hrChartType);
+                this.hrChartOptions = this.getHrChartOptions(false, this.hrChartType);
             }
         });
     }
@@ -333,7 +335,7 @@ export class StatisticalReportComponent implements OnInit {
         switch (report) {
             case 'hr':
                 this.hrChartType = actualType;
-                this.hrChartOptions = this.getChartOptions('Phân bổ nhân sự theo vị trí', isHorizontal, actualType);
+                this.hrChartOptions = this.getHrChartOptions(isHorizontal, actualType);
                 break;
             case 'income':
                 this.incomeIsHorizontal = isHorizontal;
@@ -404,6 +406,126 @@ export class StatisticalReportComponent implements OnInit {
 
         const dynamicHeight = 300 + Math.ceil(safeLabelCount / 6) * 20;
         return Math.min(Math.max(dynamicHeight, 300), 440);
+    }
+
+    private getHrChartOptions(horizontal: boolean = false, chartType: string = 'bar'): any {
+        const options = this.getChartOptions('Phân bổ nhân sự theo vị trí', horizontal, chartType);
+        const isCircular = chartType === 'pie' || chartType === 'doughnut';
+
+        if (!isCircular) {
+            return options;
+        }
+
+        options.layout = {
+            padding: {
+                top: 20,
+                right: 90,
+                bottom: 20,
+                left: 90,
+            },
+        };
+
+        options.plugins = {
+            ...options.plugins,
+            legend: {
+                ...options.plugins.legend,
+                display: false,
+            },
+            tooltip: {
+                ...options.plugins.tooltip,
+                callbacks: {
+                    label: (context: any) => {
+                        const value = this.getTooltipNumericValue(context);
+                        const data = context.dataset?.data || [];
+                        const total = data.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                        return `${context.label}: ${value.toLocaleString('vi-VN')} (${percentage}%)`;
+                    },
+                },
+            },
+        };
+
+        return options;
+    }
+
+    private createHrPieCalloutPlugin(): any {
+        return {
+            id: 'hrPieCalloutPlugin',
+            afterDatasetsDraw: (chart: any) => {
+                const chartType = chart?.config?.type;
+                if (chartType !== 'pie' && chartType !== 'doughnut') {
+                    return;
+                }
+
+                const dataset = chart?.data?.datasets?.[0];
+                const labels = chart?.data?.labels || [];
+                const values = dataset?.data || [];
+                const total = values.reduce((sum: number, item: any) => sum + (Number(item) || 0), 0);
+
+                const meta = chart.getDatasetMeta(0);
+                if (!meta?.data?.length) {
+                    return;
+                }
+
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.strokeStyle = '#64748b';
+                ctx.fillStyle = '#334155';
+                ctx.lineWidth = 1.5;
+                ctx.font = '500 11px "Segoe UI", sans-serif';
+                ctx.textBaseline = 'middle';
+
+                meta.data.forEach((arc: any, index: number) => {
+                    const value = Number(values[index] ?? 0);
+                    if (!Number.isFinite(value) || value <= 0) {
+                        return;
+                    }
+
+                    const angle = (arc.startAngle + arc.endAngle) / 2;
+                    const cos = Math.cos(angle);
+                    const sin = Math.sin(angle);
+
+                    const startX = arc.x + cos * (arc.outerRadius * 0.9);
+                    const startY = arc.y + sin * (arc.outerRadius * 0.9);
+                    const bendX = arc.x + cos * (arc.outerRadius + 16);
+                    const bendY = arc.y + sin * (arc.outerRadius + 16);
+                    const endX = bendX + (cos >= 0 ? 30 : -30);
+                    const endY = bendY;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(bendX, bendY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+
+                    const arrowAngle = Math.atan2(arc.y - startY, arc.x - startX);
+                    const arrowSize = 6;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle + Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle + Math.PI / 7) * arrowSize
+                    );
+                    ctx.lineTo(
+                        startX + Math.cos(arrowAngle - Math.PI / 7) * arrowSize,
+                        startY + Math.sin(arrowAngle - Math.PI / 7) * arrowSize
+                    );
+                    ctx.closePath();
+                    ctx.fillStyle = '#64748b';
+                    ctx.fill();
+
+                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                    const label = `${labels[index] ?? `Nhóm ${index + 1}`}: ${percentage}%`;
+
+                    ctx.fillStyle = '#334155';
+                    ctx.textAlign = cos >= 0 ? 'left' : 'right';
+                    ctx.fillText(label, endX + (cos >= 0 ? 5 : -5), endY);
+                });
+
+                ctx.restore();
+            },
+        };
     }
 
     private getIncomeChartOptions(horizontal: boolean = false): any {
