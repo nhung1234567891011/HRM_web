@@ -503,11 +503,15 @@ export class TimesheetComponent implements OnInit {
                                 );
 
                                 const singleShift = timesheet?.shifts.find(
-                                    (shift: any) =>
-                                        !shift.shiftTableName.includes(
-                                            'sáng'
-                                        ) &&
-                                        !shift.shiftTableName.includes('chiều')
+                                    (shift: any) => {
+                                        const shiftTableName = String(
+                                            shift?.shiftTableName ?? ''
+                                        ).toLowerCase();
+                                        return (
+                                            !shiftTableName.includes('sáng') &&
+                                            !shiftTableName.includes('chiều')
+                                        );
+                                    }
                                 );
 
                                 // Tổng giờ làm trong ngày (tất cả ca): > 8h → tăng ca

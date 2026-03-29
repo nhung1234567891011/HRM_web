@@ -130,7 +130,10 @@
 >
     <div class="p-fluid">
         <div class="field">
-            <label>Mã quyền hạn</label>
+            <label>
+                Mã quyền hạn
+                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+            </label>
             <input
                 pInputText
                 [(ngModel)]="permissionForm.name"
@@ -139,7 +142,10 @@
             />
         </div>
         <div class="field">
-            <label>Tên hiển thị</label>
+            <label>
+                Tên hiển thị
+                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+            </label>
             <input
                 pInputText
                 [(ngModel)]="permissionForm.displayName"
