@@ -31,6 +31,10 @@
             <button pButton pRipple icon="pi pi-sync" class="buttonfilter button-outline" (click)="onRefreshSearch()"></button>
         </div>
 
+        <div class="filter-action-col">
+            <button pButton pRipple icon="pi pi-plus" label="Thêm quyền cha" class="buttonfilter" (click)="openCreateParentDialog()"></button>
+        </div>
+
     </div>
 </div>
 
@@ -112,7 +116,9 @@
 <p-dialog
     [header]="
         permissionDialogMode === 'create'
-            ? 'Thêm quyền con'
+            ? createParentPermission
+                ? 'Thêm quyền con'
+                : 'Thêm quyền cha'
             : permissionDialogMode === 'edit'
             ? 'Cập nhật quyền hạn'
             : 'Chi tiết quyền hạn'
@@ -152,7 +158,7 @@
                 placeholder="Chọn phân hệ"
             ></p-dropdown>
         </div>
-        <div *ngIf="permissionDialogMode === 'create'" class="field">
+        <div *ngIf="permissionDialogMode === 'create' && createParentPermission" class="field">
             <label>Quyền cha</label>
             <input
                 pInputText

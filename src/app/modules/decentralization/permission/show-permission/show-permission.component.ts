@@ -271,6 +271,10 @@ export class ShowPermissionComponent implements OnInit {
 		});
 	}
 
+	openCreateParentDialog() {
+		this.openCreateDialog(null);
+	}
+
 	openCreateDialog(parentPermission: any) {
 		this.permissionDialogMode = 'create';
 		this.createParentPermission = parentPermission ?? null;
@@ -317,14 +321,6 @@ export class ShowPermissionComponent implements OnInit {
 
 		if (this.permissionDialogMode === 'create') {
 			const parentPermissionId = this.createParentPermission?.id ?? null;
-			if (!parentPermissionId) {
-				this.messageService.add({
-					severity: 'warn',
-					summary: 'Thiếu thông tin',
-					detail: 'Vui lòng chọn quyền cha bằng nút thêm trên từng dòng.',
-				});
-				return;
-			}
 
 			this.permissionService.create({
 				...payload,
