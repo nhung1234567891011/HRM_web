@@ -32,6 +32,7 @@ export class DetailLeaveApplicationComponent implements OnInit {
     };
     user: any;
     typeOfLeaveEmployee: any = {};
+    daysRemaining: any = { daysRemaining: 0 };
     breadcrumbs: any[];
     approverNote: any = '';
     dialogMessage: any = '';
@@ -90,14 +91,17 @@ export class DetailLeaveApplicationComponent implements OnInit {
                 this.leaveApplication.endDate = formattedEndDate;
                 this.leaveApplication.employeeName = employeeName;
                 this.leaveApplication.createdAt = formattedCreatedAt;
+                this.daysRemaining = { daysRemaining: 0 };
+                this.typeOfLeaveEmployee.daysRemaining = 0;
 
                 const requestT = {
                     employeeId: result.data.employeeId,
                     typeOfLeaveId: result.data.typeOfLeaveId,
-                    year: this.extractYear(formattedStartDate)
+                    year: this.extractYear(result.data.startDate)
                 }
                 this.leaveApplicationService.getTypeOfLeaveEmployee(requestT).subscribe(res => {
                     this.typeOfLeaveEmployee = res.data;
+                    this.daysRemaining = res.data;
                 })
                 this.getLeavePermissionByEmployee();
 
@@ -175,21 +179,30 @@ export class DetailLeaveApplicationComponent implements OnInit {
 
     //function extract
     extractYear(dateString) {
-        const regex = /\d{2}-(\d{2})-(\d{4})/;
-        const match = dateString.match(regex);
-        if (match) {
-            return match[2];
+        const dateRaw = (dateString || '').toString().trim();
+        const yyyyMatch = dateRaw.match(/^(\d{4})/);
+        if (yyyyMatch) {
+            return Number(yyyyMatch[1]);
         }
-        return null;
+        const parsedDate = new Date(dateString);
+        if (!isNaN(parsedDate.getTime())) {
+            return parsedDate.getFullYear();
+        }
+        const regex = /\d{2}-(\d{2})-(\d{4})/;
+        const match = dateRaw.match(regex);
+        if (match) {
+            return Number(match[2]);
+        }
+        return new Date().getFullYear();
     }
 
     //data front end
 
     getOnPaidLeaveStatusLabel(status:OnPaidLeaveStatus){
-        if(status=OnPaidLeaveStatus.Yes){
+        if(status === OnPaidLeaveStatus.Yes){
             return "Nghỉ trừ ngày phép hưởng lương"
         }
-        if(status=OnPaidLeaveStatus.No){
+        if(status === OnPaidLeaveStatus.No){
             return "Nghỉ không trừ ngày phép hưởng lương"
         }
         return "Không xác định"

@@ -204,7 +204,12 @@
                     style="justify-content: space-between; gap: 7px"
                 >
                     <span class="data-display text-center css-span">
-                        {{ typeOfLeaveEmployee.daysRemaining }}
+                        {{
+                            (daysRemaining?.daysRemaining || 0) +
+                                '/' +
+                                (leaveApplication?.typeOfLeave
+                                    ?.maximumNumberOfDayOff || 0)
+                        }}
                     </span>
                 </div>
             </div>

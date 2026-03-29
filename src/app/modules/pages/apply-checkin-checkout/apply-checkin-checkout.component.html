@@ -260,7 +260,19 @@
         >
             <form [formGroup]="checkInForm">
                 <div class="form-container">
-                    <div class="checkbox-group">
+                    <label
+                        >Loại chấm công
+                        <span class="red-asterisk">*</span></label
+                    >
+                    <div
+                        class="checkbox-group"
+                        [ngClass]="{
+                            'invalid-field-group': isFieldInvalid(
+                                checkInForm,
+                                'checkType'
+                            )
+                        }"
+                    >
                         <p-checkbox
                             name="checkInOut"
                             value="checkIn"
@@ -297,6 +309,12 @@
                                 >Ngày <span class="red-asterisk">*</span></label
                             >
                             <p-calendar
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInForm,
+                                        'date'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -315,6 +333,12 @@
                             >
                             <p-calendar
                                 formControlName="timeCheckIn"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInForm,
+                                        'timeCheckIn'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -336,9 +360,18 @@
                             </p-calendar>
                         </div>
                         <div class="field" *ngIf="showCheckOut">
-                            <label>Giờ chấm ra</label>
+                            <label
+                                >Giờ chấm ra
+                                <span class="red-asterisk">*</span></label
+                            >
                             <p-calendar
                                 formControlName="timeCheckOut"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInForm,
+                                        'timeCheckOut'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -364,9 +397,15 @@
                     <!-- Ca - Lý do -->
                     <div class="field-group">
                         <div class="field">
-                            <label>Ca</label>
+                            <label>Ca <span class="red-asterisk">*</span></label>
                             <p-dropdown
                                 [options]="shiftWorks"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInForm,
+                                        'shiftCatalogId'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -380,10 +419,19 @@
                             </p-dropdown>
                         </div>
                         <div class="field">
-                            <label>Người duyệt</label>
+                            <label
+                                >Người duyệt
+                                <span class="red-asterisk">*</span></label
+                            >
                             <p-dropdown
                                 formControlName="approverId"
                                 [options]="employeess"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInForm,
+                                        'approverId'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -401,10 +449,19 @@
                     <div class="field-group">
                         <!-- Người duyệt -->
                         <div class="field">
-                            <label>Lý do</label>
+                            <label
+                                >Lý do
+                                <span class="red-asterisk">*</span></label
+                            >
                             <textarea
                                 pInputTextarea
                                 formControlName="reason"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInForm,
+                                        'reason'
+                                    )
+                                }"
                             ></textarea>
                         </div>
 
@@ -482,7 +539,19 @@
         >
             <form [formGroup]="checkInUpdateForm">
                 <div class="form-container">
-                    <div class="checkbox-group">
+                    <label
+                        >Loại chấm công
+                        <span class="red-asterisk">*</span></label
+                    >
+                    <div
+                        class="checkbox-group"
+                        [ngClass]="{
+                            'invalid-field-group': isFieldInvalid(
+                                checkInUpdateForm,
+                                'checkType'
+                            )
+                        }"
+                    >
                         <p-checkbox
                             name="checkInOut"
                             value="checkIn"
@@ -525,6 +594,12 @@
                                 >Ngày <span class="red-asterisk">*</span></label
                             >
                             <p-calendar
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInUpdateForm,
+                                        'date'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -543,6 +618,12 @@
                             >
                             <p-calendar
                                 formControlName="timeCheckIn"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInUpdateForm,
+                                        'timeCheckIn'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -564,9 +645,18 @@
                             </p-calendar>
                         </div>
                         <div class="field" *ngIf="showCheckOut">
-                            <label>Giờ chấm ra</label>
+                            <label
+                                >Giờ chấm ra
+                                <span class="red-asterisk">*</span></label
+                            >
                             <p-calendar
                                 formControlName="timeCheckOut"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInUpdateForm,
+                                        'timeCheckOut'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -592,9 +682,15 @@
                     <!-- Ca - Lý do -->
                     <div class="field-group">
                         <div class="field">
-                            <label>Ca</label>
+                            <label>Ca <span class="red-asterisk">*</span></label>
                             <p-dropdown
                                 [options]="shiftWorks"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInUpdateForm,
+                                        'shiftCatalogId'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -608,10 +704,19 @@
                             </p-dropdown>
                         </div>
                         <div class="field">
-                            <label>Người duyệt</label>
+                            <label
+                                >Người duyệt
+                                <span class="red-asterisk">*</span></label
+                            >
                             <p-dropdown
                                 formControlName="approverId"
                                 [options]="employeess"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInUpdateForm,
+                                        'approverId'
+                                    )
+                                }"
                                 [style]="{
                                     height: '50px',
                                     width: '100%',
@@ -629,10 +734,19 @@
                     <div class="field-group">
                         <!-- Người duyệt -->
                         <div class="field">
-                            <label>Lý do</label>
+                            <label
+                                >Lý do
+                                <span class="red-asterisk">*</span></label
+                            >
                             <textarea
                                 pInputTextarea
                                 formControlName="reason"
+                                [ngClass]="{
+                                    'invalid-field': isFieldInvalid(
+                                        checkInUpdateForm,
+                                        'reason'
+                                    )
+                                }"
                             ></textarea>
                         </div>
 
@@ -684,13 +798,13 @@
                     <!-- Button -->
                     <div
                         class="button-container"
-                        *ngIf="user.id === selected?.employeeId"
+                        *ngIf="canEditSelected()"
                     >
                         <button
                             pButton
                             label="Hủy"
                             class="cancel-button"
-                            (click)="displayDialog = false"
+                            (click)="displayDialogEdit = false"
                         ></button>
                         <button
                             type="submit"

@@ -169,16 +169,19 @@ export class EditLeaveApplicationComponent implements OnInit {
                 this.leaveApplication.endDate = new Date(result.data.endDate);
                 this.leaveApplication.employeeName = employeeName;
                 this.leaveApplication.createdAt = formattedCreatedAt;
+                this.daysRemaining = { daysRemaining: 0 };
+                this.typeOfLeaveSelected = result.data.typeOfLeave || {};
                 const startDate = result.data.startDate ? new Date(result.data.startDate) : null;
                 const endDate = result.data.endDate ? new Date(result.data.endDate) : null;
 
                 const requestT = {
                     employeeId: result.data.employeeId,
                     typeOfLeaveId: result.data.typeOfLeaveId,
-                    year: this.extractYear(formattedStartDate)
+                    year: new Date(result.data.startDate).getFullYear()
                 }
                 this.leaveApplicationService.getTypeOfLeaveEmployee(requestT).subscribe(res => {
                     this.typeOfLeaveEmployee = res.data;
+                    this.daysRemaining = res.data;
                 })
                 this.getLeavePermissionByEmployee();
 
@@ -320,6 +323,7 @@ export class EditLeaveApplicationComponent implements OnInit {
         request.employeeId = this.user.employee.id;
         this.typeOfLeaveService.getDaysRemaining(request).subscribe((res) => {
             this.daysRemaining = res.data;
+            this.typeOfLeaveEmployee = res.data;
         });
     }
     //input change
@@ -551,21 +555,25 @@ export class EditLeaveApplicationComponent implements OnInit {
 
     //function extract
     extractYear(dateString) {
-        const regex = /\d{2}-(\d{2})-(\d{4})/;
-        const match = dateString.match(regex);
-        if (match) {
-            return match[2];
+        const parsedDate = new Date(dateString);
+        if (!isNaN(parsedDate.getTime())) {
+            return parsedDate.getFullYear();
         }
-        return null;
+        const regex = /\d{2}-(\d{2})-(\d{4})/;
+        const match = (dateString || '').match(regex);
+        if (match) {
+            return Number(match[2]);
+        }
+        return new Date().getFullYear();
     }
 
     //data front end
 
     getOnPaidLeaveStatusLabel(status:OnPaidLeaveStatus){
-        if(status=OnPaidLeaveStatus.Yes){
+        if(status === OnPaidLeaveStatus.Yes){
             return "Nghỉ trừ ngày phép hưởng lương"
         }
-        if(status=OnPaidLeaveStatus.No){
+        if(status === OnPaidLeaveStatus.No){
             return "Nghỉ không trừ ngày phép hưởng lương"
         }
         return "Không xác định"

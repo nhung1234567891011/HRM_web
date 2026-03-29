@@ -94,7 +94,7 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
       time: [null],
       timeCheckIn: [null],
       timeCheckOut: [null],
-      checkType: [[]],
+      checkType: [[], Validators.required],
       shiftCatalogId: [null, Validators.required],
       reason: [null, Validators.required],
       description: [null],
@@ -106,7 +106,7 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
       time: [null],
       timeCheckIn: [null],
       timeCheckOut: [null],
-      checkType: [[]],
+      checkType: [[], Validators.required],
       shiftCatalogId: [null, Validators.required],
       reason: [null, Validators.required],
       description: [null],
@@ -179,6 +179,9 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
 
   showDialog() {
     this.displayDialog = true;
+    this.showCheckIn = false;
+    this.showCheckOut = false;
+    this.applyTimeValidators(this.checkInForm, []);
   }
 
   setViewMode(forApproval: boolean): void {
@@ -189,9 +192,15 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
 
   resetForm() {
     this.checkInForm.reset();
+    this.showCheckIn = false;
+    this.showCheckOut = false;
+    this.applyTimeValidators(this.checkInForm, []);
   }
   resetFormEdit() {
     this.checkInUpdateForm.reset();
+    this.showCheckIn = false;
+    this.showCheckOut = false;
+    this.applyTimeValidators(this.checkInUpdateForm, []);
   }
   showDialogEdit(checkInOutId: number) {
     this.checkinCheckoutService.getById(checkInOutId)
@@ -214,6 +223,7 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
 
         this.showCheckIn = checkTypeArray.includes('checkIn');
         this.showCheckOut = checkTypeArray.includes('checkOut');
+        this.applyTimeValidators(this.checkInUpdateForm, checkTypeArray);
 
         this.checkInUpdateForm.patchValue({
           id: this.selected.id,
@@ -327,6 +337,8 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     // Cập nhật hiển thị của p-calendar
     this.showCheckIn = selectedTypes.includes('checkIn');
     this.showCheckOut = selectedTypes.includes('checkOut');
+
+    this.applyTimeValidators(this.checkInForm, selectedTypes);
   }
 
   onCheckTypeChangeUpdate(event: any, type: string) {
@@ -356,10 +368,75 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     // Cập nhật trạng thái hiển thị p-calendar
     this.showCheckIn = checkTypeArray.includes('checkIn');
     this.showCheckOut = checkTypeArray.includes('checkOut');
+
+    this.applyTimeValidators(this.checkInUpdateForm, checkTypeArray);
+  }
+
+  private applyTimeValidators(form: FormGroup, selectedTypes: string[] = []): void {
+    const timeCheckInControl = form.get('timeCheckIn');
+    const timeCheckOutControl = form.get('timeCheckOut');
+
+    if (!timeCheckInControl || !timeCheckOutControl) {
+      return;
+    }
+
+    if (selectedTypes.includes('checkIn')) {
+      timeCheckInControl.setValidators([Validators.required]);
+    } else {
+      timeCheckInControl.clearValidators();
+      timeCheckInControl.setValue(null);
+    }
+
+    if (selectedTypes.includes('checkOut')) {
+      timeCheckOutControl.setValidators([Validators.required]);
+    } else {
+      timeCheckOutControl.clearValidators();
+      timeCheckOutControl.setValue(null);
+    }
+
+    timeCheckInControl.updateValueAndValidity();
+    timeCheckOutControl.updateValueAndValidity();
+  }
+
+  isFieldInvalid(form: FormGroup, fieldName: string): boolean {
+    const control = form.get(fieldName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  private markFormGroupTouched(form: FormGroup): void {
+    Object.keys(form.controls).forEach((field) => {
+      const control = form.get(field);
+      control?.markAsTouched();
+      control?.markAsDirty();
+      control?.updateValueAndValidity();
+    });
+  }
+
+  canEditSelected(): boolean {
+    if (!this.selected) {
+      return false;
+    }
+
+    const ownerId = this.selected?.employee?.id ?? this.selected?.employeeId;
+    return this.user?.employee?.id === ownerId && this.selected?.checkInCheckOutStatus === 0;
   }
 
 
   submitForm() {
+    this.applyTimeValidators(this.checkInForm, this.checkInForm.value.checkType || []);
+
+    if (this.checkInForm.invalid) {
+      this.markFormGroupTouched(this.checkInForm);
+      this.messages = [
+        {
+          severity: 'warn',
+          summary: 'Thiếu thông tin',
+          detail: 'Vui lòng nhập đầy đủ các trường bắt buộc.',
+          life: 3000,
+        },
+      ];
+      return;
+    }
 
     // Xác định giá trị checkType
     let selectedTypes = this.checkInForm.value.checkType;
@@ -424,6 +501,21 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     );
   }
   submitUpdateForm() {
+    this.applyTimeValidators(this.checkInUpdateForm, this.checkInUpdateForm.value.checkType || []);
+
+    if (this.checkInUpdateForm.invalid) {
+      this.markFormGroupTouched(this.checkInUpdateForm);
+      this.messages = [
+        {
+          severity: 'warn',
+          summary: 'Thiếu thông tin',
+          detail: 'Vui lòng nhập đầy đủ các trường bắt buộc.',
+          life: 3000,
+        },
+      ];
+      return;
+    }
+
     // Chuyển đổi thời gian từ Date sang string HH:mm
     const formatTime = (date: Date | null) => {
       return date ? date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '';
