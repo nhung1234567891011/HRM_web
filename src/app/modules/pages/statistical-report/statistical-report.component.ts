@@ -75,6 +75,8 @@ export class StatisticalReportComponent implements OnInit {
     perfChartData: any;
     perfChartOptions: any;
     perfChartPlugins: any[] = [];
+    performanceMonth: number | null = null;
+    performanceHasData: boolean = true;
 
     // Attendance
     attendanceChartType: string = 'bar';
@@ -116,6 +118,10 @@ export class StatisticalReportComponent implements OnInit {
             this.toMonth = tmp;
         }
         this.loadAllReports();
+    }
+
+    onPerformanceMonthChange(): void {
+        this.loadPerformance();
     }
 
     private getMonthRange(): { start: number; end: number } {
@@ -234,37 +240,55 @@ export class StatisticalReportComponent implements OnInit {
 
     loadPerformance(): void {
         const request: any = { year: this.selectedYear };
-        if (this.fromMonth) request.fromMonth = this.fromMonth;
-        if (this.toMonth) request.toMonth = this.toMonth;
-        this.reportService.getPerformance(request).subscribe((res: any) => {
-            if (res.status && res.data) {
-                const data = res.data;
-                const topEmployees = (data.employeePerformances || [])
-                    .map((d: any) => {
-                        const commissionRevenue = Number(d.kpiScore ?? 0);
-                        return {
-                            fullName: d.fullName || 'Chưa có tên',
-                            commissionRevenue: Number.isFinite(commissionRevenue) ? commissionRevenue : 0,
-                        };
-                    })
-                    .sort((a: any, b: any) => b.commissionRevenue - a.commissionRevenue)
-                    .slice(0, 10);
+        if (this.performanceMonth !== null) request.month = this.performanceMonth;
+        this.reportService.getPerformance(request).subscribe({
+            next: (res: any) => {
+                if (res.status && res.data) {
+                    const data = res.data;
+                    const topEmployees = (data.employeePerformances || [])
+                        .map((d: any) => {
+                            const commissionRevenue = Number(d.kpiScore ?? 0);
+                            return {
+                                fullName: d.fullName || 'Chưa có tên',
+                                commissionRevenue: Number.isFinite(commissionRevenue) ? commissionRevenue : 0,
+                            };
+                        })
+                        .sort((a: any, b: any) => b.commissionRevenue - a.commissionRevenue)
+                        .slice(0, 10);
 
-                const labels = topEmployees.map((d: any) => d.fullName);
-                this.perfChartData = {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Doanh thu hoa hồng',
-                            data: topEmployees.map((d: any) => d.commissionRevenue),
-                            backgroundColor: this.generateColors(labels.length),
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 2,
-                        },
-                    ],
-                };
-                this.perfChartOptions = this.getPerformanceChartOptions(false, this.perfChartType);
-            }
+                    const labels = topEmployees.map((d: any) => d.fullName);
+                    const values = topEmployees.map((d: any) => d.commissionRevenue);
+                    const hasData = values.length > 0 && values.some((value: number) => value > 0);
+
+                    this.performanceHasData = hasData;
+                    if (!hasData) {
+                        this.perfChartData = null;
+                        return;
+                    }
+
+                    this.perfChartData = {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Doanh thu hoa hồng',
+                                data: values,
+                                backgroundColor: this.generateColors(labels.length),
+                                borderColor: 'rgba(153, 102, 255, 1)',
+                                borderWidth: 2,
+                            },
+                        ],
+                    };
+                    this.perfChartOptions = this.getPerformanceChartOptions(false, this.perfChartType);
+                    return;
+                }
+
+                this.performanceHasData = false;
+                this.perfChartData = null;
+            },
+            error: () => {
+                this.performanceHasData = false;
+                this.perfChartData = null;
+            },
         });
     }
 

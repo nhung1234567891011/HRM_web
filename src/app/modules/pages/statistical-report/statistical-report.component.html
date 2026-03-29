@@ -50,14 +50,19 @@
             <div class="flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Báo cáo hiệu suất (KPI doanh số theo hoa hồng)</h4>
                 <div class="flex align-items-center gap-2">
+                    <span class="font-medium">Tháng</span>
+                    <p-dropdown [options]="monthOptions" [(ngModel)]="performanceMonth" optionLabel="label" optionValue="value"
+                        placeholder="Tháng" appendTo="body" [style]="{ width: '130px' }"
+                        (onChange)="onPerformanceMonthChange()"></p-dropdown>
                     <p-dropdown [options]="perfChartTypeOptions" [(ngModel)]="perfChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('performance', $event)"></p-dropdown>
                 </div>
             </div>
             <div style="height: 380px;">
-                <p-chart *ngIf="perfChartData" [type]="perfChartType" [data]="perfChartData"
+                <p-chart *ngIf="performanceHasData && perfChartData" [type]="perfChartType" [data]="perfChartData"
                     [options]="perfChartOptions" [plugins]="perfChartPlugins" [style]="{ width: '100%', height: '100%' }"></p-chart>
+                <div *ngIf="!performanceHasData" class="chart-empty-state">Không có dữ liệu</div>
             </div>
         </div>
     </div>
