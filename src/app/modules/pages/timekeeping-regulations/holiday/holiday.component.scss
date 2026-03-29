@@ -1,0 +1,39 @@
+.pagetitle {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.pagetitle h4 {
+	margin: 0;
+}
+
+.btn-add-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+.paging-info {
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+}
+
+.paging-wrapper {
+	margin-top: 14px;
+}
+
+@media (max-width: 768px) {
+	.pagetitle {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.btn-add-wrapper {
+		width: 100%;
+		justify-content: flex-start;
+	}
+}

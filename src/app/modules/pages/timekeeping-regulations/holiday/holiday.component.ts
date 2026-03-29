@@ -55,6 +55,8 @@ export class HolidayComponent {
         { field: 'action', header: 'Hành động' },
     ];
     selectedColumns: any[] = [...this.allColumns];
+    checked: boolean = false;
+    currentPageReport: string = '';
     constructor(
         private formBuilder: FormBuilder,
         private employeeObject: ObjectService,
@@ -126,10 +128,11 @@ export class HolidayComponent {
                     this.totalItems = response.totalRecords || 0;
                     this.pageIndex = response.pageIndex;
                     this.pageSize = response.pageSize;
-                    // this.updatePageReport();
+                    this.updateCurrentPageReport();
                 } else {
-                    this.listAllEmployee = [];
+                    this.listLocation = [];
                     this.totalItems = 0;
+                    this.updateCurrentPageReport();
                 }
             },
             (error) => {
@@ -157,6 +160,20 @@ export class HolidayComponent {
         });
 
         this.getAllLocation(this.pageIndex, this.pageSize, queryParams);
+    }
+
+    onSelectAllChange(): void {
+        this.listLocation = (this.listLocation || []).map((item: any) => ({
+            ...item,
+            checked: this.checked,
+        }));
+    }
+
+    onCheckboxChange(): void {
+        const total = this.listLocation?.length || 0;
+        const checkedCount = this.listLocation?.filter((item: any) => item.checked)
+            ?.length || 0;
+        this.checked = total > 0 && checkedCount === total;
     }
     showDialogDeleteLocation(data: any) {
         this.nameorganization = [];
@@ -314,6 +331,18 @@ export class HolidayComponent {
 
     isColVisible(field: string): boolean {
         return this.selectedColumns.some((c) => c.field === field);
+    }
+
+    updateCurrentPageReport(): void {
+        if (this.totalItems <= 0) {
+            this.currentPageReport =
+                '<strong>0</strong> - <strong>0</strong> trong <strong>0</strong> bản ghi';
+            return;
+        }
+
+        const startRecord = (this.pageIndex - 1) * this.pageSize + 1;
+        const endRecord = Math.min(this.pageIndex * this.pageSize, this.totalItems);
+        this.currentPageReport = `<strong>${startRecord}</strong> - <strong>${endRecord}</strong> trong <strong>${this.totalItems}</strong> bản ghi`;
     }
 
     onColumnToggle(event: any, col: any): void {
