@@ -68,6 +68,7 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
   ];
   selectedColumns: any[] = [...this.allColumns];
   showColumnPanel = false;
+  forApprovalView = false;
 
   contractOption = [
     { name: 'Tất cả hợp đồng', value: null },
@@ -155,12 +156,16 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     const request: any = {
       pageSize: this.pageSize,
       pageIndex: this.pageIndex,
-      keyWord: this.keyWord ? this.keyWord.trim() : null
+      keyWord: this.keyWord ? this.keyWord.trim() : null,
+      forApproval: this.forApprovalView
     };
 
     this.checkinCheckoutService.getPaging(request).subscribe(
       (response: any) => {
-        this.checkInCheckOuts = response.data.items;
+        const items = response?.data?.items || [];
+        this.checkInCheckOuts = this.forApprovalView
+          ? items.filter((item: any) => item?.approver?.id === this.user?.employee?.id)
+          : items;
         this.totalRecords = response.data.totalRecords;
         this.updateCurrentPageReport();
       },
@@ -174,6 +179,12 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
 
   showDialog() {
     this.displayDialog = true;
+  }
+
+  setViewMode(forApproval: boolean): void {
+    this.forApprovalView = forApproval;
+    this.pageIndex = 1;
+    this.getPaging();
   }
 
   resetForm() {
@@ -240,34 +251,36 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
       pageIndex: this.pageIndex,
     };
     this.employeeService.getEmployees(request).subscribe((data) => {
-      this.employeess = data.items.map((employee: any) => ({
+      const items = data?.items || [];
+
+      this.employeess = items.map((employee: any) => ({
         id: employee.id,
         name: `${employee.lastName} ${employee.firstName}`,
         employeeCode: employee.employeeCode,
-        organizationId: employee.organization.id || '',
+        organizationId: employee.organization?.id || '',
         positionName: employee.staffPosition?.positionName,
       }));
 
       this.units = [
         ...new Set(
-          data.items
+          items
             .map((employee: any) => ({
-              id: employee.organization.id || '',
+              id: employee.organization?.id || '',
               name:
-                employee.organization.organizationName ||
+                employee.organization?.organizationName ||
                 'Không xác định',
             }))
             .filter((unit) => unit.id)
         ),
       ];
 
-      this.represenSigning = data.items
+      this.represenSigning = items
         .filter((employee: any) => employee.workingStatus === 0)
         .map((employee: any) => ({
           id: employee.id,
           name: `${employee.lastName} ${employee.firstName}`,
           employeeCode: employee.employeeCode,
-          organizationId: employee.organization.id || '',
+          organizationId: employee.organization?.id || '',
           positionName: employee.staffPosition?.positionName,
         }));
     });
@@ -463,6 +476,18 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     );
   }
   updateStatus(contract: any, status: number) {
+    if (!this.canApprove(contract)) {
+      this.messages = [
+        {
+          severity: 'error',
+          summary: 'Không có quyền',
+          detail: 'Bạn không có quyền duyệt đơn này',
+          life: 3000,
+        },
+      ];
+      return;
+    }
+
     this.checkinCheckoutService.updateCheckInCheckOutStatus(contract.id, status).subscribe(
       response => {
         if (status === 1) {
@@ -511,7 +536,8 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
 
   exportExcel(): void {
     const request: any = {
-      keyWord: this.keyWord ? this.keyWord.trim() : null
+      keyWord: this.keyWord ? this.keyWord.trim() : null,
+      forApproval: this.forApprovalView
     };
     this.checkinCheckoutService.exportExcel(request).subscribe(
       (blob: Blob) => {
@@ -554,6 +580,30 @@ export class ApplyCheckinCheckoutComponent implements OnInit {
     this.pageSize = event.rows;
     this.pageIndex = event.page + 1;
     this.getPaging();
+  }
+
+  isAdminUser(): boolean {
+    const roleNames = (this.user?.roleNames || []).map((r: string) => (r || '').toLowerCase());
+    const permissions = this.user?.permissions || [];
+    return roleNames.includes('admin') || permissions.includes('A');
+  }
+
+  isCurrentUserOwner(contract: any): boolean {
+    return this.user?.employee?.id === contract?.employee?.id;
+  }
+
+  isCurrentUserApprover(contract: any): boolean {
+    return this.user?.employee?.id === contract?.approver?.id;
+  }
+
+  canEdit(contract: any): boolean {
+    return this.isCurrentUserOwner(contract) && contract?.checkInCheckOutStatus === 0;
+  }
+
+  canApprove(contract: any): boolean {
+    // Only allow approval if request is pending (status = 0) AND user is the designated approver
+    // Admin can approve ONLY if they are the designated approver
+    return contract?.checkInCheckOutStatus === 0 && this.isCurrentUserApprover(contract);
   }
 
   goToPreviousPage(): void {
