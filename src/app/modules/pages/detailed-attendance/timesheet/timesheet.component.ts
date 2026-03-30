@@ -514,19 +514,25 @@ export class TimesheetComponent implements OnInit {
                                     }
                                 );
 
-                                // Tổng giờ làm trong ngày (tất cả ca): > 8h → tăng ca
-                                const totalDayHours = (timesheet?.shifts ?? [])
-                                    .reduce((sum: number, s: any) => sum + (s.numberOfWorkingHour ?? 0), 0);
-                                const hasOvertime = totalDayHours > 8;
-
-                                // LeaveNotPermission = 2 (nghỉ không phép, không lương) → xám
+                                // Kiểm tra tăng ca dựa trên từng shift (backend đã tính IsEnoughWork và OvertimeHours dựa trên WorkingHours của ShiftCatalog)
                                 const LEAVE_NOT_PERMISSION = 2;
                                 const shiftColor = (shift: any): string => {
                                     if (!shift) return 'lightgray';
+                                    
+                                    // Nghỉ không phép không lương → màu xám
                                     if (shift.timeKeepingLeaveStatus === LEAVE_NOT_PERMISSION)
                                         return 'rgb(174, 174, 174)';
-                                    if (hasOvertime) return '#1565c0';
-                                    return shift.isEnoughWork ? 'green' : 'yellow';
+                                    
+                                    // Đủ công và có tăng ca → màu xanh dương
+                                    if (shift.isEnoughWork && (shift.overtimeHours > 0 || shift.isOvertime))
+                                        return '#1565c0';
+                                    
+                                    // Đủ công nhưng không tăng ca → màu xanh
+                                    if (shift.isEnoughWork)
+                                        return 'green';
+                                    
+                                    // Thiếu công → màu vàng
+                                    return 'yellow';
                                 };
 
                                 if (singleShift) {
@@ -1023,6 +1029,20 @@ export class TimesheetComponent implements OnInit {
             ];
             return;
         }
+
+        // Chỉ cho phép admin thêm chấm công trực tiếp
+        if (!this.canAddAttendance()) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: '',
+                    detail: 'Chỉ Admin mới có thể thêm chấm công trực tiếp.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
         this.addAbsentEmployeeId = employeeId;
         this.addAbsentDate = day.date;
         this.addAbsentForm.reset({ startTime: null, endTime: null, leaveStatus: 0 });
