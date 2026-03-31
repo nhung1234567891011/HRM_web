@@ -23,11 +23,16 @@
                         <button
                           class="edit-btn"
                           (click)="showDialogEdit()"
-                          [disabled]="isLocked"
-                          [ngClass]="{'disabled-btn': isLocked}">
+                          [disabled]="isLocked || !canEditAttendance()"
+                          [ngClass]="{'disabled-btn': isLocked || !canEditAttendance()}"
+                          [title]="canEditAttendance() ? '' : 'Chỉ Admin mới có thể chỉnh sửa chấm công'">
                           ✎
                         </button>
-                        <span class="lock timesheet-lock" (click)="showConfirmDialog(isLocked)">
+                        <span
+                          class="lock timesheet-lock"
+                          (click)="canEditAttendance() && showConfirmDialog(isLocked)"
+                          [ngStyle]="{ 'cursor': canEditAttendance() ? 'pointer' : 'not-allowed', 'opacity': canEditAttendance() ? 1 : 0.6 }"
+                          [title]="canEditAttendance() ? '' : 'Chỉ Admin mới có thể chỉnh sửa chấm công'">
                           <i
                             [ngClass]="isLocked ? 'pi pi-lock' : 'pi pi-unlock'"
                             [style.color]="isLocked ? 'red' : 'black'"
@@ -159,19 +164,28 @@
                                 <div *ngIf="day.singleShift" style="text-align: center; padding: 5px; width: 115px;">
                                     <div [ngStyle]="{ 'background-color': day.morningColor, 'width': '10px', 'height': '10px', 'border-radius': '50%', 'margin': '0 auto 5px auto' }"></div>
                                     <div style="font-size: 0.8em; color: gray;">{{ day.morningName }}</div>
-                                    <div (click)="openDialog(day.morningshiftWorkId, day.morningtimeSheetId)">{{ day.morning }}</div>
+                                    <div
+                                      (click)="canEditAttendance() && openDialog(day.morningshiftWorkId, day.morningtimeSheetId)"
+                                      [ngStyle]="{ 'cursor': (isLocked || !canEditAttendance()) ? 'not-allowed' : 'pointer', 'opacity': (isLocked || !canEditAttendance()) ? 0.6 : 1 }"
+                                      [title]="!canEditAttendance() ? 'Chỉ Admin mới có thể chỉnh sửa chấm công' : (isLocked ? 'Bảng chấm công đang bị khóa' : 'Nhấn để chỉnh sửa chấm công')">{{ day.morning }}</div>
                                 </div>
 
                                 <div *ngIf="day.morning && day.afternoon && !day.singleShift" style="display: flex; justify-content: space-between; align-items: center; width: 206px;">
                                     <div style="flex: 1; text-align: center; padding: 5px;">
                                         <div [ngStyle]="{ 'background-color': day.morningColor, 'width': '10px', 'height': '10px', 'border-radius': '50%', 'margin': '0 auto 5px auto' }"></div>
                                         <div style="font-size: 0.8em; color: gray;">{{ day.morningName }}</div>
-                                        <div (click)="openDialog(day.morningshiftWorkId, day.morningtimeSheetId)" [ngStyle]="{ 'cursor': isLocked ? 'not-allowed' : 'pointer' }">{{ day.morning }}</div>
+                                        <div
+                                          (click)="canEditAttendance() && openDialog(day.morningshiftWorkId, day.morningtimeSheetId)"
+                                          [ngStyle]="{ 'cursor': (isLocked || !canEditAttendance()) ? 'not-allowed' : 'pointer', 'opacity': (isLocked || !canEditAttendance()) ? 0.6 : 1 }"
+                                          [title]="!canEditAttendance() ? 'Chỉ Admin mới có thể chỉnh sửa chấm công' : (isLocked ? 'Bảng chấm công đang bị khóa' : 'Nhấn để chỉnh sửa chấm công')">{{ day.morning }}</div>
                                     </div>
                                     <div style="flex: 1; text-align: center; padding: 5px; border-left: 1px solid #ccc;">
                                         <div [ngStyle]="{ 'background-color': day.afternoonColor, 'width': '10px', 'height': '10px', 'border-radius': '50%', 'margin': '0 auto 5px auto' }"></div>
                                         <div style="font-size: 0.8em; color: gray;">{{ day.afternoonName }}</div>
-                                        <div (click)="openDialog(day.afternoonshiftWorkId, day.afternoontimeSheetId)" [ngStyle]="{ 'cursor': isLocked ? 'not-allowed' : 'pointer' }">{{ day.afternoon }}</div>
+                                        <div
+                                          (click)="canEditAttendance() && openDialog(day.afternoonshiftWorkId, day.afternoontimeSheetId)"
+                                          [ngStyle]="{ 'cursor': (isLocked || !canEditAttendance()) ? 'not-allowed' : 'pointer', 'opacity': (isLocked || !canEditAttendance()) ? 0.6 : 1 }"
+                                          [title]="!canEditAttendance() ? 'Chỉ Admin mới có thể chỉnh sửa chấm công' : (isLocked ? 'Bảng chấm công đang bị khóa' : 'Nhấn để chỉnh sửa chấm công')">{{ day.afternoon }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -476,90 +490,8 @@
   <!-- Footer -->
   <ng-template pTemplate="footer">
     <button pButton type="button" label="Hủy" icon="pi pi-times" (click)="closeDialog()" class="p-button-text"></button>
-    <button pButton type="button" label="Lưu" icon="pi pi-check" (click)="sendTimeTrackingToAPI()" class="p-button-primary"></button>
+    <button pButton type="button" label="Lưu" icon="pi pi-check" (click)="sendTimeTrackingToAPI()" [disabled]="isLocked || !canEditAttendance()" class="p-button-primary"></button>
   </ng-template>
 
-</p-dialog>
-
-<!-- Dialog thêm ngày chấm công (cho ngày không đi làm hoặc chưa có dữ liệu) -->
-<p-dialog
-  header="Thêm chấm công ngày {{ addAbsentDate | date:'dd/MM/yyyy' }}"
-  [(visible)]="isAddAbsentDialogVisible"
-  [closable]="true"
-  [modal]="true"
-  [style]="{ width: '480px' }"
-  (onHide)="addAbsentForm.reset({ shiftWorkId: null, startTime: null, endTime: null, leaveStatus: 0 })">
-
-  <form [formGroup]="addAbsentForm">
-    <div class="p-fluid">
-      <div class="grid mt-2">
-        <div class="col-5"><strong>Ca làm việc</strong></div>
-        <div class="col-7">
-          <p-dropdown
-            [options]="addAbsentShiftOptions"
-            formControlName="shiftWorkId"
-            optionLabel="label"
-            optionValue="value"
-            [style]="{ width: '100%' }"
-            placeholder="Chọn ca làm việc">
-          </p-dropdown>
-          <small *ngIf="addAbsentForm.get('shiftWorkId')?.invalid && addAbsentForm.get('shiftWorkId')?.touched" class="p-error">
-            Vui lòng chọn ca làm việc
-          </small>
-        </div>
-      </div>
-
-      <div class="grid mt-2">
-        <div class="col-5"><strong>Trạng thái ngày công</strong></div>
-        <div class="col-7">
-          <p-dropdown
-            [options]="leaveStatusOptions"
-            formControlName="leaveStatus"
-            optionLabel="label"
-            optionValue="value"
-            [style]="{ width: '100%' }"
-            placeholder="Chọn trạng thái">
-          </p-dropdown>
-        </div>
-      </div>
-      <div class="grid mt-2">
-        <div class="col-5">Giờ vào</div>
-        <div class="col-7">
-          <p-calendar
-            formControlName="startTime"
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            [timeOnly]="true"
-            placeholder="Không bắt buộc">
-            <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-              <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
-            </ng-template>
-          </p-calendar>
-        </div>
-      </div>
-      <div class="grid mt-2">
-        <div class="col-5">Giờ ra</div>
-        <div class="col-7">
-          <p-calendar
-            formControlName="endTime"
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            [timeOnly]="true"
-            placeholder="Không bắt buộc">
-            <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-              <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
-            </ng-template>
-          </p-calendar>
-        </div>
-      </div>
-    </div>
-  </form>
-
-  <ng-template pTemplate="footer">
-    <button pButton type="button" label="Hủy" icon="pi pi-times"
-      (click)="isAddAbsentDialogVisible = false" class="p-button-text"></button>
-    <button pButton type="button" label="Lưu" icon="pi pi-check"
-      (click)="saveAbsentDay()" class="p-button-primary"></button>
-  </ng-template>
 </p-dialog>
 
