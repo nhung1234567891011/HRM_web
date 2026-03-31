@@ -481,3 +481,85 @@
 
 </p-dialog>
 
+<!-- Dialog thêm ngày chấm công (cho ngày không đi làm hoặc chưa có dữ liệu) -->
+<p-dialog
+  header="Thêm chấm công ngày {{ addAbsentDate | date:'dd/MM/yyyy' }}"
+  [(visible)]="isAddAbsentDialogVisible"
+  [closable]="true"
+  [modal]="true"
+  [style]="{ width: '480px' }"
+  (onHide)="addAbsentForm.reset({ shiftWorkId: null, startTime: null, endTime: null, leaveStatus: 0 })">
+
+  <form [formGroup]="addAbsentForm">
+    <div class="p-fluid">
+      <div class="grid mt-2">
+        <div class="col-5"><strong>Ca làm việc</strong></div>
+        <div class="col-7">
+          <p-dropdown
+            [options]="addAbsentShiftOptions"
+            formControlName="shiftWorkId"
+            optionLabel="label"
+            optionValue="value"
+            [style]="{ width: '100%' }"
+            placeholder="Chọn ca làm việc">
+          </p-dropdown>
+          <small *ngIf="addAbsentForm.get('shiftWorkId')?.invalid && addAbsentForm.get('shiftWorkId')?.touched" class="p-error">
+            Vui lòng chọn ca làm việc
+          </small>
+        </div>
+      </div>
+
+      <div class="grid mt-2">
+        <div class="col-5"><strong>Trạng thái ngày công</strong></div>
+        <div class="col-7">
+          <p-dropdown
+            [options]="leaveStatusOptions"
+            formControlName="leaveStatus"
+            optionLabel="label"
+            optionValue="value"
+            [style]="{ width: '100%' }"
+            placeholder="Chọn trạng thái">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="grid mt-2">
+        <div class="col-5">Giờ vào</div>
+        <div class="col-7">
+          <p-calendar
+            formControlName="startTime"
+            [iconDisplay]="'input'"
+            [showIcon]="true"
+            [timeOnly]="true"
+            placeholder="Không bắt buộc">
+            <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+              <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
+            </ng-template>
+          </p-calendar>
+        </div>
+      </div>
+      <div class="grid mt-2">
+        <div class="col-5">Giờ ra</div>
+        <div class="col-7">
+          <p-calendar
+            formControlName="endTime"
+            [iconDisplay]="'input'"
+            [showIcon]="true"
+            [timeOnly]="true"
+            placeholder="Không bắt buộc">
+            <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+              <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
+            </ng-template>
+          </p-calendar>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Hủy" icon="pi pi-times"
+      (click)="isAddAbsentDialogVisible = false" class="p-button-text"></button>
+    <button pButton type="button" label="Lưu" icon="pi pi-check"
+      (click)="saveAbsentDay()" class="p-button-primary"></button>
+  </ng-template>
+</p-dialog>
+
