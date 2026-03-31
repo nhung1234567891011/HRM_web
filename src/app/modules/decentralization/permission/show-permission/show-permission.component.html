@@ -154,13 +154,17 @@
             />
         </div>
         <div class="field">
-            <label>Phân hệ</label>
+            <label>
+                Phân hệ
+                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+            </label>
             <p-dropdown
                 [options]="sectionLabel.data"
                 optionLabel="label"
                 optionValue="key"
                 [(ngModel)]="permissionForm.section"
                 [disabled]="permissionDialogMode === 'view'"
+                [required]="permissionDialogMode === 'create' && !createParentPermission"
                 placeholder="Chọn phân hệ"
             ></p-dropdown>
         </div>
@@ -173,12 +177,16 @@
             />
         </div>
         <div class="field">
-            <label>Mô tả</label>
+            <label>
+                Mô tả
+                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+            </label>
             <textarea
                 pInputTextarea
                 rows="4"
                 [(ngModel)]="permissionForm.description"
                 [disabled]="permissionDialogMode === 'view'"
+                [required]="permissionDialogMode === 'create' && !createParentPermission"
                 placeholder="Nhập mô tả"
             ></textarea>
         </div>

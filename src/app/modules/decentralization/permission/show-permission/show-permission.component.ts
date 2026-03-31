@@ -303,16 +303,37 @@ export class ShowPermissionComponent implements OnInit {
 	savePermission() {
 		if (this.permissionDialogMode === 'view') return;
 
+		const description = this.permissionForm.description?.trim();
+
 		const payload = {
 			name: this.permissionForm.name?.trim(),
 			displayName: this.permissionForm.displayName?.trim(),
-			description: this.permissionForm.description ?? null,
-			section: this.permissionForm.section,
+			description: description ? description : null,
+			section: this.permissionForm.section ?? null,
 		};
+
+		const isCreateParentPermission =
+			this.permissionDialogMode === 'create' && !this.createParentPermission;
+
+		if (
+			isCreateParentPermission &&
+			(!payload.name ||
+				!payload.displayName ||
+				payload.section === null ||
+				payload.section === undefined ||
+				!payload.description)
+		) {
+			this.messageService.add({
+				severity: 'error',
+				summary: 'Thiếu thông tin',
+				detail: 'Vui lòng nhập đầy đủ Mã quyền hạn, Tên hiển thị, Phân hệ và Mô tả.',
+			});
+			return;
+		}
 
 		if (!payload.name || !payload.displayName) {
 			this.messageService.add({
-				severity: 'warn',
+				severity: 'error',
 				summary: 'Thiếu thông tin',
 				detail: 'Vui lòng nhập Tên quyền hạn và Tên hiển thị.',
 			});
