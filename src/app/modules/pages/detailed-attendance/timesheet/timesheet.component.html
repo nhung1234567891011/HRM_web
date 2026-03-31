@@ -148,12 +148,11 @@
                                         <div style="color: gray; font-weight: bold; font-size: 0.8em;">{{ day.holiday }}</div>
                                     </div>
                                     <div *ngIf="!day.holiday"
-                                         (click)="canAddAttendance() && openAddAbsentDialog(day, employee.id)"
-                                         [ngStyle]="{ 'cursor': (isLocked || !canAddAttendance()) ? 'not-allowed' : 'pointer', 'opacity': (isLocked || !canAddAttendance()) ? 0.5 : 1 }"
-                                         [title]="canAddAttendance() ? 'Nhấn để thêm chấm công' : 'Chỉ Admin mới có thể thêm chấm công'">
+                                       [ngStyle]="{ 'cursor': 'not-allowed', 'opacity': 0.7 }"
+                                       title="Chỉ cho phép chỉnh sửa bản ghi chấm công đã có">
                                         <div [ngStyle]="{ 'background-color': 'lightgray', 'width': '10px', 'height': '10px', 'border-radius': '50%', 'margin': '0 auto 5px auto' }"></div>
                                         <div style="color: gray; font-size: 0.8em;">---</div>
-                                        <div style="color: #bbb; font-size: 0.75em;">+ Thêm</div>
+                                      <div style="color: #bbb; font-size: 0.75em;">Không thể thêm</div>
                                     </div>
                                 </div>
 
@@ -480,70 +479,5 @@
     <button pButton type="button" label="Lưu" icon="pi pi-check" (click)="sendTimeTrackingToAPI()" class="p-button-primary"></button>
   </ng-template>
 
-</p-dialog>
-
-<!-- Dialog thêm ngày chấm công (cho ngày không đi làm hoặc chưa có dữ liệu) -->
-<p-dialog
-  header="Thêm chấm công ngày {{ addAbsentDate | date:'dd/MM/yyyy' }}"
-  [(visible)]="isAddAbsentDialogVisible"
-  [closable]="true"
-  [modal]="true"
-  [style]="{ width: '480px' }"
-  (onHide)="addAbsentForm.reset({ startTime: null, endTime: null, leaveStatus: 0 })">
-
-  <form [formGroup]="addAbsentForm">
-    <div class="p-fluid">
-      <div class="grid mt-2">
-        <div class="col-5"><strong>Trạng thái ngày công</strong></div>
-        <div class="col-7">
-          <p-dropdown
-            [options]="leaveStatusOptions"
-            formControlName="leaveStatus"
-            optionLabel="label"
-            optionValue="value"
-            [style]="{ width: '100%' }"
-            placeholder="Chọn trạng thái">
-          </p-dropdown>
-        </div>
-      </div>
-      <div class="grid mt-2">
-        <div class="col-5">Giờ vào</div>
-        <div class="col-7">
-          <p-calendar
-            formControlName="startTime"
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            [timeOnly]="true"
-            placeholder="Không bắt buộc">
-            <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-              <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
-            </ng-template>
-          </p-calendar>
-        </div>
-      </div>
-      <div class="grid mt-2">
-        <div class="col-5">Giờ ra</div>
-        <div class="col-7">
-          <p-calendar
-            formControlName="endTime"
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            [timeOnly]="true"
-            placeholder="Không bắt buộc">
-            <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
-              <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
-            </ng-template>
-          </p-calendar>
-        </div>
-      </div>
-    </div>
-  </form>
-
-  <ng-template pTemplate="footer">
-    <button pButton type="button" label="Hủy" icon="pi pi-times"
-      (click)="isAddAbsentDialogVisible = false" class="p-button-text"></button>
-    <button pButton type="button" label="Lưu" icon="pi pi-check"
-      (click)="saveAbsentDay()" class="p-button-primary"></button>
-  </ng-template>
 </p-dialog>
 

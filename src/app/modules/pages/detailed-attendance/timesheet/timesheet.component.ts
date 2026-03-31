@@ -76,17 +76,6 @@ export class TimesheetComponent implements OnInit {
     afternoonTimeSheetId: any;
     summaryTimesheetStatus = TimeKeepingLeaveStatus;
 
-    isAddAbsentDialogVisible: boolean = false;
-    addAbsentForm: any;
-    addAbsentEmployeeId: number | null = null;
-    addAbsentDate: string = '';
-    leaveStatusOptions = [
-        { label: 'Đi làm bình thường', value: 0 },
-        { label: 'Nghỉ có phép', value: 1 },
-        { label: 'Nghỉ không phép', value: 2 },
-        { label: 'Nghỉ không phép hưởng lương', value: 3 },
-    ];
-
     showErrorOrganizationId: boolean = false;
     showErrorTimekeepingSheetName: boolean = false;
     showErrorStartDate: boolean = false;
@@ -154,20 +143,10 @@ export class TimesheetComponent implements OnInit {
             earlyLeaveDuration: [null],
             overtimeHours: [{ value: null, disabled: true }],
         });
-
-        this.addAbsentForm = this.fb.group({
-            startTime: [null],
-            endTime: [null],
-            leaveStatus: [0, Validators.required],
-        });
     }
 
     CallSnaphot(): void {
         this.detailById = +this.route.snapshot.paramMap.get('id')!;
-    }
-
-    canAddAttendance(): boolean {
-        return this.userCurrent?.roleNames?.includes('admin') || this.userCurrent?.roleNames?.includes('ADMIN') || false;
     }
 
     get currentPageReport(): string {
@@ -1014,95 +993,6 @@ export class TimesheetComponent implements OnInit {
         this.timeTrackingForm.patchValue({
             breakStartTime: null,
             breakEndTime: null,
-        });
-    }
-
-    openAddAbsentDialog(day: any, employeeId: number) {
-        if (this.isLocked) {
-            this.messages = [
-                {
-                    severity: 'warn',
-                    summary: '',
-                    detail: 'Thao tác đang bị khóa.',
-                    life: 3000,
-                },
-            ];
-            return;
-        }
-
-        // Chỉ cho phép admin thêm chấm công trực tiếp
-        if (!this.canAddAttendance()) {
-            this.messages = [
-                {
-                    severity: 'warn',
-                    summary: '',
-                    detail: 'Chỉ Admin mới có thể thêm chấm công trực tiếp.',
-                    life: 3000,
-                },
-            ];
-            return;
-        }
-
-        this.addAbsentEmployeeId = employeeId;
-        this.addAbsentDate = day.date;
-        this.addAbsentForm.reset({ startTime: null, endTime: null, leaveStatus: 0 });
-        this.isAddAbsentDialogVisible = true;
-    }
-
-    saveAbsentDay() {
-        if (!this.addAbsentEmployeeId || !this.addAbsentDate) return;
-
-        const formValues = this.addAbsentForm.value;
-        const startTime = formValues.startTime
-            ? this.formatToTimeString(this.convertToDateTime(formValues.startTime))
-            : null;
-        const endTime = formValues.endTime
-            ? this.formatToTimeString(this.convertToDateTime(formValues.endTime))
-            : null;
-
-        let numberOfWorkingHour: number | null = null;
-        if (formValues.startTime && formValues.endTime) {
-            const s = new Date(formValues.startTime);
-            const e = new Date(formValues.endTime);
-            numberOfWorkingHour = Math.max((e.getTime() - s.getTime()) / (1000 * 3600), 0);
-            numberOfWorkingHour = Math.round(numberOfWorkingHour * 100) / 100;
-        }
-
-        const request = {
-            employeeId: this.addAbsentEmployeeId,
-            date: this.addAbsentDate,
-            startTime,
-            endTime,
-            numberOfWorkingHour,
-            timeKeepingLeaveStatus: formValues.leaveStatus,
-            lateDuration: 0,
-            earlyLeaveDuration: 0,
-        };
-
-        this.timeSheetService.create(request).subscribe({
-            next: () => {
-                this.messages = [
-                    {
-                        severity: 'success',
-                        summary: 'Thành công',
-                        detail: 'Đã thêm ngày chấm công',
-                        life: 3000,
-                    },
-                ];
-                this.isAddAbsentDialogVisible = false;
-                this.getTimesheetDetails();
-            },
-            error: (err) => {
-                console.error('Lỗi khi tạo chấm công:', err);
-                this.messages = [
-                    {
-                        severity: 'error',
-                        summary: 'Lỗi',
-                        detail: 'Không thể thêm ngày chấm công',
-                        life: 3000,
-                    },
-                ];
-            },
         });
     }
 
