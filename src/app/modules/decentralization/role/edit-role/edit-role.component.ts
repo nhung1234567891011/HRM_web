@@ -182,6 +182,16 @@ export class EditRoleComponent implements OnInit {
 		);
 	}
 
+	private isKnownSection(sectionKey: any): boolean {
+		return (this.sectionLabel?.data ?? []).some((section: any) => section.key == sectionKey);
+	}
+
+	getUnsectionedTopLevelPermissions(): any[] {
+		return (this.permissions ?? []).filter(
+			(p: any) => p.parentPermissionId == null && !this.isKnownSection(p.section)
+		);
+	}
+
 	private normalizeText(value: any): string {
 		return (value ?? '')
 			.toString()

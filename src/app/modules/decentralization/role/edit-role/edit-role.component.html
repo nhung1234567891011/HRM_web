@@ -41,10 +41,27 @@
         <h5 class="title__heading">PHÂN QUYỀN</h5>
         <div class="grid p-fluid p-3">
             <div class="permission-container">
-                <div class="section" *ngFor="let sectionL of sectionLabel.data">
-                    <h3 class="section-label">{{ sectionL.label }}</h3>
+                <ng-container *ngFor="let sectionL of sectionLabel.data">
+                    <div class="section">
+                        <h3 class="section-label">{{ sectionL.label }}</h3>
+                        <ng-container
+                            *ngTemplateOutlet="permissionMatrixTable; context: { permissions: getTopLevelPermissionsBySection(sectionL.key) }"
+                        ></ng-container>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="getUnsectionedTopLevelPermissions() as unsectionedPermissions">
+                    <div class="section" *ngIf="unsectionedPermissions.length > 0">
+                        <h3 class="section-label">Khác</h3>
+                        <ng-container
+                            *ngTemplateOutlet="permissionMatrixTable; context: { permissions: unsectionedPermissions }"
+                        ></ng-container>
+                    </div>
+                </ng-container>
+
+                <ng-template #permissionMatrixTable let-permissions="permissions">
                     <p-table
-                        [value]="getTopLevelPermissionsBySection(sectionL.key)"
+                        [value]="permissions"
                         [paginator]="false"
                         responsiveLayout="scroll"
                         styleClass="p-datatable-striped custom-scrollbar permission-section-table permission-matrix-table"
@@ -132,7 +149,7 @@
                             </tr>
                         </ng-template>
                     </p-table>
-                </div>
+                </ng-template>
             </div>
         </div>
     </div>

@@ -198,30 +198,6 @@
                                     Lương cơ bản thực nhận
                                 </th>
                                 <th
-                                    *ngIf="isColumnVisible('kpi')"
-                                    class="text-center"
-                                >
-                                    KPI thực nhận
-                                </th>
-                                <th
-                                    *ngIf="isColumnVisible('kpiPercentage')"
-                                    class="text-center"
-                                >
-                                    % KPI đạt
-                                </th>
-                                <th
-                                    *ngIf="isColumnVisible('kpiSalary')"
-                                    class="text-center"
-                                >
-                                    Lương KPI
-                                </th>
-                                <th
-                                    *ngIf="isColumnVisible('bonus')"
-                                    class="text-center"
-                                >
-                                    Thưởng
-                                </th>
-                                <th
                                     *ngIf="
                                         isColumnVisible('allowanceMealTravel')
                                     "
@@ -252,12 +228,6 @@
                                     class="text-center"
                                 >
                                     Bảo hiểm (BHXH+BHTN+BHYT)
-                                </th>
-                                <th
-                                    *ngIf="isColumnVisible('unionFee')"
-                                    class="text-center"
-                                >
-                                    Quỹ công đoàn
                                 </th>
                                 <th
                                     *ngIf="isColumnVisible('salaryRate')"
@@ -354,30 +324,6 @@
                                     }}
                                 </td>
                                 <td
-                                    *ngIf="isColumnVisible('kpi')"
-                                    class="text-center"
-                                >
-                                    {{ rowData.kpi | number: "1.0-0" }}
-                                </td>
-                                <td
-                                    *ngIf="isColumnVisible('kpiPercentage')"
-                                    class="text-center"
-                                >
-                                    {{ rowData.kpiPercentage }}
-                                </td>
-                                <td
-                                    *ngIf="isColumnVisible('kpiSalary')"
-                                    class="text-center"
-                                >
-                                    {{ rowData.kpiSalary | number: "1.0-0" }}
-                                </td>
-                                <td
-                                    *ngIf="isColumnVisible('bonus')"
-                                    class="text-center"
-                                >
-                                    {{ rowData.bonus | number: "1.0-0" }}
-                                </td>
-                                <td
                                     *ngIf="
                                         isColumnVisible('allowanceMealTravel')
                                     "
@@ -421,12 +367,6 @@
                                         rowData.socialInsurance
                                             | number: "1.0-0"
                                     }}
-                                </td>
-                                <td
-                                    *ngIf="isColumnVisible('unionFee')"
-                                    class="text-center"
-                                >
-                                    {{ rowData.unionFee | number: "1.0-0" }}
                                 </td>
                                 <td
                                     *ngIf="isColumnVisible('salaryRate')"

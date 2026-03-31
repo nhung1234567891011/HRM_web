@@ -69,16 +69,11 @@ export class ShowComponent implements OnInit {
         { key: 'standardWorkDays', label: 'Ngày công chuẩn' },
         { key: 'actualWorkDays', label: 'Ngày công thực tế' },
         { key: 'receivedSalary', label: 'Lương cơ bản thực nhận' },
-        { key: 'kpi', label: 'KPI thực nhận' },
-        { key: 'kpiPercentage', label: '% KPI đạt' },
-        { key: 'kpiSalary', label: 'Lương KPI' },
-        { key: 'bonus', label: 'Thưởng' },
         { key: 'allowanceMealTravel', label: 'Phụ cấp đi lại, ăn trưa' },
         { key: 'parkingAmount', label: 'Tiền gửi xe công ty' },
         { key: 'commissionAmount', label: 'Hoa hồng' },
         { key: 'overtimeAmount', label: 'Lương tăng ca' },
         { key: 'socialInsurance', label: 'Bảo hiểm (BHXH+BHTN+BHYT)' },
-        { key: 'unionFee', label: 'Quỹ công đoàn' },
         { key: 'salaryRate', label: 'Tỉ lệ hưởng lương' },
         { key: 'totalDeduction', label: 'Khấu trừ' },
         { key: 'totalAllowance', label: 'Phụ cấp (đi lại + gửi xe)' },
@@ -86,8 +81,8 @@ export class ShowComponent implements OnInit {
         { key: 'totalReceivedSalary', label: 'Tổng lương thực nhận' },
         { key: 'status', label: 'Trạng thái' },
     ];
-    /** Cột luôn hiển thị (Hoa hồng, Bảo hiểm, Quỹ công đoàn) - không cho ẩn hẳn. */
-    private readonly requiredColumnKeys = ['commissionAmount', 'socialInsurance', 'unionFee'];
+    /** Cột luôn hiển thị (Hoa hồng, Bảo hiểm) - không cho ẩn hẳn. */
+    private readonly requiredColumnKeys = ['commissionAmount', 'socialInsurance'];
     selectedColumnKeys: string[] = [...this.allColumns.map((c) => c.key)];
     responseEmployeeVisiable: boolean = false;
     user: any;
@@ -210,7 +205,7 @@ export class ShowComponent implements OnInit {
             { label: 'Bảng lương', routerLink: '/payroll/salary' },
             { label: 'Chi tiết' },
         ];
-        // Đảm bảo cột Hoa hồng, BHXH, Quỹ công đoàn luôn có trong danh sách hiển thị
+        // Đảm bảo cột Hoa hồng, BHXH luôn có trong danh sách hiển thị
         const keysSet = new Set(this.selectedColumnKeys);
         this.requiredColumnKeys.forEach((k) => keysSet.add(k));
         this.selectedColumnKeys = Array.from(keysSet);
@@ -233,7 +228,7 @@ export class ShowComponent implements OnInit {
         return this.selectedColumnKeys.includes(key);
     }
 
-    /** Đảm bảo Hoa hồng, BHXH, Quỹ công đoàn luôn nằm trong cột hiển thị (gọi khi đóng dialog cột). */
+    /** Đảm bảo Hoa hồng, BHXH luôn nằm trong cột hiển thị (gọi khi đóng dialog cột). */
     ensureRequiredColumns(): void {
         const keysSet = new Set(this.selectedColumnKeys);
         this.requiredColumnKeys.forEach((k) => keysSet.add(k));
