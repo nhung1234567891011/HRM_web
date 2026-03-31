@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/core/services/identity/auth.service';
 import { OrganizationService } from 'src/app/core/services/organization.service';
 import { StaffDetailService } from 'src/app/core/services/staff-detail.service';
 import { StaffPositionService } from 'src/app/core/services/staff-position.service';
+import { ShiftWorkService } from 'src/app/core/services/shift-work.service';
 import { TimeSheetService } from 'src/app/core/services/time-sheet.service';
 
 @Component({
@@ -80,6 +81,7 @@ export class TimesheetComponent implements OnInit {
     addAbsentForm: any;
     addAbsentEmployeeId: number | null = null;
     addAbsentDate: string = '';
+    addAbsentShiftOptions: Array<{ label: string; value: number }> = [];
     leaveStatusOptions = [
         { label: 'Đi làm bình thường', value: 0 },
         { label: 'Nghỉ có phép', value: 1 },
@@ -102,6 +104,7 @@ export class TimesheetComponent implements OnInit {
         private route: ActivatedRoute,
         private staffDetailService: StaffDetailService,
         private staffPositionService: StaffPositionService,
+        private shiftWorkService: ShiftWorkService,
         private timeSheetService: TimeSheetService,
         private holidayService: HolidayService,
         private fb: FormBuilder,
@@ -156,6 +159,7 @@ export class TimesheetComponent implements OnInit {
         });
 
         this.addAbsentForm = this.fb.group({
+            shiftWorkId: [null, Validators.required],
             startTime: [null],
             endTime: [null],
             leaveStatus: [0, Validators.required],
@@ -875,9 +879,7 @@ export class TimesheetComponent implements OnInit {
 
         if (selectedShiftStartTime && shiftStartTime) {
             const lateDurationInMilliseconds =
-                shiftStartTime.getTime() -
-                selectedShiftStartTime.getTime() -
-                totalBreakTime;
+                shiftStartTime.getTime() - selectedShiftStartTime.getTime();
             let lateDurationInMinutes = Math.max(
                 0,
                 lateDurationInMilliseconds / (1000 * 60)
@@ -898,9 +900,9 @@ export class TimesheetComponent implements OnInit {
             : null;
 
         if (selectedShiftEndTime && shiftEndTime) {
-            // Chỉ tính nếu giờ kết thúc của thời gian thực tế muộn hơn giờ kết thúc của ca làm việc
+            // Early leave = shift end - actual checkout (only when checkout is earlier).
             const earlyLeaveDurationInMilliseconds =
-                shiftEndTime.getTime() - selectedShiftEndTime.getTime();
+                selectedShiftEndTime.getTime() - shiftEndTime.getTime();
             let earlyLeaveDurationInMinutes = Math.max(
                 0,
                 earlyLeaveDurationInMilliseconds / (1000 * 60)
@@ -909,8 +911,19 @@ export class TimesheetComponent implements OnInit {
                 earlyLeaveDurationInMinutes
             ); // Làm tròn đến số nguyên phút
 
+            const standardHours = Number(this.selectedShiftData?.workingHours ?? 0);
+            if (standardHours > 0 && actualWorkHours + 0.01 >= standardHours) {
+                earlyLeaveDurationInMinutes = 0;
+            }
+
+            const overtimeHours =
+                standardHours > 0
+                    ? Math.max(0, Math.round((actualWorkHours - standardHours) * 100) / 100)
+                    : 0;
+
             this.timeTrackingForm.patchValue({
                 earlyLeaveDuration: earlyLeaveDurationInMinutes,
+                overtimeHours,
             });
         }
         this.isPatching = false;
@@ -1045,14 +1058,102 @@ export class TimesheetComponent implements OnInit {
 
         this.addAbsentEmployeeId = employeeId;
         this.addAbsentDate = day.date;
-        this.addAbsentForm.reset({ startTime: null, endTime: null, leaveStatus: 0 });
+        this.addAbsentShiftOptions = [];
+        this.addAbsentForm.reset({ shiftWorkId: null, startTime: null, endTime: null, leaveStatus: 0 });
         this.isAddAbsentDialogVisible = true;
+        this.loadShiftOptionsForAbsent(employeeId, day.date);
+    }
+
+    private loadShiftOptionsForAbsent(employeeId: number, date: string): void {
+        const request: any = {
+            employeeId,
+            startDate: date,
+            endDate: date,
+        };
+
+        this.shiftWorkService.getByEmployee(request).subscribe({
+            next: (response: any) => {
+                const items = response?.data ?? [];
+                const targetDate = new Date(date);
+
+                this.addAbsentShiftOptions = items
+                    .filter((shift: any) => this.isShiftAppliedToDate(shift, targetDate))
+                    .map((shift: any) => {
+                        const start = shift?.shiftCatalog?.startTime || '--:--';
+                        const end = shift?.shiftCatalog?.endTime || '--:--';
+                        const shiftName = shift?.shiftTableName || shift?.shiftCatalog?.name || `Ca #${shift.id}`;
+                        return {
+                            label: `${shiftName} (${start} - ${end})`,
+                            value: shift.id,
+                        };
+                    });
+
+                if (this.addAbsentShiftOptions.length === 1) {
+                    this.addAbsentForm.patchValue({ shiftWorkId: this.addAbsentShiftOptions[0].value });
+                }
+
+                if (this.addAbsentShiftOptions.length === 0) {
+                    this.messages = [
+                        {
+                            severity: 'warn',
+                            summary: '',
+                            detail: 'Không tìm thấy ca làm cho ngày này. Vui lòng kiểm tra phân ca trước khi thêm.',
+                            life: 3000,
+                        },
+                    ];
+                }
+            },
+            error: () => {
+                this.messages = [
+                    {
+                        severity: 'error',
+                        summary: '',
+                        detail: 'Không tải được danh sách ca làm.',
+                        life: 3000,
+                    },
+                ];
+            },
+        });
+    }
+
+    private isShiftAppliedToDate(shift: any, targetDate: Date): boolean {
+        const startDate = shift?.startDate ? new Date(shift.startDate) : null;
+        const endDate = shift?.endDate ? new Date(shift.endDate) : null;
+
+        if (startDate && targetDate < new Date(startDate.setHours(0, 0, 0, 0))) {
+            return false;
+        }
+
+        if (endDate && targetDate > new Date(endDate.setHours(23, 59, 59, 999))) {
+            return false;
+        }
+
+        const day = targetDate.getDay();
+        if (day === 0) return shift?.isSunday === true;
+        if (day === 1) return shift?.isMonday === true;
+        if (day === 2) return shift?.isTuesday === true;
+        if (day === 3) return shift?.isWednesday === true;
+        if (day === 4) return shift?.isThursday === true;
+        if (day === 5) return shift?.isFriday === true;
+        return shift?.isSaturday === true;
     }
 
     saveAbsentDay() {
         if (!this.addAbsentEmployeeId || !this.addAbsentDate) return;
 
         const formValues = this.addAbsentForm.value;
+        if (!formValues.shiftWorkId) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: '',
+                    detail: 'Vui lòng chọn ca làm trước khi thêm chấm công.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
         const startTime = formValues.startTime
             ? this.formatToTimeString(this.convertToDateTime(formValues.startTime))
             : null;
@@ -1060,20 +1161,12 @@ export class TimesheetComponent implements OnInit {
             ? this.formatToTimeString(this.convertToDateTime(formValues.endTime))
             : null;
 
-        let numberOfWorkingHour: number | null = null;
-        if (formValues.startTime && formValues.endTime) {
-            const s = new Date(formValues.startTime);
-            const e = new Date(formValues.endTime);
-            numberOfWorkingHour = Math.max((e.getTime() - s.getTime()) / (1000 * 3600), 0);
-            numberOfWorkingHour = Math.round(numberOfWorkingHour * 100) / 100;
-        }
-
         const request = {
             employeeId: this.addAbsentEmployeeId,
+            shiftWorkId: formValues.shiftWorkId,
             date: this.addAbsentDate,
             startTime,
             endTime,
-            numberOfWorkingHour,
             timeKeepingLeaveStatus: formValues.leaveStatus,
             lateDuration: 0,
             earlyLeaveDuration: 0,

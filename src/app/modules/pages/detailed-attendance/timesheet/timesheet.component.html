@@ -489,10 +489,27 @@
   [closable]="true"
   [modal]="true"
   [style]="{ width: '480px' }"
-  (onHide)="addAbsentForm.reset({ startTime: null, endTime: null, leaveStatus: 0 })">
+  (onHide)="addAbsentForm.reset({ shiftWorkId: null, startTime: null, endTime: null, leaveStatus: 0 })">
 
   <form [formGroup]="addAbsentForm">
     <div class="p-fluid">
+      <div class="grid mt-2">
+        <div class="col-5"><strong>Ca làm việc</strong></div>
+        <div class="col-7">
+          <p-dropdown
+            [options]="addAbsentShiftOptions"
+            formControlName="shiftWorkId"
+            optionLabel="label"
+            optionValue="value"
+            [style]="{ width: '100%' }"
+            placeholder="Chọn ca làm việc">
+          </p-dropdown>
+          <small *ngIf="addAbsentForm.get('shiftWorkId')?.invalid && addAbsentForm.get('shiftWorkId')?.touched" class="p-error">
+            Vui lòng chọn ca làm việc
+          </small>
+        </div>
+      </div>
+
       <div class="grid mt-2">
         <div class="col-5"><strong>Trạng thái ngày công</strong></div>
         <div class="col-7">
