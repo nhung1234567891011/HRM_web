@@ -98,7 +98,7 @@
                             <th>
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
-                            <th style="width: 20%">Tên bảng tổng hợp KPI</th>
+                            <th style="width: 20%">Tên bảng tổng hợp doanh thu hoa hồng</th>
                             <th style="width: 20%">Đơn vị áp dụng</th>
                             <th style="width: 30%">Vị trí áp dụng</th>
                             <th style="width: 20%">Thời gian</th>
@@ -262,7 +262,7 @@
 </div>
 
 <p-dialog
-    header="Thêm bảng tổng hợp KPI"
+    header="Thêm bảng tổng hợp doanh thu hoa hồng"
     [modal]="true"
     [style]="{ width: '40vw' }"
     [(visible)]="createKpiVisible"
@@ -368,14 +368,14 @@
 
             <div class="p-field mt-3">
                 <label class="labelip" for="value"
-                    >Tên bảng tổng hợp KPI
+                    >Tên bảng tổng hợp doanh thu hoa hồng
                     <span class="red-asterisk">*</span></label
                 >
                 <input
                     pInputText
                     type="text"
                     formControlName="nameKpiTable"
-                    placeholder="Nhập tên bảng tổng hợp KPI"
+                    placeholder="Nhập tên bảng tổng hợp doanh thu hoa hồng"
                 />
                 <div
                     *ngIf="
@@ -389,7 +389,7 @@
                         *ngIf="detailForm.get('nameKpiTable')?.errors?.['required']"
                         class="error-message"
                     >
-                        Tên bảng tổng hợp KPI không được bỏ trống
+                        Tên bảng tổng hợp doanh thu hoa hồng không được bỏ trống
                     </div>
                 </div>
             </div>
@@ -419,7 +419,7 @@
 </p-dialog>
 
 <p-dialog
-    header="Cập nhật bảng tổng hợp KPI"
+    header="Cập nhật bảng tổng hợp doanh thu hoa hồng"
     [modal]="true"
     [style]="{ width: '40vw' }"
     [(visible)]="updateKpiVisible"
@@ -528,14 +528,14 @@
 
             <div class="p-field mt-3">
                 <label class="labelip" for="value"
-                    >Tên bảng tổng hợp KPI
+                    >Tên bảng tổng hợp doanh thu hoa hồng
                     <span class="red-asterisk">*</span></label
                 >
                 <input
                     pInputText
                     type="text"
                     formControlName="nameKpiTable"
-                    placeholder="Nhập tên bảng tổng hợp KPI"
+                    placeholder="Nhập tên bảng tổng hợp doanh thu hoa hồng"
                 />
                 <div
                     *ngIf="
@@ -550,7 +550,7 @@
                         *ngIf="detailUpdateForm.get('nameKpiTable')?.errors?.['required']"
                         class="error-message"
                     >
-                        Tên bảng tổng hợp KPI không được bỏ trống
+                        Tên bảng tổng hợp doanh thu hoa hồng không được bỏ trống
                     </div>
                 </div>
             </div>
