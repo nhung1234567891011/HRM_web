@@ -462,8 +462,7 @@ export class TimesheetComponent implements OnInit {
                             const holiday = item.holidays?.find(
                                 (h: any) =>
                                     currentDate >= new Date(h.fromDate) &&
-                                    currentDate <= new Date(h.toDate) &&
-                                    item.isOffical
+                                    currentDate <= new Date(h.toDate)
                             );
 
                             if (timesheet || holiday) {

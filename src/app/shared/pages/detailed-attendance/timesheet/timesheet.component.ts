@@ -500,8 +500,7 @@ export class TimesheetComponent implements OnInit {
                                         !Number.isNaN(fromDate.getTime()) &&
                                         !Number.isNaN(toDate.getTime()) &&
                                         currentDate >= fromDate &&
-                                        currentDate <= toDate &&
-                                        !!item?.isOffical
+                                        currentDate <= toDate
                                     );
                                 }
                             );

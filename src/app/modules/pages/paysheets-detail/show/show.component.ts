@@ -73,6 +73,7 @@ export class ShowComponent implements OnInit {
         { key: 'parkingAmount', label: 'Tiền gửi xe công ty' },
         { key: 'commissionAmount', label: 'Hoa hồng' },
         { key: 'overtimeAmount', label: 'Lương tăng ca' },
+        { key: 'holidayWorkAmount', label: 'Lương ngày lễ' },
         { key: 'socialInsurance', label: 'Bảo hiểm (BHXH+BHTN+BHYT)' },
         { key: 'salaryRate', label: 'Tỉ lệ hưởng lương' },
         { key: 'totalDeduction', label: 'Khấu trừ' },
