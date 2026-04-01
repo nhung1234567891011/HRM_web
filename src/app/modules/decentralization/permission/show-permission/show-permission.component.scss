@@ -50,6 +50,19 @@
     margin-left: 4px;
 }
 
+.field-error {
+    display: block;
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+:host ::ng-deep .p-inputtext.ng-invalid.ng-dirty,
+:host ::ng-deep textarea.p-inputtextarea.ng-invalid.ng-dirty,
+:host ::ng-deep .p-dropdown.ng-invalid.ng-dirty {
+    border-color: #dc2626;
+}
+
 .column-toggle-wrap {
     position: relative;
 }

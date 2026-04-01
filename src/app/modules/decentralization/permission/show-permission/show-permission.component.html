@@ -124,7 +124,7 @@
             : 'Chi tiết quyền hạn'
     "
     [(visible)]="displayPermissionDialog"
-    (onHide)="createParentPermission = null"
+    (onHide)="onPermissionDialogHide()"
     [modal]="true"
     [style]="{ width: '520px' }"
 >
@@ -132,33 +132,39 @@
         <div class="field">
             <label>
                 Mã quyền hạn
-                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
+                <span class="required-star" *ngIf="isPermissionFormRequireEnabled()">*</span>
             </label>
             <input
                 pInputText
                 [(ngModel)]="permissionForm.name"
                 [disabled]="permissionDialogMode === 'view'"
-                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
+                [required]="isPermissionFormRequireEnabled()"
+                [class.ng-invalid]="isPermissionFieldInvalid('name')"
+                [class.ng-dirty]="isPermissionFieldInvalid('name')"
                 placeholder="VD: ManagePermissionView"
             />
+            <small class="field-error" *ngIf="isPermissionFieldInvalid('name')">Vui lòng nhập Mã quyền hạn.</small>
         </div>
         <div class="field">
             <label>
                 Tên hiển thị
-                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
+                <span class="required-star" *ngIf="isPermissionFormRequireEnabled()">*</span>
             </label>
             <input
                 pInputText
                 [(ngModel)]="permissionForm.displayName"
                 [disabled]="permissionDialogMode === 'view'"
-                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
+                [required]="isPermissionFormRequireEnabled()"
+                [class.ng-invalid]="isPermissionFieldInvalid('displayName')"
+                [class.ng-dirty]="isPermissionFieldInvalid('displayName')"
                 placeholder="VD: Xem quản lý quyền"
             />
+            <small class="field-error" *ngIf="isPermissionFieldInvalid('displayName')">Vui lòng nhập Tên hiển thị.</small>
         </div>
         <div class="field">
             <label>
                 Phân hệ
-                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
+                <span class="required-star" *ngIf="isPermissionFormRequireEnabled()">*</span>
             </label>
             <p-dropdown
                 [options]="sectionLabel.data"
@@ -166,9 +172,11 @@
                 optionValue="key"
                 [(ngModel)]="permissionForm.section"
                 [disabled]="permissionDialogMode === 'view'"
-                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
+                [required]="isPermissionFormRequireEnabled()"
+                [ngClass]="{ 'ng-invalid': isPermissionFieldInvalid('section'), 'ng-dirty': isPermissionFieldInvalid('section') }"
                 placeholder="Chọn phân hệ"
             ></p-dropdown>
+            <small class="field-error" *ngIf="isPermissionFieldInvalid('section')">Vui lòng chọn Phân hệ.</small>
         </div>
         <div *ngIf="permissionDialogMode === 'create' && createParentPermission" class="field">
             <label>Quyền cha</label>
@@ -181,16 +189,19 @@
         <div class="field">
             <label>
                 Mô tả
-                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
+                <span class="required-star" *ngIf="isPermissionFormRequireEnabled()">*</span>
             </label>
             <textarea
                 pInputTextarea
                 rows="4"
                 [(ngModel)]="permissionForm.description"
                 [disabled]="permissionDialogMode === 'view'"
-                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
+                [required]="isPermissionFormRequireEnabled()"
+                [class.ng-invalid]="isPermissionFieldInvalid('description')"
+                [class.ng-dirty]="isPermissionFieldInvalid('description')"
                 placeholder="Nhập mô tả"
             ></textarea>
+            <small class="field-error" *ngIf="isPermissionFieldInvalid('description')">Vui lòng nhập Mô tả.</small>
         </div>
     </div>
     <p-footer>

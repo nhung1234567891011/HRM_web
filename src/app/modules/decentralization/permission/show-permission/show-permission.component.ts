@@ -71,6 +71,7 @@ export class ShowPermissionComponent implements OnInit {
 	// dialog CRUD
 	displayPermissionDialog = false;
 	permissionDialogMode: 'create' | 'edit' | 'view' = 'create';
+	permissionFormSubmitted = false;
 	permissionForm: any = {
 		id: null,
 		name: null,
@@ -278,6 +279,7 @@ export class ShowPermissionComponent implements OnInit {
 	openCreateDialog(parentPermission: any) {
 		this.permissionDialogMode = 'create';
 		this.createParentPermission = parentPermission ?? null;
+		this.permissionFormSubmitted = false;
 		this.permissionForm = {
 			id: null,
 			name: null,
@@ -290,6 +292,7 @@ export class ShowPermissionComponent implements OnInit {
 
 	openEditDialog(permission: any, mode: 'edit' | 'view' = 'edit') {
 		this.permissionDialogMode = mode;
+		this.permissionFormSubmitted = false;
 		this.permissionForm = {
 			id: permission?.id ?? null,
 			name: permission?.name ?? null,
@@ -300,8 +303,44 @@ export class ShowPermissionComponent implements OnInit {
 		this.displayPermissionDialog = true;
 	}
 
+	onPermissionDialogHide() {
+		this.createParentPermission = null;
+		this.permissionFormSubmitted = false;
+	}
+
+	isPermissionFormRequireEnabled(): boolean {
+		return this.permissionDialogMode === 'create' || this.permissionDialogMode === 'edit';
+	}
+
+	isPermissionFieldInvalid(field: 'name' | 'displayName' | 'section' | 'description'): boolean {
+		if (!this.permissionFormSubmitted || !this.isPermissionFormRequireEnabled()) {
+			return false;
+		}
+
+		const value = this.permissionForm?.[field];
+		if (field === 'section') {
+			return value === null || value === undefined || value === '';
+		}
+
+		if (typeof value === 'string') {
+			return !value.trim();
+		}
+
+		return !value;
+	}
+
+	private hasInvalidPermissionForm(): boolean {
+		return (
+			this.isPermissionFieldInvalid('name') ||
+			this.isPermissionFieldInvalid('displayName') ||
+			this.isPermissionFieldInvalid('section') ||
+			this.isPermissionFieldInvalid('description')
+		);
+	}
+
 	savePermission() {
 		if (this.permissionDialogMode === 'view') return;
+		this.permissionFormSubmitted = true;
 
 		const description = this.permissionForm.description?.trim();
 
@@ -312,31 +351,11 @@ export class ShowPermissionComponent implements OnInit {
 			section: this.permissionForm.section ?? null,
 		};
 
-		const isCreateParentPermission =
-			this.permissionDialogMode === 'create' && !this.createParentPermission;
-		const isUpdatePermission = this.permissionDialogMode === 'edit';
-
-		if (
-			(isCreateParentPermission || isUpdatePermission) &&
-			(!payload.name ||
-				!payload.displayName ||
-				payload.section === null ||
-				payload.section === undefined ||
-				!payload.description)
-		) {
+		if (this.hasInvalidPermissionForm()) {
 			this.messageService.add({
 				severity: 'error',
 				summary: 'Thiếu thông tin',
-				detail: 'Vui lòng nhập đầy đủ Mã quyền hạn, Tên hiển thị, Phân hệ và Mô tả.',
-			});
-			return;
-		}
-
-		if (!payload.name || !payload.displayName) {
-			this.messageService.add({
-				severity: 'error',
-				summary: 'Thiếu thông tin',
-				detail: 'Vui lòng nhập Tên quyền hạn và Tên hiển thị.',
+				detail: 'Vui lòng nhập đầy đủ các trường bắt buộc.',
 			});
 			return;
 		}
