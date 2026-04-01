@@ -28,6 +28,7 @@ import { UpdateCommonContainerComponent } from './../../update-personal-record/u
 import { ContractService } from 'src/app/core/services/contract.service';
 import { PayrollConfirmationStatus } from 'src/app/core/enums/payroll.enum';
 import { PayrollConfirmationStatusEmployee } from 'src/app/core/enums/payroll-confirmation-status-employee.enum';
+import { PermissionConstant } from 'src/app/core/constants/permission-constant';
 import { RecoverPasswordComponent } from './../../../auth/recover-password/recover-password.component';
 import { LoadingService } from './../../../../core/services/global/loading.service';
 
@@ -87,6 +88,17 @@ export class ShowComponent implements OnInit {
     responseEmployeeVisiable: boolean = false;
     user: any;
     payRollUpdate: any;
+
+    get isEmployeeGroup(): boolean {
+        const roleNames = (this.user?.roleNames ?? [])
+            .map((role: any) => String(role).toLowerCase());
+        const permissions = this.user?.permissions ?? [];
+
+        return (
+            roleNames.includes('employee') ||
+            permissions.includes(PermissionConstant.Employee)
+        );
+    }
 
     constructor(
         private confirmationService: ConfirmationService,

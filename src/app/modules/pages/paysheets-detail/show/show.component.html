@@ -64,6 +64,7 @@
                             severity="secondary"
                             (click)="reCalculatePayroll()"
                             [disabled]="isPayrollLocked"
+                            *ngIf="!isEmployeeGroup"
                         ></p-button>
                         <p-button
                             label="Gửi xác nhận"
@@ -71,6 +72,7 @@
                             (click)="workConfirmDialog = true"
                             [outlined]="true"
                             severity="secondary"
+                            *ngIf="!isEmployeeGroup"
                         ></p-button>
                         <p-button
                             label=""
