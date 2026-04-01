@@ -226,6 +226,12 @@
                                     Lương tăng ca
                                 </th>
                                 <th
+                                    *ngIf="isColumnVisible('holidayWorkAmount')"
+                                    class="text-center"
+                                >
+                                    Lương ngày lễ
+                                </th>
+                                <th
                                     *ngIf="isColumnVisible('socialInsurance')"
                                     class="text-center"
                                 >
@@ -359,6 +365,15 @@
                                 >
                                     {{
                                         rowData.overtimeAmount | number: "1.0-0"
+                                    }}
+                                </td>
+                                <td
+                                    *ngIf="isColumnVisible('holidayWorkAmount')"
+                                    class="text-center"
+                                >
+                                    {{
+                                        rowData.holidayWorkAmount
+                                            | number: "1.0-0"
                                     }}
                                 </td>
                                 <td
