@@ -132,31 +132,33 @@
         <div class="field">
             <label>
                 Mã quyền hạn
-                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
             </label>
             <input
                 pInputText
                 [(ngModel)]="permissionForm.name"
                 [disabled]="permissionDialogMode === 'view'"
+                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
                 placeholder="VD: ManagePermissionView"
             />
         </div>
         <div class="field">
             <label>
                 Tên hiển thị
-                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
             </label>
             <input
                 pInputText
                 [(ngModel)]="permissionForm.displayName"
                 [disabled]="permissionDialogMode === 'view'"
+                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
                 placeholder="VD: Xem quản lý quyền"
             />
         </div>
         <div class="field">
             <label>
                 Phân hệ
-                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
             </label>
             <p-dropdown
                 [options]="sectionLabel.data"
@@ -164,7 +166,7 @@
                 optionValue="key"
                 [(ngModel)]="permissionForm.section"
                 [disabled]="permissionDialogMode === 'view'"
-                [required]="permissionDialogMode === 'create' && !createParentPermission"
+                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
                 placeholder="Chọn phân hệ"
             ></p-dropdown>
         </div>
@@ -179,14 +181,14 @@
         <div class="field">
             <label>
                 Mô tả
-                <span class="required-star" *ngIf="permissionDialogMode === 'create' && !createParentPermission">*</span>
+                <span class="required-star" *ngIf="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'">*</span>
             </label>
             <textarea
                 pInputTextarea
                 rows="4"
                 [(ngModel)]="permissionForm.description"
                 [disabled]="permissionDialogMode === 'view'"
-                [required]="permissionDialogMode === 'create' && !createParentPermission"
+                [required]="(permissionDialogMode === 'create' && !createParentPermission) || permissionDialogMode === 'edit'"
                 placeholder="Nhập mô tả"
             ></textarea>
         </div>

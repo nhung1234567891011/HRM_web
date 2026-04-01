@@ -314,9 +314,10 @@ export class ShowPermissionComponent implements OnInit {
 
 		const isCreateParentPermission =
 			this.permissionDialogMode === 'create' && !this.createParentPermission;
+		const isUpdatePermission = this.permissionDialogMode === 'edit';
 
 		if (
-			isCreateParentPermission &&
+			(isCreateParentPermission || isUpdatePermission) &&
 			(!payload.name ||
 				!payload.displayName ||
 				payload.section === null ||
