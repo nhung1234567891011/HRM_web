@@ -439,6 +439,32 @@ export class AppTopBarComponent implements OnInit {
     //info
     displayInfo: boolean = false;
     displayChangePassword: boolean = false;
+    showOldPassword: boolean = false;
+    showNewPassword: boolean = false;
+    showRepeatNewPassword: boolean = false;
+
+    togglePasswordVisibility(
+        field: 'oldPassword' | 'newPassword' | 'repeatNewPassword'
+    ) {
+        if (field === 'oldPassword') {
+            this.showOldPassword = !this.showOldPassword;
+            return;
+        }
+
+        if (field === 'newPassword') {
+            this.showNewPassword = !this.showNewPassword;
+            return;
+        }
+
+        this.showRepeatNewPassword = !this.showRepeatNewPassword;
+    }
+
+    resetPasswordVisibility() {
+        this.showOldPassword = false;
+        this.showNewPassword = false;
+        this.showRepeatNewPassword = false;
+    }
+
     handleOpenInfoDialog() {
         this.showDropdown = false;
         this.displayInfo = true;
@@ -446,6 +472,7 @@ export class AppTopBarComponent implements OnInit {
 
     handleOpenChangePasswordDialog() {
         this.showDropdown = false;
+        this.resetPasswordVisibility();
         this.displayChangePassword = true;
     }
 

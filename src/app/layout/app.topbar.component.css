@@ -265,3 +265,29 @@ textarea {
     cursor: pointer;
     margin-left: 10px;
 }
+
+.password-input-wrapper {
+    position: relative;
+}
+
+.password-input-wrapper .p-inputtext {
+    width: 100%;
+    padding-right: 2.5rem;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.password-toggle-btn:hover {
+    color: #334155;
+}

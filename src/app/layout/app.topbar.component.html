@@ -322,18 +322,36 @@
                 ></app-validation-message>
             </div>
             <div class="form-group">
-                <label for="email"
+                <label for="oldPassword"
                     >Mật khẩu <span class="red-asterisk">*</span>
                     <span><i class="pi pi-key auti-custom-input-icon"></i></span
                 ></label>
-                <input
-                    pInputText
-                    id="phoneNumber"
-                    type="text"
-                    spellcheck="false"
-                    formControlName="oldPassword"
-                    placeholder="Nhập mật khẩu"
-                />
+                <div class="password-input-wrapper">
+                    <input
+                        pInputText
+                        id="oldPassword"
+                        [type]="showOldPassword ? 'text' : 'password'"
+                        spellcheck="false"
+                        formControlName="oldPassword"
+                        placeholder="Nhập mật khẩu"
+                    />
+                    <button
+                        type="button"
+                        class="password-toggle-btn"
+                        (click)="togglePasswordVisibility('oldPassword')"
+                        [attr.aria-label]="
+                            showOldPassword
+                                ? 'Ẩn mật khẩu'
+                                : 'Hiển thị mật khẩu'
+                        "
+                    >
+                        <i
+                            [class]="
+                                showOldPassword ? 'pi pi-eye-slash' : 'pi pi-eye'
+                            "
+                        ></i>
+                    </button>
+                </div>
                 <app-validation-message
                     [form]="setPasswordForm"
                     [messages]="validationMessages"
@@ -341,18 +359,36 @@
                 ></app-validation-message>
             </div>
             <div class="form-group">
-                <label for="oldPassword"
+                <label for="newPassword"
                     >Mật khẩu mới <span class="red-asterisk">*</span>
                     <span><i class="pi pi-key auti-custom-input-icon"></i></span
                 ></label>
-                <input
-                    pInputText
-                    id="phoneNumber"
-                    type="text"
-                    spellcheck="false"
-                    formControlName="newPassword"
-                    placeholder="Nhập mật khẩu mới"
-                />
+                <div class="password-input-wrapper">
+                    <input
+                        pInputText
+                        id="newPassword"
+                        [type]="showNewPassword ? 'text' : 'password'"
+                        spellcheck="false"
+                        formControlName="newPassword"
+                        placeholder="Nhập mật khẩu mới"
+                    />
+                    <button
+                        type="button"
+                        class="password-toggle-btn"
+                        (click)="togglePasswordVisibility('newPassword')"
+                        [attr.aria-label]="
+                            showNewPassword
+                                ? 'Ẩn mật khẩu'
+                                : 'Hiển thị mật khẩu'
+                        "
+                    >
+                        <i
+                            [class]="
+                                showNewPassword ? 'pi pi-eye-slash' : 'pi pi-eye'
+                            "
+                        ></i>
+                    </button>
+                </div>
                 <app-validation-message
                     [form]="setPasswordForm"
                     [messages]="validationMessages"
@@ -360,18 +396,38 @@
                 ></app-validation-message>
             </div>
             <div class="form-group">
-                <label for="oldPassword"
-                    >Mật khẩu mới <span class="red-asterisk">*</span>
+                <label for="repeatNewPassword"
+                    >Nhập lại mật khẩu mới <span class="red-asterisk">*</span>
                     <span><i class="pi pi-key auti-custom-input-icon"></i></span
                 ></label>
-                <input
-                    pInputText
-                    id="phoneNumber"
-                    type="text"
-                    spellcheck="false"
-                    formControlName="repeatNewPassword"
-                    placeholder="Nhập lại mật khẩu mới"
-                />
+                <div class="password-input-wrapper">
+                    <input
+                        pInputText
+                        id="repeatNewPassword"
+                        [type]="showRepeatNewPassword ? 'text' : 'password'"
+                        spellcheck="false"
+                        formControlName="repeatNewPassword"
+                        placeholder="Nhập lại mật khẩu mới"
+                    />
+                    <button
+                        type="button"
+                        class="password-toggle-btn"
+                        (click)="togglePasswordVisibility('repeatNewPassword')"
+                        [attr.aria-label]="
+                            showRepeatNewPassword
+                                ? 'Ẩn mật khẩu'
+                                : 'Hiển thị mật khẩu'
+                        "
+                    >
+                        <i
+                            [class]="
+                                showRepeatNewPassword
+                                    ? 'pi pi-eye-slash'
+                                    : 'pi pi-eye'
+                            "
+                        ></i>
+                    </button>
+                </div>
                 <app-validation-message
                     [form]="setPasswordForm"
                     [messages]="validationMessages"
