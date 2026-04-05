@@ -116,11 +116,11 @@
                           [style]="{ 'margin-left': '10px' }"
                           label="Xuất Excel"
                           [outlined]="true"
-                          severity="success"
-                          icon="pi pi-file-excel"
-                          (onClick)="exportDetailedTimesheetToExcel()"
-                          [disabled]="!allEmployees || allEmployees.length === 0"
-                          title="Xuất Excel bảng chấm công chi tiết"
+                          severity="secondary"
+                          icon="fa fa-external-link"
+                          [disabled]="!timesheet"
+                            (onClick)="exportDetailTimesheetExcel()"
+                            title="Xuất chấm công chi tiết"
                       ></p-button>
                     </div>
                 </div>

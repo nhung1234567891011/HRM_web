@@ -122,10 +122,10 @@
                             <td>
                                 <!-- Tính hoa hồng theo cấu hình khi có doanh thu (áp dụng cho SALE/CTV) -->
                                 <ng-container *ngIf="getCommissionValue(rowData) !== null; else commissionEmpty">
-                                    <span>{{ getCommissionValue(rowData) | number:'1.0-0' }} ₫</span>
+                                    <span>{{ getCommissionValue(rowData) | number:'1.0-2' }} ₫</span>
                                 </ng-container>
                                 <ng-template #commissionEmpty>
-                                    <span style="color: #999;">-</span>
+                                    <span style="color: #999;">{{ getCommissionUnavailableReason(rowData) }}</span>
                                 </ng-template>
                             </td>
                             <td>

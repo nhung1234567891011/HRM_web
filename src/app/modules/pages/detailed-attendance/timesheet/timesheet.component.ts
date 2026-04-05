@@ -654,6 +654,70 @@ export class TimesheetComponent implements OnInit {
             });
     }
 
+    exportDetailTimesheetExcel(): void {
+        if (!this.timesheet) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: '',
+                    detail: 'Chưa có dữ liệu bảng chấm công để xuất.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
+        const request: any = {
+            DetailTimesheetId: this.detailById,
+            OrganizationId:
+                this.selectedNode?.data?.id || this.userCurrent.organization.id,
+            EmployeeId: this.selectedEmployee?.id ?? null,
+            Name: this.selectedEmployee?.displayName || '',
+            StartDate: this.timesheet?.startDate
+                ? new Date(this.timesheet.startDate).toISOString()
+                : null,
+            EndDate: this.timesheet?.endDate
+                ? new Date(this.timesheet.endDate).toISOString()
+                : null,
+            SortBy: 'LastName',
+            OrderBy: 'asc',
+        };
+
+        const safeName = (this.timesheet?.timekeepingSheetName || 'Bang_luong')
+            .replace(/[\\/:*?"<>|]/g, '_')
+            .trim();
+
+        this.timeSheetService.exportDetailTimesheetExcel(request).subscribe({
+            next: (blob: Blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${safeName}_${new Date().getTime()}.xlsx`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+
+                this.messages = [
+                    {
+                        severity: 'success',
+                        summary: '',
+                        detail: 'Xuất chấm công chi tiết thành công.',
+                        life: 2500,
+                    },
+                ];
+            },
+            error: () => {
+                this.messages = [
+                    {
+                        severity: 'error',
+                        summary: '',
+                        detail: 'Xuất chấm công chi tiết thất bại. Vui lòng thử lại.',
+                        life: 3000,
+                    },
+                ];
+            },
+        });
+    }
+
     generateDateRange(
         startDate: Date,
         endDate: Date

@@ -57,6 +57,10 @@ export class TimeSheetService {
         return this.http.get('detail-timesheet/statistic-detail-time-sheet', request);
     }
 
+    exportDetailTimesheetExcel(request: any = null): Observable<Blob> {
+        return this.http.getBlob('detail-timesheet/export-excel', request);
+    }
+
     getTimeSheetData(request: any = null): Observable<any> {
         const fakeApiData = {
             "status": true,
