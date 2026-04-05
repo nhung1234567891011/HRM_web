@@ -20,6 +20,7 @@ import {
     MessageService,
 } from 'primeng/api';
 import { PayrollDetailService } from 'src/app/core/services/payroll-detail.service';
+import { PayrollInquiryService } from 'src/app/core/services/payroll-inquiry.service';
 import { OrganiStructTypeService } from 'src/app/core/services/organi-struct-type.service';
 import { PayrollService } from 'src/app/core/services/payroll.service';
 import { AuthService } from 'src/app/core/services/identity/auth.service';
@@ -28,6 +29,7 @@ import { UpdateCommonContainerComponent } from './../../update-personal-record/u
 import { ContractService } from 'src/app/core/services/contract.service';
 import { PayrollConfirmationStatus } from 'src/app/core/enums/payroll.enum';
 import { PayrollConfirmationStatusEmployee } from 'src/app/core/enums/payroll-confirmation-status-employee.enum';
+import { InquiryStatus } from 'src/app/core/enums/payroll-inquiry.enum';
 import { RecoverPasswordComponent } from './../../../auth/recover-password/recover-password.component';
 import { LoadingService } from './../../../../core/services/global/loading.service';
 
@@ -51,6 +53,9 @@ export class ShowComponent implements OnInit {
     payrollName: any;
     isPayrollLocked = false;
     responseEmployeeVisiable: boolean = false;
+    payrollInquiries: any[] = [];
+    isLoadingPayrollInquiries: boolean = false;
+    InquiryStatusEnum: typeof InquiryStatus = InquiryStatus;
     user: any;
     payRollUpdate: any;
 
@@ -60,6 +65,7 @@ export class ShowComponent implements OnInit {
         private router: Router,
         private toastService: ToastService,
         private payrollDetailService: PayrollDetailService,
+        private payrollInquiryService: PayrollInquiryService,
         private payrollService: PayrollService,
         private messageService: MessageService,
         private organiStructTypeService: OrganiStructTypeService,
@@ -706,6 +712,71 @@ export class ShowComponent implements OnInit {
     onSelectionChange(event: any) {
         console.log(this.selectedPayroll);
     }
+
+    openInquiryDialog(): void {
+        this.responseEmployeeVisiable = true;
+        this.loadPayrollInquiries();
+    }
+
+    loadPayrollInquiries(): void {
+        if (!this.id) {
+            this.payrollInquiries = [];
+            return;
+        }
+
+        this.isLoadingPayrollInquiries = true;
+        this.payrollInquiryService
+            .getPaging({
+                payrollId: this.id,
+                pageIndex: 1,
+                pageSize: 200,
+                sortBy: 'CreatedAt',
+                orderBy: 'desc',
+            })
+            .subscribe({
+                next: (result: any) => {
+                    const items = result?.items ?? result?.data?.items ?? [];
+                    this.payrollInquiries = Array.isArray(items) ? items : [];
+                    this.isLoadingPayrollInquiries = false;
+                },
+                error: () => {
+                    this.payrollInquiries = [];
+                    this.isLoadingPayrollInquiries = false;
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Lỗi',
+                        detail: 'Không thể tải danh sách thắc mắc của nhân viên',
+                    });
+                },
+            });
+    }
+
+    getInquiryStatusLabel(status: InquiryStatus | number): string {
+        if (status === InquiryStatus.Pending) {
+            return 'Đang chờ xử lý';
+        }
+        if (status === InquiryStatus.Resolved) {
+            return 'Đã xử lý';
+        }
+        if (status === InquiryStatus.Rejected) {
+            return 'Đã từ chối';
+        }
+        return 'Không xác định';
+    }
+
+    getInquiryStatusClass(status: InquiryStatus | number): string {
+        if (status === InquiryStatus.Pending) {
+            return 'inquiry-pending';
+        }
+        if (status === InquiryStatus.Resolved) {
+            return 'inquiry-resolved';
+        }
+        if (status === InquiryStatus.Rejected) {
+            return 'inquiry-rejected';
+        }
+        return '';
+    }
+
     handleSendPayrollDetailConfirm(): void {
         if (!this.selectedPayroll?.length) {
             this.messageService.add({

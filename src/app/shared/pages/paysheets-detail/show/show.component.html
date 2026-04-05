@@ -83,7 +83,7 @@
                             label=""
                             icon="pi pi-comment"
                             [outlined]="true"
-                            (click)="responseEmployeeVisiable = true"
+                            (click)="openInquiryDialog()"
                             severity="secondary"
                         ></p-button>
                     </div>
@@ -403,9 +403,64 @@
     header="Danh sách phản hồi nhân viên"
     [modal]="true"
     [(visible)]="responseEmployeeVisiable"
-    [style]="{ width: '30vw' }"
+    [style]="{ width: '70vw' }"
+    [breakpoints]="{ '960px': '95vw' }"
 >
-    324324324324
+    <div
+        *ngIf="isLoadingPayrollInquiries"
+        class="flex justify-content-center align-items-center py-4"
+    >
+        <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem"></i>
+    </div>
+
+    <p-table
+        *ngIf="!isLoadingPayrollInquiries"
+        [value]="payrollInquiries"
+        responsiveLayout="scroll"
+        styleClass="p-datatable-sm"
+        [tableStyle]="{ 'min-width': '65rem' }"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 70px">STT</th>
+                <th style="width: 140px">Mã nhân viên</th>
+                <th style="width: 220px">Nhân viên</th>
+                <th style="width: 170px">Bộ phận</th>
+                <th>Nội dung thắc mắc</th>
+                <th style="width: 170px">Thời gian gửi</th>
+                <th style="width: 140px">Trạng thái</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row let-i="rowIndex">
+            <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ row.employeeCode || row.employeeId || '-' }}</td>
+                <td>{{ row.employeeName || '-' }}</td>
+                <td>{{ row.department || '-' }}</td>
+                <td>
+                    <div class="inquiry-content">{{ row.content || '-' }}</div>
+                </td>
+                <td>{{ row.timeSent | date : 'dd/MM/yyyy HH:mm:ss' }}</td>
+                <td>
+                    <span
+                        class="inquiry-status"
+                        [ngClass]="getInquiryStatusClass(row.status)"
+                    >
+                        {{ getInquiryStatusLabel(row.status) }}
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7" class="text-center py-3">
+                    Chưa có thắc mắc nào từ nhân viên
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </p-dialog>
 <!-- Dialog PrimeNG -->
 <p-dialog

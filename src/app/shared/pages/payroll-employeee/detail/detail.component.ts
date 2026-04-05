@@ -3,10 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PayrollInquiryService } from 'src/app/core/services/payroll-inquiry.service';
 import { MessageService } from 'primeng/api';
-import { aN } from '@fullcalendar/core/internal-common';
 import { InquiryStatus } from 'src/app/core/enums/payroll-inquiry.enum';
-import { forkJoin } from 'rxjs';
 import { PayrollConfirmationStatus } from 'src/app/core/enums/payroll.enum';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-detail',
@@ -15,6 +14,7 @@ import { PayrollConfirmationStatus } from 'src/app/core/enums/payroll.enum';
 })
 export class DetailComponent implements OnInit {
     updateReasonVisible: boolean = false;
+    isSavingReason: boolean = false;
     id!: string; // Tham số `id`
     employeeid!: string; // Tham số `employeeid`
     totalReceiptSalary: number = 0;
@@ -114,29 +114,85 @@ export class DetailComponent implements OnInit {
         return totalKhauTru;
     }
     reasonResponse: string = '';
-    saveReason() {
+    get canSaveReason(): boolean {
+        return !!this.reasonResponse?.trim() && !this.isSavingReason;
+    }
+
+    openReasonDialog(): void {
+        this.reasonResponse = '';
+        this.updateReasonVisible = true;
+    }
+
+    closeReasonDialog(): void {
         this.updateReasonVisible = false;
-        var request = {
-            payrollDetailId: this.payrollDetailEmployees[0].payrollDetailId,
-            content: this.reasonResponse,
+        this.reasonResponse = '';
+    }
+
+    saveReason(): void {
+        const payrollDetailId =
+            this.payrollDetailEmployees?.[0]?.payrollDetailId ??
+            this.payrollDetailEmployees?.[0]?.id;
+        const content = this.reasonResponse?.trim();
+
+        if (!payrollDetailId) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Lỗi',
+                detail: 'Không tìm thấy bảng lương để gửi thắc mắc!',
+            });
+            return;
+        }
+
+        if (!content) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Thiếu thông tin',
+                detail: 'Vui lòng nhập nội dung thắc mắc!',
+            });
+            return;
+        }
+
+        const request = {
+            payrollDetailId,
+            content,
             status: this.InquiryStatusEnum.Pending,
         };
-        this.payrollInquiryService.create(request).subscribe((res) => {
-            console.log(res);
-            if (res.status == true) {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Thành công',
-                    detail: 'Gửi thắc mắc thành công',
-                });
-            } else {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Thất bại',
-                    detail: 'Đã có lỗi xảy ra',
-                });
-            }
-        });
+
+        this.isSavingReason = true;
+        this.payrollInquiryService
+            .create(request)
+            .pipe(
+                finalize(() => {
+                    this.isSavingReason = false;
+                })
+            )
+            .subscribe({
+                next: (res) => {
+                    console.log(res);
+                    if (res?.status === true) {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Thành công',
+                            detail: 'Gửi thắc mắc thành công',
+                        });
+                        this.closeReasonDialog();
+                        return;
+                    }
+
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Thất bại',
+                        detail: 'Đã có lỗi xảy ra',
+                    });
+                },
+                error: () => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Lỗi',
+                        detail: 'Không thể gửi thắc mắc. Vui lòng thử lại!',
+                    });
+                },
+            });
     }
     getTotalDeduction(): number {
         return (
