@@ -432,6 +432,25 @@ export class DetailKpiComponent implements OnInit {
     return this.calculateProgressiveCommission(revenue, tiers);
   }
 
+  getCommissionUnavailableReason(rowData: any): string {
+    const revenue = this.toNumberOrZero(rowData?.revenue);
+    if (revenue < 0) return 'Doanh thu không hợp lệ';
+
+    const targetType = this.getTargetTypeFromStaffPositionCode(
+      rowData?.staffPositionCode ?? rowData?.StaffPositionCode,
+      rowData?.staffPositionName ?? rowData?.StaffPositionName ?? rowData?.positionName
+    );
+    if (targetType === null) return 'Không áp dụng';
+
+    const policy = this.commissionPolicies[targetType];
+    if (!policy) return 'Chưa có cấu hình hiệu lực';
+
+    const tiers = policy?.tiers ?? policy?.Tiers ?? [];
+    if (!Array.isArray(tiers) || tiers.length === 0) return 'Thiếu bậc hoa hồng';
+
+    return '-';
+  }
+
   onPageChange(event: any): void {
     this.pageSize = event.rows;
     this.pageIndex = event.page + 1;
