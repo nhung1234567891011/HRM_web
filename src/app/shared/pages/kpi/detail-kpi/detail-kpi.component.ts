@@ -40,7 +40,9 @@ export class DetailKpiComponent implements OnInit {
   editingRowIndex3: number | null = null;
 
   commissionPolicies: Record<number, any | null> = { 0: null, 1: null }; // 0: SALE, 1: CTV
-  private commissionPolicyLoadedForOrgId: number | null = null;
+  private commissionPolicyLoadedKey: string | null = null;
+  private kpiTableReferenceDate: Date | null = null;
+  private readonly commissionPolicyIds: number[] = [1];
 
   constructor(
     private employeesService: EmployeeService,
@@ -69,12 +71,33 @@ export class DetailKpiComponent implements OnInit {
     this.getStaffPosition();
     this.fetchEmployees();
     this.CallSnaphot();
+    this.loadKpiTableReferenceDate();
     this.fetchData();
     this.loadCommissionPolicies();
   }
 
   CallSnaphot(): void {
     this.detailKpiById = +this.route.snapshot.paramMap.get('id')!;
+  }
+
+  private loadKpiTableReferenceDate(): void {
+    if (!Number.isFinite(this.detailKpiById)) {
+      this.kpiTableReferenceDate = null;
+      return;
+    }
+
+    this.kpiService.getById({ Id: this.detailKpiById }).subscribe({
+      next: (response: any) => {
+        const data = response?.data ?? response;
+        const toDateRaw = data?.toDate ?? data?.ToDate;
+        this.kpiTableReferenceDate = this.parseDateOnly(toDateRaw);
+        this.loadCommissionPolicies(true);
+      },
+      error: () => {
+        this.kpiTableReferenceDate = null;
+        this.loadCommissionPolicies(true);
+      }
+    });
   }
 
   fetchData(): void {
@@ -289,7 +312,10 @@ export class DetailKpiComponent implements OnInit {
 
   private formatMoney(value: number): string {
     if (value == null || !Number.isFinite(value)) return '0';
-    return Math.round(value).toLocaleString('vi-VN');
+    return value.toLocaleString('vi-VN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
   }
 
   private toNumberOrZero(value: any): number {
@@ -312,18 +338,31 @@ export class DetailKpiComponent implements OnInit {
     return Number.isFinite(Number(userOrgId)) ? Number(userOrgId) : null;
   }
 
-  private pickEffectivePolicy(res: any): any | null {
+  private parseDateOnly(input: any): Date | null {
+    if (!input) return null;
+
+    const date = new Date(input);
+    if (Number.isNaN(date.getTime())) return null;
+
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  private getPolicyReferenceDate(): Date {
+    return this.kpiTableReferenceDate ?? new Date();
+  }
+
+  private pickEffectivePolicy(res: any, referenceDate: Date): any | null {
     const data = res?.data ?? res;
     const items = data?.items ?? data;
     const list: any[] = Array.isArray(items) ? items : [];
     if (list.length === 0) return null;
 
-    const now = new Date();
+    const referenceDateOnly = this.parseDateOnly(referenceDate) ?? new Date();
     const isEffectiveNow = (p: any) => {
-      const from = p?.effectiveFrom ? new Date(p.effectiveFrom) : null;
-      const to = p?.effectiveTo ? new Date(p.effectiveTo) : null;
-      if (from && now < from) return false;
-      if (to && now > to) return false;
+      const from = this.parseDateOnly(p?.effectiveFrom ?? p?.EffectiveFrom);
+      const to = this.parseDateOnly(p?.effectiveTo ?? p?.EffectiveTo);
+      if (from && referenceDateOnly < from) return false;
+      if (to && referenceDateOnly > to) return false;
       return true;
     };
 
@@ -343,30 +382,55 @@ export class DetailKpiComponent implements OnInit {
     const orgId = this.getCurrentOrgId();
     if (!orgId) {
       this.commissionPolicies = { 0: null, 1: null };
-      this.commissionPolicyLoadedForOrgId = null;
+      this.commissionPolicyLoadedKey = null;
       return;
     }
 
-    if (!force && this.commissionPolicyLoadedForOrgId === orgId) return;
-    this.commissionPolicyLoadedForOrgId = orgId;
+    const referenceDate = this.getPolicyReferenceDate();
+    const referenceDateKey = (this.parseDateOnly(referenceDate) ?? referenceDate).toISOString().slice(0, 10);
+    const policyKey = this.commissionPolicyIds.join(',');
+    const loadedKey = `${orgId}-${referenceDateKey}-${policyKey}`;
 
-    const baseRequest: any = {
-      pageSize: 999,
-      pageIndex: 1,
-      OrganizationId: orgId,
-      Status: 0,
-    };
+    if (!force && this.commissionPolicyLoadedKey === loadedKey) return;
+    this.commissionPolicyLoadedKey = loadedKey;
 
-    forkJoin({
-      sale: this.revenueCommissionPolicyService
-        .paging({ ...baseRequest, TargetType: 0 })
-        .pipe(catchError(() => of(null))),
-      ctv: this.revenueCommissionPolicyService
-        .paging({ ...baseRequest, TargetType: 1 })
-        .pipe(catchError(() => of(null))),
-    }).subscribe(({ sale, ctv }) => {
-      this.commissionPolicies[0] = this.pickEffectivePolicy(sale);
-      this.commissionPolicies[1] = this.pickEffectivePolicy(ctv);
+    const requestById: Record<string, any> = {};
+    this.commissionPolicyIds.forEach((id) => {
+      requestById[`id_${id}`] = this.revenueCommissionPolicyService
+        .getById(id)
+        .pipe(catchError(() => of(null)));
+    });
+
+    forkJoin(requestById).subscribe((responses) => {
+      this.commissionPolicies = { 0: null, 1: null };
+
+      Object.values(responses).forEach((response: any) => {
+        const policy = response?.data ?? response;
+        if (!policy) return;
+
+        const targetType = Number(policy?.targetType ?? policy?.TargetType);
+        const organizationId = Number(policy?.organizationId ?? policy?.OrganizationId);
+        const status = Number(policy?.status ?? policy?.Status);
+
+        if (!Number.isFinite(targetType) || (targetType !== 0 && targetType !== 1)) return;
+        if (organizationId !== orgId) return;
+        if (status !== 0) return;
+
+        const effectivePolicy = this.pickEffectivePolicy([policy], referenceDate);
+        if (!effectivePolicy) return;
+
+        const currentPolicy = this.commissionPolicies[targetType];
+        if (!currentPolicy) {
+          this.commissionPolicies[targetType] = effectivePolicy;
+          return;
+        }
+
+        const currentEffectiveFrom = new Date(currentPolicy?.effectiveFrom ?? currentPolicy?.EffectiveFrom ?? 0).getTime();
+        const nextEffectiveFrom = new Date(effectivePolicy?.effectiveFrom ?? effectivePolicy?.EffectiveFrom ?? 0).getTime();
+        if (nextEffectiveFrom >= currentEffectiveFrom) {
+          this.commissionPolicies[targetType] = effectivePolicy;
+        }
+      });
     });
   }
 
@@ -374,42 +438,80 @@ export class DetailKpiComponent implements OnInit {
   private getTargetTypeFromStaffPositionCode(code: any, positionName?: any): 0 | 1 | null {
     const c = (code ?? '').toString().trim().toUpperCase();
     const name = (positionName ?? '').toString().toUpperCase();
-    if (c.startsWith('SALE') || name.includes('SALE')) return 0;
-    if (c === 'CTV' || name.includes('CTV')) return 1;
+    if (c.startsWith('CTV') || c.includes('CTV') || name.includes('CTV') || name.includes('CONG TAC VIEN') || name.includes('CỘNG TÁC VIÊN')) return 1;
+    if (c.startsWith('SALE') || c.includes('SALE') || name.includes('SALE') || name.includes('KINH DOANH')) return 0;
     if (!c && !name) return null;
     return null;
+  }
+
+  private getActiveCommissionTiers(tiers: any[]): any[] {
+    return tiers
+      .filter(t => t && t.isDeleted !== true && t.IsDeleted !== true)
+      .sort((a, b) => {
+        const fromA = Number(a?.fromAmount ?? a?.FromAmount ?? 0);
+        const fromB = Number(b?.fromAmount ?? b?.FromAmount ?? 0);
+        if (fromA !== fromB) return fromA - fromB;
+
+        const toA = a?.toAmount ?? a?.ToAmount;
+        const toB = b?.toAmount ?? b?.ToAmount;
+        const hasToA = toA !== null && toA !== undefined && toA !== '';
+        const hasToB = toB !== null && toB !== undefined && toB !== '';
+        if (hasToA !== hasToB) return hasToA ? -1 : 1;
+
+        const sortA = Number(a?.sortOrder ?? a?.SortOrder ?? 0);
+        const sortB = Number(b?.sortOrder ?? b?.SortOrder ?? 0);
+        return sortA - sortB;
+      });
   }
 
   private calculateProgressiveCommission(revenue: number, tiers: any[]): number {
     if (!Array.isArray(tiers) || tiers.length === 0) return 0;
 
-    const sorted = [...tiers].sort((a, b) => {
-      const sa = Number(a?.sortOrder ?? 0);
-      const sb = Number(b?.sortOrder ?? 0);
-      if (sa !== sb) return sa - sb;
-      return Number(a?.fromAmount ?? 0) - Number(b?.fromAmount ?? 0);
-    });
+    const sorted = this.getActiveCommissionTiers(tiers);
+    if (sorted.length === 0) return 0;
 
-    let commission = 0;
-
-    for (const t of sorted) {
-      const from = Number(t?.fromAmount ?? 0);
-      const toRaw = t?.toAmount;
+    const matchedTier = sorted.slice().reverse().find((t) => {
+      const from = Number(t?.fromAmount ?? t?.FromAmount ?? 0);
+      const toRaw = t?.toAmount ?? t?.ToAmount;
       const to = toRaw === null || toRaw === undefined || toRaw === '' ? Number.POSITIVE_INFINITY : Number(toRaw);
-      const ratePercent = Number(t?.ratePercent ?? 0);
+      return Number.isFinite(from) && revenue > from && (!Number.isFinite(to) || revenue <= to);
+    }) ?? sorted.slice().reverse().find((t) => revenue > Number(t?.fromAmount ?? t?.FromAmount ?? 0));
 
-      if (!Number.isFinite(from) || !Number.isFinite(ratePercent)) continue;
-      if (!(to > from)) continue;
-      if (revenue <= from) continue;
+    if (!matchedTier) return 0;
 
-      const upper = Number.isFinite(to) ? Math.min(revenue, to) : revenue;
-      const amountInTier = upper - from;
-      if (amountInTier > 0) commission += amountInTier * (ratePercent / 100);
+    const from = Number(matchedTier?.fromAmount ?? matchedTier?.FromAmount ?? 0);
+    const toRaw = matchedTier?.toAmount ?? matchedTier?.ToAmount;
+    const to = toRaw === null || toRaw === undefined || toRaw === '' ? Number.POSITIVE_INFINITY : Number(toRaw);
+    const ratePercent = Number(matchedTier?.ratePercent ?? matchedTier?.RatePercent ?? 0);
 
-      if (revenue <= to) break;
+    if (!Number.isFinite(from) || !Number.isFinite(ratePercent) || ratePercent <= 0) return 0;
+
+    const upper = Number.isFinite(to) && to > from ? to : revenue;
+    const amountInTier = Math.min(revenue, upper) - from;
+    if (amountInTier <= 0) return 0;
+
+    return amountInTier * (ratePercent / 100);
+  }
+
+  getCommissionUnavailableReason(rowData: any): string {
+    const revenue = this.toNumberOrZero(rowData?.revenue);
+    if (revenue < 0) return 'Doanh thu không hợp lệ';
+
+    const targetType = this.getTargetTypeFromStaffPositionCode(
+      rowData?.staffPositionCode ?? rowData?.StaffPositionCode,
+      rowData?.staffPositionName ?? rowData?.StaffPositionName ?? rowData?.positionName
+    );
+    if (targetType === null) return 'Không áp dụng';
+
+    const policy = this.commissionPolicies[targetType];
+    if (!policy) return 'Chưa có cấu hình hiệu lực';
+
+    const tiers = policy?.tiers ?? policy?.Tiers ?? [];
+    if (!Array.isArray(tiers) || this.getActiveCommissionTiers(tiers).length === 0) {
+      return 'Thiếu bậc hoa hồng';
     }
 
-    return commission > 0 ? commission : 0;
+    return '-';
   }
 
   /**

@@ -118,6 +118,9 @@
                           [outlined]="true"
                           severity="secondary"
                           icon="fa fa-external-link"
+                          [disabled]="!timesheet"
+                            (onClick)="exportDetailTimesheetExcel()"
+                            title="Xuất chấm công chi tiết"
                       ></p-button>
                     </div>
                 </div>
