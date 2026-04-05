@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TreeNode } from 'primeng/api';
+import * as XLSX from 'xlsx';
 import { TimeKeepingLeaveStatus } from 'src/app/core/enums/time-keeping-leave-status';
 import { EmployeeService } from 'src/app/core/services/employee.service';
 import { HolidayService } from 'src/app/core/services/holiday.service';
@@ -1272,6 +1273,147 @@ export class TimesheetComponent implements OnInit {
                     console.error('Cập nhật thất bại');
                 }
             });
+    }
+
+    exportDetailedTimesheetToExcel(): void {
+        if (!this.allEmployees || this.allEmployees.length === 0) {
+            this.messages = [
+                {
+                    severity: 'warn',
+                    summary: 'Không có dữ liệu',
+                    detail: 'Không có dữ liệu để xuất Excel.',
+                    life: 3000,
+                },
+            ];
+            return;
+        }
+
+        const dateHeaders = this.dateRange.map((date: any) =>
+            this.getDateHeaderForExport(date?.date, date?.dayOfWeek)
+        );
+        const headers = ['Mã nhân viên', 'Nhân viên', ...dateHeaders];
+
+        const rows = this.allEmployees.map((employee: any) => {
+            const row: Record<string, string> = {
+                'Mã nhân viên': employee?.employeeCode ?? '',
+                'Nhân viên': employee?.name ?? '',
+            };
+
+            const scheduleMap = new Map<string, any>(
+                (employee?.schedule ?? []).map((day: any) => [day?.date, day])
+            );
+
+            this.dateRange.forEach((date: any, index: number) => {
+                row[dateHeaders[index]] = this.getShiftCellForExport(
+                    scheduleMap.get(date?.date)
+                );
+            });
+
+            return row;
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(rows, { header: headers });
+        (worksheet as any)['!cols'] = this.buildExportColumns(headers, rows);
+
+        const workbook = XLSX.utils.book_new();
+        const sheetBaseName = this.sanitizeExcelName(
+            this.timesheet?.timekeepingSheetName || 'Bang_cham_cong_chi_tiet'
+        );
+        const sheetName = sheetBaseName.substring(0, 31) || 'Chi_tiet';
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+        const fileName = `${sheetBaseName}_${new Date().getTime()}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+
+        this.messages = [
+            {
+                severity: 'success',
+                summary: 'Thành công',
+                detail: 'Xuất file Excel thành công.',
+                life: 3000,
+            },
+        ];
+    }
+
+    private getDateHeaderForExport(dateValue: string, dayOfWeek: string): string {
+        if (!dateValue) {
+            return dayOfWeek ? `N/A (${dayOfWeek})` : 'N/A';
+        }
+
+        const date = new Date(dateValue);
+        if (Number.isNaN(date.getTime())) {
+            return dayOfWeek ? `${dateValue} (${dayOfWeek})` : dateValue;
+        }
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        return `${day}/${month}${dayOfWeek ? ` (${dayOfWeek})` : ''}`;
+    }
+
+    private getShiftCellForExport(day: any): string {
+        if (!day) {
+            return '---';
+        }
+
+        if (day.holiday && !day.morning && !day.afternoon) {
+            return `Nghỉ lễ: ${day.holiday}`;
+        }
+
+        if (day.singleShift && day.morning) {
+            const shiftName = day.morningName || 'Ca';
+            return `${shiftName}: ${day.morning}`;
+        }
+
+        const parts: string[] = [];
+        if (day.morning) {
+            parts.push(`${day.morningName || 'Sáng'}: ${day.morning}`);
+        }
+        if (day.afternoon) {
+            parts.push(`${day.afternoonName || 'Chiều'}: ${day.afternoon}`);
+        }
+
+        if (parts.length > 0) {
+            return parts.join(' | ');
+        }
+
+        if (day.holiday) {
+            return `Nghỉ lễ: ${day.holiday}`;
+        }
+
+        return '---';
+    }
+
+    private buildExportColumns(
+        headers: string[],
+        rows: Record<string, string>[]
+    ): { wch: number }[] {
+        return headers.map((header: string, index: number) => {
+            if (index === 0) {
+                return { wch: 18 };
+            }
+
+            if (index === 1) {
+                return { wch: 24 };
+            }
+
+            let maxLength = header.length;
+            rows.forEach((row) => {
+                const length = String(row[header] ?? '').length;
+                if (length > maxLength) {
+                    maxLength = length;
+                }
+            });
+
+            return { wch: Math.min(Math.max(maxLength + 2, 18), 50) };
+        });
+    }
+
+    private sanitizeExcelName(value: string): string {
+        const safe = String(value || '')
+            .replace(/[\\/:*?"<>|]/g, '_')
+            .trim();
+
+        return safe || 'Bang_cham_cong_chi_tiet';
     }
 
     formatToTimeString(date: any): string {

@@ -114,10 +114,13 @@
 
                       <p-button
                           [style]="{ 'margin-left': '10px' }"
-                          label=""
+                          label="Xuất Excel"
                           [outlined]="true"
-                          severity="secondary"
-                          icon="fa fa-external-link"
+                          severity="success"
+                          icon="pi pi-file-excel"
+                          (onClick)="exportDetailedTimesheetToExcel()"
+                          [disabled]="!allEmployees || allEmployees.length === 0"
+                          title="Xuất Excel bảng chấm công chi tiết"
                       ></p-button>
                     </div>
                 </div>
