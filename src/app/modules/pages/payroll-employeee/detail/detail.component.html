@@ -407,7 +407,7 @@
                             <p-button
                                 label="Thắc mắc"
                                 [outlined]="true"
-                                (click)="updateReasonVisible = true"
+                                (click)="openReasonDialog()"
                             ></p-button>
                         </div>
                     </div>
@@ -429,7 +429,8 @@
         [autoResize]="true"
         [rows]="5"
         [cols]="30"
-        [ngModel]="reasonResponse"
+        [(ngModel)]="reasonResponse"
+        placeholder="Nhập nội dung thắc mắc..."
     ></textarea>
     <ng-template pTemplate="footer">
         <div class="flex justify-content-end gap-3">
@@ -438,12 +439,14 @@
                 label="Hủy"
                 [outlined]="true"
                 class="p-button-secondary"
-                (click)="updateReasonVisible = false"
+                (click)="closeReasonDialog()"
             ></p-button>
             <p-button
                 type="button"
                 label="Lưu"
                 class="p-button-primary"
+                [loading]="isSavingReason"
+                [disabled]="!canSaveReason"
                 (click)="saveReason()"
             ></p-button>
         </div>
