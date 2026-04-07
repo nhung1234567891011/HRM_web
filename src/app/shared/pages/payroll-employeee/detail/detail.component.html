@@ -162,54 +162,6 @@
                             </div>
                             <div class="grid">
                                 <div
-                                    class="col-12 lg:col-6 xl:col-6"
-                                    style="padding: 0.75rem 1rem"
-                                >
-                                    Lương KPI
-                                </div>
-                                <div
-                                    class="col-12 lg:col-6 xl:col-6 flex justify-content-end"
-                                    style="padding: 0.75rem 1rem"
-                                >
-                                    {{
-                                        payrollDetailEmployee?.kpiSalary
-                                            | number : "1.0-0"
-                                    }}
-                                </div>
-                            </div>
-                            <div class="grid">
-                                <div
-                                    class="col-12 lg:col-6 xl:col-6"
-                                    style="padding: 0.75rem 1rem"
-                                >
-                                    KPI đạt (%)
-                                </div>
-                                <div
-                                    class="col-12 lg:col-6 xl:col-6 flex justify-content-end"
-                                    style="padding: 0.75rem 1rem"
-                                >
-                                    {{ payrollDetailEmployee?.kpiPercentage }}
-                                </div>
-                            </div>
-                            <div class="grid">
-                                <div
-                                    class="col-12 lg:col-6 xl:col-6 font-semibold"
-                                    style="padding: 0.75rem 1rem"
-                                >
-                                    Lương KPI thực nhận
-                                </div>
-                                <div
-                                    class="col-12 lg:col-6 xl:col-6 flex justify-content-end font-semibold"
-                                    style="padding: 0.75rem 1rem"
-                                >
-                                    {{
-                                        payrollDetailEmployee?.kpi
-                                            | number : "1.0-0"
-                                    }}
-                                </div>
-                            </div>
-                            <div class="grid">
-                                <div
                                     class="col-12 lg:col-6 xl:col-6 font-semibold"
                                     style="padding: 0.75rem 1rem"
                                 >
@@ -254,25 +206,6 @@
                                     -
                                     {{
                                         payrollDetailEmployee?.socialInsurance
-                                            | number : "1.0-0"
-                                    }}
-                                </div>
-                            </div>
-                            <div class="grid">
-                                <div
-                                    class="col-12 lg:col-6 xl:col-6 font-semibold"
-                                    style="padding: 0.75rem 1rem"
-                                >
-                                    Công đoàn
-                                </div>
-                                <div
-                                    class="col-12 lg:col-6 xl:col-6 flex justify-content-end font-semibold"
-                                    style="padding: 0.75rem 1rem"
-                                    style="color: red; font-weight: 500"
-                                >
-                                    -
-                                    {{
-                                        payrollDetailEmployee?.unionFee
                                             | number : "1.0-0"
                                     }}
                                 </div>
