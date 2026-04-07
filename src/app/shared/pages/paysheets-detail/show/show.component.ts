@@ -942,6 +942,9 @@ export class ShowComponent implements OnInit {
                                 payrollId: this.id,
                             };
                             this.getPayrollDetails(request);
+                            if (this.responseEmployeeVisiable) {
+                                this.loadPayrollInquiries();
+                            }
                             this.isLoading = false;
                             this.messageService.add({
                                 severity: 'success',

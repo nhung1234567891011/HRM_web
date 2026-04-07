@@ -737,6 +737,9 @@ export class ShowComponent implements OnInit {
                     this.displayEditPayrollDetailDialog = false;
                     this.payrollDetailEditing = null;
                     this.reloadData();
+                    if (this.responseEmployeeVisiable) {
+                        this.loadPayrollInquiries();
+                    }
                 } else {
                     this.messageService.add({
                         severity: 'error',
@@ -1098,6 +1101,9 @@ export class ShowComponent implements OnInit {
                             }
                             this.isLoading = false;
                             this.getPayrollDetails(request);
+                            if (this.responseEmployeeVisiable) {
+                                this.loadPayrollInquiries();
+                            }
                             this.messageService.add({
                                 severity: 'success',
                                 summary: 'Thành công',
