@@ -107,8 +107,8 @@ export class EditComponent {
             ],
             personalEmail: [''],
             organizationId: ['', Validators.required],
-            staffPositionId: [''],
-            companyId: [''],
+            staffPositionId: ['', Validators.required],
+            companyId: ['', Validators.required],
             staffTitleId: ['', Validators.required],
             workingStatus: ['', Validators.required],
             probationDate: [''],
@@ -897,7 +897,14 @@ export class EditComponent {
     }
 
     onSubmitForm() {
-        if (this.employeeForm.valid) {
+        if (this.employeeForm.invalid) {
+            this.employeeForm.markAllAsTouched();
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Chú ý',
+                detail: 'Vui lòng điền đầy đủ các trường yêu cầu.',
+            });
+            return;
         }
         // const organizationId = this.employeeForm.get('organizationId')?.value.data
         // console.log(organizationId);
