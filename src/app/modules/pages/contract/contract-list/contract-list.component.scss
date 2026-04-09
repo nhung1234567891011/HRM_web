@@ -147,6 +147,15 @@
   background-color: #f4f4f4;
 }
 
+.menu-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.menu-btn:disabled:hover {
+  background: none;
+}
+
 ::ng-deep .p-treeselect {
   width: 100%;
 }

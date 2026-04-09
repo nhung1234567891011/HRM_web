@@ -91,6 +91,72 @@ export class ContractListComponent implements OnInit {
         return contract?.expiredStatus === true;
     }
 
+    private getBusinessCurrentDate(): Date {
+        const now = new Date();
+        const utcTimestamp = now.getTime() + now.getTimezoneOffset() * 60000;
+        const vietnamTimestamp = utcTimestamp + 7 * 60 * 60000;
+        const vietnamNow = new Date(vietnamTimestamp);
+
+        return new Date(
+            vietnamNow.getFullYear(),
+            vietnamNow.getMonth(),
+            vietnamNow.getDate()
+        );
+    }
+
+    private toDateOnly(value: any): Date | null {
+        if (!value) {
+            return null;
+        }
+
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) {
+            return null;
+        }
+
+        return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    }
+
+    isActiveContract(contract: any): boolean {
+        if (!contract || contract?.expiredStatus === true) {
+            return false;
+        }
+
+        const currentDate = this.getBusinessCurrentDate();
+        const effectiveDate = this.toDateOnly(contract?.effectiveDate);
+        const expiryDate = this.toDateOnly(contract?.expiryDate);
+
+        const isEffective = !effectiveDate || effectiveDate <= currentDate;
+        const isNotExpired = !expiryDate || expiryDate >= currentDate;
+
+        return isEffective && isNotExpired;
+    }
+
+    canDeleteContract(contract: any): boolean {
+        return !this.isActiveContract(contract);
+    }
+
+    private showActiveContractDeleteWarning(blockedCount: number = 1): void {
+        const detail =
+            blockedCount > 1
+                ? `${blockedCount} hợp đồng còn hiệu lực, không thể xóa.`
+                : 'Hợp đồng còn hiệu lực, không thể xóa.';
+
+        this.messages = [
+            {
+                severity: 'warn',
+                summary: 'Không thể xóa',
+                detail,
+                life: 3500,
+            },
+        ];
+    }
+
+    private isActiveContractDeleteError(detail: string): boolean {
+        const normalized = (detail || '').toLowerCase();
+        return normalized.includes('hợp đồng còn hiệu lực');
+    }
+
     canEditContract(contract: any): boolean {
         return !this.isExpiredContract(contract);
     }
@@ -100,7 +166,12 @@ export class ContractListComponent implements OnInit {
     }
 
     private getApiErrorDetail(error: any, fallback: string): string {
-        return error?.error?.detail || fallback;
+        return (
+            error?.error?.detail ||
+            error?.error?.message ||
+            error?.error?.title ||
+            fallback
+        );
     }
 
     onEdit(contract: any) {
@@ -484,26 +555,76 @@ export class ContractListComponent implements OnInit {
     private deleteSelectedContracts(): void {
         const selectedIds = [...this.selectedContractIds];
 
-        from(selectedIds)
+        const contractById = new Map<number, any>(
+            (this.contracts || [])
+                .filter((contract: any) => contract?.id !== null && contract?.id !== undefined)
+                .map((contract: any) => [contract.id, contract])
+        );
+
+        const blockedIds = selectedIds.filter((id) => {
+            const contract = contractById.get(id);
+            return contract ? this.isActiveContract(contract) : false;
+        });
+
+        const blockedIdSet = new Set<number>(blockedIds);
+        const deletableIds = selectedIds.filter((id) => !blockedIdSet.has(id));
+
+        if (deletableIds.length === 0) {
+            this.showActiveContractDeleteWarning(blockedIds.length);
+            this.closeDiaLogDelete();
+            return;
+        }
+
+        from(deletableIds)
             .pipe(
                 concatMap((id) =>
                     this.contractService.deleteContract(id).pipe(
-                        map(() => ({ id, success: true })),
-                        catchError(() => of({ id, success: false }))
+                        map(() => ({ id, success: true, detail: '' })),
+                        catchError((error) =>
+                            of({
+                                id,
+                                success: false,
+                                detail: this.getApiErrorDetail(
+                                    error,
+                                    'Có lỗi xảy ra khi xóa hợp đồng.'
+                                ),
+                            })
+                        )
                     )
                 ),
                 toArray()
             )
             .subscribe((results) => {
                 const successCount = results.filter((r) => r.success).length;
-                const failCount = results.length - successCount;
+                const failedResults = results.filter((r) => !r.success);
+                const blockedByServerCount = failedResults.filter((r) =>
+                    this.isActiveContractDeleteError(r.detail)
+                ).length;
+                const otherFailCount = failedResults.length - blockedByServerCount;
+                const totalBlockedCount = blockedIds.length + blockedByServerCount;
 
-                if (failCount === 0) {
+                const details: string[] = [];
+                if (successCount > 0) {
+                    details.push(`Đã xóa ${successCount} hợp đồng`);
+                }
+                if (totalBlockedCount > 0) {
+                    details.push(
+                        `${totalBlockedCount} hợp đồng còn hiệu lực không được xóa`
+                    );
+                }
+                if (otherFailCount > 0) {
+                    details.push(`${otherFailCount} hợp đồng xóa thất bại`);
+                }
+
+                const detailMessage =
+                    details.join(', ') || 'Không thể xóa hợp đồng đã chọn.';
+
+                if (otherFailCount === 0 && totalBlockedCount === 0) {
                     this.messages = [
                         {
                             severity: 'success',
                             summary: 'Thành công',
-                            detail: `Đã xóa ${successCount} hợp đồng`,
+                            detail: detailMessage,
                             life: 3000,
                         },
                     ];
@@ -511,8 +632,11 @@ export class ContractListComponent implements OnInit {
                     this.messages = [
                         {
                             severity: 'warn',
-                            summary: 'Hoàn tất một phần',
-                            detail: `Đã xóa ${successCount} hợp đồng, ${failCount} hợp đồng xóa thất bại`,
+                            summary:
+                                successCount > 0
+                                    ? 'Hoàn tất một phần'
+                                    : 'Không thể xóa',
+                            detail: detailMessage,
                             life: 4000,
                         },
                     ];
@@ -1167,6 +1291,11 @@ export class ContractListComponent implements OnInit {
 
 
     openDiaLogDelete(contract: any): void {
+        if (this.isActiveContract(contract)) {
+            this.showActiveContractDeleteWarning();
+            return;
+        }
+
         this.isBulkDeleteDialog = false;
         this.contractDelete = contract;
         this.showDiaLogDelete = true;
@@ -1185,6 +1314,12 @@ export class ContractListComponent implements OnInit {
         }
 
         if (this.contractDelete) {
+            if (this.isActiveContract(this.contractDelete)) {
+                this.showActiveContractDeleteWarning();
+                this.closeDiaLogDelete();
+                return;
+            }
+
             const contractId = this.contractDelete.id;
             this.contractService.deleteContract(contractId).subscribe({
                 next: () => {
@@ -1206,7 +1341,10 @@ export class ContractListComponent implements OnInit {
                         {
                             severity: 'error',
                             summary: 'Thất bại',
-                            detail: 'Có lỗi xảy ra',
+                            detail: this.getApiErrorDetail(
+                                err,
+                                'Có lỗi xảy ra khi xóa hợp đồng.'
+                            ),
                             life: 3000,
                         },
                     ];
