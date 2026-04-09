@@ -84,6 +84,7 @@ import { LaborService } from 'src/app/core/services/labor.service';
 import { ObjectService } from 'src/app/core/services/object.service';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { MessageService } from 'primeng/api';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-update-job-information',
@@ -614,21 +615,142 @@ export class UpdateJobInformationComponent {
     }
 
     onSubmit(): void {
-        // this.createJobInfo.value.employeeId = this.;
+        if (this.createJobInfo.invalid) {
+            this.createJobInfo.markAllAsTouched();
+            this.toastService.showWarning(
+                'Chú ý',
+                'Vui lòng kiểm tra lại dữ liệu trước khi cập nhật.'
+            );
+            return;
+        }
 
-        console.log(this.createJobInfo.value.natureOfLaborId);
+        if (!this.profileById?.id) {
+            this.toastService.showError(
+                'Thất bại',
+                'Không tìm thấy hồ sơ công việc cần cập nhật.'
+            );
+            return;
+        }
+
+        const rawValue = this.createJobInfo.getRawValue();
+        const formData = {
+            ...rawValue,
+            employeeId: this.id,
+            workingStatus: this.toNumberOrNull(rawValue?.workingStatus),
+            natureOfLaborId: this.toNumberOrNull(rawValue?.natureOfLaborId),
+            timeKeepingId: this.toNumberOrNull(rawValue?.timeKeepingId),
+            contractTypeId: this.toNumberOrNull(rawValue?.contractTypeId),
+            internshipStartDate: this.toIsoOrNull(rawValue?.internshipStartDate),
+            probationStartDate: this.toIsoOrNull(rawValue?.probationStartDate),
+            officialStartDate: this.toIsoOrNull(rawValue?.officialStartDate),
+            seniority: this.toDecimalOrNull(rawValue?.seniority),
+            retiredDate: this.toIsoOrNull(rawValue?.retiredDate),
+            quitJobDate: this.toIsoOrNull(rawValue?.quitJobDate),
+            salaryLevel: this.toDecimalOrNull(rawValue?.salaryLevel),
+            basicSalary: this.toDecimalOrNull(rawValue?.basicSalary),
+            insuranceSalary: this.toDecimalOrNull(rawValue?.insuranceSalary),
+            totalSalary: this.toDecimalOrNull(rawValue?.totalSalary),
+        };
+
+        if (formData.workingStatus === 0) {
+            formData.reasonGroupQuitJob = null;
+            formData.reasonQuitJob = null;
+            formData.quitJobDate = null;
+            formData.opinionContribute = null;
+        }
+
         this.profileService
             .updateJobInfo(
                 { id: this.profileById?.id },
-                this.createJobInfo.value
+                formData
             )
-            .subscribe((results) => {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Thông báo',
-                    detail: 'Cập nhật thông tin chung hồ sơ thành công',
-                });
+            .subscribe({
+                next: (results) => {
+                    if (results?.status === false) {
+                        this.toastService.showError(
+                            'Cập nhật thất bại',
+                            this.getReadableErrorMessage(results)
+                        );
+                        return;
+                    }
+
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Thông báo',
+                        detail: 'Cập nhật thông tin công việc thành công',
+                    });
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.toastService.showError(
+                        'Cập nhật thất bại',
+                        this.getReadableErrorMessage(error)
+                    );
+                },
             });
+    }
+
+    private toNumberOrNull(value: any): number | null {
+        if (value === null || value === undefined || value === '') {
+            return null;
+        }
+
+        const parsed = Number(value);
+        return Number.isNaN(parsed) ? null : parsed;
+    }
+
+    private toDecimalOrNull(value: any): number | null {
+        return this.toNumberOrNull(value);
+    }
+
+    private toIsoOrNull(value: any): string | null {
+        if (!value) {
+            return null;
+        }
+
+        const dateValue = value instanceof Date ? value : new Date(value);
+        if (Number.isNaN(dateValue.getTime())) {
+            return null;
+        }
+
+        return dateValue.toISOString();
+    }
+
+    private getReadableErrorMessage(source: any): string {
+        const payload = source?.error ?? source;
+
+        const messages: string[] = [];
+
+        if (typeof payload?.message === 'string' && payload.message.trim()) {
+            messages.push(payload.message.trim());
+        }
+
+        if (typeof payload?.detail === 'string' && payload.detail.trim()) {
+            messages.push(payload.detail.trim());
+        }
+
+        if (Array.isArray(payload?.errors)) {
+            payload.errors.forEach((item: any) => {
+                if (typeof item === 'string' && item.trim()) {
+                    messages.push(item.trim());
+                }
+                if (
+                    typeof item?.errorMessage === 'string' &&
+                    item.errorMessage.trim()
+                ) {
+                    messages.push(item.errorMessage.trim());
+                }
+            });
+        }
+
+        if (messages.length > 0) {
+            return [...new Set(messages)].join(' | ');
+        }
+
+        if (source?.status === 0) {
+            return 'Không thể kết nối tới máy chủ. Vui lòng thử lại.';
+        }
+
+        return 'Có lỗi xảy ra khi cập nhật thông tin công việc.';
     }
 
     handleDelete(item: any): void {

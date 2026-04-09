@@ -95,6 +95,7 @@
                                     filterBy="groupPositionName"
                                     filterPlaceholder="Tìm nhóm vị trí"
                                     placeholder="Chọn nhóm vị trí"
+                                    appendTo="body"
                                 ></p-dropdown>
                             </div>
                             <div class="col-12 mb-2 md:col-2 md:mb-0">
@@ -207,6 +208,7 @@
                                     filterBy="staffTitleName"
                                     filterPlaceholder="Tìm chức danh"
                                     placeholder="Chọn chức danh"
+                                    appendTo="body"
                                 ></p-dropdown>
                             </div>
                             <div class="col-12 mb-2 md:col-2 md:mb-0">
@@ -265,6 +267,9 @@
                                     display="chip"
                                     [metaKeySelection]="false"
                                     selectionMode="checkbox"
+                                    [propagateSelectionDown]="false"
+                                    [propagateSelectionUp]="false"
+                                    appendTo="body"
                                     placeholder="Chọn đơn vị công tác"
                                 ></p-treeSelect>
                                 <div

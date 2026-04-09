@@ -61,36 +61,6 @@
     transition: all 0.1s;
 }
 
-.permissions-tree .ui-treenode-connector {
-    display: none;
-}
-
-.permission-tree {
-    list-style-type: none;
-    /* Xóa dấu bullet */
-}
-
-.permission-item {
-    cursor: pointer;
-}
-
-.permission-item ul {
-    margin-left: 20px;
-}
-
-.expanded::before {
-    content: "▼";
-    /* Biểu tượng mở */
-    padding-right: 5px;
-}
-
-.collapsed::before {
-    content: "▶";
-    /* Biểu tượng đóng */
-    padding-right: 5px;
-}
-
-
 .container-update-role {
     padding-top: 200px;
     display: flex;
@@ -143,7 +113,12 @@ ul{
     border: 1px solid #d9e3ef;
     border-radius: 14px;
     box-shadow: 0 10px 24px rgba(19, 41, 68, 0.08);
-    overflow: hidden;
+    overflow: visible;
+}
+
+::ng-deep .p-dropdown-panel,
+::ng-deep .p-treeselect-panel {
+    z-index: 1200 !important;
 }
 
 .staff-position-form .field {
