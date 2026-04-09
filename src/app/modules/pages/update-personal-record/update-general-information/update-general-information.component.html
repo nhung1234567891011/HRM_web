@@ -859,6 +859,8 @@
             pRipple
             icon="pi pi-plus"
             label="Cập nhật hồ sơ"
+            [loading]="isSubmitting"
+            [disabled]="isSubmitting"
         ></button>
     </div>
 </form>

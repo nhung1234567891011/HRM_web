@@ -142,6 +142,7 @@ export class UpdateJobInformationComponent {
     employees: any;
 
     id: any;
+    isSubmitting: boolean = false;
     constructor(
         private toastService: ToastService,
         private loadingService: LoadingService,
@@ -660,13 +661,10 @@ export class UpdateJobInformationComponent {
             formData.opinionContribute = null;
         }
 
-        this.profileService
-            .updateJobInfo(
-                { id: profileId },
-                formData
-            )
-            .subscribe({
+        this.isSubmitting = true;
+        this.profileService.updateJobInfo({ id: profileId }, formData).subscribe({
                 next: (results) => {
+                    this.isSubmitting = false;
                     if (results?.status === false) {
                         this.toastService.showError(
                             'Cập nhật thất bại',
@@ -682,6 +680,7 @@ export class UpdateJobInformationComponent {
                     });
                 },
                 error: (error: HttpErrorResponse) => {
+                    this.isSubmitting = false;
                     this.toastService.showError(
                         'Cập nhật thất bại',
                         this.getReadableErrorMessage(error)

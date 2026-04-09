@@ -103,6 +103,7 @@ export class UpdateGeneralInformationComponent {
 
     employees: any;
     id: any;
+    isSubmitting: boolean = false;
     imageUrl: string = environment.baseApiImageUrl;
     constructor(
         private toastService: ToastService,
@@ -384,10 +385,10 @@ export class UpdateGeneralInformationComponent {
         //     "classification": null // Xếp loại
         // }
 
-        this.profileService
-            .updateGeneralInfo({ id: profileId }, formData)
-            .subscribe({
+        this.isSubmitting = true;
+        this.profileService.updateGeneralInfo({ id: profileId }, formData).subscribe({
                 next: (results) => {
+                    this.isSubmitting = false;
                     if (results?.status === false) {
                         this.toastService.showError(
                             'Cập nhật thất bại',
@@ -403,6 +404,7 @@ export class UpdateGeneralInformationComponent {
                     });
                 },
                 error: (error: HttpErrorResponse) => {
+                    this.isSubmitting = false;
                     this.toastService.showError(
                         'Cập nhật thất bại',
                         this.getReadableErrorMessage(error)
