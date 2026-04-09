@@ -10,6 +10,7 @@ import { ToastService } from 'src/app/core/services/global/toast.service';
 import { noWhitespaceValidator } from 'src/app/shared/validator';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-create',
@@ -194,35 +195,42 @@ export class CreateComponent implements OnInit {
                         });
                     } else {
                         this.loadingService.hide();
+                        const detail = this.getReadableErrorMessage(response);
                         this.messageService.add({
                             severity: 'error',
                             summary: 'Thông báo',
-                            detail: `${response.message}`,
+                            detail,
                         });
                     }
                 },
-                error: (error) => {
+                error: (error: HttpErrorResponse) => {
                     this.loadingService.hide();
+                    const detail = this.getReadableErrorMessage(error);
+
                     if (error.status === 400) {
-                        this.toastService.showError(
-                            'Thất bại',
-                            `${error.error?.detail || 'Dữ liệu không hợp lệ.'}`
-                        );
-                    } else if (error.status === 404) {
-                        this.toastService.showError(
-                            'Lỗi 404',
-                            `${error.detail}`
-                        );
-                    } else {
-                        this.toastService.showError(
-                            'Lỗi',
-                            'Đã xảy ra lỗi trong quá trình xử lý.'
-                        );
+                        this.toastService.showError('Thất bại', detail);
+                        return;
                     }
+
+                    if (error.status === 404) {
+                        this.toastService.showError('Lỗi 404', detail);
+                        return;
+                    }
+
+                    if (error.status === 409) {
+                        this.toastService.showError('Dữ liệu bị trùng', detail);
+                        return;
+                    }
+
+                    this.toastService.showError('Lỗi', detail);
                 },
             });
         } else {
             this.staffPositionCreateForm.markAllAsTouched();
+            this.toastService.showError(
+                'Thiếu thông tin',
+                'Vui lòng nhập đầy đủ các trường bắt buộc trước khi thêm mới.'
+            );
         }
     }
 
@@ -316,5 +324,58 @@ export class CreateComponent implements OnInit {
         } else {
             this.positionVisible = false;
         }
+    }
+
+    private getReadableErrorMessage(source: any): string {
+        const payload = source?.error ?? source;
+
+        const messages: string[] = [];
+
+        if (payload?.message && typeof payload.message === 'string') {
+            messages.push(payload.message.trim());
+        }
+
+        if (payload?.detail && typeof payload.detail === 'string') {
+            messages.push(payload.detail.trim());
+        }
+
+        const errors = payload?.errors;
+
+        if (Array.isArray(errors)) {
+            for (const item of errors) {
+                if (typeof item === 'string' && item.trim()) {
+                    messages.push(item.trim());
+                    continue;
+                }
+
+                if (item?.errorMessage && typeof item.errorMessage === 'string') {
+                    messages.push(item.errorMessage.trim());
+                }
+            }
+        } else if (errors && typeof errors === 'object') {
+            Object.values(errors).forEach((value) => {
+                if (Array.isArray(value)) {
+                    value.forEach((msg) => {
+                        if (typeof msg === 'string' && msg.trim()) {
+                            messages.push(msg.trim());
+                        }
+                    });
+                } else if (typeof value === 'string' && value.trim()) {
+                    messages.push(value.trim());
+                }
+            });
+        }
+
+        const uniqueMessages = [...new Set(messages.filter(Boolean))];
+
+        if (uniqueMessages.length > 0) {
+            return uniqueMessages.join(' | ');
+        }
+
+        if (source?.status === 0) {
+            return 'Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng và thử lại.';
+        }
+
+        return 'Thêm vị trí thất bại. Vui lòng kiểm tra lại dữ liệu và thử lại.';
     }
 }

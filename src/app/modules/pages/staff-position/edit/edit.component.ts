@@ -34,7 +34,7 @@ export class EditComponent implements OnInit {
     selectedPosition: any;
     selectedTitle: any;
 
-    selectedPermissionIds: any;
+    existingOrganizationIds: number[] = [];
     groupAddVisible: boolean = false;
 
     isStaffTitleEditing: number | null = null; // Thêm biến này
@@ -43,7 +43,6 @@ export class EditComponent implements OnInit {
     groupPositionsCreateForm: FormGroup;
     staffTitleCreateForm: FormGroup;
 
-    permissionsTree: any;
     constructor(
         private route: ActivatedRoute,
         private toastService: ToastService,
@@ -90,8 +89,7 @@ export class EditComponent implements OnInit {
                 .subscribe((results) => {
                     if (results.status) {
                         this.staffPositionById = results.data;
-                        console.log(this.organizations);
-                        this.selectedPermissionIds =
+                        this.existingOrganizationIds =
                             this.staffPositionById.organizationPositions.map(
                                 (position: any) => position.organizationId
                             );
@@ -101,16 +99,17 @@ export class EditComponent implements OnInit {
                             locationGroup:
                                 this.staffPositionById.groupPositionId,
                             name: this.staffPositionById.positionName,
-                            organizations: [null],
+                            organizations: [],
                             group: this.staffPositionById.group,
                             title: this.staffPositionById.staffTitleId,
                             status: this.staffPositionById.staffPositionStatus,
                         });
+
+                        this.syncSelectedOrganizations();
                     } else {
                     }
                 });
         });
-        this.permissionsTree = [];
     }
 
     loadPositionGroups(): void {
@@ -124,43 +123,25 @@ export class EditComponent implements OnInit {
         });
     }
 
-    formatPermissions(items: any[], parent: any = null): any[] {
-        return items?.map((item) => {
-            const formattedItem = {
-                displayName: item.organizationName,
-                data: item.organizationName,
-                id: item.id,
-                parent: parent, // Set parent reference
-                parentPermissionId: parent?.id,
-                childrens: this.formatPermissions(
-                    item.organizationChildren,
-                    item
-                ),
-            };
-            return formattedItem;
-        });
-    }
-
     loadOrganization(): void {
         this.organizationService.getPaging({ id: 1 }).subscribe((results) => {
-            this.organizations = this.formatPermissions([results.data]);
-            this.permissionsTree = [results.data];
-            console.log(this.organizations);
+            this.organizations = this.transformData([results.data]);
+            this.syncSelectedOrganizations();
         });
     }
 
-    // transformData(data: any) {
-    //     return data.map((item: any) => {
-    //         const transformedItem = {
-    //             label: item.organizationName,
-    //             data: item.id,
-    //             children: item.organizationChildren
-    //                 ? this.transformData(item.organizationChildren)
-    //                 : [],
-    //         };
-    //         return transformedItem;
-    //     });
-    // }
+    transformData(data: any) {
+        return data.map((item: any) => {
+            const transformedItem = {
+                label: item.organizationName,
+                data: item.id,
+                children: item.organizationChildren
+                    ? this.transformData(item.organizationChildren)
+                    : [],
+            };
+            return transformedItem;
+        });
+    }
 
     loadPosition(): void {}
 
@@ -176,11 +157,12 @@ export class EditComponent implements OnInit {
         if (this.staffPositionUpdateForm.valid) {
             this.loadingService.show();
             const organizationPositions = [];
+            const selectedOrganizations =
+                this.staffPositionUpdateForm.value.organizations || [];
 
-            console.log(this.selectedPermissionIds);
-            for (const orgId of this.selectedPermissionIds) {
+            for (const org of selectedOrganizations) {
                 organizationPositions.push({
-                    organizationId: orgId,
+                    organizationId: org?.data ?? org?.id ?? org,
                 });
             }
             const formData = {
@@ -275,7 +257,34 @@ export class EditComponent implements OnInit {
 
     onPermissionsChange(updatedPermissions: any[]) {
         // console.log("change nhe" +updatedPermissions);
-        this.selectedPermissionIds = updatedPermissions;
+        this.existingOrganizationIds = updatedPermissions;
+    }
+
+    private syncSelectedOrganizations(): void {
+        if (!this.organizations?.length || !this.existingOrganizationIds?.length) {
+            return;
+        }
+
+        const selectedNodes: any[] = [];
+        const selectedIdSet = new Set(this.existingOrganizationIds);
+
+        const collectSelected = (nodes: any[]) => {
+            for (const node of nodes || []) {
+                if (selectedIdSet.has(node.data)) {
+                    selectedNodes.push(node);
+                }
+
+                if (node.children?.length) {
+                    collectSelected(node.children);
+                }
+            }
+        };
+
+        collectSelected(this.organizations);
+
+        this.staffPositionUpdateForm.patchValue({
+            organizations: selectedNodes,
+        });
     }
 
     handleCreateStaffTitle(): void {

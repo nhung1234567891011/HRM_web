@@ -74,6 +74,7 @@ import { AuthService } from 'src/app/core/services/identity/auth.service';
 import { environment } from 'src/environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-update-general-information',
@@ -289,44 +290,62 @@ export class UpdateGeneralInformationComponent {
     }
 
     onSubmit(): void {
-        console.log(this.generalInfoCreateForm.value);
+        if (this.generalInfoCreateForm.invalid) {
+            this.generalInfoCreateForm.markAllAsTouched();
+            this.toastService.showWarning(
+                'Chú ý',
+                'Vui lòng kiểm tra lại dữ liệu trước khi cập nhật.'
+            );
+            return;
+        }
+
+        const profileId = this.profileById?.id;
+        if (profileId == null) {
+            this.toastService.showError(
+                'Thất bại',
+                'Không tìm thấy hồ sơ cần cập nhật.'
+            );
+            return;
+        }
+
+        const rawValue = this.generalInfoCreateForm.getRawValue();
         const formData = {
             EmployeeId: this.id, // Mã nhân viên
             // Employee: name, // Tên nhân viên
             // ProfileCode: code, // Mã hồ sơ
             // anotherName: this.generalInfoCreateForm.value?.otherName,
-            originalLocation: this.generalInfoCreateForm.value?.placeOfOrigin,
-            bornLocation: this.generalInfoCreateForm.value?.placeOfBirth,
-            MarriageStatus: this.generalInfoCreateForm.value?.maritalStatus, // Tình trạng hôn nhân (Độc thân, Đã kết hôn, v.v.)
-            PersonalTaxNumber: this.generalInfoCreateForm.value?.personalTax, // Số thuế cá nhân
-            TypeFamily: this.generalInfoCreateForm.value?.familyComposition, // Loại hình gia đình (Ví dụ: hạt nhân, truyền thống)
-            TypePersonal: this.generalInfoCreateForm.value?.selfComposition, // Loại hình cá nhân (Ví dụ: nhân viên hợp đồng, chính thức)
-            Tripe: this.generalInfoCreateForm.value?.ethnicity, // Dân tộc
-            Religion: this.generalInfoCreateForm.value?.religion, // Tôn giáo
-            Nation: this.generalInfoCreateForm.value?.nationality, // Quốc tịch
-            TypePaper: this.generalInfoCreateForm.value?.idType, // Loại giấy tờ (Ví dụ: CMND, CCCD)
-            PaperNumber: this.generalInfoCreateForm.value?.idNumber, // Số giấy tờ
-            PaperProvideDate: this.generalInfoCreateForm.value?.idIssueDate, // Ngày cấp giấy tờ
+            originalLocation: rawValue?.placeOfOrigin,
+            bornLocation: rawValue?.placeOfBirth,
+            MarriageStatus: rawValue?.maritalStatus, // Tình trạng hôn nhân (Độc thân, Đã kết hôn, v.v.)
+            PersonalTaxNumber: rawValue?.personalTax, // Số thuế cá nhân
+            TypeFamily: rawValue?.familyComposition, // Loại hình gia đình (Ví dụ: hạt nhân, truyền thống)
+            TypePersonal: rawValue?.selfComposition, // Loại hình cá nhân (Ví dụ: nhân viên hợp đồng, chính thức)
+            Tripe: rawValue?.ethnicity, // Dân tộc
+            Religion: rawValue?.religion, // Tôn giáo
+            Nation: rawValue?.nationality, // Quốc tịch
+            TypePaper: rawValue?.idType, // Loại giấy tờ (Ví dụ: CMND, CCCD)
+            PaperNumber: rawValue?.idNumber, // Số giấy tờ
+            PaperProvideDate: this.toIsoOrNull(rawValue?.idIssueDate), // Ngày cấp giấy tờ
             PaperProvideLocation:
-                this.generalInfoCreateForm.value?.idIssuePlace, // Nơi cấp giấy tờ
-            ExpirePaperDate: this.generalInfoCreateForm.value?.idExpiryDate, // Ngày hết hạn giấy tờ
-            PassportNumber: this.generalInfoCreateForm.value?.passportNumber, // Số hộ chiếu
+                rawValue?.idIssuePlace, // Nơi cấp giấy tờ
+            ExpirePaperDate: this.toIsoOrNull(rawValue?.idExpiryDate), // Ngày hết hạn giấy tờ
+            PassportNumber: rawValue?.passportNumber, // Số hộ chiếu
             PassportProvideDate:
-                this.generalInfoCreateForm.value?.passportIssueDate, // Ngày cấp hộ chiếu
+                this.toIsoOrNull(rawValue?.passportIssueDate), // Ngày cấp hộ chiếu
             PassportProvideLocation:
-                this.generalInfoCreateForm.value?.passportIssuePlace, // Nơi cấp hộ chiếu
+                rawValue?.passportIssuePlace, // Nơi cấp hộ chiếu
             ExpirePassportDate:
-                this.generalInfoCreateForm.value?.passportExpiryDate, // Ngày hết hạn hộ chiếu
-            CultureLevel: this.generalInfoCreateForm.value?.educationLevel, // Trình độ văn hóa (Ví dụ: 12/12, 9/12)
-            EducationLevel: this.generalInfoCreateForm.value?.trainingLevel, // Trình độ học vấn (Ví dụ: Đại học, Cao đẳng)
+                this.toIsoOrNull(rawValue?.passportExpiryDate), // Ngày hết hạn hộ chiếu
+            CultureLevel: rawValue?.educationLevel, // Trình độ văn hóa (Ví dụ: 12/12, 9/12)
+            EducationLevel: rawValue?.trainingLevel, // Trình độ học vấn (Ví dụ: Đại học, Cao đẳng)
             EducationTraningLocation:
-                this.generalInfoCreateForm.value?.trainingPlace, // Nơi đào tạo
-            Faculty: this.generalInfoCreateForm.value?.department, // Khoa (nếu học đại học)
-            Specialized: this.generalInfoCreateForm.value?.major, // Chuyên ngành
-            GraduateDate: this.generalInfoCreateForm.value?.graduationYear, // Ngày tốt nghiệp
+                rawValue?.trainingPlace, // Nơi đào tạo
+            Faculty: rawValue?.department, // Khoa (nếu học đại học)
+            Specialized: rawValue?.major, // Chuyên ngành
+            GraduateDate: rawValue?.graduationYear, // Ngày tốt nghiệp
             GraduationClassification:
-                this.generalInfoCreateForm.value?.classification, // Xếp loại tốt nghiệp (Giỏi, Khá, Trung bình)
-            anotherName: this.generalInfoCreateForm.value?.otherName,
+                rawValue?.classification, // Xếp loại tốt nghiệp (Giỏi, Khá, Trung bình)
+            anotherName: rawValue?.otherName,
         };
 
         //             {
@@ -366,13 +385,80 @@ export class UpdateGeneralInformationComponent {
         // }
 
         this.profileService
-            .updateGeneralInfo({ id: this.profileById.id }, formData)
-            .subscribe((results) => {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Thông báo',
-                    detail: 'Thêm mới thông tin chung hồ sơ thành công',
-                });
+            .updateGeneralInfo({ id: profileId }, formData)
+            .subscribe({
+                next: (results) => {
+                    if (results?.status === false) {
+                        this.toastService.showError(
+                            'Cập nhật thất bại',
+                            this.getReadableErrorMessage(results)
+                        );
+                        return;
+                    }
+
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Thông báo',
+                        detail: 'Cập nhật thông tin chung hồ sơ thành công',
+                    });
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.toastService.showError(
+                        'Cập nhật thất bại',
+                        this.getReadableErrorMessage(error)
+                    );
+                },
             });
+    }
+
+    private toIsoOrNull(value: any): string | null {
+        if (!value) {
+            return null;
+        }
+
+        const dateValue = value instanceof Date ? value : new Date(value);
+        if (Number.isNaN(dateValue.getTime())) {
+            return null;
+        }
+
+        return dateValue.toISOString();
+    }
+
+    private getReadableErrorMessage(source: any): string {
+        const payload = source?.error ?? source;
+
+        const messages: string[] = [];
+
+        if (typeof payload?.message === 'string' && payload.message.trim()) {
+            messages.push(payload.message.trim());
+        }
+
+        if (typeof payload?.detail === 'string' && payload.detail.trim()) {
+            messages.push(payload.detail.trim());
+        }
+
+        if (Array.isArray(payload?.errors)) {
+            payload.errors.forEach((item: any) => {
+                if (typeof item === 'string' && item.trim()) {
+                    messages.push(item.trim());
+                }
+                if (
+                    typeof item?.errorMessage === 'string' &&
+                    item.errorMessage.trim()
+                ) {
+                    messages.push(item.errorMessage.trim());
+                }
+            });
+        }
+
+        if (messages.length > 0) {
+            return [...new Set(messages)].join(' | ');
+        }
+
+        if (source?.status === 0) {
+            return 'Không thể kết nối tới máy chủ. Vui lòng thử lại.';
+        }
+
+        return 'Có lỗi xảy ra khi cập nhật thông tin hồ sơ.';
     }
 }
