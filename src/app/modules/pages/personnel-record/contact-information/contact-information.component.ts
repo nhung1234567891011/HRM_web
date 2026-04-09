@@ -674,11 +674,13 @@ export class ContactInformationComponent {
             return;
         }
 
-        const employeeId = this.userCurrent?.employee?.id;
+        const employeeId = this.toNumberOrNull(
+            this.profileById?.employeeId ?? this.userCurrent?.employee?.id
+        );
         if (employeeId == null) {
             this.toastService.showError(
                 'Thất bại',
-                'Không xác định được nhân viên hiện tại.'
+                'Không xác định được nhân viên của hồ sơ cần cập nhật.'
             );
             return;
         }
