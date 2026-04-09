@@ -299,7 +299,8 @@ export class UpdateGeneralInformationComponent {
             return;
         }
 
-        if (!this.profileById?.id) {
+        const profileId = this.profileById?.id;
+        if (profileId == null) {
             this.toastService.showError(
                 'Thất bại',
                 'Không tìm thấy hồ sơ cần cập nhật.'
@@ -384,7 +385,7 @@ export class UpdateGeneralInformationComponent {
         // }
 
         this.profileService
-            .updateGeneralInfo({ id: this.profileById.id }, formData)
+            .updateGeneralInfo({ id: profileId }, formData)
             .subscribe({
                 next: (results) => {
                     if (results?.status === false) {

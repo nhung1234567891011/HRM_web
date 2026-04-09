@@ -624,7 +624,8 @@ export class UpdateJobInformationComponent {
             return;
         }
 
-        if (!this.profileById?.id) {
+        const profileId = this.profileById?.id;
+        if (profileId == null) {
             this.toastService.showError(
                 'Thất bại',
                 'Không tìm thấy hồ sơ công việc cần cập nhật.'
@@ -661,7 +662,7 @@ export class UpdateJobInformationComponent {
 
         this.profileService
             .updateJobInfo(
-                { id: this.profileById?.id },
+                { id: profileId },
                 formData
             )
             .subscribe({

@@ -726,10 +726,20 @@ export class UpdateContactInformationComponent {
     handleCreateContactRequest() {}
 
     onSubmit(): void {
-        if (!this.profileById?.id) {
+        const profileId = this.profileById?.id;
+        if (profileId == null) {
             this.toastService.showError(
                 'Thất bại',
                 'Không tìm thấy hồ sơ liên hệ cần cập nhật.'
+            );
+            return;
+        }
+
+        const employeeId = this.userCurrent?.employee?.id;
+        if (employeeId == null) {
+            this.toastService.showError(
+                'Thất bại',
+                'Không xác định được nhân viên hiện tại.'
             );
             return;
         }
@@ -786,7 +796,7 @@ export class UpdateContactInformationComponent {
         //     sameRegistration: true,
         // };
         const formData = {
-            employeeId: this.id,
+            employeeId,
             organizationPhone: rawValue?.organizationPhone,
             phonePersonHome: rawValue?.phonePersonHome,
             organizationEmail: rawValue?.organizationEmail,
@@ -864,7 +874,7 @@ export class UpdateContactInformationComponent {
         };
 
         this.profileService
-            .updateContactInfo({ id: this.profileById?.id }, formData)
+            .updateContactInfo({ id: profileId }, formData)
             .subscribe({
                 next: (items) => {
                     if (items?.status === false) {
@@ -1042,20 +1052,30 @@ export class UpdateContactInformationComponent {
     }
 
     onCityChange(data: any) {
-        console.log(data);
-        this.selectedCityId = data.value.id;
-        this.getDistrictsByCity(data.value.id);
+        const cityId = data?.value?.id ?? null;
+        if (cityId == null) {
+            this.onClearCity();
+            return;
+        }
+
+        this.selectedCityId = cityId;
+        this.getDistrictsByCity(cityId);
         this.districts = [];
         this.wards = [];
 
-        console.log(this.districts);
         this.createContactForm.get('wardId')?.setValue(null);
         this.createContactForm.get('districtId')?.setValue(null);
     }
 
     onDistrictChange(districtId: any) {
-        this.selectedDistrictId = districtId.value.id;
-        this.getWardsByDistrict(districtId.value.id);
+        const selectedDistrictId = districtId?.value?.id ?? null;
+        if (selectedDistrictId == null) {
+            this.onClearDistrict();
+            return;
+        }
+
+        this.selectedDistrictId = selectedDistrictId;
+        this.getWardsByDistrict(selectedDistrictId);
         this.wards = [];
         this.createContactForm.get('wardId')?.setValue(null);
     }
@@ -1144,19 +1164,30 @@ export class UpdateContactInformationComponent {
     }
 
     onCityChangeCurrent(data: any) {
-        this.selectedCityId = data.value.id;
-        this.getDistrictsByCityCurrent(data.value.id);
+        const cityId = data?.value?.id ?? null;
+        if (cityId == null) {
+            this.onClearCityCurrent();
+            return;
+        }
+
+        this.selectedCityId = cityId;
+        this.getDistrictsByCityCurrent(cityId);
         this.districtsCurrent = [];
         this.wardsCurrent = [];
 
-        console.log(this.districts);
         this.createContactForm.get('currentWardId')?.setValue(null);
         this.createContactForm.get('currentDistrictId')?.setValue(null);
     }
 
     onDistrictChangeCurrent(districtId: any) {
-        this.selectedDistrictId = districtId.value.id;
-        this.getWardsByDistrictCurrent(districtId.value.id);
+        const selectedDistrictId = districtId?.value?.id ?? null;
+        if (selectedDistrictId == null) {
+            this.onClearDistrictCurrent();
+            return;
+        }
+
+        this.selectedDistrictId = selectedDistrictId;
+        this.getWardsByDistrictCurrent(selectedDistrictId);
         this.wardsCurrent = [];
         this.createContactForm.get('currentWardId')?.setValue(null);
     }
