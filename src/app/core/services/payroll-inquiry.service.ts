@@ -16,11 +16,11 @@ export class PayrollInquiryService {
     }
 
     create(request: any): Observable<any> {
-        return this.http.postFormData('payroll-inquiry/create', request);
+        return this.http.post('payroll-inquiry/create', request);
     }
 
     update(request: any): Observable<any> {
-        return this.http.putFormData('payroll-inquiry/update', request);
+        return this.http.put('payroll-inquiry/update', request);
     }
 
     updateBodyAndQueryParams(
