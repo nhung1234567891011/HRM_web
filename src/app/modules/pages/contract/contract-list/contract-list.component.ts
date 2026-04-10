@@ -724,7 +724,7 @@ export class ContractListComponent implements OnInit {
             '.contract-container .signDate'
         );
         if (dateElement) {
-            dateElement.textContent = `Hôm nay, ngày ${formattedDate}, tại Công ty Cổ phần Công nghệ và Truyền thông SMO, chúng tôi gồm:`;
+            dateElement.textContent = `Hôm nay, ngày ${formattedDate}, tại Công ty TNHH XNK Hữu Cơ Việt Nam, chúng tôi gồm:`;
         }
 
         const signingDates = new Date(contract.signingDate);
@@ -1006,7 +1006,7 @@ export class ContractListComponent implements OnInit {
             '.contract-container .signDate'
         );
         if (dateElement) {
-            dateElement.textContent = `Hôm nay, ngày ${formattedDate}, tại Công ty Cổ phần Công nghệ và Truyền thông SMO, chúng tôi gồm:`;
+            dateElement.textContent = `Hôm nay, ngày ${formattedDate}, tại Công ty TNHH XNK Hữu Cơ Việt Nam, chúng tôi gồm:`;
         }
 
         const signingDates = new Date(contract.signingDate);
@@ -1590,14 +1590,13 @@ export class ContractListComponent implements OnInit {
                         <p class="intro1">- Căn cứ Bộ luật Lao động 2019;</p>
 
                         <p class="section1 signDate">
-                            Hôm nay, ${formattedDate}, tại Công ty Cổ phần Công nghệ và
-                            Truyền thông SMO, chúng tôi gồm:
+                            Hôm nay, ${formattedDate}, tại Công ty TNHH XNK Hữu Cơ Việt Nam, chúng tôi gồm:
                         </p>
                         <h3 class="section-title">
                             <u style="padding-bottom: 10px">Bên A: Người sử dụng lao động</u>
                         </h3>
                         <p class="section1 address">
-                            Công ty: Cổ phần Công nghệ và Truyền thông SMO – SMO MEDIA JSC<br />
+                            Công ty: CCông ty TNHH XNK Hữu Cơ Việt Nam<br />
                             Địa chỉ: Thôn Liêu Hạ, xã Tân Lập, huyện Yên Mỹ, tỉnh Hưng Yên<br />
                             Điện thoại: 094 817 83 86<br />
                             Mã số thuế: 0901064979<br />
@@ -1670,8 +1669,7 @@ export class ContractListComponent implements OnInit {
                             </tr>
                         </table>
                         <p class="section1">
-                            - Địa điểm làm việc: Công ty cổ phần Công nghệ và Truyền thông SMO –
-                            SMO MEDIA JSC<br />
+                            - Địa điểm làm việc: Công ty TNHH XNK Hữu Cơ Việt Nam C<br />
                             - Bộ phận công tác: ……………………………………………………………………………………<br />
                             <span class="section1"
                                 >+ Phòng: ${ contract.unit?.organizationName }</span
