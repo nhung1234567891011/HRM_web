@@ -120,9 +120,13 @@ export class HttpLoadingService {
     buildQueryParams(data: any): string {
         if (data) {
             const params = new URLSearchParams();
-            for (const key in data) {
-                if (data.hasOwnProperty(key) && data[key] != null) {
-                    params.set(key, data[key]);
+            const normalizedData = this.normalizeRequestData(data);
+            for (const key in normalizedData) {
+                if (
+                    normalizedData.hasOwnProperty(key) &&
+                    normalizedData[key] != null
+                ) {
+                    params.set(key, normalizedData[key].toString());
                 }
             }
             return params.toString();
@@ -132,7 +136,8 @@ export class HttpLoadingService {
     post(endpoint: string, data: any): Observable<any> {
         // this.loadingUi.show();
         const headers = this.createHeaders();
-        return this.http.post(`/${endpoint}`, data, { headers }).pipe(
+        const normalizedData = this.normalizeRequestData(data);
+        return this.http.post(`/${endpoint}`, normalizedData, { headers }).pipe(
             catchError((error: HttpErrorResponse) => {
                 this.handleErrorResponse(error);
                 return throwError(error);
@@ -146,9 +151,10 @@ export class HttpLoadingService {
     public postFormData(endpoint: string, formData: FormData): Observable<any> {
         // this.loadingUi.show();
         const headers = this.createHeadersForFormData();
+        const normalizedFormData = this.normalizeFormData(formData);
         // const headers = this.createHeaders();
 
-        return this.http.post(`/${endpoint}`, formData, { headers }).pipe(
+        return this.http.post(`/${endpoint}`, normalizedFormData, { headers }).pipe(
             catchError((error: HttpErrorResponse) => {
                 this.handleErrorResponse(error);
                 return throwError(error);
@@ -161,7 +167,8 @@ export class HttpLoadingService {
 
     put(endpoint: string, data: any): Observable<any> {
         const headers = this.createHeaders();
-        return this.http.put(`/${endpoint}`, data, { headers }).pipe(
+        const normalizedData = this.normalizeRequestData(data);
+        return this.http.put(`/${endpoint}`, normalizedData, { headers }).pipe(
             catchError((error: HttpErrorResponse) => {
                 this.handleErrorResponse(error);
                 return throwError(error);
@@ -172,9 +179,10 @@ export class HttpLoadingService {
     public putFormData(endpoint: string, formData: FormData): Observable<any> {
         // this.loadingUi.show();
         const headers = this.createHeadersForFormData();
+        const normalizedFormData = this.normalizeFormData(formData);
         // const headers = this.createHeaders();
 
-        return this.http.put(`/${endpoint}`, formData, { headers }).pipe(
+        return this.http.put(`/${endpoint}`, normalizedFormData, { headers }).pipe(
             catchError((error: HttpErrorResponse) => {
                 this.handleErrorResponse(error);
                 return throwError(error);
@@ -207,6 +215,90 @@ export class HttpLoadingService {
         });
     }
 
+    private normalizeRequestData(data: any): any {
+        if (data == null) {
+            return data;
+        }
+
+        if (typeof data === 'string') {
+            return this.normalizeDateString(data);
+        }
+
+        if (data instanceof Date) {
+            return this.formatDateForApi(data);
+        }
+
+        if (
+            data instanceof File ||
+            data instanceof Blob ||
+            data instanceof FormData
+        ) {
+            return data;
+        }
+
+        if (Array.isArray(data)) {
+            return data.map((item) => this.normalizeRequestData(item));
+        }
+
+        if (typeof data === 'object') {
+            const normalized: any = {};
+            Object.keys(data).forEach((key) => {
+                normalized[key] = this.normalizeRequestData(data[key]);
+            });
+            return normalized;
+        }
+
+        return data;
+    }
+
+    private normalizeFormData(formData: FormData): FormData {
+        const normalizedFormData = new FormData();
+        formData.forEach((value, key) => {
+            if (typeof value === 'string') {
+                normalizedFormData.append(key, this.normalizeDateString(value));
+                return;
+            }
+
+            normalizedFormData.append(key, value);
+        });
+
+        return normalizedFormData;
+    }
+
+    private normalizeDateString(value: string): string {
+        if (!this.isUtcIsoDateString(value)) {
+            return value;
+        }
+
+        const date = new Date(value);
+        if (isNaN(date.getTime())) {
+            return value;
+        }
+
+        return this.formatDateForApi(date);
+    }
+
+    private isUtcIsoDateString(value: string): boolean {
+        return /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/.test(value);
+    }
+
+    private formatDateForApi(date: Date): string {
+        if (isNaN(date.getTime())) {
+            return '';
+        }
+
+        const pad = (value: number) => value.toString().padStart(2, '0');
+        const year = date.getFullYear();
+        const month = pad(date.getMonth() + 1);
+        const day = pad(date.getDate());
+        const hour = pad(date.getHours());
+        const minute = pad(date.getMinutes());
+        const second = pad(date.getSeconds());
+
+        // Keep local datetime without timezone suffix to avoid UTC date shifting.
+        return `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+    }
+
     handleErrorResponse(error: HttpErrorResponse) {
         console.error('HTTP Error:', error);
     }
@@ -218,10 +310,11 @@ export class HttpLoadingService {
     ): Observable<any> {
         const headers = this.createHeaders();
         const queryParams = this.buildQueryParams(dataQueryParams);
+        const normalizedDataBody = this.normalizeRequestData(dataBody);
         return this.http
             .put(
                 `/${endpoint}${queryParams ? `?${queryParams}` : ''}`,
-                dataBody,
+                normalizedDataBody,
                 { headers }
             )
             .pipe(
@@ -295,10 +388,11 @@ export class HttpLoadingService {
     ): Observable<any> {
         const headers = this.createHeaders();
         const queryParams = this.buildQueryParams(dataQueryParams);
+        const normalizedFormData = this.normalizeFormData(dataForm);
         return this.http
             .put(
                 `/${endpoint}${queryParams ? `?${queryParams}` : ''}`,
-                dataForm,
+                normalizedFormData,
                 { headers }
             )
             .pipe(
@@ -316,10 +410,11 @@ export class HttpLoadingService {
     ): Observable<any> {
         const headers = this.createHeaders();
         const queryParams = this.buildQueryParams(dataQueryParams);
+        const normalizedDataBody = this.normalizeRequestData(dataBody);
         return this.http
             .post(
                 `/${endpoint}${queryParams ? `?${queryParams}` : ''}`,
-                dataBody,
+                normalizedDataBody,
                 { headers }
             )
             .pipe(

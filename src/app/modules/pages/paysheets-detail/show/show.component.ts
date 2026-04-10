@@ -947,10 +947,21 @@ export class ShowComponent implements OnInit {
         const payrollDetailIds = this.selectedPayroll.map(
             (item: any) => item.id
         );
+        const responseDeadline = this.formatDateOnly(this.workConfirmTime);
+
+        if (!responseDeadline) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Cảnh báo',
+                detail: 'Ngày phản hồi không hợp lệ',
+            });
+            return;
+        }
+
         this.payrollDetailService
             .sendPayrollDetailConfirm({
                 payrollDetailIds: payrollDetailIds,
-                responseDeadline: this.workConfirmTime,
+                responseDeadline,
             })
             .subscribe({
                 next: (results: any) => {
@@ -981,6 +992,23 @@ export class ShowComponent implements OnInit {
                 },
             });
     }
+
+    private formatDateOnly(value: any): string | null {
+        if (!value) {
+            return null;
+        }
+
+        const date = value instanceof Date ? value : new Date(value);
+        if (isNaN(date.getTime())) {
+            return null;
+        }
+
+        const pad = (num: number) => num.toString().padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+            date.getDate()
+        )}`;
+    }
+
     displayEditDialog = false;
     inputPayrollName: string;
     onEditName() {
