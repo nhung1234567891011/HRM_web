@@ -11,6 +11,7 @@ import { MessageService } from 'primeng/api';
     templateUrl: './app.layout.component.html',
     providers: [MessageService],
 })
+
 export class AppLayoutComponent implements OnDestroy {
     overlayMenuOpenSubscription: Subscription;
 
