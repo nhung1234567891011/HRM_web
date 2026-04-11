@@ -143,12 +143,16 @@ export class HttpLoadingService {
         );
     }
 
-    public postFormData(endpoint: string, formData: FormData): Observable<any> {
+    public postFormData(
+        endpoint: string,
+        formData: FormData | Record<string, any>
+    ): Observable<any> {
         // this.loadingUi.show();
         const headers = this.createHeadersForFormData();
         // const headers = this.createHeaders();
+        const normalizedFormData = this.normalizeFormData(formData);
 
-        return this.http.post(`/${endpoint}`, formData, { headers }).pipe(
+        return this.http.post(`/${endpoint}`, normalizedFormData, { headers }).pipe(
             catchError((error: HttpErrorResponse) => {
                 this.handleErrorResponse(error);
                 return throwError(error);
@@ -169,12 +173,16 @@ export class HttpLoadingService {
         );
     }
 
-    public putFormData(endpoint: string, formData: FormData): Observable<any> {
+    public putFormData(
+        endpoint: string,
+        formData: FormData | Record<string, any>
+    ): Observable<any> {
         // this.loadingUi.show();
         const headers = this.createHeadersForFormData();
         // const headers = this.createHeaders();
+        const normalizedFormData = this.normalizeFormData(formData);
 
-        return this.http.put(`/${endpoint}`, formData, { headers }).pipe(
+        return this.http.put(`/${endpoint}`, normalizedFormData, { headers }).pipe(
             catchError((error: HttpErrorResponse) => {
                 this.handleErrorResponse(error);
                 return throwError(error);
@@ -209,6 +217,50 @@ export class HttpLoadingService {
 
     handleErrorResponse(error: HttpErrorResponse) {
         console.error('HTTP Error:', error);
+    }
+
+    private normalizeFormData(
+        data: FormData | Record<string, any>
+    ): FormData {
+        if (data instanceof FormData) {
+            return data;
+        }
+
+        const formData = new FormData();
+
+        const appendValue = (key: string, value: any) => {
+            if (value === undefined || value === null) {
+                return;
+            }
+
+            if (value instanceof Blob) {
+                formData.append(key, value);
+                return;
+            }
+
+            if (value instanceof Date) {
+                formData.append(key, value.toISOString());
+                return;
+            }
+
+            if (Array.isArray(value)) {
+                value.forEach((item) => appendValue(key, item));
+                return;
+            }
+
+            if (typeof value === 'object') {
+                Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+                    appendValue(`${key}[${nestedKey}]`, nestedValue);
+                });
+                return;
+            }
+
+            formData.append(key, String(value));
+        };
+
+        Object.entries(data).forEach(([key, value]) => appendValue(key, value));
+
+        return formData;
     }
 
     putBodyAndQueryParams(

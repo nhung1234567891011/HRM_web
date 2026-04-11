@@ -60,7 +60,7 @@ export class GpsTimekeepingService {
         return this.http.put('shift-catalog/delete-range', request);
     }
     checkInOut(request: any): Observable<any> {
-        return this.http.postFormData(
+        return this.http.post(
             'timekeeping-gps-log/checkin-checkout',
             request
         );
