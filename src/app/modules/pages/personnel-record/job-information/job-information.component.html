@@ -995,6 +995,8 @@
                                 icon="pi pi-save"
                                 label="Cập nhật"
                                 type="submit"
+                                [loading]="isSubmitting"
+                                [disabled]="isSubmitting"
                             ></button>
                         </div>
                     </form>

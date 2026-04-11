@@ -8,6 +8,7 @@ import { ToastService } from 'src/app/core/services/global/toast.service';
 import { AuthService } from 'src/app/core/services/identity/auth.service';
 import contactInfoConstant from 'src/app/core/constants/contact-info.constant';
 import { MessageService } from 'primeng/api';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-contact-information',
@@ -54,6 +55,7 @@ export class ContactInformationComponent {
     //UserCurrent
     userCurrent: any;
     profileById: any;
+    isSubmitting: boolean = false;
 
     public constant: any = {
         contactInfo: contactInfoConstant,
@@ -663,111 +665,195 @@ export class ContactInformationComponent {
     createContactForm: FormGroup;
     handleCreateContactRequest() {}
     onSubmit(): void {
-        this.createContactForm.value.employeeId = this.userCurrent.employee.id;
-        console.log(this.createContactForm.value);
+        const profileId = this.profileById?.id;
+        if (profileId == null) {
+            this.toastService.showError(
+                'Thất bại',
+                'Không tìm thấy hồ sơ liên hệ cần cập nhật.'
+            );
+            return;
+        }
+
+        const employeeId = this.toNumberOrNull(
+            this.profileById?.employeeId ?? this.userCurrent?.employee?.id
+        );
+        if (employeeId == null) {
+            this.toastService.showError(
+                'Thất bại',
+                'Không xác định được nhân viên của hồ sơ cần cập nhật.'
+            );
+            return;
+        }
+
+        const rawValue = this.createContactForm.getRawValue();
         const formData = {
-            employeeId: this.createContactForm.value?.employeeId,
-            organizationPhone: this.createContactForm.value?.organizationPhone,
-            phonePersonHome: this.createContactForm.value?.phonePersonHome,
-            organizationEmail: this.createContactForm.value?.organizationEmail,
-            anotherEmail: this.createContactForm.value?.anotherEmail,
-            skype: this.createContactForm.value?.skype,
-            facebook: this.createContactForm.value?.facebook,
-            personEmail: this.createContactForm.value?.personEmail,
-            nationId: this.createContactForm.value?.nationId,
-            nation: this.createContactForm.value?.nation,
+            employeeId,
+            organizationPhone: rawValue?.organizationPhone,
+            phonePersonHome: rawValue?.phonePersonHome,
+            organizationEmail: rawValue?.organizationEmail,
+            anotherEmail: rawValue?.anotherEmail,
+            skype: rawValue?.skype,
+            facebook: rawValue?.facebook,
+            personEmail: rawValue?.personEmail,
+            nationId: this.toNumberOrNull(rawValue?.nationId),
+            nation: rawValue?.nation,
 
-            cityId: this.createContactForm.value?.cityId?.id,
-            city: this.createContactForm.value?.cityId?.name,
+            cityId: this.toNumberOrNull(rawValue?.cityId?.id),
+            city: rawValue?.cityId?.name,
 
-            districtId: this.createContactForm.value?.districtId?.id,
-            district: this.createContactForm.value?.districtId?.name,
+            districtId: this.toNumberOrNull(rawValue?.districtId?.id),
+            district: rawValue?.districtId?.name,
 
-            wardId: this.createContactForm.value?.wardId?.id,
-            ward: this.createContactForm.value?.wardId?.name,
-            streetId: this.createContactForm.value?.streetId,
-            address: this.createContactForm.value?.address,
-            homeNumber: this.createContactForm.value?.homeNumber,
-
-            //Địa chỉ hiện tại
-
-            currentNationId: this.createContactForm.value?.currentNationId?.id,
-            currentNation: this.createContactForm.value?.currentNationId?.name,
-            currentCityId: this.createContactForm.value?.currentCityId?.id,
-            currentCity: this.createContactForm.value?.currentCityId?.name,
-            currentDistrictId:
-                this.createContactForm.value?.currentDistrictId?.id,
-            currentDistrict:
-                this.createContactForm.value?.currentDistrict?.name,
-            currentWardId: this.createContactForm.value?.currentWardId?.id,
-            currentWard: this.createContactForm.value?.currentWardId?.name,
-
-            currentStreetId: this.createContactForm.value?.currentStreetId?.id,
-            currentStreet: this.createContactForm.value?.currentStreet?.name,
-            currentHomeNumberId:
-                this.createContactForm.value?.currentHomeNumberId?.name,
-            currentHomeNumber: this.createContactForm.value?.currentHomeNumber,
-            currentAddresss: this.createContactForm.value?.currentAddresss,
+            wardId: this.toNumberOrNull(rawValue?.wardId?.id),
+            ward: rawValue?.wardId?.name,
+            streetId: this.toNumberOrNull(rawValue?.streetId),
+            address: rawValue?.address,
+            homeNumber: rawValue?.homeNumber,
 
             //Địa chỉ hiện tại
 
-            familyNumber: this.createContactForm.value?.familyNumber,
-            homeRegistrationNumber:
-                this.createContactForm.value?.homeRegistrationNumber,
-            isMaster: this.createContactForm.value?.isMaster,
-            residenceAddress: this.createContactForm.value?.residenceAddress,
-            isAtResidenceAddress:
-                this.createContactForm.value?.isAtResidenceAddress,
-            fullName: this.createContactForm.value?.fullName,
-            relationshipId: this.createContactForm.value?.relationshipId,
-            relationshipName: this.createContactForm.value?.relationshipName,
-            phoneNumberEmergency:
-                this.createContactForm.value?.phoneNumberEmergency,
-            addressEmergency: this.createContactForm.value?.addressEmergency,
-            homePhoneEmergency:
-                this.createContactForm.value?.homePhoneEmergency,
-            insuranceDate: this.createContactForm.value?.insuranceDate,
+            currentNationId: this.toNumberOrNull(rawValue?.currentNationId?.id),
+            currentNation: rawValue?.currentNationId?.name,
+            currentCityId: this.toNumberOrNull(rawValue?.currentCityId?.id),
+            currentCity: rawValue?.currentCityId?.name,
+            currentDistrictId: this.toNumberOrNull(rawValue?.currentDistrictId?.id),
+            currentDistrict: rawValue?.currentDistrictId?.name,
+            currentWardId: this.toNumberOrNull(rawValue?.currentWardId?.id),
+            currentWard: rawValue?.currentWardId?.name,
+
+            currentStreetId: this.toNumberOrNull(rawValue?.currentStreetId),
+            currentStreet: rawValue?.currentStreet,
+            currentHomeNumberId: this.toNumberOrNull(rawValue?.currentHomeNumberId),
+            currentHomeNumber: rawValue?.currentHomeNumber,
+            currentAddresss: rawValue?.currentAddresss,
+
+            //Địa chỉ hiện tại
+
+            familyNumber: rawValue?.familyNumber,
+            homeRegistrationNumber: rawValue?.homeRegistrationNumber,
+            isMaster: rawValue?.isMaster,
+            residenceAddress: rawValue?.residenceAddress,
+            isAtResidenceAddress: rawValue?.isAtResidenceAddress,
+            fullName: rawValue?.fullName,
+            relationshipId: this.toNumberOrNull(rawValue?.relationshipId),
+            relationshipName: rawValue?.relationshipName,
+            phoneNumberEmergency: rawValue?.phoneNumberEmergency,
+            addressEmergency: rawValue?.addressEmergency,
+            homePhoneEmergency: rawValue?.homePhoneEmergency,
+            insuranceDate: this.toIsoOrNull(rawValue?.insuranceDate),
             insuranceContributionRate:
-                this.createContactForm.value?.insuranceContributionRate,
-            healthInsuranceNumber:
-                this.createContactForm.value?.healthInsuranceNumber,
-            socialInsuranceNumber:
-                this.createContactForm.value?.socialInsuranceNumber,
-            healthInsuranceCardNumber:
-                this.createContactForm.value?.healthInsuranceCardNumber,
-            socialSecurityNumber:
-                this.createContactForm.value?.socialSecurityNumber,
-            isSyndicate: this.createContactForm.value?.isSyndicate,
-            issuranceStatus: this.createContactForm.value?.issuranceStatus,
-            cityProvide: this.createContactForm.value?.cityProvide?.id,
-            cityProvideId: this.createContactForm.value?.cityProvide?.id,
-            cityProvideCode: this.createContactForm.value?.cityProvide?.code,
+                this.toDecimalOrNull(rawValue?.insuranceContributionRate),
+            healthInsuranceNumber: rawValue?.healthInsuranceNumber,
+            socialInsuranceNumber: rawValue?.socialInsuranceNumber,
+            healthInsuranceCardNumber: rawValue?.healthInsuranceCardNumber,
+            socialSecurityNumber: rawValue?.socialSecurityNumber,
+            isSyndicate: rawValue?.isSyndicate,
+            issuranceStatus: this.toNumberOrNull(rawValue?.issuranceStatus),
+            cityProvide: rawValue?.cityProvideId?.name ?? rawValue?.cityProvide,
+            cityProvideId: this.toNumberOrNull(rawValue?.cityProvideId?.id),
+            cityProvideCode: rawValue?.cityProvideId?.code ?? rawValue?.cityProvideCode,
             heathcareRegistractionCode:
-                this.createContactForm.value?.heathcareRegistractionCode,
+                rawValue?.heathcareRegistractionCode,
             heathcareRegistractionLocation:
-                this.createContactForm.value?.heathcareRegistractionLocation,
+                rawValue?.heathcareRegistractionLocation,
             heathcareRegistracionNumber:
-                this.createContactForm.value?.heathcareRegistracionNumber,
-            sameRegistration: this.createContactForm.value?.sameRegistration,
-            emailEmergency: this.createContactForm.value?.emailEmergency,
-            anotherPhoneNumber:
-                this.createContactForm.value?.anotherPhoneNumber,
+                rawValue?.heathcareRegistracionNumber,
+            sameRegistration: rawValue?.sameRegistration,
+            emailEmergency: rawValue?.emailEmergency,
+            anotherPhoneNumber: rawValue?.anotherPhoneNumber,
         };
-        console.log(formData);
-        this.profileService
-            .updateContactInfo({ id: this.profileById?.id }, formData)
-            .subscribe((items) => {
-                // this.toastService.showSuccess(
-                //     'Thành công',
-                //     'Thêm mới thông tin liên hệ thành công!'
-                // );
+
+        this.isSubmitting = true;
+        this.profileService.updateContactInfo({ id: profileId }, formData).subscribe({
+            next: (items) => {
+                this.isSubmitting = false;
+
+                if (items?.status === false) {
+                    this.toastService.showError(
+                        'Cập nhật thất bại',
+                        this.getReadableErrorMessage(items)
+                    );
+                    return;
+                }
 
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Thông báo',
                     detail: 'Cập nhật thông tin liên hệ thành công!',
                 });
+            },
+            error: (error: HttpErrorResponse) => {
+                this.isSubmitting = false;
+                this.toastService.showError(
+                    'Cập nhật thất bại',
+                    this.getReadableErrorMessage(error)
+                );
+            },
+        });
+    }
+
+    private toNumberOrNull(value: any): number | null {
+        if (value === null || value === undefined || value === '') {
+            return null;
+        }
+
+        const parsed = Number(value);
+        return Number.isNaN(parsed) ? null : parsed;
+    }
+
+    private toDecimalOrNull(value: any): number | null {
+        return this.toNumberOrNull(value);
+    }
+
+    private toIsoOrNull(value: any): string | null {
+        if (!value) {
+            return null;
+        }
+
+        const dateValue = value instanceof Date ? value : new Date(value);
+        if (Number.isNaN(dateValue.getTime())) {
+            return null;
+        }
+
+        return dateValue.toISOString();
+    }
+
+    private getReadableErrorMessage(source: any): string {
+        const payload = source?.error ?? source;
+
+        const messages: string[] = [];
+
+        if (typeof payload?.message === 'string' && payload.message.trim()) {
+            messages.push(payload.message.trim());
+        }
+
+        if (typeof payload?.detail === 'string' && payload.detail.trim()) {
+            messages.push(payload.detail.trim());
+        }
+
+        if (Array.isArray(payload?.errors)) {
+            payload.errors.forEach((item: any) => {
+                if (typeof item === 'string' && item.trim()) {
+                    messages.push(item.trim());
+                }
+                if (
+                    typeof item?.errorMessage === 'string' &&
+                    item.errorMessage.trim()
+                ) {
+                    messages.push(item.errorMessage.trim());
+                }
             });
+        }
+
+        if (messages.length > 0) {
+            return [...new Set(messages)].join(' | ');
+        }
+
+        if (source?.status === 0) {
+            return 'Không thể kết nối tới máy chủ. Vui lòng thử lại.';
+        }
+
+        return 'Có lỗi xảy ra khi cập nhật thông tin liên hệ.';
     }
 
     getCitiesByCountry(countryId: number) {

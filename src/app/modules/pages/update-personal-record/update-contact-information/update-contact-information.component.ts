@@ -110,6 +110,7 @@ export class UpdateContactInformationComponent {
     //UserCurrent
     userCurrent: any;
     profileById: any;
+    isSubmitting: boolean = false;
 
     public constant: any = {
         contactInfo: contactInfoConstant,
@@ -735,11 +736,13 @@ export class UpdateContactInformationComponent {
             return;
         }
 
-        const employeeId = this.userCurrent?.employee?.id;
+        const employeeId = this.toNumberOrNull(
+            this.profileById?.employeeId ?? this.id ?? this.userCurrent?.employee?.id
+        );
         if (employeeId == null) {
             this.toastService.showError(
                 'Thất bại',
-                'Không xác định được nhân viên hiện tại.'
+                'Không xác định được nhân viên của hồ sơ cần cập nhật.'
             );
             return;
         }
@@ -873,10 +876,10 @@ export class UpdateContactInformationComponent {
             anotherPhoneNumber: rawValue?.anotherPhoneNumber,
         };
 
-        this.profileService
-            .updateContactInfo({ id: profileId }, formData)
-            .subscribe({
+        this.isSubmitting = true;
+        this.profileService.updateContactInfo({ id: profileId }, formData).subscribe({
                 next: (items) => {
+                    this.isSubmitting = false;
                     if (items?.status === false) {
                         this.toastService.showError(
                             'Cập nhật thất bại',
@@ -892,6 +895,7 @@ export class UpdateContactInformationComponent {
                     });
                 },
                 error: (error: HttpErrorResponse) => {
+                    this.isSubmitting = false;
                     this.toastService.showError(
                         'Cập nhật thất bại',
                         this.getReadableErrorMessage(error)

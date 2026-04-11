@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    baseFeUrl: 'https://hrm.smomedia.vn',
+    baseFeUrl: 'https://chiasecode.net/',
     // Thêm https:// vào dòng dưới đây
     baseApiUrl: 'https://api-hrm-gzhfhkcra3bbd7bc.southeastasia-01.azurewebsites.net/api', 
     baseApiImageUrl: 'https://api-hrm-gzhfhkcra3bbd7bc.southeastasia-01.azurewebsites.net',

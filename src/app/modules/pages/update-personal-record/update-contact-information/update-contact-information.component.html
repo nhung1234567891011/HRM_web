@@ -1363,6 +1363,8 @@
                             pButton
                             icon="pi pi-plus"
                             label="Cập nhật"
+                            [loading]="isSubmitting"
+                            [disabled]="isSubmitting"
                         ></button>
                     </div>
                 </div>

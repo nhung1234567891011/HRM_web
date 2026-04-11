@@ -410,6 +410,17 @@
                                                         )
                                                     "
                                                     class="menu-btn"
+                                                    [disabled]="!canDeleteContract(contract)"
+                                                    [attr.data-tooltip]="
+                                                        canDeleteContract(contract)
+                                                            ? 'Xóa hợp đồng'
+                                                            : 'Hợp đồng còn hiệu lực, không thể xóa'
+                                                    "
+                                                    [title]="
+                                                        canDeleteContract(contract)
+                                                            ? 'Xóa hợp đồng'
+                                                            : 'Hợp đồng còn hiệu lực, không thể xóa'
+                                                    "
                                                 >
                                                     <i class="pi pi-trash"></i>
                                                     Xóa
@@ -919,7 +930,7 @@
     </div>
     <div *ngIf="!isBulkDeleteDialog && contractDelete">
         <p>
-            Bạn có chắc muốn xóa đơn vị cơ cấu này? Lưu ý: Sau khi xóa bạn không
+            Bạn có chắc muốn xóa hợp đồng này? Lưu ý: Sau khi xóa bạn không
             thể hoàn tác hay khôi phục.
         </p>
         <strong class="name-delete">{{ contractDelete.code }}</strong>

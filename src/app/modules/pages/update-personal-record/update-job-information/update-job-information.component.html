@@ -989,6 +989,8 @@
                                     icon="pi pi-plus"
                                     label="Cập nhật"
                                     type="submit"
+                                    [loading]="isSubmitting"
+                                    [disabled]="isSubmitting"
                                 ></button>
                             </div>
                         </div>
