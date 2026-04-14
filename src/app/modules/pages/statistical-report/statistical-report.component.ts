@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { catchError, forkJoin, of } from 'rxjs';
 import { ChartModule } from 'primeng/chart';
+import { PrimeNGConfig } from 'primeng/api';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ReportService } from 'src/app/core/services/report.service';
 
@@ -17,6 +19,8 @@ export class StatisticalReportComponent implements OnInit {
     selectedYear: number = new Date().getFullYear();
     fromMonth: number | null = null;
     toMonth: number | null = null;
+    incomeFromPeriod: Date | null = null;
+    incomeToPeriod: Date | null = null;
     yearOptions: any[] = [];
     monthOptions: any[] = [
         { label: 'Tất cả', value: null },
@@ -93,14 +97,36 @@ export class StatisticalReportComponent implements OnInit {
 
     currentYear: number = new Date().getFullYear();
 
-    constructor(private reportService: ReportService) { }
+    constructor(private reportService: ReportService, private primengConfig: PrimeNGConfig) { }
 
     ngOnInit(): void {
+        this.primengConfig.setTranslation({
+            firstDayOfWeek: 1,
+            dayNames: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+            dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+            dayNamesMin: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+            monthNames: ['Tháng một', 'Tháng hai', 'Tháng ba', 'Tháng tư', 'Tháng năm', 'Tháng sáu', 'Tháng bảy', 'Tháng tám', 'Tháng chín', 'Tháng mười', 'Tháng mười một', 'Tháng mười hai'],
+            monthNamesShort: ['Thg 1', 'Thg 2', 'Thg 3', 'Thg 4', 'Thg 5', 'Thg 6', 'Thg 7', 'Thg 8', 'Thg 9', 'Thg 10', 'Thg 11', 'Thg 12'],
+            today: 'Hôm nay',
+            clear: 'Xóa',
+            chooseDate: 'Chọn ngày',
+            chooseMonth: 'Chọn tháng',
+            chooseYear: 'Chọn năm',
+            prevMonth: 'Tháng trước',
+            nextMonth: 'Tháng sau',
+            prevYear: 'Năm trước',
+            nextYear: 'Năm sau',
+        });
+
         this.hrChartPlugins = [this.createHrPieCalloutPlugin()];
         this.perfChartPlugins = [this.createPerformancePieCalloutPlugin()];
         for (let y = this.selectedYear - 5; y <= this.selectedYear; y++) {
             this.yearOptions.push({ label: `Năm ${y}`, value: y });
         }
+
+        this.incomeFromPeriod = new Date(this.selectedYear, 0, 1);
+        this.incomeToPeriod = new Date(this.selectedYear, 11, 1);
+
         this.loadAllReports();
     }
 
@@ -120,6 +146,16 @@ export class StatisticalReportComponent implements OnInit {
         this.loadAllReports();
     }
 
+    onIncomePeriodChange(): void {
+        if (this.incomeFromPeriod && this.incomeToPeriod && this.incomeFromPeriod.getTime() > this.incomeToPeriod.getTime()) {
+            const temp = this.incomeFromPeriod;
+            this.incomeFromPeriod = this.incomeToPeriod;
+            this.incomeToPeriod = temp;
+        }
+
+        this.loadMonthlyIncome();
+    }
+
     onPerformanceMonthChange(): void {
         this.loadPerformance();
     }
@@ -128,6 +164,29 @@ export class StatisticalReportComponent implements OnInit {
         const start = this.fromMonth ?? 1;
         const end = this.toMonth ?? 12;
         return start <= end ? { start, end } : { start: end, end: start };
+    }
+
+    private normalizeToMonthStart(date: Date): Date {
+        return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    private getIncomePeriodRange(): { start: Date; end: Date } {
+        const defaultStart = new Date(this.selectedYear, 0, 1);
+        const defaultEnd = new Date(this.selectedYear, 11, 1);
+        const fromDate = this.normalizeToMonthStart(this.incomeFromPeriod ?? defaultStart);
+        const toDate = this.normalizeToMonthStart(this.incomeToPeriod ?? defaultEnd);
+
+        return fromDate.getTime() <= toDate.getTime()
+            ? { start: fromDate, end: toDate }
+            : { start: toDate, end: fromDate };
+    }
+
+    private getIncomeRangeYears(startYear: number, endYear: number): number[] {
+        const years: number[] = [];
+        for (let year = startYear; year <= endYear; year++) {
+            years.push(year);
+        }
+        return years;
     }
 
     loadHrDistribution(): void {
@@ -155,21 +214,55 @@ export class StatisticalReportComponent implements OnInit {
     }
 
     loadMonthlyIncome(): void {
-        this.reportService.getMonthlyIncome({ year: this.selectedYear }).subscribe((res: any) => {
-            if (res.status && res.data) {
-                const data = res.data;
-                const summaries = data.monthlySummaries || [];
-                const range = this.getMonthRange();
-                const byMonth = new Map<number, any>(
-                    summaries.map((m: any) => [Number(m.month), m])
-                );
+        const periodRange = this.getIncomePeriodRange();
+        const startYear = periodRange.start.getFullYear();
+        const endYear = periodRange.end.getFullYear();
+        const requestYears = this.getIncomeRangeYears(startYear, endYear);
+        const requests = requestYears.map((year: number) =>
+            this.reportService.getMonthlyIncome({ year }).pipe(
+                catchError(() => of({ status: false, data: null }))
+            )
+        );
 
-                const filledSummaries = Array.from({ length: range.end - range.start + 1 }, (_, i) => {
-                    const month = range.start + i;
-                    const existing = byMonth.get(month);
-                    return existing ?? {
+        forkJoin(requests).subscribe((responses: any[]) => {
+            const summariesByPeriod = new Map<string, any>();
+
+            responses.forEach((res: any, index: number) => {
+                if (!res?.status || !res?.data) {
+                    return;
+                }
+
+                const requestYear = requestYears[index];
+                const summaries = res.data.monthlySummaries || [];
+
+                summaries.forEach((summary: any) => {
+                    const month = Number(summary.month);
+                    const year = Number(summary.year) || requestYear;
+                    if (!Number.isFinite(month) || month < 1 || month > 12) {
+                        return;
+                    }
+
+                    summariesByPeriod.set(`${year}-${month}`, {
+                        ...summary,
                         month,
-                        year: this.selectedYear,
+                        year,
+                    });
+                });
+            });
+
+            const filledSummaries: any[] = [];
+            const cursor = new Date(periodRange.start.getFullYear(), periodRange.start.getMonth(), 1);
+            const periodEnd = new Date(periodRange.end.getFullYear(), periodRange.end.getMonth(), 1);
+
+            while (cursor.getTime() <= periodEnd.getTime()) {
+                const month = cursor.getMonth() + 1;
+                const year = cursor.getFullYear();
+                const existing = summariesByPeriod.get(`${year}-${month}`);
+
+                filledSummaries.push(
+                    existing ?? {
+                        month,
+                        year,
                         totalBaseSalary: 0,
                         totalAllowance: 0,
                         totalBonus: 0,
@@ -177,64 +270,71 @@ export class StatisticalReportComponent implements OnInit {
                         totalDeductions: 0,
                         totalNetSalary: 0,
                         employeeCount: 0,
-                    };
-                });
+                    }
+                );
 
-                const labels = filledSummaries.map((m: any) => `Tháng ${m.month}`);
-                this.incomeChartData = {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Lương cứng',
-                            data: filledSummaries.map((m: any) => m.totalBaseSalary ?? 0),
-                            backgroundColor: 'rgba(59, 130, 246, 0.75)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            borderWidth: 0,
-                            stack: 'income',
-                        },
-                        {
-                            label: 'Phụ cấp',
-                            data: filledSummaries.map((m: any) => m.totalAllowance ?? 0),
-                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            borderWidth: 0,
-                            stack: 'income',
-                        },
-                        {
-                            label: 'Thưởng',
-                            data: filledSummaries.map((m: any) => m.totalBonus ?? 0),
-                            backgroundColor: 'rgba(245, 158, 11, 0.75)',
-                            borderColor: 'rgba(245, 158, 11, 1)',
-                            borderWidth: 0,
-                            stack: 'income',
-                        },
-                        {
-                            label: 'Tăng ca',
-                            data: filledSummaries.map((m: any) => m.totalOvertimePay ?? 0),
-                            backgroundColor: 'rgba(168, 85, 247, 0.75)',
-                            borderColor: 'rgba(168, 85, 247, 1)',
-                            borderWidth: 0,
-                            stack: 'income',
-                        },
-                        {
-                            label: 'Thực nhận',
-                            data: filledSummaries.map((m: any) => m.totalNetSalary ?? 0),
-                            borderColor: 'rgba(239, 68, 68, 1)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderWidth: 3,
-                            fill: false,
-                            type: 'line',
-                            pointRadius: 5,
-                            pointBackgroundColor: 'rgba(239, 68, 68, 1)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            tension: 0.4,
-                        },
-                    ],
-                };
-                this.incomeChartOptions = this.getIncomeChartOptions(this.incomeIsHorizontal);
-                this.updateChartContainerHeight('income');
+                cursor.setMonth(cursor.getMonth() + 1);
             }
+
+            const singleYearRange = startYear === endYear;
+            const labels = filledSummaries.map((m: any) =>
+                singleYearRange ? `Tháng ${m.month}` : `T${m.month}/${m.year}`
+            );
+
+            this.incomeChartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Lương cứng',
+                        data: filledSummaries.map((m: any) => m.totalBaseSalary ?? 0),
+                        backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 0,
+                        stack: 'income',
+                    },
+                    {
+                        label: 'Phụ cấp',
+                        data: filledSummaries.map((m: any) => m.totalAllowance ?? 0),
+                        backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 0,
+                        stack: 'income',
+                    },
+                    {
+                        label: 'Thưởng',
+                        data: filledSummaries.map((m: any) => m.totalBonus ?? 0),
+                        backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        borderWidth: 0,
+                        stack: 'income',
+                    },
+                    {
+                        label: 'Tăng ca',
+                        data: filledSummaries.map((m: any) => m.totalOvertimePay ?? 0),
+                        backgroundColor: 'rgba(168, 85, 247, 0.75)',
+                        borderColor: 'rgba(168, 85, 247, 1)',
+                        borderWidth: 0,
+                        stack: 'income',
+                    },
+                    {
+                        label: 'Thực nhận',
+                        data: filledSummaries.map((m: any) => m.totalNetSalary ?? 0),
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 3,
+                        fill: false,
+                        type: 'line',
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        tension: 0.4,
+                    },
+                ],
+            };
+
+            this.incomeChartOptions = this.getIncomeChartOptions(this.incomeIsHorizontal);
+            this.updateChartContainerHeight('income');
         });
     }
 
