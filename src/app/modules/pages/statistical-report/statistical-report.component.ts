@@ -17,10 +17,10 @@ import { ReportService } from 'src/app/core/services/report.service';
 export class StatisticalReportComponent implements OnInit {
     // Period filter (dashboard)
     selectedYear: number = new Date().getFullYear();
-    fromMonth: number | null = null;
-    toMonth: number | null = null;
     incomeFromPeriod: Date | null = null;
     incomeToPeriod: Date | null = null;
+    attendanceFromPeriod: Date | null = null;
+    attendanceToPeriod: Date | null = null;
     yearOptions: any[] = [];
     monthOptions: any[] = [
         { label: 'Tất cả', value: null },
@@ -126,6 +126,8 @@ export class StatisticalReportComponent implements OnInit {
 
         this.incomeFromPeriod = new Date(this.selectedYear, 0, 1);
         this.incomeToPeriod = new Date(this.selectedYear, 11, 1);
+        this.attendanceFromPeriod = new Date(this.selectedYear, 0, 1);
+        this.attendanceToPeriod = new Date(this.selectedYear, 11, 1);
 
         this.loadAllReports();
     }
@@ -135,15 +137,6 @@ export class StatisticalReportComponent implements OnInit {
         this.loadMonthlyIncome();
         this.loadPerformance();
         this.loadAttendance();
-    }
-
-    onPeriodChange(): void {
-        if (this.fromMonth && this.toMonth && this.fromMonth > this.toMonth) {
-            const tmp = this.fromMonth;
-            this.fromMonth = this.toMonth;
-            this.toMonth = tmp;
-        }
-        this.loadAllReports();
     }
 
     onIncomePeriodChange(): void {
@@ -156,14 +149,22 @@ export class StatisticalReportComponent implements OnInit {
         this.loadMonthlyIncome();
     }
 
-    onPerformanceMonthChange(): void {
-        this.loadPerformance();
+    onAttendancePeriodChange(): void {
+        if (
+            this.attendanceFromPeriod &&
+            this.attendanceToPeriod &&
+            this.attendanceFromPeriod.getTime() > this.attendanceToPeriod.getTime()
+        ) {
+            const temp = this.attendanceFromPeriod;
+            this.attendanceFromPeriod = this.attendanceToPeriod;
+            this.attendanceToPeriod = temp;
+        }
+
+        this.loadAttendance();
     }
 
-    private getMonthRange(): { start: number; end: number } {
-        const start = this.fromMonth ?? 1;
-        const end = this.toMonth ?? 12;
-        return start <= end ? { start, end } : { start: end, end: start };
+    onPerformanceMonthChange(): void {
+        this.loadPerformance();
     }
 
     private normalizeToMonthStart(date: Date): Date {
@@ -181,7 +182,18 @@ export class StatisticalReportComponent implements OnInit {
             : { start: toDate, end: fromDate };
     }
 
-    private getIncomeRangeYears(startYear: number, endYear: number): number[] {
+    private getAttendancePeriodRange(): { start: Date; end: Date } {
+        const defaultStart = new Date(this.selectedYear, 0, 1);
+        const defaultEnd = new Date(this.selectedYear, 11, 1);
+        const fromDate = this.normalizeToMonthStart(this.attendanceFromPeriod ?? defaultStart);
+        const toDate = this.normalizeToMonthStart(this.attendanceToPeriod ?? defaultEnd);
+
+        return fromDate.getTime() <= toDate.getTime()
+            ? { start: fromDate, end: toDate }
+            : { start: toDate, end: fromDate };
+    }
+
+    private getRangeYears(startYear: number, endYear: number): number[] {
         const years: number[] = [];
         for (let year = startYear; year <= endYear; year++) {
             years.push(year);
@@ -217,7 +229,7 @@ export class StatisticalReportComponent implements OnInit {
         const periodRange = this.getIncomePeriodRange();
         const startYear = periodRange.start.getFullYear();
         const endYear = periodRange.end.getFullYear();
-        const requestYears = this.getIncomeRangeYears(startYear, endYear);
+        const requestYears = this.getRangeYears(startYear, endYear);
         const requests = requestYears.map((year: number) =>
             this.reportService.getMonthlyIncome({ year }).pipe(
                 catchError(() => of({ status: false, data: null }))
@@ -393,80 +405,120 @@ export class StatisticalReportComponent implements OnInit {
     }
 
     loadAttendance(): void {
-        const request: any = { year: this.selectedYear };
-        if (this.fromMonth) request.fromMonth = this.fromMonth;
-        if (this.toMonth) request.toMonth = this.toMonth;
-        this.reportService.getAttendance(request).subscribe((res: any) => {
-            if (res.status && res.data) {
-                const data = res.data;
-                const monthItems = data.monthlyAttendances || [];
-                const range = this.getMonthRange();
-                const byMonth = new Map<number, any>(monthItems.map((m: any) => [Number(m.month), m]));
-                const filled = Array.from({ length: range.end - range.start + 1 }, (_, i) => {
-                    const month = range.start + i;
-                    const existing = byMonth.get(month);
-                    return existing ?? {
+        const periodRange = this.getAttendancePeriodRange();
+        const startYear = periodRange.start.getFullYear();
+        const endYear = periodRange.end.getFullYear();
+        const requestYears = this.getRangeYears(startYear, endYear);
+        const requests = requestYears.map((year: number) =>
+            this.reportService.getAttendance({ year }).pipe(
+                catchError(() => of({ status: false, data: null }))
+            )
+        );
+
+        forkJoin(requests).subscribe((responses: any[]) => {
+            const summariesByPeriod = new Map<string, any>();
+
+            responses.forEach((res: any, index: number) => {
+                if (!res?.status || !res?.data) {
+                    return;
+                }
+
+                const requestYear = requestYears[index];
+                const monthItems = res.data.monthlyAttendances || [];
+
+                monthItems.forEach((item: any) => {
+                    const month = Number(item.month);
+                    const year = Number(item.year) || requestYear;
+                    if (!Number.isFinite(month) || month < 1 || month > 12) {
+                        return;
+                    }
+
+                    summariesByPeriod.set(`${year}-${month}`, {
+                        ...item,
                         month,
-                        year: this.selectedYear,
+                        year,
+                    });
+                });
+            });
+
+            const filled: any[] = [];
+            const cursor = new Date(periodRange.start.getFullYear(), periodRange.start.getMonth(), 1);
+            const periodEnd = new Date(periodRange.end.getFullYear(), periodRange.end.getMonth(), 1);
+
+            while (cursor.getTime() <= periodEnd.getTime()) {
+                const month = cursor.getMonth() + 1;
+                const year = cursor.getFullYear();
+                const existing = summariesByPeriod.get(`${year}-${month}`);
+
+                filled.push(
+                    existing ?? {
+                        month,
+                        year,
                         totalWorkDays: 0,
                         totalLateDays: 0,
                         totalLeaveDays: 0,
                         totalOvertimeHours: 0,
-                    };
-                });
+                    }
+                );
 
-                const labels = filled.map((m: any) => `Tháng ${m.month}`);
-                this.attendanceChartData = {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Ngày làm việc',
-                            data: filled.map((m: any) => m.totalWorkDays ?? 0),
-                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            borderWidth: 0,
-                        },
-                        {
-                            label: 'Đi muộn',
-                            data: filled.map((m: any) => m.totalLateDays ?? 0),
-                            backgroundColor: 'rgba(251, 146, 60, 0.75)',
-                            borderColor: 'rgba(251, 146, 60, 1)',
-                            borderWidth: 0,
-                        },
-                        {
-                            label: 'Nghỉ phép',
-                            data: filled.map((m: any) => m.totalLeaveDays ?? 0),
-                            backgroundColor: 'rgba(239, 68, 68, 0.75)',
-                            borderColor: 'rgba(239, 68, 68, 1)',
-                            borderWidth: 0,
-                        },
-                    ],
-                };
-
-                this.overtimeChartData = {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Giờ tăng ca',
-                            data: filled.map((m: any) => m.totalOvertimeHours ?? 0),
-                            borderColor: 'rgba(168, 85, 247, 1)',
-                            backgroundColor: 'rgba(168, 85, 247, 0.16)',
-                            borderWidth: 3,
-                            fill: true,
-                            pointRadius: 4,
-                            pointBackgroundColor: 'rgba(168, 85, 247, 1)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            tension: 0.35,
-                        },
-                    ],
-                };
-
-                this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
-                this.overtimeChartOptions = this.getOvertimeChartOptions();
-                this.updateChartContainerHeight('attendance');
-                this.updateChartContainerHeight('overtime');
+                cursor.setMonth(cursor.getMonth() + 1);
             }
+
+            const singleYearRange = startYear === endYear;
+            const labels = filled.map((m: any) =>
+                singleYearRange ? `Tháng ${m.month}` : `T${m.month}/${m.year}`
+            );
+
+            this.attendanceChartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Ngày làm việc',
+                        data: filled.map((m: any) => m.totalWorkDays ?? 0),
+                        backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 0,
+                    },
+                    {
+                        label: 'Đi muộn',
+                        data: filled.map((m: any) => m.totalLateDays ?? 0),
+                        backgroundColor: 'rgba(251, 146, 60, 0.75)',
+                        borderColor: 'rgba(251, 146, 60, 1)',
+                        borderWidth: 0,
+                    },
+                    {
+                        label: 'Nghỉ phép',
+                        data: filled.map((m: any) => m.totalLeaveDays ?? 0),
+                        backgroundColor: 'rgba(239, 68, 68, 0.75)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 0,
+                    },
+                ],
+            };
+
+            this.overtimeChartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Giờ tăng ca',
+                        data: filled.map((m: any) => m.totalOvertimeHours ?? 0),
+                        borderColor: 'rgba(168, 85, 247, 1)',
+                        backgroundColor: 'rgba(168, 85, 247, 0.16)',
+                        borderWidth: 3,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: 'rgba(168, 85, 247, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        tension: 0.35,
+                    },
+                ],
+            };
+
+            this.attendanceChartOptions = this.getAttendanceChartOptions(this.attendanceIsHorizontal);
+            this.overtimeChartOptions = this.getOvertimeChartOptions();
+            this.updateChartContainerHeight('attendance');
+            this.updateChartContainerHeight('overtime');
         });
     }
 
