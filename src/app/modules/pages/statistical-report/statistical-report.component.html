@@ -45,13 +45,15 @@
     <!-- Báo cáo hiệu suất -->
     <div class="chart-col chart-col-performance">
         <div class="card">
-            <div class="flex justify-content-between align-items-center mb-4">
-                <h4 class="m-0">Báo cáo hiệu suất (KPI doanh số theo hoa hồng)</h4>
-                <div class="flex align-items-center gap-2">
-                    <span class="font-medium">Tháng</span>
-                    <p-dropdown [options]="monthOptions" [(ngModel)]="performanceMonth" optionLabel="label" optionValue="value"
-                        placeholder="Tháng" appendTo="body" [style]="{ width: '130px' }"
-                        (onChange)="onPerformanceMonthChange()"></p-dropdown>
+            <div class="mb-4">
+                <h4 class="m-0 mb-3">Báo cáo hiệu suất (KPI doanh số theo hoa hồng)</h4>
+                <div class="flex align-items-center gap-2 flex-wrap">
+                    <p-calendar [(ngModel)]="performanceFromPeriod" view="month" dateFormat="mm/yy" placeholder="Từ MM/YY"
+                        appendTo="body" [showIcon]="true" [readonlyInput]="true" [style]="{ width: '140px' }"
+                        (ngModelChange)="onPerformancePeriodChange()"></p-calendar>
+                    <p-calendar [(ngModel)]="performanceToPeriod" view="month" dateFormat="mm/yy" placeholder="Đến MM/YY"
+                        appendTo="body" [showIcon]="true" [readonlyInput]="true" [style]="{ width: '140px' }"
+                        (ngModelChange)="onPerformancePeriodChange()"></p-calendar>
                     <p-dropdown [options]="perfChartTypeOptions" [(ngModel)]="perfChartType" optionLabel="label"
                         optionValue="value" placeholder="Loại biểu đồ" [style]="{ width: '180px' }"
                         (onChange)="onChartTypeChange('performance', $event)"></p-dropdown>

@@ -22,15 +22,6 @@ export class StatisticalReportComponent implements OnInit {
     attendanceFromPeriod: Date | null = null;
     attendanceToPeriod: Date | null = null;
     yearOptions: any[] = [];
-    monthOptions: any[] = [
-        { label: 'Tất cả', value: null },
-        { label: 'Tháng 1', value: 1 }, { label: 'Tháng 2', value: 2 },
-        { label: 'Tháng 3', value: 3 }, { label: 'Tháng 4', value: 4 },
-        { label: 'Tháng 5', value: 5 }, { label: 'Tháng 6', value: 6 },
-        { label: 'Tháng 7', value: 7 }, { label: 'Tháng 8', value: 8 },
-        { label: 'Tháng 9', value: 9 }, { label: 'Tháng 10', value: 10 },
-        { label: 'Tháng 11', value: 11 }, { label: 'Tháng 12', value: 12 },
-    ];
 
     hrChartTypeOptions = [
         { label: 'Biểu đồ tròn', value: 'pie' },
@@ -79,7 +70,8 @@ export class StatisticalReportComponent implements OnInit {
     perfChartData: any;
     perfChartOptions: any;
     perfChartPlugins: any[] = [];
-    performanceMonth: number | null = null;
+    performanceFromPeriod: Date | null = null;
+    performanceToPeriod: Date | null = null;
     performanceHasData: boolean = true;
 
     // Attendance
@@ -128,6 +120,8 @@ export class StatisticalReportComponent implements OnInit {
         this.incomeToPeriod = new Date(this.selectedYear, 11, 1);
         this.attendanceFromPeriod = new Date(this.selectedYear, 0, 1);
         this.attendanceToPeriod = new Date(this.selectedYear, 11, 1);
+        this.performanceFromPeriod = new Date(this.selectedYear, 0, 1);
+        this.performanceToPeriod = new Date(this.selectedYear, 11, 1);
 
         this.loadAllReports();
     }
@@ -163,7 +157,17 @@ export class StatisticalReportComponent implements OnInit {
         this.loadAttendance();
     }
 
-    onPerformanceMonthChange(): void {
+    onPerformancePeriodChange(): void {
+        if (
+            this.performanceFromPeriod &&
+            this.performanceToPeriod &&
+            this.performanceFromPeriod.getTime() > this.performanceToPeriod.getTime()
+        ) {
+            const temp = this.performanceFromPeriod;
+            this.performanceFromPeriod = this.performanceToPeriod;
+            this.performanceToPeriod = temp;
+        }
+
         this.loadPerformance();
     }
 
@@ -187,6 +191,17 @@ export class StatisticalReportComponent implements OnInit {
         const defaultEnd = new Date(this.selectedYear, 11, 1);
         const fromDate = this.normalizeToMonthStart(this.attendanceFromPeriod ?? defaultStart);
         const toDate = this.normalizeToMonthStart(this.attendanceToPeriod ?? defaultEnd);
+
+        return fromDate.getTime() <= toDate.getTime()
+            ? { start: fromDate, end: toDate }
+            : { start: toDate, end: fromDate };
+    }
+
+    private getPerformancePeriodRange(): { start: Date; end: Date } {
+        const defaultStart = new Date(this.selectedYear, 0, 1);
+        const defaultEnd = new Date(this.selectedYear, 11, 1);
+        const fromDate = this.normalizeToMonthStart(this.performanceFromPeriod ?? defaultStart);
+        const toDate = this.normalizeToMonthStart(this.performanceToPeriod ?? defaultEnd);
 
         return fromDate.getTime() <= toDate.getTime()
             ? { start: fromDate, end: toDate }
@@ -351,8 +366,14 @@ export class StatisticalReportComponent implements OnInit {
     }
 
     loadPerformance(): void {
-        const request: any = { year: this.selectedYear };
-        if (this.performanceMonth !== null) request.month = this.performanceMonth;
+        const periodRange = this.getPerformancePeriodRange();
+        const request: any = {
+            fromYear: periodRange.start.getFullYear(),
+            fromMonth: periodRange.start.getMonth() + 1,
+            toYear: periodRange.end.getFullYear(),
+            toMonth: periodRange.end.getMonth() + 1,
+        };
+
         this.reportService.getPerformance(request).subscribe({
             next: (res: any) => {
                 if (res.status && res.data) {
